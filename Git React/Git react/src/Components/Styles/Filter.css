@@ -1,0 +1,27 @@
+.filter {
+  padding: 20px;
+}
+
+.header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.header select {
+  padding: 5px;
+}
+
+.user-list table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.user-list th, .user-list td {
+  border: 1px solid #ddd;
+  padding: 8px;
+}
+
+.user-list th {
+  background-color: #f2f2f2;
+}
