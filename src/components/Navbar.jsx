@@ -13,8 +13,8 @@ const Navbar = () => {
       <div className="">
         <input
           type="text"
-          placeholder="Search here..."
-          className=" p-1 px-9 w-full bg-slate-200 rounded-md"
+          placeholder="Search Projects..."
+          className=" p-2 px-12 w-full bg-slate-200 rounded-md"
         />
       </div>
       <div className=" flex items-center p-1 gap-9">
@@ -22,7 +22,7 @@ const Navbar = () => {
           <NotificationsIcon />
         </Badge>
         <div>
-          <h2 className="font-semibold">Mr.Ntya</h2>
+          <h2 className="font-semibold">Mr. Rahul</h2>
           <h4 className=" text-slate-700">software developer</h4>
         </div>
         <Avatar
