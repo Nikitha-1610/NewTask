@@ -1,0 +1,35 @@
+/* @import url('https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap'); */
+@import url("https://fonts.googleapis.com/css2?family=Rajdhani:wght@300;400;500;600;700&display=swap");
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+* {
+  /* font-family: "Roboto",sans-serif; */
+  font-family: "Rajdhani", sans-serif;
+}
+
+.scrollbar-hidden {
+  scrollbar-width: none; /* For Firefox */
+}
+
+.scrollbar-hidden::-webkit-scrollbar {
+  display: none; /* For Chrome, Safari, and Edge */
+}
+
+/* tracker page button style */
+
+.custom-primary-button {
+  background-color: white;
+  border-bottom: 2px solid gray !important;
+  outline: none;
+  font-weight: 600;
+  color: black !important;
+}
+
+.custom-default-button {
+  background-color: #f1f1f1 !important;
+  border-color: #dcdcdc !important;
+  color: black !important;
+}
