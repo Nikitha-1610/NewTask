@@ -27,11 +27,11 @@ const Side = () => {
           profile
         </MenuItem>
         <MenuItem
-          component={<Link to="/profile" />}
-          icon={<Icon icon="iconamoon:profile" height={22} width={22} />}
+          component={<Link to="/teams" />}
+          icon={<Icon icon="logos:microsoft-teams" height={22} width={22} />}
         >
           {" "}
-          profile
+          Teams
         </MenuItem>
         <SubMenu label="Charts" icon={<Icon icon="logos:highcharts" />}>
           <MenuItem> Pie charts </MenuItem>
