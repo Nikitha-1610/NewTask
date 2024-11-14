@@ -5,6 +5,7 @@ import Profile from "./pages/Profile";
 import People from "./pages/People";
 import Teams from "./pages/Teams";
 // import Settings from "./pages/Settings";
+import Usersemail from './pages/Usersemail'
 
 const App = () => {
   return (
@@ -17,6 +18,8 @@ const App = () => {
           <Route path="/people" element={<People />} />
           {/* <Route path="/settings" element={<Settings />} /> */}
           <Route path="*" element={<Dashboard />} /> {/* Default route */}
+          <Route path="/usersemail" element={<Usersemail/>} />
+
         </Routes>
       </Layout>
     </Router>

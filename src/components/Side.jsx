@@ -43,6 +43,16 @@ const Side = () => {
         >
           {" "}
           People
+        
+        </MenuItem>
+
+        <MenuItem
+          component={<Link to="/Usersemail" />}
+          icon={<Icon icon="iconamoon:profile" height={22} width={22} />}
+        >
+          {" "}
+          UsersEmail
+        
         </MenuItem>
       </Menu>
     </Sidebar>
