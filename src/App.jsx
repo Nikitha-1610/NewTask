@@ -6,7 +6,7 @@ import People from "./pages/People";
 import Teams from "./pages/Teams";
 // import Settings from "./pages/Settings";
 import Usersemail from './pages/Usersemail'
-
+import AddTasks from "./pages/AddTasks"; 
 const App = () => {
   return (
     <Router>
@@ -18,6 +18,7 @@ const App = () => {
           <Route path="/people" element={<People />} />
           <Route path="*" element={<Dashboard />} /> {/* Default route */}
           <Route path="/usersemail" element={<Usersemail/>} />
+          <Route path="/addtasks" element={<AddTasks />} />
 
         </Routes>
       </Layout>
