@@ -36,6 +36,7 @@ const Side = () => {
         </MenuItem>
 
         <MenuItem
+          component={<Link to="/Usersemail" />}
           icon={<Icon icon="iconamoon:profile" height={22} width={22} />}
         >
           <Link to="/usersemail">UsersEmail</Link>
@@ -46,6 +47,15 @@ const Side = () => {
           icon={<Icon icon="mdi:plus-circle" height={22} width={22} />} 
         >
           <Link to="/addtasks">Add Tasks</Link>
+        </MenuItem>
+
+        <MenuItem
+          component={<Link to="/designteam" />}
+          icon={<Icon icon="iconamoon:profile" height={22} width={22} />}
+        >
+          {" "}
+          DesignTeam
+        
         </MenuItem>
       </Menu>
     </Sidebar>

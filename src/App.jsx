@@ -4,8 +4,8 @@ import Dashboard from "./pages/Dashboard";
 import Profile from "./pages/Profile";
 import People from "./pages/People";
 import Teams from "./pages/Teams";
-import Usersemail from './pages/Usersemail';
-import AddTasks from "./pages/addTasks";  // Corrected import
+// import Settings from "./pages/Settings";
+import Usersemail from './pages/Usersemail'
 
 const App = () => {
   return (
@@ -17,8 +17,8 @@ const App = () => {
           <Route path="/teams" element={<Teams />} />
           <Route path="/people" element={<People />} />
           <Route path="*" element={<Dashboard />} /> {/* Default route */}
-          <Route path="/usersemail" element={<Usersemail />} />
-          <Route path="/addtasks" element={<AddTasks />} /> {/* Corrected path */}
+          <Route path="/usersemail" element={<Usersemail/>} />
+
         </Routes>
       </Layout>
     </Router>
