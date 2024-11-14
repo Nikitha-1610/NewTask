@@ -1,7 +1,6 @@
 import { Link } from "react-router-dom";
 import { Sidebar, Menu, MenuItem, SubMenu } from "react-pro-sidebar";
 import { Icon } from "@iconify-icon/react";
-import Profile from "../pages/Profile";
 
 const Side = () => {
   return (
