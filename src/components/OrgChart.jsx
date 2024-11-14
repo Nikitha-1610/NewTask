@@ -7,6 +7,7 @@ import ReactFlow, {
   addEdge,
 } from "reactflow";
 import "reactflow/dist/style.css";
+import MessageCard from "./MessageCard";
 
 // Custom Node Content Component with Tailwind CSS styling
 const NodeContent = ({ name, image, position }) => (
@@ -189,7 +190,7 @@ const OrgChart = () => {
   const onConnect = (params) => setEdges((eds) => addEdge(params, eds));
 
   return (
-    <div style={{ height: "500px", width: "100%" }}>
+    <div style={{ height: "500px", width: "100%" }} className=" flex">
       <ReactFlow
         nodes={nodes}
         edges={edges}
@@ -202,6 +203,7 @@ const OrgChart = () => {
         <Controls />
         <Background />
       </ReactFlow>
+      <MessageCard />
     </div>
   );
 };
