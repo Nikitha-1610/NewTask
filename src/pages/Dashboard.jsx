@@ -1,8 +1,8 @@
 import React from 'react';
 import { MdBarChart } from 'react-icons/md';
-import WeeklyProduction from './DashboardComp/WeeklyProduction';
-import Production from './DashboardComp/Production';
-import TwoWaveChart from './DashboardComp/TwoWaveChart';
+import WeeklyProduction from '../components/DashboardComp/WeeklyProduction';
+import Production from '../components/DashboardComp/Production';
+import TwoWaveChart from '../components/DashboardComp/TwoWaveChart';
 
 const Dashboard = () => {
   return (

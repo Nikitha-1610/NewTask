@@ -7,52 +7,45 @@ const Side = () => {
     <Sidebar>
       <Menu>
         <MenuItem
-          component={<Link to="/dashboard" />}
-          icon={
-            <Icon
-              icon="material-symbols:dashboard-outline"
-              height={22}
-              width={22}
-            />
-          }
+          icon={<Icon icon="material-symbols:dashboard-outline" height={22} width={22} />}
         >
-          {" "}
-          Dashboard
+          <Link to="/dashboard">Dashboard</Link>
         </MenuItem>
+        
         <MenuItem
-          component={<Link to="/profile" />}
           icon={<Icon icon="iconamoon:profile" height={22} width={22} />}
         >
-          {" "}
-          profile
+          <Link to="/profile">Profile</Link>
         </MenuItem>
+        
         <MenuItem
-          component={<Link to="/teams" />}
           icon={<Icon icon="logos:microsoft-teams" height={22} width={22} />}
         >
-          {" "}
-          Teams
+          <Link to="/teams">Teams</Link>
         </MenuItem>
+        
         <SubMenu label="Charts" icon={<Icon icon="logos:highcharts" />}>
           <MenuItem> Pie charts </MenuItem>
           <MenuItem> Line charts </MenuItem>
         </SubMenu>
+        
         <MenuItem
-          component={<Link to="/people" />}
           icon={<Icon icon="iconamoon:profile" height={22} width={22} />}
         >
-          {" "}
-          People
-        
+          <Link to="/people">People</Link>
         </MenuItem>
 
         <MenuItem
-          component={<Link to="/Usersemail" />}
           icon={<Icon icon="iconamoon:profile" height={22} width={22} />}
         >
-          {" "}
-          UsersEmail
-        
+          <Link to="/usersemail">UsersEmail</Link>
+        </MenuItem>
+
+        {/* Updated the icon for Add Tasks */}
+        <MenuItem
+          icon={<Icon icon="mdi:plus-circle" height={22} width={22} />} 
+        >
+          <Link to="/addtasks">Add Tasks</Link>
         </MenuItem>
       </Menu>
     </Sidebar>
