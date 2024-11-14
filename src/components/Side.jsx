@@ -48,11 +48,20 @@ const Side = () => {
         </MenuItem>
 
         <MenuItem
-          component={<Link to="/Usersemail" />}
+          component={<Link to="/usersemail" />}
           icon={<Icon icon="iconamoon:profile" height={22} width={22} />}
         >
           {" "}
           UsersEmail
+        
+        </MenuItem>
+
+        <MenuItem
+          component={<Link to="/designteam" />}
+          icon={<Icon icon="iconamoon:profile" height={22} width={22} />}
+        >
+          {" "}
+          DesignTeam
         
         </MenuItem>
       </Menu>
