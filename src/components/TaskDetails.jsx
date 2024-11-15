@@ -2,34 +2,15 @@ import { Icon } from "@iconify/react";
 
 const TaskDetails = ({ task }) => {
   return (
-    <div className=" w-full mx-auto p-6 bg-white rounded-lg shadow-md border border-gray-200 font-sans">
-      {/* Task Status */}
-      <div className="flex items-center justify-between pb-4 border-b border-gray-300">
-        <h2 className="text-xl font-bold bg-yellow-200 px-2 p-1 rounded-md text-gray-700">
-          In Progress({task.id})
-        </h2>
-        <div className=" flex gap-3">
-          <button className="px-3 py-1 text-sm text-white bg-teal-500 rounded hover:bg-teal-600">
-            + Add a task
-          </button>
-          <h2 className=" flex gap-2">
-            <Icon icon="lets-icons:filter" height={22} width={22} />
-            Filter
-          </h2>
-        </div>
-      </div>
-
-      {/* Task Title */}
+    <div className=" w-full mx-auto p-6 bg-white rounded-lg shadow-md border border-gray-200">
       <h3 className="mt-4 text-xl font-semibold text-gray-800">{task.title}</h3>
-
-      {/* Task Details */}
       <div className="mt-4 text-base font-normal text-gray-600">
         <div className="flex items-center gap-8 mb-2">
           <div className=" flex">
             <Icon icon="ic:outline-watch-later" height={18} width={18} />
             <span className="ml-2">Status</span>:{" "}
           </div>
-          <div className=" flex">
+          <div className=" flex ml-5">
             <Icon icon="ri:progress-8-fill" height={18} width={18} />
             <span className="ml-1 font-medium">{task.status}</span>
           </div>
@@ -145,30 +126,32 @@ const TaskDetails = ({ task }) => {
 
       {/* Comments Section */}
       <div className="mt-4">
-        <h4 className="text-gray-700 text-sm font-semibold">
-          Comments ({task.comments.length})
-        </h4>
-        <div className="space-y-2">
+        <div className=" flex gap-2">
+          <Icon icon="basil:comment-outline" height={22} width={22} />
+          <h4 className="text-gray-700 text-base font-semibold">
+            Comments ({task.attachments.length})
+          </h4>
+        </div>
+        <div className="space-y-2 mt-2">
           {task.comments.map((comment, index) => (
-            <div key={index} className="flex items-start space-x-2">
+            <div
+              key={index}
+              className="w-full p-2 mt-2 flex gap-2 text-sm text-gray-700 bg-gray-100 border border-gray-300 rounded-md resize-none focus:outline-none"
+            >
               <img
                 src={comment.userImage}
                 alt={comment.user}
                 className="w-6 h-6 rounded-full"
               />
               <div>
-                <div className="text-sm font-medium text-gray-800">
+                {/* <div className="text-sm font-medium text-gray-800">
                   {comment.user}
-                </div>
+                </div> */}
                 <div className="text-sm text-gray-600">{comment.text}</div>
               </div>
             </div>
           ))}
         </div>
-        <textarea
-          placeholder="Add a comment"
-          className="w-full p-2 mt-2 text-sm text-gray-700 bg-gray-100 border border-gray-300 rounded-md resize-none focus:outline-none"
-        />
       </div>
 
       {/* Status Change */}
@@ -176,13 +159,16 @@ const TaskDetails = ({ task }) => {
         <span className="text-gray-700 text-sm font-semibold">
           Change Status
         </span>
-        <button className="px-3 py-1 text-xs font-medium bg-green-100 text-green-600 rounded-md">
+        <button className="px-2 py-1 flex items-center gap-1 text-xs font-medium bg-green-100 text-green-600 rounded-md">
+          <div className=" h-2 w-2 rounded-full bg-green-400"></div>
           Low
         </button>
-        <button className="px-3 py-1 text-xs font-medium bg-yellow-100 text-yellow-600 rounded-md">
+        <button className="px-2 py-1 flex items-center gap-1 text-xs font-medium bg-yellow-100 text-green-600 rounded-md">
+          <div className=" h-2 w-2 rounded-full bg-yellow-400"></div>
           Normal
         </button>
-        <button className="px-3 py-1 text-xs font-medium bg-red-100 text-red-600 rounded-md">
+        <button className="px-2 py-1 flex items-center gap-1 text-xs font-medium bg-red-100 text-green-600 rounded-md">
+          <div className=" h-2 w-2 rounded-full bg-red-400"></div>
           Urgent
         </button>
       </div>

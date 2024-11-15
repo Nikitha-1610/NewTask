@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState } from "react"; 
 import { FaCalendarAlt, FaUserPlus, FaCog, FaFileAlt } from "react-icons/fa";
 import { FaFilePdf, FaFileWord, FaFileExcel } from 'react-icons/fa';
 
@@ -54,23 +54,16 @@ const TaskForm = () => {
 
   const getFileIcon = (type) => {
     if (type === 'application/pdf') {
-      return (
-        <FaFilePdf size={30} color="#D11515" /> // PDF icon
-      );
+      return <FaFilePdf size={30} color="#D11515" />; // PDF icon
     } else if (type === 'application/vnd.openxmlformats-officedocument.wordprocessingml.document') {
-      return (
-        <FaFileWord size={30} color="#2A5699" /> // DOCX icon (blue for Word)
-      );
+      return <FaFileWord size={30} color="#2A5699" />; // DOCX icon (blue for Word)
     } else if (type === 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet') {
-      return (
-        <FaFileExcel size={30} color="#217346" /> // XLSX icon (green for Excel)
-      );
+      return <FaFileExcel size={30} color="#217346" />; // XLSX icon (green for Excel)
     } else {
-      return (
-        <FaFileAlt size={30} color="#808080" /> // Default icon for other file types
-      );
+      return <FaFileAlt size={30} color="#808080" />; // Default icon for other file types
     }
   };
+
   const validateForm = () => {
     if (!dueDate || selectedMembers.length === 0 || !selectedPriority || !description || files.length === 0) {
       setFormValid(false);
@@ -89,25 +82,27 @@ const TaskForm = () => {
       alert('Please fill out all required fields: false');
     }
   };
+
   return (
-    <div className="w-full h-full p-2 font-sans" style={{ fontFamily: 'Arial, sans-serif' }}>
+    <div className="w-full max-w-[480px] sm:max-w-[880px] mx-auto p-4 mt-4 font-sans bg-white shadow-lg rounded-md">
+  {/* Project Name & Due Date */}
       {/* Project Name & Due Date */}
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-3 mb-4">
+      <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-6">
         <div>
-          <label className="block text-gray-700 font-medium mb-1  font-sans">Project Name</label>
+          <label className="block text-gray-700 font-medium mb-2 text-sm sm:text-base font-sans">Project Name</label>
           <input
             type="text"
-            className="w-full p-2 focus:outline-none bg-white rounded-[5.814px] border-[0.727px] border-[rgba(1,194,181,0.3)] shadow-[0px_2.907px_5.814px_rgba(70,95,241,0.1)]"
+            className="w-full p-3 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 text-sm sm:text-base"
             placeholder="Enter project name"
             required
           />
         </div>
         <div>
-          <label className="block text-gray-700 font-medium mb-1  font-sans">Due Date</label>
+          <label className="block text-gray-700 font-medium mb-2 text-sm sm:text-base font-sans">Due Date</label>
           <div className="relative">
             <input
               type="text"
-              className="w-full p-2 pr-10 focus:outline-none bg-white rounded-[5.814px] border-[0.727px] border-[rgba(1,194,181,0.3)] shadow-[0px_2.907px_5.814px_rgba(70,95,241,0.1)]"
+              className="w-full p-3 pr-10 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 text-sm sm:text-base"
               placeholder="Select date"
               onFocus={(e) => (e.target.type = "date")}
               onBlur={(e) => (e.target.type = "text")}
@@ -124,35 +119,28 @@ const TaskForm = () => {
       </div>
 
       {/* Members */}
-      <div className="relative mb-4">
-        <label className="block text-gray-700 font-medium mb-1 font-sans">Members</label>
-
-        {/* Container for FaUserPlus icon, selected members and "+" button */}
+      <div className="relative mb-6">
+        <label className="block text-gray-700 font-medium mb-2 font-sans">Members</label>
         <div className="flex items-center justify-between relative">
-          {/* Show the FaUserPlus icon and selected member's name together */}
           <div className="flex items-center">
             <FaUserPlus className="text-gray-500 text-xl" />
             {selectedMembers.length > 0 && (
               <span className="ml-2">{selectedMembers.join(", ")}</span>
             )}
           </div>
-
-          {/* Plus Icon - Dropdown on click */}
           <button
-            onClick={() => setIsMemberDropdownOpen(!isMemberDropdownOpen)} // Toggle members dropdown
-            className="flex items-center justify-center w-8 h-8 rounded-full bg-gray-200 text-gray-600 text-xl font-sans"
+            onClick={() => setIsMemberDropdownOpen(!isMemberDropdownOpen)}
+            className="flex items-center justify-center w-8 h-8 rounded-full bg-gray-200 text-gray-600 text-xl"
           >
             +
           </button>
-
-          {/* Dropdown Menu - appears directly below "+" icon */}
           {isMemberDropdownOpen && (
-            <div className="absolute left-0 mt-2 p-2 border border-gray-300 rounded-md bg-white shadow-lg w-40 z-10 font-sans">
+            <div className="absolute left-0 mt-2 p-2 border border-gray-300 rounded-md bg-white shadow-lg w-40 z-10">
               {membersList.map((member, index) => (
                 <div
                   key={index}
                   className="py-2 px-4 hover:bg-gray-100 cursor-pointer"
-                  onClick={() => handleMemberSelect(member)} // Handle member selection
+                  onClick={() => handleMemberSelect(member)}
                 >
                   {member}
                 </div>
@@ -160,40 +148,32 @@ const TaskForm = () => {
             </div>
           )}
         </div>
-
         <hr className="border-t border-gray-300 my-2" />
       </div>
 
       {/* Designer */}
-      <div className="relative mb-4">
-        <label className="block text-gray-700 font-medium mb-1 font-sans">Designer</label>
-
-        {/* Container for "+" button and dropdown */}
+      <div className="relative mb-6">
+        <label className="block text-gray-700 font-medium mb-2 font-sans">Designer</label>
         <div className="flex items-center justify-between relative">
-          {/* Show the selected designer's profile icon and name */}
           {selectedDesigner && (
             <div className="flex items-center ml-3">
               <FaUserPlus className="text-gray-500 text-xl" />
               <span className="ml-2">{selectedDesigner}</span>
             </div>
           )}
-
-          {/* Plus Icon - Dropdown on click */}
           <button
-            onClick={() => setIsDesignerDropdownOpen(!isDesignerDropdownOpen)} // Toggle designers dropdown
-            className="flex items-center justify-center w-8 h-8 rounded-full bg-gray-200 text-gray-600 text-xl font-sans"
+            onClick={() => setIsDesignerDropdownOpen(!isDesignerDropdownOpen)}
+            className="flex items-center justify-center w-8 h-8 rounded-full bg-gray-200 text-gray-600 text-xl"
           >
             +
           </button>
-
-          {/* Dropdown Menu - appears directly below "+" icon */}
           {isDesignerDropdownOpen && (
-            <div className="absolute left-0 mt-2 p-2 border border-gray-300 rounded-md bg-white shadow-lg w-40 z-10 font-sans">
+            <div className="absolute left-0 mt-2 p-2 border border-gray-300 rounded-md bg-white shadow-lg w-40 z-10">
               {designersList.map((designer, index) => (
                 <div
                   key={index}
                   className="py-2 px-4 hover:bg-gray-100 cursor-pointer"
-                  onClick={() => handleDesignerSelect(designer)} // Handle designer selection
+                  onClick={() => handleDesignerSelect(designer)}
                 >
                   {designer}
                 </div>
@@ -201,7 +181,6 @@ const TaskForm = () => {
             </div>
           )}
         </div>
-
         <hr className="border-t border-gray-300 my-2" />
       </div>
 
@@ -212,7 +191,7 @@ const TaskForm = () => {
       {/* Low Priority Button */}
       <button
         onClick={() => handlePrioritySelect("low")}
-        className={`flex items-center gap-2 px-4 py-2 rounded-full border-4 border-[#EEF2F6] ${
+        className={`flex items-center gap-2 px-4 py-2 rounded-full border-4 border-[#EEF2F6] w-full sm:w-auto  ${
           selectedPriority === "low"
             ? "bg-[#01C2B5] text-white"
             : "text-[#475569]"
@@ -285,7 +264,7 @@ const TaskForm = () => {
       <div className="mb-4">
   <label className="block text-gray-700 font-medium mb-1 font-sans">Description</label>
   <textarea
-    className="w-[665px] h-[248px] border border-[#999494] rounded-[8px] p-2 focus:outline-none flex-shrink-0 bg-white font-sans"
+    className="sm:w-[665px] w-full h-[248px] border border-[#999494] rounded-[8px] p-2 focus:outline-none flex-shrink-0 bg-white font-sans"
     value={description}
     onChange={(e) => setDescription(e.target.value)}
     placeholder="Enter a description of the task" required

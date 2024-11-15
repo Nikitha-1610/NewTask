@@ -5,7 +5,7 @@ import MenuIcon from "@mui/icons-material/Menu";
 // import SearchIcon from "@mui/icons-material/Search";
 const Navbar = () => {
   return (
-    <header className="w-full h-16  flex items-center justify-between px-4">
+    <header className="navbar w-full h-16  flex items-center justify-between px-4">
       <div className=" font-semibold h-4 flex items-center gap-6 cursor-pointer">
         <MenuIcon />
         Dashboard

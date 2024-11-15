@@ -6,7 +6,7 @@ import { Icon } from "@iconify-icon/react";
 
 const Side = () => {
   return (
-    <Sidebar>
+    <Sidebar className="sidebar">
       <Menu>
         <MenuItem
           icon={
@@ -70,10 +70,10 @@ const Side = () => {
         </MenuItem>
         <MenuItem
           component={<Link to="/screen2" />}
-          icon={<Icon icon="iconamoon:profile" height={22} width={22} />}
+          icon={<Icon icon="si:assignment-line" height={22} width={22} />}
         >
           {" "}
-          Task
+          Assign Task
         </MenuItem>
         <MenuItem
           component={<Link to="/chats" />}
