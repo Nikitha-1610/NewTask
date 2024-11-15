@@ -70,10 +70,10 @@ const Side = () => {
         </MenuItem>
         <MenuItem
           component={<Link to="/screen2" />}
-          icon={<Icon icon="iconamoon:profile" height={22} width={22} />}
+          icon={<Icon icon="si:assignment-line" height={22} width={22} />}
         >
           {" "}
-          Task
+          Assign Task
         </MenuItem>
       </Menu>
     </Sidebar>
