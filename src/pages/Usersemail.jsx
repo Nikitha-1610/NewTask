@@ -166,6 +166,7 @@ const EmailApp = () => {
           </form>
         )}
       </div>
+      {/* <div className="use-table p-4 w-8/12 ml-auto mr-8 mt-5 border rounded-lg shadow-md"> */}
       <div className="use-table p-4 w-8/12 ml-auto mr-8 mt-5 border rounded-lg shadow-md">
         {/* Search Bar and Icons */}
         <div className="flex justify-between mb-4 items-center">
@@ -229,5 +230,3 @@ const EmailApp = () => {
 };
 
 export default EmailApp;
-
-
