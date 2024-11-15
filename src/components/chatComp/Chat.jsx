@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import { FaPhone, FaVideo, FaEllipsisV, FaUserCircle, FaFilePdf } from "react-icons/fa";
 
 const Chat = () => {
-  const [selectedOption, setSelectedOption] = useState("Chat"); // Default selection is "Chat"
+  const [selectedOption, setSelectedOption] = useState("Chat"); 
 
   const menuOptions = ["Chat", "Files", "Media"];
 
@@ -89,7 +89,8 @@ const Chat = () => {
     <span className="text-black text-[14px] font-semibold">Revathy</span>
   </div>
   
-  {/* PDF Icon and Filename in Same Line with Background and Border */}
+
+        
   <div className="flex items-center gap-2 mb-2 p-2 bg-gray-100 border h-[50px] border-gray-300 rounded-md">
     <FaFilePdf className="text-red-500 text-[22px]" />
     <span className="text-black text-[14px] font-semibold">
