@@ -4,10 +4,12 @@ import Dashboard from "./pages/Dashboard";
 import Profile from "./pages/Profile";
 import People from "./pages/People";
 import Teams from "./pages/Teams";
+import Screen2 from "./pages/Screen2";
 // import Settings from "./pages/Settings";
-import Usersemail from './pages/Usersemail'
+import Usersemail from "./pages/Usersemail";
+import InProgressTask from "./pages/InProgressTask";
+import AddTasks from "./pages/AddTasks";
 import DesignTeam from "./pages/DesignTeam";
-
 const App = () => {
   return (
     <Router>
@@ -17,12 +19,14 @@ const App = () => {
           <Route path="/profile" element={<Profile />} />
           <Route path="/teams" element={<Teams />} />
           <Route path="/people" element={<People />} />
+          <Route path="/screen2" element={<Screen2 />} />
           {/* <Route path="/settings" element={<Settings />} /> */}
           <Route path="*" element={<Dashboard />} /> {/* Default route */}
-          <Route path="/usersemail" element={<Usersemail/>} />
-          <Route path="/designteam" element={<DesignTeam/>} />
-
-
+          <Route path="/usersemail" element={<Usersemail />} />
+          <Route path="/task" element={<InProgressTask />} />
+          <Route path="/usersemail" element={<Usersemail />} />
+          <Route path="/addtasks" element={<AddTasks />} />
+          <Route path="/designteam" element={<DesignTeam />} />
         </Routes>
       </Layout>
     </Router>

@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import { useState } from "react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faCalendarAlt, faUsers, faComment, faSliders, faPlus, faChevronDown, faChevronUp } from "@fortawesome/free-solid-svg-icons";
 import img1 from '../assets/img1.png';
@@ -33,27 +33,76 @@ const Board = () => {
       title: "IN PROGRESS",
       color: "yellow",
       tasks: [
-        { title: "Overall UX Process of full product for first version", dueDate: "Oct 20", label: "Development", status: "In Progress" },
-        { title: "Overall UX Process of full product for first version", dueDate: "Oct 12", label: "New Screen", status: "In Progress" },
-        { title: "Overall UX Process of full product for first version", dueDate: "Oct 23", label: "Table Content", status: "In Progress" },
+        {
+          title: "Overall UX Process of full product for first version",
+          dueDate: "Oct 20",
+          label: "Development",
+          status: "In Progress",
+        },
+        {
+          title: "Overall UX Process of full product for first version",
+          dueDate: "Oct 12",
+          label: "New Screen",
+          status: "In Progress",
+        },
+        {
+          title: "Overall UX Process of full product for first version",
+          dueDate: "Oct 23",
+          label: "Table Content",
+          status: "In Progress",
+        },
       ],
     },
     {
       title: "IN TEST",
       color: "red",
       tasks: [
-        { title: "Overall UX Process of full product for first version", dueDate: "Oct 20", label: "UX Design", status: "In Test", images: [img2, img3] },
-        { title: "Overall UX Process of full product for first version", dueDate: "Oct 20", label: "UX Research", status: "In Test" },
-        { title: "Overall UX Process of full product for first version", dueDate: "Oct 20", label: "Planning", status: "In Test", images: [img4] },
+        {
+          title: "Overall UX Process of full product for first version",
+          dueDate: "Oct 20",
+          label: "UX Design",
+          status: "In Test",
+          images: [img2, img3],
+        },
+        {
+          title: "Overall UX Process of full product for first version",
+          dueDate: "Oct 20",
+          label: "UX Research",
+          status: "In Test",
+        },
+        {
+          title: "Overall UX Process of full product for first version",
+          dueDate: "Oct 20",
+          label: "Planning",
+          status: "In Test",
+          images: [img4],
+        },
       ],
     },
     {
       title: "COMPLETED",
       color: "teal",
       tasks: [
-        { title: "Overall UX Process of full product for first version", dueDate: "Oct 20", label: "Requirement Gathering", status: "Completed", images: [img6, img7] },
-        { title: "Overall UX Process of full product for first version", dueDate: "Oct 23", label: "Business Insights", status: "Completed" },
-        { title: "Overall UX Process of full product for first version", dueDate: "Oct 23", label: "Development", status: "Completed", images: [img5] }
+        {
+          title: "Overall UX Process of full product for first version",
+          dueDate: "Oct 20",
+          label: "Requirement Gathering",
+          status: "Completed",
+          images: [img6, img7],
+        },
+        {
+          title: "Overall UX Process of full product for first version",
+          dueDate: "Oct 23",
+          label: "Business Insights",
+          status: "Completed",
+        },
+        {
+          title: "Overall UX Process of full product for first version",
+          dueDate: "Oct 23",
+          label: "Development",
+          status: "Completed",
+          images: [img5],
+        },
       ],
     },
   ];
@@ -65,13 +114,23 @@ const Board = () => {
     setShowFilterDropdown(false);
   };
 
-  const filteredColumns = columns.map(column => ({
+  const filteredColumns = columns.map((column) => ({
     ...column,
-    tasks: column.tasks.filter(task => (filterLabel ? task.label === filterLabel : true)),
+    tasks: column.tasks.filter((task) =>
+      filterLabel ? task.label === filterLabel : true
+    ),
   }));
 
   const generateRandomColor = () => {
-    const colors = ["bg-green-200", "bg-blue-200", "bg-yellow-200", "bg-red-200", "bg-teal-200", "bg-purple-200", "bg-pink-200"];
+    const colors = [
+      "bg-green-200",
+      "bg-blue-200",
+      "bg-yellow-200",
+      "bg-red-200",
+      "bg-teal-200",
+      "bg-purple-200",
+      "bg-pink-200",
+    ];
     return colors[Math.floor(Math.random() * colors.length)];
   };
 
@@ -105,9 +164,18 @@ const Board = () => {
 
             {showFilterDropdown && (
               <div className="absolute top-full left-0 mt-2 w-30 max-w-13 bg-white border rounded shadow-lg z-10">
-                <button onClick={() => handleFilterChange("")} className="block px-4 py-2 text-sm text-gray-800 hover:bg-gray-100">All</button>
+                <button
+                  onClick={() => handleFilterChange("")}
+                  className="block px-4 py-2 text-sm text-gray-800 hover:bg-gray-100"
+                >
+                  All
+                </button>
                 {labels.map((label, index) => (
-                  <button key={index} onClick={() => handleFilterChange(label)} className="block px-4 py-2 text-sm text-gray-800 hover:bg-gray-100">
+                  <button
+                    key={index}
+                    onClick={() => handleFilterChange(label)}
+                    className="block px-4 py-2 text-sm text-gray-800 hover:bg-gray-100"
+                  >
                     {label}
                   </button>
                 ))}
