@@ -1,6 +1,8 @@
 import { Link } from "react-router-dom";
 import { Sidebar, Menu, MenuItem, SubMenu } from "react-pro-sidebar";
 import { Icon } from "@iconify-icon/react";
+// import Profile from "../pages/Profile";
+// import Task from "../pages/Task"
 
 const Side = () => {
   return (
@@ -38,36 +40,40 @@ const Side = () => {
         <MenuItem
           icon={<Icon icon="iconamoon:profile" height={22} width={22} />}
         >
-          {" "}
-          People
           <Link to="/people">People</Link>
         </MenuItem>
 
         <MenuItem
           component={<Link to="/Usersemail" />}
-          icon={<Icon icon="iconamoon:profile" height={22} width={22} />}
+          icon={
+            <Icon icon="material-symbols:action-key" height={22} width={22} />
+          }
         >
           <Link to="/usersemail">UsersEmail</Link>
         </MenuItem>
-
-        {/* Updated the icon for Add Tasks */}
-        <MenuItem icon={<Icon icon="mdi:plus-circle" height={22} width={22} />}>
-          <Link to="/addtasks">Add Tasks</Link>
-        </MenuItem>
-
         <MenuItem
           component={<Link to="/designteam" />}
-          icon={<Icon icon="iconamoon:profile" height={22} width={22} />}
+          icon={<Icon icon="bi:list-task" height={22} width={22} />}
         >
           {" "}
-          UsersEmail
+          Task
+        </MenuItem>
+        <MenuItem icon={<Icon icon="mdi:plus-circle" height={22} width={22} />}>
+          <Link to="/addtasks">Add Tasks</Link>
         </MenuItem>
         <MenuItem
           component={<Link to="/task" />}
           icon={<Icon icon="pajamas:list-task" height={22} width={22} />}
         >
           {" "}
-          Task DesignTeam
+          Inprogress task
+        </MenuItem>
+        <MenuItem
+          component={<Link to="/screen2" />}
+          icon={<Icon icon="si:assignment-line" height={22} width={22} />}
+        >
+          {" "}
+          Assign Task
         </MenuItem>
       </Menu>
     </Sidebar>
