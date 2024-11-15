@@ -9,23 +9,23 @@ import img9 from '../assets/img9.jpeg';
 
 // Updated list of contacts
 const contacts = [
-  { name: 'Revathy', image: img8, lastMessage: 'Hi, I am having a doubt on profile Screen.', time: '1:35 PM' },
-  { name: 'Sanjay', image: img9, lastMessage: 'Can you help me with the UI?', time: '2:00 PM' },
-  { name: 'Priya', image: img8, lastMessage: 'Let\'s catch up soon.', time: '3:30 PM' },
-  { name: 'John', image: img9, lastMessage: 'I need some feedback on the design.', time: '4:00 PM' },
+  { name: 'Revathy', image: img8, lastMessage: 'Hi, I am having a doubt.', time: '1:35 PM' },
+  { name: 'Sanjay', image: img9, lastMessage: 'Can you help with?', time: '2:00 PM' },
+  { name: 'Revathy', image: img8, lastMessage: 'Let\'s catch up soon.', time: '3:30 PM' },
+  { name: 'John', image: img9, lastMessage: 'I need some feedback', time: '4:00 PM' },
   { name: 'Alice', image: img8, lastMessage: 'The meeting was great.', time: '5:15 PM' },
   { name: 'Raj', image: img9, lastMessage: 'I sent the project details.', time: '6:00 PM' },
-  { name: 'Maya', image: img8, lastMessage: 'Can we schedule a call?', time: '7:00 PM' },
-  { name: 'David', image: img9, lastMessage: 'The deadline is tomorrow, let\'s finalize the plan.', time: '8:00 PM' },
-  { name: 'Sarah', image: img8, lastMessage: 'I have updated the document you requested.', time: '9:30 PM' },
+  { name: 'Anu', image: img8, lastMessage: 'Can we schedule a call?', time: '7:00 PM' },
+  { name: 'David', image: img9, lastMessage: 'The deadline is tomorrow', time: '8:00 PM' },
+  { name: 'Sarah', image: img8, lastMessage: 'I have updated the document .', time: '9:30 PM' },
   { name: 'Vinay', image: img9, lastMessage: 'Please review my changes.', time: '10:00 PM' },
-  { name: 'Ananya', image: img8, lastMessage: 'Let\'s discuss the project update.', time: '11:15 PM' },
+  { name: 'Ananya', image: img8, lastMessage: 'Let\'s discuss.', time: '11:15 PM' },
 ];
 
 // Updated list of pinned contacts
 const pinnedContacts = [
-  { name: 'Revathy', image: img8, lastMessage: 'Hi, I am having a doubt on profile Screen.', time: '1:35 PM' },
-  { name: 'Sanjay', image: img9, lastMessage: 'Can you help me with the UI?', time: '2:00 PM' },
+  { name: 'Revathy', image: img8, lastMessage: 'Hi, I am having a doubt ', time: '1:35 PM' },
+  { name: 'Sanjay', image: img9, lastMessage: 'Can you help me with?', time: '2:00 PM' },
   { name: 'Raj', image: img9, lastMessage: 'I sent the project details.', time: '6:00 PM' },
   { name: 'Maya', image: img8, lastMessage: 'Can we schedule a call?', time: '7:00 PM' },
 ];
@@ -79,18 +79,32 @@ const ChatApp = () => {
         <h3 className="text-black-500 font-semibold mb-1 text-xl">Pinned</h3>
         <div className="space-y-1">
           {filteredPinnedContacts.map((contact, index) => (
-            <div key={index} className="flex items-start p-1 bg-gray-100 rounded-md hover:bg-gray-200 max-w-full">
-              <img src={contact.image} alt="User" className="w-6 h-6 rounded-full mr-2" />
-              <div className="flex-1">
-                <div className="flex justify-between items-start">
-                  <p className="font-bold text-xs leading-tight">{contact.name}</p>
-                  <span className="text-xs font-semibold text-gray-500 whitespace-nowrap ml-2">{contact.time}</span>
-                </div>
-                <p className="text-xs text-gray-600 leading-tight truncate">
-                  {contact.lastMessage}
-                </p>
-              </div>
-            </div>
+            // <div key={index} className="flex items-start p-1 bg-gray-100 rounded-md hover:bg-gray-200 max-w-full">
+            //   <img src={contact.image} alt="User" className="w-6 h-6 rounded-full mr-2" />
+            //   <div className="flex-1">
+            //     <div className="flex justify-between items-start">
+            //       <p className="font-bold text-xs leading-tight">{contact.name}</p>
+            //       <span className="text-xs font-semibold text-gray-500 whitespace-nowrap ml-2">{contact.time}</span>
+            //     </div>
+            //     <p className="text-xs text-gray-600 leading-tight truncate">
+            //       {contact.lastMessage}
+            //     </p>
+            //   </div>
+            // </div>
+            <div className="flex items-start p-1 bg-gray-100 rounded-md hover:bg-gray-200 max-w-full">
+  <img src={contact.image} alt="User" className="w-6 h-6 rounded-full mr-2" />
+  <div className="flex-1 flex flex-col">
+    <div className="flex justify-between items-start">
+      <p className="font-bold text-xs leading-tight">{contact.name}</p>
+      <span className="text-xs font-semibold text-gray-500 whitespace-nowrap ml-2">{contact.time}</span>
+      
+    </div>
+    <p className="text-xs text-gray-600 leading-tight truncate overflow-hidden text-ellipsis">
+      {contact.lastMessage}
+    </p>
+  </div>
+</div>
+
           ))}
         </div>
 
@@ -110,6 +124,8 @@ const ChatApp = () => {
                 </p>
               </div>
             </div>
+         
+
           ))}
         </div>
       </div>
