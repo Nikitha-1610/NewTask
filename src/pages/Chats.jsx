@@ -1,15 +1,14 @@
-<<<<<<< HEAD
+
 // src/ChatApp.jsx
 import React from 'react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faPhone, faVideo, faEllipsisV, faMicrophone } from '@fortawesome/free-solid-svg-icons';
 import Chat from "../components/chatComp/Chat";
-=======
->>>>>>> aa36e6055280330ecb5d6a50ebae44a035aac2e0
 
 
-import React, { useState } from 'react';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+
+import  { useState } from 'react';
+// import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faSearch } from '@fortawesome/free-solid-svg-icons';
 
 import img8 from '../assets/img8.jpeg';
@@ -66,11 +65,7 @@ const ChatApp = () => {
   };
 
   return (
-<<<<<<< HEAD
-    <div className="flex min-h-screen">
-=======
-    <div className="flex flex-col lg:flex-row h-screen">
->>>>>>> aa36e6055280330ecb5d6a50ebae44a035aac2e0
+    <div className="flex flex-col lg:flex-row min-h-screen">
       {/* Left Chat List Section */}
       <div className="w-full lg:w-1/4 border-r border-gray-300 p-2">
         <div className="mb-2 relative">
@@ -146,22 +141,21 @@ const ChatApp = () => {
       <div className="flex-1 flex flex-col">
         {/* <div className="flex items-center justify-between p-4 border-b border-gray-300">
           <h2 className="text-lg font-bold">Design Group</h2>
-<<<<<<< HEAD
+
        
 
         </div> */}
 
 <Chat />
-=======
         </div>
->>>>>>> aa36e6055280330ecb5d6a50ebae44a035aac2e0
+
 
         {/* Right Chat Content */}
         <div className="p-4">
           {/* Additional content for the right section */}
         </div>
       </div>
-    </div>
+
   );
 };
 
