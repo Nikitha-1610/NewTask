@@ -142,11 +142,15 @@ const Board = () => {
   };
 
   return (
+
     <div className="p-2 bg-gray-100 min-h-screen">
       {/* Header Section */}
-      <div className="flex justify-between items-center mb-6">
-        <h1 className="text-2xl font-bold text-gray-700 bg-teal-100 rounded-lg w-60 h-9 text-center">DESIGN TEAM</h1>
-        <div className="flex space-x-4">
+      <div className="flex flex-col sm:flex-row justify-between items-center mb-6 space-y-4 sm:space-y-0 md:space-y-0">
+        <h1 className="text-2xl font-bold text-gray-700 bg-teal-100 rounded-lg w-60 h-9 text-center">
+          DESIGN TEAM
+        </h1>
+        {/* Right-aligned buttons */}
+        <div className="flex space-x-4 flex-wrap items-center sm:ml-auto sm:space-x-4 md:space-x-6">
           <button className="flex items-center px-4 py-2 bg-teal-500 text-white font-bold rounded-2xl hover:bg-green-600">
             <FontAwesomeIcon icon={faPlus} className="mr-2" />
             Add a task
@@ -189,10 +193,10 @@ const Board = () => {
       <div className="flex flex-col lg:flex-row space-y-4 lg:space-y-0 lg:space-x-4">
         {filteredColumns.map((column, colIndex) => (
           <div key={colIndex} className="flex-1">
-            {/* Column Title with Toggle for Mobile View */}
+            {/* Column Title with Toggle for Mobile and Tablet View */}
             <div className="flex items-center justify-between lg:justify-start cursor-pointer" onClick={() => toggleColumn(colIndex)}>
-              <h2 className={`font-semibold p-2  border-b-2  ${column.color === 'green' ? 'text-gray-600 border-green-400' :
-                column.color === 'yellow' ? 'text-gray-600 border-yellow-500 ' :
+              <h2 className={`font-semibold p-2 border-b-2 ${column.color === 'green' ? 'text-gray-600 border-green-400' :
+                column.color === 'yellow' ? 'text-gray-600 border-yellow-500' :
                   column.color === 'red' ? 'text-gray-600 border-red-500' :
                     column.color === 'teal' ? 'text-gray-600 border-teal-500' : ''}`}>
                 {column.title}
@@ -259,6 +263,10 @@ const Board = () => {
         ))}
       </div>
     </div>
+
+
+
+
   );
 };
 

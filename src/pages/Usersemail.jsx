@@ -316,90 +316,87 @@ const EmailApp = () => {
       </div>
 
       {/* Main Content Area */}
-      <div className="w-full sm:w-8/12 p-4 sm:ml-auto sm:mr-8 border rounded-lg shadow-md flex-grow  max-h-screen ">
-        <div className="flex justify-between mb-4 items-center">
-          <input
-            type="text"
-            placeholder="Search mail"
-            value={searchQuery}
-            onChange={handleSearchChange}
-            className="w-3/4 p-2 border border-gray-300 rounded-lg text-sm"
-          />
-          <div className="flex space-x-3">
-            <FaDownload className="text-lg cursor-pointer hover:text-teal-600" />
-            <FaInfoCircle className="text-lg cursor-pointer hover:text-teal-600" />
-            <FaTrashAlt className="text-lg cursor-pointer hover:text-teal-600" />
-          </div>
-        </div>
+      <div className="tab-content w-full sm:w-8/12 p-4 sm:ml-auto sm:mr-8 border rounded-lg shadow-md flex-grow max-h-screen overflow-auto">
+  <div className="flex justify-between mb-4 items-center">
+    <input
+      type="text"
+      placeholder="Search mail"
+      value={searchQuery}
+      onChange={handleSearchChange}
+      className="w-3/4 p-2 border border-gray-300 rounded-lg text-sm"
+    />
+    <div className="flex space-x-3">
+      <FaDownload className="text-lg cursor-pointer hover:text-teal-600" />
+      <FaInfoCircle className="text-lg cursor-pointer hover:text-teal-600" />
+      <FaTrashAlt className="text-lg cursor-pointer hover:text-teal-600" />
+    </div>
+  </div>
 
-        <div className="email-list space-y-1">
-          {currentEmails.length > 0 ? (
-            currentEmails.map((email) => (
-              <div
-                className={`email-item flex items-center p-2 border-b ${!email.label ? "bg-gray-100" : "bg-white"
-                  }`}
-                key={email.id}
-              >
-                <input type="checkbox" className="mr-4" />
-                <span className="star mr-4">
-                  <i
-                    className={`fas fa-star ${email.isStarred ? "text-yellow-500" : "text-gray-400"
-                      }`}
-                  ></i>
-                </span>
-                <span className="sender font-medium text-gray-800 mr-12 text-sm">
-                  {email.sender}
-                </span>
-                {email.label && (
-                  <span
-                    className={`label inline-block px-2 py-1 text-xs rounded-full ${email.label.toLowerCase() === "primary"
-                        ? "bg-blue-200 text-blue-600"
-                        : "bg-orange-200 text-orange-600"
-                      } mr-3`}
-                  >
-                    {email.label}
-                  </span>
-                )}
-                <span className="text flex-grow text-gray-600 mr-20 font-semibold text-sm">
-                  {email.text}
-                </span>
-                <span className="time text-gray-500 font-semibold text-sm">
-                  {email.time}
-                </span>
-              </div>
-            ))
-          ) : (
-            <p>No emails to display.</p>
-          )}
-        </div>
+  <div className="email-list space-y-1">
+    {currentEmails.length > 0 ? (
+      currentEmails.map((email) => (
+        <div className={`email-item flex items-center p-2 border-b ${!email.label ? "bg-gray-100" : "bg-white"}`} key={email.id}>
+  <input type="checkbox" className="mr-4" />
+  <span className="star mr-4">
+    <i className={`fas fa-star ${email.isStarred ? "text-yellow-500" : "text-gray-400"}`}></i>
+  </span>
+  <span className="sender font-medium text-gray-800 mr-12 text-sm">
+    {email.sender}
+  </span>
+  {email.label && (
+    <span
+      className={`label inline-block px-2 py-1 text-xs rounded-full ${email.label.toLowerCase() === "primary"
+        ? "bg-blue-200 text-blue-600"
+        : "bg-orange-200 text-orange-600"
+      } mr-3`}
+    >
+      {email.label}
+    </span>
+  )}
+  <span className="text flex-grow text-gray-600 mr-4 font-semibold text-sm overflow-hidden truncate">
+    {email.text}
+  </span>
+  <span className="time text-gray-500 font-semibold text-sm whitespace-nowrap">
+    {email.time}
+  </span>
+</div>
 
-        {/* Pagination */}
-        <div className="footer flex justify-between items-center mt-4 text-sm text-gray-600">
-          <div>
-            <h5>
-              Showing {indexOfFirstEmail + 1} -{" "}
-              {Math.min(indexOfLastEmail, searchFilteredEmails.length)} of{" "}
-              {searchFilteredEmails.length}
-            </h5>
-          </div>
-          <div className="buttons flex space-x-2">
-            <button
-              onClick={handlePrevPage}
-              disabled={currentPage === 1}
-              className="bg-gray-300 text-gray-600 rounded p-2"
-            >
-              Prev
-            </button>
-            <button
-              onClick={handleNextPage}
-              disabled={currentPage === totalPages}
-              className="bg-gray-300 text-gray-600 rounded p-2"
-            >
-              Next
-            </button>
-          </div>
-        </div>
-      </div>
+  
+      ))
+    ) : (
+      <p>No emails to display.</p>
+    )}
+  </div>
+
+  {/* Pagination */}
+  <div className="footer flex justify-between items-center mt-4 text-sm text-gray-600">
+    <div>
+      <h5>
+        Showing {indexOfFirstEmail + 1} -{" "}
+        {Math.min(indexOfLastEmail, searchFilteredEmails.length)} of{" "}
+        {searchFilteredEmails.length}
+      </h5>
+    </div>
+    <div className="buttons flex space-x-2">
+      <button
+        onClick={handlePrevPage}
+        disabled={currentPage === 1}
+        className="bg-gray-300 text-gray-600 rounded p-2"
+      >
+        Prev
+      </button>
+      <button
+        onClick={handleNextPage}
+        disabled={currentPage === totalPages}
+        className="bg-gray-300 text-gray-600 rounded p-2"
+      >
+        Next
+      </button>
+    </div>
+  </div>
+</div>
+
+     
     </div>
   );
 };
