@@ -2,6 +2,7 @@ import { Link } from "react-router-dom";
 import { Sidebar, Menu, MenuItem, SubMenu } from "react-pro-sidebar";
 import { Icon } from "@iconify-icon/react";
 import Profile from "../pages/Profile";
+// import Task from "../pages/Task"
 
 const Side = () => {
   return (
@@ -44,6 +45,13 @@ const Side = () => {
         >
           {" "}
           People
+        </MenuItem>
+        <MenuItem
+          component={<Link to="/screen2" />}
+          icon={<Icon icon="iconamoon:profile" height={22} width={22} />}
+        >
+          {" "}
+          Task
         </MenuItem>
       </Menu>
     </Sidebar>
