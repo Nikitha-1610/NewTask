@@ -2,11 +2,12 @@
 import React from 'react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faPhone, faVideo, faEllipsisV, faMicrophone } from '@fortawesome/free-solid-svg-icons';
+import Chat from "../components/chatComp/Chat";
 
 
 const ChatApp = () => {
   return (
-    <div className="flex h-screen">
+    <div className="flex min-h-screen">
       {/* Left Chat List Section */}
       <div className="w-1/4 border-r border-gray-300 p-2 overflow-y-auto">
         <div className="mb-2">
@@ -192,10 +193,13 @@ const ChatApp = () => {
 
       {/* Right Chat Content Section */}
       <div className="flex-1 flex flex-col">
-        <div className="flex items-center justify-between p-4 border-b border-gray-300">
+        {/* <div className="flex items-center justify-between p-4 border-b border-gray-300">
           <h2 className="text-lg font-bold">Design Group</h2>
+       
 
-        </div>
+        </div> */}
+
+<Chat />
 
 
 
