@@ -8,6 +8,7 @@ import Teams from "./pages/Teams";
 import Usersemail from "./pages/Usersemail";
 import InProgressTask from "./pages/InProgressTask";
 import AddTasks from "./pages/AddTasks";
+import DesignTeam from "./pages/DesignTeam";
 const App = () => {
   return (
     <Router>
@@ -22,6 +23,7 @@ const App = () => {
           <Route path="/task" element={<InProgressTask />} />
           <Route path="/usersemail" element={<Usersemail />} />
           <Route path="/addtasks" element={<AddTasks />} />
+          <Route path="/designteam" element={<DesignTeam />} />
         </Routes>
       </Layout>
     </Router>

@@ -99,27 +99,45 @@ const TaskDetails = ({ task }) => {
           {task.attachments.map((file, index) => (
             <div
               key={index}
-              className="flex items-center p-2 border rounded-md border-gray-300 bg-gray-50 w-80"
+              className="flex items-center gap-3 p-2 border rounded-md border-gray-300 bg-gray-50 h-20 w-80"
             >
               <Icon
                 icon="mdi:file-pdf"
                 className="text-red-500"
-                height={30}
-                width={30}
+                height={40}
+                width={40}
               />
-              <div className="ml-2 text-xs text-gray-600">
-                <div>{file.name}</div>
-                <div className="text-gray-500">Size: {file.size}</div>
-                <a
-                  href={file.link}
-                  className="text-blue-500 hover:underline text-xs"
-                >
-                  Download
-                </a>
+              <div className="flex-grow">
+                <div className="text-base font-medium">{file.fileName}</div>
+                <div className="text-sm text-gray-500">{file.date}</div>
+                <div className="text-sm flex gap-2">
+                  <span className="font-medium">Size:</span> {file.size}
+                  <a href="#" className="ml-2 text-blue-600 underline">
+                    Download
+                  </a>
+                  <Icon
+                    icon="material-symbols-light:download"
+                    height={20}
+                    width={20}
+                  />
+                </div>
               </div>
+              {file.status === "completed" ? (
+                <Icon
+                  icon="fluent-mdl2:completed-solid"
+                  height={22}
+                  width={22}
+                />
+              ) : (
+                <Icon
+                  icon="material-symbols-light:arrow-upload-progress"
+                  height={22}
+                  width={22}
+                />
+              )}
             </div>
           ))}
-          <button className="flex items-center justify-center h-16 w-16 border rounded-md border-gray-300 text-gray-600 hover:bg-gray-100">
+          <button className="flex items-center justify-center h-20 w-16 border rounded-md border-gray-300 text-gray-600 hover:bg-gray-100">
             <Icon icon="mdi:plus" height={30} width={30} />
           </button>
         </div>

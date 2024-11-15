@@ -25,9 +25,27 @@ const InProgressTask = () => {
       image: "https://material-ui.com/static/images/avatar/5.jpg",
     },
     attachments: [
-      { name: "Landing-page.pdf", size: "1Mb", link: "#" },
-      { name: "Dashboard.pdf", size: "1Mb", link: "#" },
-      { name: "Settings.pdf", size: "1Mb", link: "#" },
+      {
+        id: 1,
+        fileName: "Landing-page.pdf",
+        date: "2021/10/31",
+        size: "1Mb",
+        status: "completed",
+      },
+      {
+        id: 2,
+        fileName: "Landing-page.pdf",
+        date: "2021/10/31",
+        size: "1Mb",
+        status: "completed",
+      },
+      {
+        id: 3,
+        fileName: "Landing-page.pdf",
+        date: "2021/10/31",
+        size: "1Mb",
+        status: "failed",
+      },
     ],
     comments: [
       {
