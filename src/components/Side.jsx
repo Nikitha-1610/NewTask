@@ -75,6 +75,15 @@ const Side = () => {
           {" "}
           Task
         </MenuItem>
+        <MenuItem
+          component={<Link to="/chats" />}
+          icon={<Icon icon="fa-solid:comments" height={22} width={22} />}
+
+        >
+          {" "}
+          Chats
+        </MenuItem>
+       
       </Menu>
     </Sidebar>
   );
