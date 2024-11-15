@@ -53,6 +53,13 @@ const Side = () => {
           {" "}
           Task
         </MenuItem>
+        <MenuItem
+          component={<Link to="/position" />}
+          icon={<Icon icon="iconamoon:profile" height={22} width={22} />}
+        >
+          {" "}
+          Position
+        </MenuItem>
       </Menu>
     </Sidebar>
   );
