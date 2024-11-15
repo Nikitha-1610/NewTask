@@ -1,5 +1,5 @@
 import { FaRegSmile, FaEllipsisV } from "react-icons/fa";
-
+import { Icon } from "@iconify-icon/react";
 const MessageCard = () => {
   return (
     <div className="w-72 p-4 bg-white rounded-lg shadow-lg border border-gray-200">
@@ -31,8 +31,14 @@ const MessageCard = () => {
 
       <div className="flex items-center justify-between mt-4">
         <div className="flex items-center space-x-2">
+          <Icon
+            icon="ion:attach"
+            height={22}
+            width={22}
+            className=" cursor-pointer"
+          />
           <FaRegSmile className="text-gray-500 cursor-pointer" />
-          <button className="text-gray-500 cursor-pointer">🙂</button>
+          {/* <button className="text-gray-500 cursor-pointer">🙂</button> */}
         </div>
         <button className="px-4 py-2 text-sm text-white bg-teal-500 rounded-md hover:bg-teal-600">
           Send

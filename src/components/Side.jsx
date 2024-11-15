@@ -43,7 +43,6 @@ const Side = () => {
         >
           {" "}
           People
-        
         </MenuItem>
 
         <MenuItem
@@ -52,7 +51,13 @@ const Side = () => {
         >
           {" "}
           UsersEmail
-        
+        </MenuItem>
+        <MenuItem
+          component={<Link to="/task" />}
+          icon={<Icon icon="pajamas:list-task" height={22} width={22} />}
+        >
+          {" "}
+          Task
         </MenuItem>
       </Menu>
     </Sidebar>
