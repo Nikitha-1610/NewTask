@@ -4,7 +4,7 @@ import { Icon } from "@iconify-icon/react";
 
 const Side = () => {
   return (
-    <Sidebar>
+    <Sidebar className="sidebar">
       <Menu>
         <MenuItem
           icon={
