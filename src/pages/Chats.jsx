@@ -203,8 +203,8 @@ const pinnedContacts = [
 const ChatApp = () => {
   const [searchQuery, setSearchQuery] = useState("");
   const [filteredContacts, setFilteredContacts] = useState(contacts);
-  const [filteredPinnedContacts, setFilteredPinnedContacts] =
-    useState(pinnedContacts);
+  const [filteredPinnedContacts, setFilteredPinnedContacts] = useState(pinnedContacts);
+  const [selectedContact, setSelectedContact] = useState(null); // Define selectedContact state
 
   // Handle the search query and filter contacts
   const handleSearchChange = (event) => {
@@ -228,11 +228,9 @@ const ChatApp = () => {
     }
   };
 
-
   const handleContactClick = (contact) => {
-    setSelectedContact(contact);
+    setSelectedContact(contact); // Update selectedContact when a contact is clicked
   };
-
 
   return (
     <div className="flex flex-col lg:flex-row min-h-screen mb-2">
@@ -256,19 +254,11 @@ const ChatApp = () => {
         <h3 className="text-black-500 font-semibold mb-1 text-xl">Pinned</h3>
         <div className="space-y-1">
           {filteredPinnedContacts.map((contact, index) => (
-            // <div key={index} className="flex items-start p-1 bg-gray-100 rounded-md hover:bg-gray-200 max-w-full">
-            //   <img src={contact.image} alt="User" className="w-6 h-6 rounded-full mr-2" />
-            //   <div className="flex-1">
-            //     <div className="flex justify-between items-start">
-            //       <p className="font-bold text-xs leading-tight">{contact.name}</p>
-            //       <span className="text-xs font-semibold text-gray-500 whitespace-nowrap ml-2">{contact.time}</span>
-            //     </div>
-            //     <p className="text-xs text-gray-600 leading-tight truncate">
-            //       {contact.lastMessage}
-            //     </p>
-            //   </div>
-            // </div>
-            <div className="flex items-start p-1 bg-gray-100 rounded-md hover:bg-gray-200 max-w-full">
+            <div
+              key={index}
+              className="flex items-start p-1 bg-gray-100 rounded-md hover:bg-gray-200 max-w-full"
+              onClick={() => handleContactClick(contact)} // Handle click to select contact
+            >
               <img
                 src={contact.image}
                 alt="User"
@@ -298,6 +288,7 @@ const ChatApp = () => {
             <div
               key={index}
               className="flex items-start p-1 bg-gray-100 rounded-md hover:bg-gray-200 max-w-full"
+              onClick={() => handleContactClick(contact)} // Handle click to select contact
             >
               <img
                 src={contact.image}
@@ -323,20 +314,6 @@ const ChatApp = () => {
       </div>
 
       {/* Right Chat Content Section */}
-
-      <div className="flex-1 flex flex-col mr-0 pr-0">
-        {/* <div className="flex items-center justify-between p-4 border-b border-gray-300">
-          <h2 className="text-lg font-bold">Design Group</h2>
-
-       
-
-        </div> */}
-
-        <Chat />
-      </div>
-
-    
-
       <div className="flex-1 flex flex-col">
         {/* Only render Chat when a contact is selected */}
         {selectedContact ? (
@@ -345,9 +322,9 @@ const ChatApp = () => {
           <div className="p-4">Select a contact to start chatting</div>
         )}
       </div>
-
     </div>
   );
 };
 
 export default ChatApp;
+
