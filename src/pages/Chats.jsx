@@ -224,7 +224,7 @@ const ChatApp = () => {
       </div>
 
       {/* Right Chat Content Section */}
-      <div className="flex-1 flex flex-col">
+      <div className="flex-1 flex flex-col mr-0 pr-0 mb-0">
         {/* <div className="flex items-center justify-between p-4 border-b border-gray-300">
           <h2 className="text-lg font-bold">Design Group</h2>
 
@@ -235,10 +235,7 @@ const ChatApp = () => {
         <Chat />
       </div>
 
-      {/* Right Chat Content */}
-      <div className="p-4">
-        {/* Additional content for the right section */}
-      </div>
+    
     </div>
   );
 };
