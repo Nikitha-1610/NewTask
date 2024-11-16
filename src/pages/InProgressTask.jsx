@@ -101,8 +101,8 @@ const InProgressTask = () => {
   ];
 
   return (
-    <div className=" space-y-8">
-      <div className="flex items-center justify-between pb-4 border-gray-300 mt-3">
+    <div className=" space-y-5">
+      <div className="flex items-center justify-between pb-4 border-gray-300">
         <h2 className="text-xl font-bold bg-yellow-200 px-2 p-1 rounded-md text-gray-700">
           In Progress
         </h2>

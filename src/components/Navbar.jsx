@@ -1,30 +1,34 @@
 import Avatar from "@mui/material/Avatar";
 import Badge from "@mui/material/Badge";
 import NotificationsIcon from "@mui/icons-material/Notifications";
-import MenuIcon from "@mui/icons-material/Menu";
-// import SearchIcon from "@mui/icons-material/Search";
+
 const Navbar = () => {
   return (
-    <header className="w-full h-16  flex items-center justify-between px-4">
-      <div className=" font-semibold h-4 flex items-center gap-6 cursor-pointer">
-        <MenuIcon />
-        Dashboard
+    <header className=" w-full h-16  flex items-center justify-between p-4 bg-white shadow-lg">
+      <div className="font-semibold text-lg md:text-xl">
+        <span className="hidden md:inline">Dashboard</span>
       </div>
-      <div className="">
+
+      <div className="flex-1 max-w-md mx-auto hidden sm:block">
         <input
           type="text"
           placeholder="Search Projects..."
-          className=" p-2 px-12 w-full bg-slate-200 rounded-md"
+          className="w-full p-2 bg-slate-200 rounded-md"
         />
       </div>
-      <div className=" flex items-center p-1 gap-9">
+
+      <div className="flex items-center gap-4">
         <Badge badgeContent={17} color="error">
           <NotificationsIcon />
         </Badge>
-        <div>
-          <h2 className="font-semibold">Mr. Rahul</h2>
-          <h4 className=" text-slate-700">software developer</h4>
+
+        <div className=" hidden md:block">
+          <h2 className="font-semibold text-sm">Mr.xyz</h2>
+          <h6 className="text-slate-700 text-xs tracking-tight">
+            Software Developer
+          </h6>
         </div>
+
         <Avatar
           alt="Travis Howard"
           src="https://material-ui.com/static/images/avatar/2.jpg"

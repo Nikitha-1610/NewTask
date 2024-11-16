@@ -2,40 +2,46 @@ import { Icon } from "@iconify/react";
 
 const TaskDetails = ({ task }) => {
   return (
-    <div className=" w-full mx-auto p-6 bg-white rounded-lg shadow-md border border-gray-200">
-      <h3 className="mt-4 text-xl font-semibold text-gray-800">{task.title}</h3>
-      <div className="mt-4 text-base font-normal text-gray-600">
-        <div className="flex items-center gap-8 mb-2">
-          <div className=" flex">
+    <div className="w-full mx-auto p-6 bg-white rounded-lg shadow-md border border-gray-200">
+      {/* Task Title */}
+      <h3 className="mt-4 text-lg md:text-xl font-semibold text-gray-800">
+        {task.title}
+      </h3>
+
+      {/* Task Info */}
+      <div className="mt-4 text-sm md:text-base font-normal text-gray-600 space-y-4">
+        <div className="flex flex-wrap items-center gap-4">
+          <div className="flex items-center">
             <Icon icon="ic:outline-watch-later" height={18} width={18} />
-            <span className="ml-2">Status</span>:{" "}
+            <span className="ml-2">Status:</span>
           </div>
-          <div className=" flex ml-5">
+          <div className="flex items-center">
             <Icon icon="ri:progress-8-fill" height={18} width={18} />
             <span className="ml-1 font-medium">{task.status}</span>
           </div>
         </div>
-        <div className="flex items-center gap-8 mb-2">
-          <div className="flex">
+
+        <div className="flex flex-wrap items-center gap-4">
+          <div className="flex items-center">
             <Icon icon="ic:outline-calendar-today" className="text-gray-500" />
-            <span className="ml-2">Due Date</span>:{" "}
+            <span className="ml-2">Due Date:</span>
           </div>
-          <span className="ml-1 font-medium">{task.dueDate}</span>
+          <span className="font-medium">{task.dueDate}</span>
         </div>
 
         {/* Assigned To */}
-        <div className="flex items-center gap-1 mb-2">
-          <div className=" flex">
+        <div className="flex flex-wrap items-center gap-4">
+          <div className="flex items-center">
             <Icon icon="lucide:users" height={22} width={22} />
             <span className="ml-2">Assigned to:</span>
           </div>
-          <div className="ml-2 flex space-x-2">
+          <div className="flex flex-wrap gap-2">
             {task.assignedTo.map((person, index) => (
-              <div key={index} className="flex items-center gap-3">
+              <div key={index} className="flex items-center gap-2">
                 <img
                   src={person.image}
                   alt={person.name}
-                  className="w-6 h-6 rounded-full mr-1"
+                  className="w-6 h-6 rounded-full"
                 />
                 <span className="text-gray-700 font-medium">{person.name}</span>
               </div>
@@ -44,14 +50,14 @@ const TaskDetails = ({ task }) => {
         </div>
 
         {/* Assigned By */}
-        <div className="flex items-center mb-2">
+        <div className="flex flex-wrap items-center gap-4">
           <Icon icon="mdi:user-outline" height={22} width={22} />
           <span className="ml-2">Assigned by:</span>
-          <div className="ml-2 flex items-center">
+          <div className="flex items-center">
             <img
               src={task.assignedBy.image}
               alt={task.assignedBy.name}
-              className="w-6 h-6 rounded-full mr-1"
+              className="w-6 h-6 rounded-full"
             />
             <span className="text-gray-700 font-medium">
               {task.assignedBy.name}
@@ -60,27 +66,31 @@ const TaskDetails = ({ task }) => {
         </div>
       </div>
 
-      <div className=" flex mt-8 gap-1">
-        <Icon icon="tabler:file-description" height={22} width={22} />
-        <h2 className=" text-base font-semibold">Description</h2>
+      {/* Description Section */}
+      <div className="mt-8">
+        <div className="flex items-center gap-2">
+          <Icon icon="tabler:file-description" height={22} width={22} />
+          <h2 className="text-base font-semibold">Description</h2>
+        </div>
+        <textarea
+          placeholder="Description"
+          className="w-full p-2 mt-4 text-sm text-gray-700 bg-gray-100 border border-gray-300 rounded-md resize-none focus:outline-none"
+        />
       </div>
-      <textarea
-        placeholder="Description"
-        className="w-full p-2 min-h-20 mt-4 text-sm text-gray-700 bg-gray-100 border border-gray-300 rounded-md resize-none focus:outline-none"
-      />
 
+      {/* Attachments Section */}
       <div className="mt-4">
-        <div className=" flex gap-2">
+        <div className="flex items-center gap-2">
           <Icon icon="cuida:attachment-clip-outline" height={22} width={22} />
-          <h4 className="text-gray-700 text-base font-semibold">
+          <h4 className="text-base font-semibold">
             Attachments ({task.attachments.length})
           </h4>
         </div>
-        <div className="flex space-x-4 mt-2">
+        <div className="flex flex-wrap gap-4 mt-2">
           {task.attachments.map((file, index) => (
             <div
               key={index}
-              className="flex items-center gap-3 p-2 border rounded-md border-gray-300 bg-gray-50 h-20 w-80"
+              className="flex items-center gap-3 p-2 border rounded-md border-gray-300 bg-gray-50 w-full md:w-80"
             >
               <Icon
                 icon="mdi:file-pdf"
@@ -96,11 +106,6 @@ const TaskDetails = ({ task }) => {
                   <a href="#" className="ml-2 text-blue-600 underline">
                     Download
                   </a>
-                  <Icon
-                    icon="material-symbols-light:download"
-                    height={20}
-                    width={20}
-                  />
                 </div>
               </div>
               {file.status === "completed" ? (
@@ -126,51 +131,55 @@ const TaskDetails = ({ task }) => {
 
       {/* Comments Section */}
       <div className="mt-4">
-        <div className=" flex gap-2">
+        <div className="flex items-center gap-2">
           <Icon icon="basil:comment-outline" height={22} width={22} />
-          <h4 className="text-gray-700 text-base font-semibold">
-            Comments ({task.attachments.length})
+          <h4 className="text-base font-semibold">
+            Comments ({task.comments.length})
           </h4>
         </div>
         <div className="space-y-2 mt-2">
           {task.comments.map((comment, index) => (
             <div
               key={index}
-              className="w-full p-2 mt-2 flex gap-2 text-sm text-gray-700 bg-gray-100 border border-gray-300 rounded-md resize-none focus:outline-none"
+              className="flex items-center gap-2 p-2 text-sm text-gray-700 bg-gray-100 border border-gray-300 rounded-md"
             >
               <img
                 src={comment.userImage}
                 alt={comment.user}
                 className="w-6 h-6 rounded-full"
               />
-              <div>
-                {/* <div className="text-sm font-medium text-gray-800">
-                  {comment.user}
-                </div> */}
-                <div className="text-sm text-gray-600">{comment.text}</div>
-              </div>
+              <div>{comment.text}</div>
             </div>
           ))}
         </div>
       </div>
 
-      {/* Status Change */}
-      <div className="mt-4 flex items-center space-x-2">
-        <span className="text-gray-700 text-sm font-semibold">
-          Change Status
-        </span>
-        <button className="px-2 py-1 flex items-center gap-1 text-xs font-medium bg-green-100 text-green-600 rounded-md">
-          <div className=" h-2 w-2 rounded-full bg-green-400"></div>
-          Low
-        </button>
-        <button className="px-2 py-1 flex items-center gap-1 text-xs font-medium bg-yellow-100 text-green-600 rounded-md">
-          <div className=" h-2 w-2 rounded-full bg-yellow-400"></div>
-          Normal
-        </button>
-        <button className="px-2 py-1 flex items-center gap-1 text-xs font-medium bg-red-100 text-green-600 rounded-md">
-          <div className=" h-2 w-2 rounded-full bg-red-400"></div>
-          Urgent
-        </button>
+      {/* Status Change Section */}
+      <div className="mt-4 flex flex-wrap gap-2 items-center">
+        <span className="text-sm font-semibold">Change Status</span>
+        {["Low", "Normal", "Urgent"].map((status, index) => (
+          <button
+            key={index}
+            className={`px-2 py-1 flex items-center gap-1 text-xs font-medium rounded-md ${
+              status === "Low"
+                ? "bg-green-100 text-green-600"
+                : status === "Normal"
+                ? "bg-yellow-100 text-yellow-600"
+                : "bg-red-100 text-red-600"
+            }`}
+          >
+            <div
+              className={`h-2 w-2 rounded-full ${
+                status === "Low"
+                  ? "bg-green-400"
+                  : status === "Normal"
+                  ? "bg-yellow-400"
+                  : "bg-red-400"
+              }`}
+            ></div>
+            {status}
+          </button>
+        ))}
       </div>
     </div>
   );
