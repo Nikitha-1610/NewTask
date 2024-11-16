@@ -25,6 +25,7 @@ const App = () => {
           <Route path="/assign" element={<Assign />} />
           <Route path="/intest" element={<InTest />} />
           <Route path="/position" element={<Position />} />
+          {/* <Route path="/mainpage" element={<MainPage />} /> */}
           {/* <Route path="/settings" element={<Settings />} /> */}
           <Route path="*" element={<Dashboard />} />
           <Route path="/usersemail" element={<Usersemail />} />
