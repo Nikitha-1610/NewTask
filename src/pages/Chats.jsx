@@ -1,8 +1,5 @@
-
-// src/ChatApp.jsx
 import React from 'react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faPhone, faVideo, faEllipsisV, faMicrophone } from '@fortawesome/free-solid-svg-icons';
 import Chat from "../components/chatComp/Chat";
 
 
