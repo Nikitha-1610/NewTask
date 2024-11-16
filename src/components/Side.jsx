@@ -115,7 +115,12 @@ const Side = () => {
           <MenuItem
             icon={<Icon icon="si:assignment-line" height={22} width={22} />}
           >
-            <Link to="/screen2">Assign Task</Link>
+            <Link to="/assign">Assign Task</Link>
+          </MenuItem>
+          <MenuItem
+            icon={<Icon icon="arcticons:serialtest" height={22} width={22} />}
+          >
+            <Link to="/intest">In Test</Link>
           </MenuItem>
 
           <MenuItem
