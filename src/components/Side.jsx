@@ -9,7 +9,7 @@ import { Icon } from "@iconify-icon/react";
 import { Link } from "react-router-dom";
 import MenuIcon from "@mui/icons-material/Menu";
 
-const Sidebar = () => {
+const Side = () => {
   const [isOpen, setIsOpen] = useState(false);
   const [isCollapsed, setIsCollapsed] = useState(false);
 
@@ -44,7 +44,14 @@ const Sidebar = () => {
       >
         {isOpen ? <Icon icon="maki:cross" /> : <MenuIcon />}
       </button>
-      <Sidebar className="sidebar">
+
+      {/* Sidebar */}
+      <ProSidebar
+        collapsed={isCollapsed}
+        className={`fixed top-0 left-0 h-full z-40 transition-transform duration-300 bg-white shadow-lg ${
+          isOpen ? "translate-x-0" : "-translate-x-full"
+        } md:translate-x-0`}
+      >
         <Menu>
           <MenuItem
             icon={
@@ -58,148 +65,87 @@ const Sidebar = () => {
             <Link to="/dashboard">Dashboard</Link>
           </MenuItem>
 
-          {/* Sidebar */}
-          <ProSidebar
-            collapsed={isCollapsed}
-            className={`fixed top-0 left-0 h-full z-40 transition-transform duration-300 bg-white shadow-lg ${
-              isOpen ? "translate-x-0" : "-translate-x-full"
-            } md:translate-x-0`}
-          >
-            <Menu>
-              <MenuItem
-                icon={
-                  <Icon
-                    icon="material-symbols:dashboard-outline"
-                    height={22}
-                    width={22}
-                  />
-                }
-              >
-                <Link to="/dashboard">Dashboard</Link>
-              </MenuItem>
-
-              <MenuItem
-                icon={<Icon icon="iconamoon:profile" height={22} width={22} />}
-              >
-                <Link to="/profile">Profile</Link>
-              </MenuItem>
-
-              <MenuItem
-                icon={
-                  <Icon icon="simple-icons:teamspeak" height={22} width={22} />
-                }
-              >
-                <Link to="/teams">Teams</Link>
-              </MenuItem>
-
-              <SubMenu label="Charts" icon={<Icon icon="logos:highcharts" />}>
-                <MenuItem>Pie charts</MenuItem>
-                <MenuItem>Line charts</MenuItem>
-              </SubMenu>
-              <MenuItem
-                icon={<Icon icon="iconamoon:profile" height={22} width={22} />}
-              >
-                <Link to="/people">People</Link>
-              </MenuItem>
-
-              <MenuItem
-                icon={
-                  <Icon
-                    icon="material-symbols:action-key"
-                    height={22}
-                    width={22}
-                  />
-                }
-              >
-                <Link to="/usersemail">Users Email</Link>
-              </MenuItem>
-
-              <MenuItem
-                icon={<Icon icon="bi:list-task" height={22} width={22} />}
-              >
-                <Link to="/designteam">Task</Link>
-              </MenuItem>
-
-              <MenuItem
-                icon={<Icon icon="mdi:plus-circle" height={22} width={22} />}
-              >
-                <Link to="/addtasks">Add Tasks</Link>
-              </MenuItem>
-
-              <MenuItem
-                icon={<Icon icon="pajamas:list-task" height={22} width={22} />}
-              >
-                <Link to="/task">Inprogress Task</Link>
-              </MenuItem>
-
-              <MenuItem
-                icon={<Icon icon="si:assignment-line" height={22} width={22} />}
-              >
-                <Link to="/screen2">Assign Task</Link>
-              </MenuItem>
-
-              <MenuItem
-                icon={
-                  <Icon icon="iconoir:position-align" height={22} width={22} />
-                }
-              >
-                <Link to="/position">Position</Link>
-              </MenuItem>
-            </Menu>
-          </ProSidebar>
-
-          {/* Overlay to close sidebar on mobile */}
-          {isOpen && (
-            <div
-              onClick={toggleSidebar}
-              className="fixed inset-0 bg-black opacity-50 z-30 md:hidden"
-            ></div>
-          )}
           <MenuItem
-            component={<Link to="/Usersemail" />}
+            icon={<Icon icon="iconamoon:profile" height={22} width={22} />}
+          >
+            <Link to="/profile">Profile</Link>
+          </MenuItem>
+
+          <MenuItem
+            icon={<Icon icon="logos:microsoft-teams" height={22} width={22} />}
+          >
+            <Link to="/teams">Teams</Link>
+          </MenuItem>
+
+          <SubMenu label="Charts" icon={<Icon icon="logos:highcharts" />}>
+            <MenuItem>Pie charts</MenuItem>
+            <MenuItem>Line charts</MenuItem>
+          </SubMenu>
+
+          <MenuItem
+            icon={<Icon icon="iconamoon:profile" height={22} width={22} />}
+          >
+            <Link to="/people">People</Link>
+          </MenuItem>
+
+          <MenuItem
             icon={
               <Icon icon="material-symbols:action-key" height={22} width={22} />
             }
           >
-            <Link to="/usersemail">UsersEmail</Link>
+            <Link to="/usersemail">Users Email</Link>
           </MenuItem>
-          <MenuItem
-            component={<Link to="/designteam" />}
-            icon={<Icon icon="bi:list-task" height={22} width={22} />}
-          >
-            {" "}
-            Task
+
+          <MenuItem icon={<Icon icon="bi:list-task" height={22} width={22} />}>
+            <Link to="/designteam">Task</Link>
           </MenuItem>
+
           <MenuItem
             icon={<Icon icon="mdi:plus-circle" height={22} width={22} />}
           >
             <Link to="/addtasks">Add Tasks</Link>
           </MenuItem>
+
           <MenuItem
-            component={<Link to="/task" />}
             icon={<Icon icon="pajamas:list-task" height={22} width={22} />}
           >
-            {" "}
-            Inprogress task
+            <Link to="/task">Inprogress Task</Link>
           </MenuItem>
+
           <MenuItem
-            component={<Link to="/screen2" />}
             icon={<Icon icon="si:assignment-line" height={22} width={22} />}
           >
-            {" "}
-            Assign Task
+            <Link to="/screen2">Assign Task</Link>
+          </MenuItem>
+
+          <MenuItem
+            icon={<Icon icon="iconoir:position-align" height={22} width={22} />}
+          >
+            <Link to="/position">Position</Link>
           </MenuItem>
           <MenuItem
-            component={<Link to="/chats" />}
-            icon={<Icon icon="fa-solid:comments" height={22} width={22} />}
+            icon={
+              <Icon
+                icon="material-symbols:chat-outline"
+                height={22}
+                width={22}
+              />
+            }
           >
-            {" "}
-            Chats
+            <Link to="/chats">Chats</Link>
           </MenuItem>
         </Menu>
-      </Sidebar>
+      </ProSidebar>
+
+      {/* Overlay to close sidebar on mobile */}
+      {isOpen && (
+        <div
+          onClick={toggleSidebar}
+          className="fixed inset-0 bg-black opacity-50 z-30 md:hidden"
+        ></div>
+      )}
     </div>
   );
 };
 
-export default Sidebar;
+export default Side;
