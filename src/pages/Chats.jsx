@@ -230,7 +230,6 @@ const ChatApp = () => {
       </div>
 
      
-      {/* Right Chat Content Section */}
     {/* Right Chat Content Section */}
     <div className="flex-1">
   {selectedContact ? (
@@ -265,9 +264,7 @@ const ChatApp = () => {
   )}
 </div>
 
-
-
-
+     
     </div>
   );
 };
