@@ -1,16 +1,13 @@
-import React from 'react';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import React, { useState } from "react";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faSearch, faEllipsisV } from "@fortawesome/free-solid-svg-icons";
 import Chat from "../components/chatComp/Chat";
-
-import { useState } from "react";
-// import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faSearch } from "@fortawesome/free-solid-svg-icons";
-
 import img8 from "../assets/img8.jpeg";
 import img9 from "../assets/img9.jpeg";
 
-// Updated list of contacts
+
 const contacts = [
+
   {
     name: "Revathy",
     image: img8,
@@ -62,7 +59,7 @@ const contacts = [
   {
     name: "Sarah",
     image: img8,
-    lastMessage: "I have updated the document .",
+    lastMessage: "I have updated the document.",
     time: "9:30 PM",
   },
   {
@@ -79,12 +76,12 @@ const contacts = [
   },
 ];
 
-// Updated list of pinned contacts
 const pinnedContacts = [
+
   {
     name: "Revathy",
     image: img8,
-    lastMessage: "Hi, I am having a doubt ",
+    lastMessage: "Hi, I am having a doubt",
     time: "1:35 PM",
   },
   {
@@ -113,7 +110,8 @@ const ChatApp = () => {
   const [filteredPinnedContacts, setFilteredPinnedContacts] =
     useState(pinnedContacts);
 
-  // Handle the search query and filter contacts
+  const [selectedContact, setSelectedContact] = useState(null);
+
   const handleSearchChange = (event) => {
     const query = event.target.value;
     setSearchQuery(query);
@@ -135,10 +133,24 @@ const ChatApp = () => {
     }
   };
 
+  const handleContactClick = (contact) => {
+    setSelectedContact(contact); // Update the selected contact
+  };
+
   return (
     <div className="flex flex-col lg:flex-row min-h-screen">
-      {/* Left Chat List Section */}
+      {/* Left Sidebar */}
       <div className="w-full lg:w-1/4 border-r border-gray-300 p-2">
+        {/* Top Bar with "Chats" Text and 3 Dots Icon */}
+        <div className="flex items-center justify-between mb-4">
+          <h3 className="text-xl font-semibold">Chats</h3>
+          <FontAwesomeIcon
+            icon={faEllipsisV}
+            className="text-xl cursor-pointer hover:text-gray-500"
+          />
+        </div>
+
+        {/* Search Bar */}
         <div className="mb-2 relative">
           <input
             type="text"
@@ -157,19 +169,11 @@ const ChatApp = () => {
         <h3 className="text-black-500 font-semibold mb-1 text-xl">Pinned</h3>
         <div className="space-y-1">
           {filteredPinnedContacts.map((contact, index) => (
-            // <div key={index} className="flex items-start p-1 bg-gray-100 rounded-md hover:bg-gray-200 max-w-full">
-            //   <img src={contact.image} alt="User" className="w-6 h-6 rounded-full mr-2" />
-            //   <div className="flex-1">
-            //     <div className="flex justify-between items-start">
-            //       <p className="font-bold text-xs leading-tight">{contact.name}</p>
-            //       <span className="text-xs font-semibold text-gray-500 whitespace-nowrap ml-2">{contact.time}</span>
-            //     </div>
-            //     <p className="text-xs text-gray-600 leading-tight truncate">
-            //       {contact.lastMessage}
-            //     </p>
-            //   </div>
-            // </div>
-            <div className="flex items-start p-1 bg-gray-100 rounded-md hover:bg-gray-200 max-w-full">
+            <div
+              key={index}
+              className="flex items-start p-1 bg-gray-100 rounded-md hover:bg-gray-200 max-w-full cursor-pointer"
+              onClick={() => handleContactClick(contact)} // Click handler
+            >
               <img
                 src={contact.image}
                 alt="User"
@@ -198,7 +202,8 @@ const ChatApp = () => {
           {filteredContacts.map((contact, index) => (
             <div
               key={index}
-              className="flex items-start p-1 bg-gray-100 rounded-md hover:bg-gray-200 max-w-full"
+              className="flex items-start p-1 bg-gray-100 rounded-md hover:bg-gray-200 max-w-full cursor-pointer"
+              onClick={() => handleContactClick(contact)} // Click handler
             >
               <img
                 src={contact.image}
@@ -225,19 +230,13 @@ const ChatApp = () => {
 
       {/* Right Chat Content Section */}
       <div className="flex-1 flex flex-col">
-        {/* <div className="flex items-center justify-between p-4 border-b border-gray-300">
-          <h2 className="text-lg font-bold">Design Group</h2>
-
-       
-
-        </div> */}
-
-        <Chat />
-      </div>
-
-      {/* Right Chat Content */}
-      <div className="p-4">
-        {/* Additional content for the right section */}
+        {selectedContact ? (
+          <Chat contact={selectedContact} /> // Pass selected contact to Chat component
+        ) : (
+          <div className="flex items-center justify-center h-full text-gray-500">
+            Select a contact to start chatting
+          </div>
+        )}
       </div>
     </div>
   );
