@@ -60,6 +60,13 @@ const Side = () => {
           {" "}
           Position
         </MenuItem>
+        <MenuItem
+          component={<Link to="/mainpage" />}
+          icon={<Icon icon="iconamoon:profile" height={22} width={22} />}
+        >
+          {" "}
+          Front Page
+        </MenuItem>
       </Menu>
     </Sidebar>
   );
