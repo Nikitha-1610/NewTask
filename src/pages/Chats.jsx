@@ -4,13 +4,11 @@ import Chat from "../components/chatComp/Chat";
 import { faEllipsisVertical, faSearch } from "@fortawesome/free-solid-svg-icons";
 import img8 from "../assets/img8.jpeg";
 import img9 from "../assets/img9.jpeg";
-<<<<<<< HEAD
+
 import GroupChat from "../components/chatComp/GroupChat";
 import IndividualChat from "../components/chatComp/IndividualChat";
 // Updated list of contacts
-=======
 
->>>>>>> a526728668d1efcdb2f1d5c2c8830afa9e26dc9b
 const contacts = [
   { name: "Sanjay", image: img9, lastMessage: "Can you help with?", time: "2:00 PM" },
   { name: "Revathy", image: img8, lastMessage: "Let's catch up soon.", time: "3:30 PM" },
@@ -25,7 +23,7 @@ const contacts = [
 ];
 
 const pinnedContacts = [
-<<<<<<< HEAD
+
   {
 
     name: "Revathy",
@@ -33,6 +31,7 @@ const pinnedContacts = [
     lastMessage: "Hi, I am having a doubt ",
     time: "1:35 PM",
   },
+  
   {
     name: "Sanjay",
     image: img9,
@@ -74,14 +73,11 @@ const pinnedContacts = [
             lastMessage: "Can we schedule a call?",
             time: "7:00 PM",
           },
-          {name:"Design Group", image:img9,lastMessage: "Hi, I am having a doubt", time: "1:35 PM"}
-=======
-  { name: "Sanjay", image: img9, lastMessage: "Can you help me with?", time: "2:00 PM" },
-  { name: "Raj", image: img9, lastMessage: "I sent the project details.", time: "6:00 PM" },
-  { name: "Maya", image: img8, lastMessage: "Can we schedule a call?", time: "7:00 PM" },
-  { name: "Revathy", image: img8, lastMessage: "Hi, I am having a doubt", time: "1:35 PM" },
-  {name:"Design Group", image:img9,lastMessage: "Hi, I am having a doubt", time: "1:35 PM"}
->>>>>>> a526728668d1efcdb2f1d5c2c8830afa9e26dc9b
+          {name:"Design Group", image:img9,lastMessage: "Hi, I am having a doubt", time: "1:35 PM"},
+
+
+  
+
 ];
 
 const removeDuplicates = (array) => {
@@ -92,15 +88,15 @@ const removeDuplicates = (array) => {
 
 const ChatApp = () => {
   const [searchQuery, setSearchQuery] = useState("");
-<<<<<<< HEAD
   const [filteredContacts, setFilteredContacts] = useState(contacts);
   const [filteredPinnedContacts, setFilteredPinnedContacts] = useState(pinnedContacts);
-  const [selectedContact, setSelectedContact] = useState(null); // Define selectedContact state
-=======
-  const [filteredContacts, setFilteredContacts] = useState(removeDuplicates(contacts));
-  const [filteredPinnedContacts, setFilteredPinnedContacts] = useState(removeDuplicates(pinnedContacts));
-  const [selectedContact, setSelectedContact] = useState(null);
->>>>>>> a526728668d1efcdb2f1d5c2c8830afa9e26dc9b
+  const [selectedContact, setSelectedContact] = useState(
+    pinnedContacts.find(contact => contact.name === "Design Group") // Default to "Design Group"
+  );
+ // Define selectedContact state
+
+  
+
 
   const handleSearchChange = (event) => {
     const query = event.target.value;
@@ -172,11 +168,9 @@ const ChatApp = () => {
             <div
               key={index}
               className="flex items-start p-1 bg-gray-100 rounded-md hover:bg-gray-200 max-w-full"
-<<<<<<< HEAD
               onClick={() => handleContactClick(contact)} // Handle click to select contact
-=======
-              onClick={() => handleContactClick(contact)}
->>>>>>> a526728668d1efcdb2f1d5c2c8830afa9e26dc9b
+
+
             >
               <img
                 src={contact.image}
@@ -205,11 +199,7 @@ const ChatApp = () => {
             <div
               key={index}
               className="flex items-start p-1 bg-gray-100 rounded-md hover:bg-gray-200 max-w-full"
-<<<<<<< HEAD
-              onClick={() => handleContactClick(contact)} // Handle click to select contact
-=======
               onClick={() => handleContactClick(contact)}
->>>>>>> a526728668d1efcdb2f1d5c2c8830afa9e26dc9b
             >
               <img
                 src={contact.image}
@@ -233,7 +223,6 @@ const ChatApp = () => {
       </div>
 
       {/* Right Chat Content Section */}
-<<<<<<< HEAD
        {/* Chat Content */}
        <div className="flex-1 flex flex-col">
         {selectedContact ? (
@@ -246,24 +235,11 @@ const ChatApp = () => {
             ) : (
               <IndividualChat contact={selectedContact} />
             )}
-=======
-      <div className="flex-1 flex flex-col">
-        {selectedContact ? (
-          <>
-            {/* Button to go back to contacts (only visible on mobile) */}
-            <button
-              onClick={handleBackToContacts}
-              className="text-blue-500 mb-4 lg:hidden"
-            >
-              Back to Contacts
-            </button>
-            <Chat contact={selectedContact} />
->>>>>>> a526728668d1efcdb2f1d5c2c8830afa9e26dc9b
           </>
         ) : (
-          <div className="flex items-center justify-center h-full text-gray-500">
-            Select a contact to view messages
-          </div>
+          
+           <GroupChat contact="Design Group"/>
+         
         )}
       </div>
     </div>
