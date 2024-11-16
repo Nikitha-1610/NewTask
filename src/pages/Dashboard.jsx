@@ -6,9 +6,9 @@ import TwoWaveChart from "../components/DashboardComp/TwoWaveChart";
 const Dashboard = () => {
   return (
     <div className="flex flex-col items-center p-5 font-montserrat">
-      <div className="grid grid-cols-1 gap-4 w-full max-w-screen-xl">
+     <div className="grid grid-cols-1 gap-4 w-full max-w-screen-xl">
         {/* First Container with 4 inner containers */}
-        <div className="bg-gray-100 p-5 rounded-lg shadow-lg flex justify-between flex-wrap gap-4">
+        <div className="bg-gray-100 p-5 rounded-lg shadow-lg grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-4">
           {[
             {
               title: "Design Team",
@@ -37,7 +37,7 @@ const Dashboard = () => {
           ].map((card, index) => (
             <div
               key={index}
-              className="w-[22%] min-w-[220px] bg-white p-4 rounded-lg shadow-lg transform transition-transform duration-300 hover:scale-105"
+              className="min-w-[220px] bg-white p-4 rounded-lg shadow-lg transform transition-transform duration-300 hover:scale-105 mx-auto"
             >
               <div className="flex justify-between items-center">
                 <div
