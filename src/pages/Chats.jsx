@@ -12,6 +12,7 @@ import img9 from "../assets/img9.jpeg";
 // Updated list of contacts
 const contacts = [
   {
+
     name: "Revathy",
     image: img8,
     lastMessage: "Hi, I am having a doubt.",
@@ -77,11 +78,79 @@ const contacts = [
     lastMessage: "Let's discuss.",
     time: "11:15 PM",
   },
+{
+            name: "Revathy",
+            image: img8,
+            lastMessage: "Hi, I am having a doubt.",
+            time: "1:35 PM",
+          },
+          {
+            name: "Sanjay",
+            image: img9,
+            lastMessage: "Can you help with?",
+            time: "2:00 PM",
+          },
+          {
+            name: "Revathy",
+            image: img8,
+            lastMessage: "Let's catch up soon.",
+            time: "3:30 PM",
+          },
+          {
+            name: "John",
+            image: img9,
+            lastMessage: "I need some feedback",
+            time: "4:00 PM",
+          },
+          {
+            name: "Alice",
+            image: img8,
+            lastMessage: "The meeting was great.",
+            time: "5:15 PM",
+          },
+          {
+            name: "Raj",
+            image: img9,
+            lastMessage: "I sent the project details.",
+            time: "6:00 PM",
+          },
+          {
+            name: "Anu",
+            image: img8,
+            lastMessage: "Can we schedule a call?",
+            time: "7:00 PM",
+          },
+          {
+            name: "David",
+            image: img9,
+            lastMessage: "The deadline is tomorrow",
+            time: "8:00 PM",
+          },
+          {
+            name: "Sarah",
+            image: img8,
+            lastMessage: "I have updated the document.",
+            time: "9:30 PM",
+          },
+          {
+            name: "Vinay",
+            image: img9,
+            lastMessage: "Please review my changes.",
+            time: "10:00 PM",
+          },
+          {
+            name: "Ananya",
+            image: img8,
+            lastMessage: "Let's discuss.",
+            time: "11:15 PM",
+          },
+
 ];
 
 // Updated list of pinned contacts
 const pinnedContacts = [
   {
+
     name: "Revathy",
     image: img8,
     lastMessage: "Hi, I am having a doubt ",
@@ -104,7 +173,31 @@ const pinnedContacts = [
     image: img8,
     lastMessage: "Can we schedule a call?",
     time: "7:00 PM",
-  },
+
+            name: "Revathy",
+            image: img8,
+            lastMessage: "Hi, I am having a doubt",
+            time: "1:35 PM",
+          },
+          {
+            name: "Sanjay",
+            image: img9,
+            lastMessage: "Can you help me with?",
+            time: "2:00 PM",
+          },
+          {
+            name: "Raj",
+            image: img9,
+            lastMessage: "I sent the project details.",
+            time: "6:00 PM",
+          },
+          {
+            name: "Maya",
+            image: img8,
+            lastMessage: "Can we schedule a call?",
+            time: "7:00 PM",
+          },
+
 ];
 
 const ChatApp = () => {
@@ -134,6 +227,12 @@ const ChatApp = () => {
       setFilteredPinnedContacts(pinnedContacts);
     }
   };
+
+
+  const handleContactClick = (contact) => {
+    setSelectedContact(contact);
+  };
+
 
   return (
     <div className="flex flex-col lg:flex-row min-h-screen mb-2">
@@ -224,6 +323,7 @@ const ChatApp = () => {
       </div>
 
       {/* Right Chat Content Section */}
+
       <div className="flex-1 flex flex-col mr-0 pr-0">
         {/* <div className="flex items-center justify-between p-4 border-b border-gray-300">
           <h2 className="text-lg font-bold">Design Group</h2>
@@ -236,6 +336,16 @@ const ChatApp = () => {
       </div>
 
     
+
+      <div className="flex-1 flex flex-col">
+        {/* Only render Chat when a contact is selected */}
+        {selectedContact ? (
+          <Chat contact={selectedContact} />
+        ) : (
+          <div className="p-4">Select a contact to start chatting</div>
+        )}
+      </div>
+
     </div>
   );
 };
