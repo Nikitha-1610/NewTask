@@ -24,13 +24,13 @@ const App = () => {
           <Route path="/screen2" element={<Screen2 />} />
           <Route path="/position" element={<Position />} />
           {/* <Route path="/settings" element={<Settings />} /> */}
-          <Route path="*" element={<Dashboard />} /> {/* Default route */}
+          <Route path="*" element={<Dashboard />} />
           <Route path="/usersemail" element={<Usersemail />} />
           <Route path="/task" element={<InProgressTask />} />
           <Route path="/usersemail" element={<Usersemail />} />
           <Route path="/addtasks" element={<AddTasks />} />
           <Route path="/designteam" element={<DesignTeam />} />
-          <Route path="/chats" element={<Chats/>} />
+          <Route path="/chats" element={<Chats />} />
         </Routes>
       </Layout>
     </Router>
