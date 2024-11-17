@@ -6,7 +6,7 @@ import People from "./pages/People";
 import Teams from "./pages/Teams";
 import Screen2 from "./pages/Screen2";
 
-import Position from "./pages/Position";
+
 
 import Position from "./pages/Position"
 import MainPage from "./pages/MainPage";

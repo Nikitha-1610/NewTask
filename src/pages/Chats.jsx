@@ -31,7 +31,6 @@ const removeDuplicates = (array) => {
     index === self.findIndex((t) => t.name === value.name)
   );
 };
-
 const ChatApp = () => {
   const [searchQuery, setSearchQuery] = useState("");
   const [filteredContacts, setFilteredContacts] = useState(removeDuplicates(contacts));
@@ -72,9 +71,13 @@ const ChatApp = () => {
   };
 
   return (
-    <div className="flex flex-col lg:flex-row min-h-screen mb-2">
-      {/* Left Chat List Section (hidden on mobile) */}
-      <div className={`w-full lg:w-1/4 border-r border-gray-300 p-2 ${selectedContact ? "lg:block hidden" : ""}`}>
+    <div className="flex flex-col lg:flex-row min-h-screen">
+      {/* Left Chat List Section */}
+      <div
+        className={`${
+          selectedContact ? "hidden" : "block"
+        } lg:block w-full lg:w-1/4 border-r border-gray-300 p-2`}
+      >
         {/* Header */}
         <div className="mb-2">
           <div className="flex items-center justify-between mb-2">
@@ -107,7 +110,7 @@ const ChatApp = () => {
           {filteredPinnedContacts.map((contact, index) => (
             <div
               key={index}
-              className="flex items-start p-1 bg-gray-100 rounded-md hover:bg-gray-200 max-w-full"
+              className="flex items-start p-1 bg-gray-100 rounded-md hover:bg-gray-200 max-w-full cursor-pointer"
               onClick={() => handleContactClick(contact)}
             >
               <img
@@ -136,7 +139,7 @@ const ChatApp = () => {
           {filteredContacts.map((contact, index) => (
             <div
               key={index}
-              className="flex items-start p-1 bg-gray-100 rounded-md hover:bg-gray-200 max-w-full"
+              className="flex items-start p-1 bg-gray-100 rounded-md hover:bg-gray-200 max-w-full cursor-pointer"
               onClick={() => handleContactClick(contact)}
             >
               <img
@@ -161,7 +164,7 @@ const ChatApp = () => {
       </div>
 
       {/* Right Chat Content Section */}
-      <div className="flex-1 flex flex-col">
+      <div className={`flex-1 flex flex-col ${selectedContact ? "block" : "hidden"} lg:block`}>
         {selectedContact ? (
           <>
             {/* Button to go back to contacts (only visible on mobile) */}
@@ -180,5 +183,4 @@ const ChatApp = () => {
     </div>
   );
 };
-
-export default ChatApp;
+ export default ChatApp;
