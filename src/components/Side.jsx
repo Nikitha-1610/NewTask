@@ -139,6 +139,11 @@ const Side = () => {
           >
             <Link to="/chats">Chats</Link>
           </MenuItem>
+          <MenuItem
+            icon={<Icon icon="duo-icons:dashboard" height={22} width={22} />}
+          >
+            <Link to="/mainpage">MainPage</Link>
+          </MenuItem>
         </Menu>
       </ProSidebar>
 

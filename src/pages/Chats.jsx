@@ -1,7 +1,10 @@
-import React, { useState } from 'react';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { useState } from "react";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import Chat from "../components/chatComp/Chat";
-import { faEllipsisVertical, faSearch } from "@fortawesome/free-solid-svg-icons";
+import {
+  faEllipsisVertical,
+  faSearch,
+} from "@fortawesome/free-solid-svg-icons";
 import img8 from "../assets/img8.jpeg";
 import img9 from "../assets/img9.jpeg";
 
@@ -10,28 +13,76 @@ import IndividualChat from "../components/chatComp/IndividualChat";
 // Updated list of contacts
 
 const contacts = [
-  { name: "Sanjay", image: img9, lastMessage: "Can you help with?", time: "2:00 PM" },
-  { name: "Revathy", image: img8, lastMessage: "Let's catch up soon.", time: "3:30 PM" },
-  { name: "John", image: img9, lastMessage: "I need some feedback", time: "4:00 PM" },
-  { name: "Alice", image: img8, lastMessage: "The meeting was great.", time: "5:15 PM" },
-  { name: "Raj", image: img9, lastMessage: "I sent the project details.", time: "6:00 PM" },
-  { name: "Anu", image: img8, lastMessage: "Can we schedule a call?", time: "7:00 PM" },
-  { name: "David", image: img9, lastMessage: "The deadline is tomorrow", time: "8:00 PM" },
-  { name: "Sarah", image: img8, lastMessage: "I have updated the document.", time: "9:30 PM" },
-  { name: "Vinay", image: img9, lastMessage: "Please review my changes.", time: "10:00 PM" },
-  { name: "Ananya", image: img8, lastMessage: "Let's discuss.", time: "11:15 PM" }
+  {
+    name: "Sanjay",
+    image: img9,
+    lastMessage: "Can you help with?",
+    time: "2:00 PM",
+  },
+  {
+    name: "Revathy",
+    image: img8,
+    lastMessage: "Let's catch up soon.",
+    time: "3:30 PM",
+  },
+  {
+    name: "John",
+    image: img9,
+    lastMessage: "I need some feedback",
+    time: "4:00 PM",
+  },
+  {
+    name: "Alice",
+    image: img8,
+    lastMessage: "The meeting was great.",
+    time: "5:15 PM",
+  },
+  {
+    name: "Raj",
+    image: img9,
+    lastMessage: "I sent the project details.",
+    time: "6:00 PM",
+  },
+  {
+    name: "Anu",
+    image: img8,
+    lastMessage: "Can we schedule a call?",
+    time: "7:00 PM",
+  },
+  {
+    name: "David",
+    image: img9,
+    lastMessage: "The deadline is tomorrow",
+    time: "8:00 PM",
+  },
+  {
+    name: "Sarah",
+    image: img8,
+    lastMessage: "I have updated the document.",
+    time: "9:30 PM",
+  },
+  {
+    name: "Vinay",
+    image: img9,
+    lastMessage: "Please review my changes.",
+    time: "10:00 PM",
+  },
+  {
+    name: "Ananya",
+    image: img8,
+    lastMessage: "Let's discuss.",
+    time: "11:15 PM",
+  },
 ];
 
 const pinnedContacts = [
-
   {
-
     name: "Revathy",
     image: img8,
     lastMessage: "Hi, I am having a doubt ",
     time: "1:35 PM",
   },
-  
+
   {
     name: "Sanjay",
     image: img9,
@@ -50,53 +101,53 @@ const pinnedContacts = [
     lastMessage: "Can we schedule a call?",
     time: "7:00 PM",
 
-            name: "Revathy",
-            image: img8,
-            lastMessage: "Hi, I am having a doubt",
-            time: "1:35 PM",
-          },
-          {
-            name: "Sanjay",
-            image: img9,
-            lastMessage: "Can you help me with?",
-            time: "2:00 PM",
-          },
-          {
-            name: "Raj",
-            image: img9,
-            lastMessage: "I sent the project details.",
-            time: "6:00 PM",
-          },
-          {
-            name: "Maya",
-            image: img8,
-            lastMessage: "Can we schedule a call?",
-            time: "7:00 PM",
-          },
-          {name:"Design Group", image:img9,lastMessage: "Hi, I am having a doubt", time: "1:35 PM"},
-
-
-  
-
+    name: "Revathy",
+    image: img8,
+    lastMessage: "Hi, I am having a doubt",
+    time: "1:35 PM",
+  },
+  {
+    name: "Sanjay",
+    image: img9,
+    lastMessage: "Can you help me with?",
+    time: "2:00 PM",
+  },
+  {
+    name: "Raj",
+    image: img9,
+    lastMessage: "I sent the project details.",
+    time: "6:00 PM",
+  },
+  {
+    name: "Maya",
+    image: img8,
+    lastMessage: "Can we schedule a call?",
+    time: "7:00 PM",
+  },
+  {
+    name: "Design Group",
+    image: img9,
+    lastMessage: "Hi, I am having a doubt",
+    time: "1:35 PM",
+  },
 ];
 
 const removeDuplicates = (array) => {
-  return array.filter((value, index, self) =>
-    index === self.findIndex((t) => t.name === value.name)
+  return array.filter(
+    (value, index, self) =>
+      index === self.findIndex((t) => t.name === value.name)
   );
 };
 
 const ChatApp = () => {
   const [searchQuery, setSearchQuery] = useState("");
   const [filteredContacts, setFilteredContacts] = useState(contacts);
-  const [filteredPinnedContacts, setFilteredPinnedContacts] = useState(pinnedContacts);
+  const [filteredPinnedContacts, setFilteredPinnedContacts] =
+    useState(pinnedContacts);
   const [selectedContact, setSelectedContact] = useState(
-    pinnedContacts.find(contact => contact.name === "Design Group") // Default to "Design Group"
+    pinnedContacts.find((contact) => contact.name === "Design Group") // Default to "Design Group"
   );
- // Define selectedContact state
-
-  
-
+  // Define selectedContact state
 
   const handleSearchChange = (event) => {
     const query = event.target.value;
@@ -127,7 +178,6 @@ const ChatApp = () => {
     setSelectedContact(contact);
   };
 
-
   const handleBackToContacts = () => {
     setSelectedContact(null); // Go back to the contact list
   };
@@ -141,7 +191,11 @@ const ChatApp = () => {
   return (
     <div className="flex flex-col lg:flex-row min-h-screen mb-2">
       {/* Left Chat List Section (hidden on mobile) */}
-      <div className={`w-full lg:w-1/4 border-r border-gray-300 p-2 ${selectedContact ? "lg:block hidden" : ""}`}>
+      <div
+        className={`w-full lg:w-1/4 border-r border-gray-300 p-2 ${
+          selectedContact ? "lg:block hidden" : ""
+        }`}
+      >
         {/* Header */}
         <div className="mb-2">
           <div className="flex items-center justify-between mb-2">
@@ -184,7 +238,9 @@ const ChatApp = () => {
               />
               <div className="flex-1 flex flex-col">
                 <div className="flex justify-between items-start">
-                  <p className="font-bold text-xs leading-tight">{contact.name}</p>
+                  <p className="font-bold text-xs leading-tight">
+                    {contact.name}
+                  </p>
                   <span className="text-xs font-semibold text-gray-500 whitespace-nowrap ml-2">
                     {contact.time}
                   </span>
@@ -213,7 +269,9 @@ const ChatApp = () => {
               />
               <div className="flex-1">
                 <div className="flex justify-between items-start">
-                  <p className="font-bold text-xs leading-tight">{contact.name}</p>
+                  <p className="font-bold text-xs leading-tight">
+                    {contact.name}
+                  </p>
                   <span className="text-xs font-semibold text-gray-500 whitespace-nowrap ml-2">
                     {contact.time}
                   </span>
@@ -247,4 +305,4 @@ const ChatApp = () => {
     </div>
   );
 };
- export default ChatApp;
+export default ChatApp;

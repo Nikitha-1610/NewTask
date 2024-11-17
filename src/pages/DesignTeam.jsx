@@ -114,7 +114,11 @@ const Board = () => {
     },
   ];
 
-  const labels = [...new Set(columns.flatMap(column => column.tasks.map(task => task.label)))];
+  const labels = [
+    ...new Set(
+      columns.flatMap((column) => column.tasks.map((task) => task.label))
+    ),
+  ];
 
   const handleFilterChange = (label) => {
     setFilterLabel(label);
@@ -142,14 +146,13 @@ const Board = () => {
   };
 
   const toggleColumn = (colIndex) => {
-    setCollapsedColumns(prev => ({
+    setCollapsedColumns((prev) => ({
       ...prev,
       [colIndex]: !prev[colIndex],
     }));
   };
 
   return (
-
     <div className="p-2 bg-gray-100 min-h-screen">
       {/* Header Section */}
       <div className="flex flex-col sm:flex-row justify-between items-center mb-6 space-y-4 sm:space-y-0 md:space-y-0">
@@ -233,7 +236,10 @@ const Board = () => {
             {!collapsedColumns[colIndex] && (
               <div className="mt-4">
                 {column.tasks.map((task, taskIndex) => (
-                  <div key={taskIndex} className="bg-white shadow rounded-lg p-4 mb-4 relative border border-gray-400">
+                  <div
+                    key={taskIndex}
+                    className="bg-white shadow rounded-lg p-4 mb-4 relative border border-gray-400"
+                  >
                     {/* Task Details with Conditional Rendering for Completed Tasks */}
                     <div className="absolute top-2 right-2">
                       {task.status === "Completed" ? (
@@ -243,27 +249,40 @@ const Board = () => {
                         </div>
                       ) : (
                         <div className="flex items-center text-gray-500 text-xs">
-                          <FontAwesomeIcon icon={faCalendarAlt} className="mr-1" />
+                          <FontAwesomeIcon
+                            icon={faCalendarAlt}
+                            className="mr-1"
+                          />
                           <span>{task.dueDate}</span>
                         </div>
                       )}
                     </div>
 
                     {task.label && (
-                      <span className={`text-xs font-semibold mb-2 inline-block px-2 py-1 rounded ${generateRandomColor()}`}>
+                      <span
+                        className={`text-xs font-semibold mb-2 inline-block px-2 py-1 rounded ${generateRandomColor()}`}
+                      >
                         {task.label}
                       </span>
                     )}
 
-                    <h3 className="text-sm font-semibold text-gray-800 mt-2">{task.title}</h3>
+                    <h3 className="text-sm font-semibold text-gray-800 mt-2">
+                      {task.title}
+                    </h3>
                     {task.images && task.images.length > 0 && (
-                      <div className={`mt-2 flex ${task.images.length > 1 ? 'space-x-2' : ''}`}>
+                      <div
+                        className={`mt-2 flex ${
+                          task.images.length > 1 ? "space-x-2" : ""
+                        }`}
+                      >
                         {task.images.map((image, imgIndex) => (
                           <img
                             key={imgIndex}
                             src={image}
                             alt={`Task image ${imgIndex + 1}`}
-                            className={`${task.images.length === 1 ? 'w-full' : 'w-1/2'} h-24 object-cover rounded`}
+                            className={`${
+                              task.images.length === 1 ? "w-full" : "w-1/2"
+                            } h-24 object-cover rounded`}
                           />
                         ))}
                       </div>
@@ -272,7 +291,11 @@ const Board = () => {
                       <div className="flex items-center text-gray-500 text-xs">
                         <FontAwesomeIcon icon={faComment} className="mr-1" />
                         <span>8</span>
-                        <img src={spiralPin} alt="Pin icon" className="w-4 h-4 mr-1 ml-2" />
+                        <img
+                          src={spiralPin}
+                          alt="Pin icon"
+                          className="w-4 h-4 mr-1 ml-2"
+                        />
                       </div>
                       <div className="flex items-center text-gray-500 text-xs">
                         <FontAwesomeIcon icon={faUsers} className="mr-1" />
@@ -287,13 +310,7 @@ const Board = () => {
         ))}
       </div>
     </div>
-
-
-
-
   );
 };
 
 export default Board;
-
-

@@ -8,9 +8,9 @@ const Layout = ({ children }) => {
       <div className="w-64 hidden md:block">
         <Sidebar />
       </div>
-      <div className="flex-1 flex flex-col overflow-auto">
+      <div className=" flex-1 flex flex-col overflow-auto">
         <Navbar />
-        <main className="p-4 mt-16">{children}</main>
+        <main className="p-4 mt-4">{children}</main>
       </div>
       <Sidebar />
     </div>
