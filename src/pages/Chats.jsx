@@ -285,24 +285,35 @@ const ChatApp = () => {
         </div>
       </div>
 
-      {/* Right Chat Content Section */}
-      <div className="flex-1 flex flex-col">
+     {/* Right Chat Content Section */}
+     <div className="flex-1">
+        {/* Show the chat screen only if a contact is selected */}
         {selectedContact ? (
           <>
-            {/* Button to go back to contacts (only visible on mobile) */}
+            {/* Show Go Back button when contact is selected */}
             <button
               onClick={handleBackToContacts}
-              className="text-blue-500 mb-4 lg:hidden"
+              className="text-blue-500 p-2 lg:hidden"
             >
-              Back to Contacts
+              Go Back
             </button>
-            <Chat contact={selectedContact} />
+
+            {/* Show Chat for the selected contact */}
+            {selectedContact.name === "Design Group" ? (
+              <GroupChat contact={selectedContact} />
+            ) : (
+              <IndividualChat contact={selectedContact} />
+            )}
           </>
         ) : (
-          <div className="p-4">Select a contact to start chatting</div>
+          // Show the default view (if no contact selected)
+          <div className="text-center text-gray-500">
+            Select a contact to start chatting.
+          </div>
         )}
       </div>
     </div>
   );
 };
+
 export default ChatApp;
