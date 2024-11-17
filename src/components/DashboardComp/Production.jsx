@@ -6,12 +6,12 @@ const Production = () => {
     <div className="flex flex-col md:flex-row h-auto md:h-[400px] justify-between items-center p-2 bg-gray-100">
       {/* Left Section */}
       {/* Left Section */}
-      <div className="flex flex-col gap-4 border border-gray-300 bg-white p-6 w-full md:w-[350px] h-auto md:h-full shadow-md rounded-lg relative mb-4 md:mb-0">
-        <h2 className="text-2xl font-bold text-gray-800">Production (Overall)</h2>
+      <div className="flex flex-col gap-4 border border-gray-300 bg-white p-6 w-[350px] sm:w-[350px]  h-auto md:h-full shadow-md rounded-lg relative mb-4 md:mb-0">
+        <h2 className="sm:text-2xl text-[18px] font-bold text-gray-800">Production (Overall)</h2>
 
         {/* SVG Display as a Progress Representation */}
-        <div className="flex justify-center mt-6 md:mt-10">
-        <svg xmlns="http://www.w3.org/2000/svg" width="272" height="150" viewBox="0 0 245 128" fill="none">
+        <div className="flex justify-center mt-6 md:mt-8">
+        <svg xmlns="http://www.w3.org/2000/svg" class="w-[10] h-[40] sm:w-[20] sm:h-[50]" viewBox="0 0 245 128" fill="none"> 
   <mask id="path-1-inside-1_102_17964" fill="white">
     <path d="M4.73691 125.919C2.13835 125.979 -0.0254685 123.919 0.015233 121.32C0.294616 103.48 4.41132 85.8992 12.0975 69.8246C20.459 52.3376 32.8026 37.1398 48.0995 25.4977C63.3963 13.8556 81.2033 6.10664 100.036 2.89651C117.34 -0.0529379 135.049 0.9078 151.916 5.68684C154.396 6.38964 155.744 9.023 154.971 11.4822L152.323 19.8988C151.538 22.3957 148.868 23.7598 146.344 23.0663C132.232 19.1886 117.447 18.4444 102.995 20.9078C86.98 23.6376 71.8375 30.2271 58.8296 40.1271C45.8216 50.0271 35.325 62.9509 28.2147 77.8213C21.7786 91.2814 18.2857 105.984 17.9535 120.915C17.8957 123.51 15.8505 125.663 13.255 125.722L4.73691 125.919Z"/>
   </mask>
@@ -40,29 +40,29 @@ const Production = () => {
         </div>
 
         {/* Dot Containers for Monthly Data */}
-        <div className="absolute bottom-12 left-4 flex items-center">
-          <svg xmlns="http://www.w3.org/2000/svg" width="20" height="21" viewBox="0 0 20 21" fill="none">
+        <div className="absolute sm:bottom-12 bottom-0 left-4 flex items-center">
+        <svg xmlns="http://www.w3.org/2000/svg" class="w-3 h-3 sm:w-5 sm:h-5" viewBox="0 0 20 21" fill="none">
             <circle cx="10" cy="10.5" r="10" fill="#FCC590" />
           </svg>
           <div className="ml-2">
-            <div className="text-xl font-bold text-gray-800">46%</div>
-            <div className="text-xl text-gray-500">October</div>
+            <div className="sm:text-xl text-[12px] font-bold text-gray-800">46%</div>
+            <div className="sm:text-xl text-[12px]  text-gray-500">October</div>
           </div>
         </div>
 
-        <div className="absolute bottom-12 right-4 flex items-center">
-          <svg xmlns="http://www.w3.org/2000/svg" width="20" height="21" viewBox="0 0 20 21" fill="none">
+        <div className="absolute sm:bottom-12 bottom-0 right-4 flex items-center">
+        <svg xmlns="http://www.w3.org/2000/svg" class="w-3 h-3 sm:w-5 sm:h-5" viewBox="0 0 20 21" fill="none">
             <circle cx="10" cy="10.5" r="10" fill="#C25F01" />
           </svg>
           <div className="ml-2">
-            <div className="text-xl font-bold text-gray-800">56%</div>
-            <div className="text-xl text-gray-500">This Month</div>
+            <div className="sm:text-xl text-[12px]  font-bold text-gray-800">56%</div>
+            <div className="sm:text-xl text-[12px] text-gray-500">This Month</div>
           </div>
         </div>
       </div>
 
       {/* Right Section */}
-      <div className="border border-gray-300 bg-white p-6 w-full md:w-[670px] h-auto md:h-full shadow-md rounded-lg">
+      <div className="border border-gray-300 bg-white p-6 w-[350px] sm:w-[650px]  h-auto md:h-full shadow-md rounded-lg">
       <h3 className="text-xl md:text-[28px] font-bold text-[#2B3674] leading-tight mb-4 text-center md:text-left">
     Complex Table
   </h3>

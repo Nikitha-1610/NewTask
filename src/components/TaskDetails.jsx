@@ -155,7 +155,11 @@ const TaskDetails = ({ task }) => {
       </div>
 
       {/* Status Change Section */}
-      <div className="mt-4 flex flex-wrap gap-2 items-center">
+      <div
+        className={`mt-4 flex flex-wrap gap-2 items-center ${
+          task.status === "In Test" ? "bg-red-300" : "bg-gray-300"
+        } p-4 rounded-md`}
+      >
         <span className="text-sm font-semibold">Change Status</span>
         {["Low", "Normal", "Urgent"].map((status, index) => (
           <button

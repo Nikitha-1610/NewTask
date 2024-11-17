@@ -5,6 +5,10 @@ import { faEllipsisVertical, faSearch } from "@fortawesome/free-solid-svg-icons"
 import img8 from "../assets/img8.jpeg";
 import img9 from "../assets/img9.jpeg";
 
+import GroupChat from "../components/chatComp/GroupChat";
+import IndividualChat from "../components/chatComp/IndividualChat";
+// Updated list of contacts
+
 const contacts = [
   { name: "Sanjay", image: img9, lastMessage: "Can you help with?", time: "2:00 PM" },
   { name: "Revathy", image: img8, lastMessage: "Let's catch up soon.", time: "3:30 PM" },
@@ -19,11 +23,61 @@ const contacts = [
 ];
 
 const pinnedContacts = [
-  { name: "Sanjay", image: img9, lastMessage: "Can you help me with?", time: "2:00 PM" },
-  { name: "Raj", image: img9, lastMessage: "I sent the project details.", time: "6:00 PM" },
-  { name: "Maya", image: img8, lastMessage: "Can we schedule a call?", time: "7:00 PM" },
-  { name: "Revathy", image: img8, lastMessage: "Hi, I am having a doubt", time: "1:35 PM" },
-  {name:"Design Group", image:img9,lastMessage: "Hi, I am having a doubt", time: "1:35 PM"}
+
+  {
+
+    name: "Revathy",
+    image: img8,
+    lastMessage: "Hi, I am having a doubt ",
+    time: "1:35 PM",
+  },
+  
+  {
+    name: "Sanjay",
+    image: img9,
+    lastMessage: "Can you help me with?",
+    time: "2:00 PM",
+  },
+  {
+    name: "Raj",
+    image: img9,
+    lastMessage: "I sent the project details.",
+    time: "6:00 PM",
+  },
+  {
+    name: "Maya",
+    image: img8,
+    lastMessage: "Can we schedule a call?",
+    time: "7:00 PM",
+
+            name: "Revathy",
+            image: img8,
+            lastMessage: "Hi, I am having a doubt",
+            time: "1:35 PM",
+          },
+          {
+            name: "Sanjay",
+            image: img9,
+            lastMessage: "Can you help me with?",
+            time: "2:00 PM",
+          },
+          {
+            name: "Raj",
+            image: img9,
+            lastMessage: "I sent the project details.",
+            time: "6:00 PM",
+          },
+          {
+            name: "Maya",
+            image: img8,
+            lastMessage: "Can we schedule a call?",
+            time: "7:00 PM",
+          },
+          {name:"Design Group", image:img9,lastMessage: "Hi, I am having a doubt", time: "1:35 PM"},
+
+
+  
+
 ];
 
 const removeDuplicates = (array) => {
@@ -34,9 +88,15 @@ const removeDuplicates = (array) => {
 
 const ChatApp = () => {
   const [searchQuery, setSearchQuery] = useState("");
-  const [filteredContacts, setFilteredContacts] = useState(removeDuplicates(contacts));
-  const [filteredPinnedContacts, setFilteredPinnedContacts] = useState(removeDuplicates(pinnedContacts));
-  const [selectedContact, setSelectedContact] = useState(null);
+  const [filteredContacts, setFilteredContacts] = useState(contacts);
+  const [filteredPinnedContacts, setFilteredPinnedContacts] = useState(pinnedContacts);
+  const [selectedContact, setSelectedContact] = useState(
+    pinnedContacts.find(contact => contact.name === "Design Group") // Default to "Design Group"
+  );
+ // Define selectedContact state
+
+  
+
 
   const handleSearchChange = (event) => {
     const query = event.target.value;
@@ -67,18 +127,21 @@ const ChatApp = () => {
     setSelectedContact(contact);
   };
 
+
   const handleBackToContacts = () => {
-    setSelectedContact(null);
+    setSelectedContact(null); // Go back to the contact list
+  };
+
+  // Refresh the page on mobile after clicking the "Go Back" button
+  const handleMobileBack = () => {
+    setSelectedContact(null); // Clear the selected contact
+    window.location.reload(); // Refresh the page to show the contact list again
   };
 
   return (
-    <div className="flex flex-col lg:flex-row min-h-screen">
-      {/* Left Chat List Section */}
-      <div
-        className={`${
-          selectedContact ? "hidden" : "block"
-        } lg:block w-full lg:w-1/4 border-r border-gray-300 p-2`}
-      >
+    <div className="flex flex-col lg:flex-row min-h-screen mb-2">
+      {/* Left Chat List Section (hidden on mobile) */}
+      <div className={`w-full lg:w-1/4 border-r border-gray-300 p-2 ${selectedContact ? "lg:block hidden" : ""}`}>
         {/* Header */}
         <div className="mb-2">
           <div className="flex items-center justify-between mb-2">
@@ -111,7 +174,7 @@ const ChatApp = () => {
           {filteredPinnedContacts.map((contact, index) => (
             <div
               key={index}
-              className="flex items-start p-1 bg-gray-100 rounded-md hover:bg-gray-200 max-w-full cursor-pointer"
+              className="flex items-start p-1 bg-gray-100 rounded-md hover:bg-gray-200 max-w-full"
               onClick={() => handleContactClick(contact)}
             >
               <img
@@ -165,7 +228,7 @@ const ChatApp = () => {
       </div>
 
       {/* Right Chat Content Section */}
-      <div className={`flex-1 flex flex-col ${selectedContact ? "block" : "hidden"} lg:block`}>
+      <div className="flex-1 flex flex-col">
         {selectedContact ? (
           <>
             {/* Button to go back to contacts (only visible on mobile) */}

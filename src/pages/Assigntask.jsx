@@ -1,12 +1,12 @@
 import TaskDetails from "../components/TaskDetails";
 import { Icon } from "@iconify/react";
 
-const InProgressTask = () => {
+const AssignTask = () => {
   const sampleTask = [
     {
       id: 1,
       title: "Task 1: Landing page and Dashboard of M App",
-      status: "In Progress",
+      status: "Assign Task",
       dueDate: "28-10-2024",
       assignedTo: [
         {
@@ -103,8 +103,8 @@ const InProgressTask = () => {
   return (
     <div className=" space-y-5">
       <div className="flex items-center justify-between pb-4 border-gray-300">
-        <h2 className="text-xl font-bold bg-yellow-200 px-2 p-1 rounded-md text-gray-700">
-          In Progress(4)
+        <h2 className="text-xl font-bold bg-green-400 px-2 p-1 rounded-md text-gray-700">
+          Today Assigned(3)
         </h2>
         <div className=" flex gap-3">
           <button className="px-3 py-2 text-sm text-white bg-teal-500 rounded hover:bg-teal-600">
@@ -123,4 +123,4 @@ const InProgressTask = () => {
   );
 };
 
-export default InProgressTask;
+export default AssignTask;

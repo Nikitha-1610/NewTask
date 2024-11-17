@@ -18,6 +18,7 @@ import InProgressTask from "./pages/InProgressTask";
 import AddTasks from "./pages/AddTasks";
 import DesignTeam from "./pages/DesignTeam";
 import Chats from "./pages/Chats";
+import InTest from "./pages/InTest";
 const App = () => {
   return (
     <Router>
@@ -27,9 +28,10 @@ const App = () => {
           <Route path="/profile" element={<Profile />} />
           <Route path="/teams" element={<Teams />} />
           <Route path="/people" element={<People />} />
-          <Route path="/screen2" element={<Screen2 />} />
+          <Route path="/assign" element={<Assign />} />
+          <Route path="/intest" element={<InTest />} />
           <Route path="/position" element={<Position />} />
-          <Route path="/mainpage" element={<MainPage />} />
+          {/* <Route path="/mainpage" element={<MainPage />} /> */}
           {/* <Route path="/settings" element={<Settings />} /> */}
           <Route path="*" element={<Dashboard />} />
           <Route path="/usersemail" element={<Usersemail />} />
