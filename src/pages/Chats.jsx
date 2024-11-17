@@ -139,16 +139,15 @@ const removeDuplicates = (array) => {
   );
 };
 
+
 const ChatApp = () => {
   const [searchQuery, setSearchQuery] = useState("");
   const [filteredContacts, setFilteredContacts] = useState(contacts);
   const [filteredPinnedContacts, setFilteredPinnedContacts] =
     useState(pinnedContacts);
-  const [selectedContact, setSelectedContact] = useState(
-    pinnedContacts.find((contact) => contact.name === "Design Group") // Default to "Design Group"
-  );
-  // Define selectedContact state
+  const [selectedContact, setSelectedContact] = useState(null);
 
+  // Handle search input change
   const handleSearchChange = (event) => {
     const query = event.target.value;
     setSearchQuery(query);
@@ -174,144 +173,133 @@ const ChatApp = () => {
     }
   };
 
+  // Handle selecting a contact
   const handleContactClick = (contact) => {
     setSelectedContact(contact);
   };
 
+  // Handle returning to the contact list
   const handleBackToContacts = () => {
-    setSelectedContact(null); // Go back to the contact list
-  };
-
-  // Refresh the page on mobile after clicking the "Go Back" button
-  const handleMobileBack = () => {
-    setSelectedContact(null); // Clear the selected contact
-    window.location.reload(); // Refresh the page to show the contact list again
+    setSelectedContact(null);
   };
 
   return (
-    <div className="flex flex-col lg:flex-row min-h-screen mb-2">
-      {/* Left Chat List Section (hidden on mobile) */}
-      <div
-        className={`w-full lg:w-1/4 border-r border-gray-300 p-2 ${
-          selectedContact ? "lg:block hidden" : ""
-        }`}
-      >
-        {/* Header */}
-        <div className="mb-2">
-          <div className="flex items-center justify-between mb-2">
-            <h3 className="text-xl font-semibold text-gray-800">Chats</h3>
-            <FontAwesomeIcon
-              icon={faEllipsisVertical}
-              className="text-gray-500 text-lg cursor-pointer"
-            />
-          </div>
-
-          {/* Search Bar */}
-          <div className="relative">
-            <input
-              type="text"
-              value={searchQuery}
-              onChange={handleSearchChange}
-              placeholder="Search contacts"
-              className="w-full p-2 pr-10 pl-4 border rounded-md text-sm focus:outline-none focus:border-blue-500"
-            />
-            <FontAwesomeIcon
-              icon={faSearch}
-              className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-500"
-            />
-          </div>
-        </div>
-
-        {/* Pinned Contacts */}
-        <h3 className="text-black-500 font-semibold mb-1 text-xl">Pinned</h3>
-        <div className="space-y-1">
-          {filteredPinnedContacts.map((contact, index) => (
-            <div
-              key={index}
-              className="flex items-start p-1 bg-gray-100 rounded-md hover:bg-gray-200 max-w-full"
-              onClick={() => handleContactClick(contact)}
-            >
-              <img
-                src={contact.image}
-                alt="User"
-                className="w-6 h-6 rounded-full mr-2"
+    <div className="flex flex-col lg:flex-row min-h-screen">
+      {/* Contacts List Section */}
+      {(!selectedContact || window.innerWidth >= 1024) && (
+        <div className="w-full lg:w-1/4 border-r border-gray-300 p-2">
+          {/* Header */}
+          <div className="mb-2">
+            <div className="flex items-center justify-between mb-2">
+              <h3 className="text-xl font-semibold text-gray-800">Chats</h3>
+              <FontAwesomeIcon
+                icon={faEllipsisVertical}
+                className="text-gray-500 text-lg cursor-pointer"
               />
-              <div className="flex-1 flex flex-col">
-                <div className="flex justify-between items-start">
+            </div>
+
+            {/* Search Bar */}
+            <div className="relative">
+              <input
+                type="text"
+                value={searchQuery}
+                onChange={handleSearchChange}
+                placeholder="Search contacts"
+                className="w-full p-2 pr-10 pl-4 border rounded-md text-sm focus:outline-none focus:border-blue-500"
+              />
+              <FontAwesomeIcon
+                icon={faSearch}
+                className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-500"
+              />
+            </div>
+          </div>
+
+          {/* Pinned Contacts */}
+          <h3 className="text-black-500 font-semibold mb-1 text-xl">Pinned</h3>
+          <div className="space-y-1 overflow-y-auto">
+            {filteredPinnedContacts.map((contact, index) => (
+              <div
+                key={index}
+                className="flex items-start p-2 bg-gray-100 rounded-md hover:bg-gray-200"
+                onClick={() => handleContactClick(contact)}
+              >
+                <img
+                  src={contact.image}
+                  alt="User"
+                  className="w-8 h-8 rounded-full mr-2"
+                />
+                <div className="flex-1">
                   <p className="font-bold text-xs leading-tight">
                     {contact.name}
                   </p>
-                  <span className="text-xs font-semibold text-gray-500 whitespace-nowrap ml-2">
-                    {contact.time}
-                  </span>
+                  <p className="text-xs text-gray-600 truncate">
+                    {contact.lastMessage}
+                  </p>
                 </div>
-                <p className="text-xs text-gray-600 leading-tight truncate overflow-hidden text-ellipsis">
-                  {contact.lastMessage}
-                </p>
               </div>
-            </div>
-          ))}
-        </div>
+            ))}
+          </div>
 
-        {/* Recent Contacts */}
-        <h3 className="text-black-500 font-semibold mb-1 text-xl">Recent</h3>
-        <div className="space-y-1">
-          {filteredContacts.map((contact, index) => (
-            <div
-              key={index}
-              className="flex items-start p-1 bg-gray-100 rounded-md hover:bg-gray-200 max-w-full cursor-pointer"
-              onClick={() => handleContactClick(contact)}
-            >
-              <img
-                src={contact.image}
-                alt="User"
-                className="w-6 h-6 rounded-full mr-2"
-              />
-              <div className="flex-1">
-                <div className="flex justify-between items-start">
+          {/* Recent Contacts */}
+          <h3 className="text-black-500 font-semibold mb-1 text-xl">Recent</h3>
+          <div className="space-y-1 overflow-y-auto">
+            {filteredContacts.map((contact, index) => (
+              <div
+                key={index}
+                className="flex items-start p-2 bg-gray-100 rounded-md hover:bg-gray-200"
+                onClick={() => handleContactClick(contact)}
+              >
+                <img
+                  src={contact.image}
+                  alt="User"
+                  className="w-8 h-8 rounded-full mr-2"
+                />
+                <div className="flex-1">
                   <p className="font-bold text-xs leading-tight">
                     {contact.name}
                   </p>
-                  <span className="text-xs font-semibold text-gray-500 whitespace-nowrap ml-2">
-                    {contact.time}
-                  </span>
+                  <p className="text-xs text-gray-600 truncate">
+                    {contact.lastMessage}
+                  </p>
                 </div>
-                <p className="text-xs text-gray-600 leading-tight truncate">
-                  {contact.lastMessage}
-                </p>
               </div>
-            </div>
-          ))}
+            ))}
+          </div>
         </div>
-      </div>
+      )}
 
-     {/* Right Chat Content Section */}
-     <div className="flex-1">
-        {/* Show the chat screen only if a contact is selected */}
-        {selectedContact ? (
-          <>
-            {/* Show Go Back button when contact is selected */}
-            <button
-              onClick={handleBackToContacts}
-              className="text-blue-500 p-2 lg:hidden"
-            >
-              Go Back
-            </button>
+      {/* Chat Content Section */}
+      {selectedContact && (
+        <div className="flex-1 flex flex-col bg-gray-100">
+          {/* Back Button for Mobile */}
+          <button
+            onClick={handleBackToContacts}
+            className="p-2 text-blue-500 lg:hidden"
+          >
+            Go Back
+          </button>
 
-            {/* Show Chat for the selected contact */}
+
+
+          {/* Chat Body */}
+          <div className="flex-1 p-4 overflow-y-auto">
             {selectedContact.name === "Design Group" ? (
               <GroupChat contact={selectedContact} />
             ) : (
               <IndividualChat contact={selectedContact} />
             )}
-          </>
-        ) : (
-          // Show the default view (if no contact selected)
-          <div className="text-center text-gray-500">
-            Select a contact to start chatting.
           </div>
-        )}
-      </div>
+
+          {/* Chat Input */}
+          <div className="p-2 bg-white border-t border-gray-300">
+            <input
+              type="text"
+              placeholder="Type a message"
+              className="w-full p-2 border rounded-md text-sm focus:outline-none focus:border-blue-500"
+            />
+          </div>
+        </div>
+      )}
     </div>
   );
 };
