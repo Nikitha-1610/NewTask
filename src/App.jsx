@@ -4,7 +4,7 @@ import Dashboard from "./pages/Dashboard";
 import Profile from "./pages/Profile";
 import People from "./pages/People";
 import Teams from "./pages/Teams";
-import Screen2 from "./pages/Screen2";
+
 
 
 
@@ -19,6 +19,7 @@ import AddTasks from "./pages/AddTasks";
 import DesignTeam from "./pages/DesignTeam";
 import Chats from "./pages/Chats";
 import InTest from "./pages/InTest";
+import AssignTask from "./pages/Assigntask";
 const App = () => {
   return (
     <Router>
@@ -28,7 +29,7 @@ const App = () => {
           <Route path="/profile" element={<Profile />} />
           <Route path="/teams" element={<Teams />} />
           <Route path="/people" element={<People />} />
-          <Route path="/assign" element={<Assign />} />
+          {/* <Route path="/assign" element={<Assign/>} /> */}
           <Route path="/intest" element={<InTest />} />
           <Route path="/position" element={<Position />} />
           {/* <Route path="/mainpage" element={<MainPage />} /> */}
@@ -40,6 +41,8 @@ const App = () => {
           <Route path="/addtasks" element={<AddTasks />} />
           <Route path="/designteam" element={<DesignTeam />} />
           <Route path="/chats" element={<Chats />} />
+          <Route path="/assign" element={<AssignTask/>} />
+
         </Routes>
       </Layout>
     </Router>

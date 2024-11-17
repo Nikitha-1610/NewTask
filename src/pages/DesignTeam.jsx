@@ -9,6 +9,8 @@ import img5 from '../assets/img5.png';
 import img6 from '../assets/img6.png';
 import img7 from '../assets/img7.png';
 import spiralPin from '../assets/spiralPin.png';
+import { Link } from 'react-router-dom';
+
 
 const Board = () => {
   const [filterLabel, setFilterLabel] = useState("");
@@ -26,8 +28,11 @@ const Board = () => {
           label: "Work 1",
           status: "Assigned",
           images: [img1],
+
         },
       ],
+      path: "/assign"
+
     },
     {
       title: "IN PROGRESS",
@@ -52,6 +57,7 @@ const Board = () => {
           status: "In Progress",
         },
       ],
+      path: "/task"
     },
     {
       title: "IN TEST",
@@ -78,6 +84,7 @@ const Board = () => {
           images: [img4],
         },
       ],
+      path: '/intest'
     },
     {
       title: "COMPLETED",
@@ -192,18 +199,35 @@ const Board = () => {
       {/* Board Columns */}
       <div className="flex flex-col lg:flex-row space-y-4 lg:space-y-0 lg:space-x-4">
         {filteredColumns.map((column, colIndex) => (
+
           <div key={colIndex} className="flex-1">
-            {/* Column Title with Toggle for Mobile and Tablet View */}
-            <div className="flex items-center justify-between lg:justify-start cursor-pointer" onClick={() => toggleColumn(colIndex)}>
-              <h2 className={`font-semibold p-2 border-b-2 ${column.color === 'green' ? 'text-gray-600 border-green-400' :
-                column.color === 'yellow' ? 'text-gray-600 border-yellow-500' :
-                  column.color === 'red' ? 'text-gray-600 border-red-500' :
-                    column.color === 'teal' ? 'text-gray-600 border-teal-500' : ''}`}>
-                {column.title}
-              </h2>
-              {/* Toggle Icon */}
-              <FontAwesomeIcon icon={collapsedColumns[colIndex] ? faChevronDown : faChevronUp} className="ml-2 lg:hidden" />
-            </div>
+            {/* Column Title with Link for Navigation */}
+            <Link to={column.path}>
+              <div
+                className="flex items-center justify-between lg:justify-start cursor-pointer"
+                onClick={() => toggleColumn(colIndex)}
+              >
+                <h2
+                  className={`font-semibold p-2 border-b-2 ${column.color === "green"
+                      ? "text-gray-600 border-green-400"
+                      : column.color === "yellow"
+                        ? "text-gray-600 border-yellow-500"
+                        : column.color === "red"
+                          ? "text-gray-600 border-red-500"
+                          : column.color === "teal"
+                            ? "text-gray-600 border-teal-500"
+                            : ""
+                    }`}
+                >
+                  {column.title}
+                </h2>
+                {/* Toggle Icon */}
+                <FontAwesomeIcon
+                  icon={collapsedColumns[colIndex] ? faChevronDown : faChevronUp}
+                  className="ml-2 lg:hidden"
+                />
+              </div>
+            </Link>
 
             {/* Tasks - Visible on Desktop and toggled on Mobile */}
             {!collapsedColumns[colIndex] && (
