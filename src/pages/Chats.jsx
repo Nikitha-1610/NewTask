@@ -31,6 +31,7 @@ const removeDuplicates = (array) => {
     index === self.findIndex((t) => t.name === value.name)
   );
 };
+
 const ChatApp = () => {
   const [searchQuery, setSearchQuery] = useState("");
   const [filteredContacts, setFilteredContacts] = useState(removeDuplicates(contacts));
