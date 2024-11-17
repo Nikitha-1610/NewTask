@@ -13,6 +13,7 @@ import AddTasks from "./pages/AddTasks";
 import DesignTeam from "./pages/DesignTeam";
 import Chats from "./pages/Chats";
 import InTest from "./pages/InTest";
+import MainPage from "./pages/MainPage";
 const App = () => {
   return (
     <Router>
@@ -25,7 +26,7 @@ const App = () => {
           <Route path="/assign" element={<Assign />} />
           <Route path="/intest" element={<InTest />} />
           <Route path="/position" element={<Position />} />
-          {/* <Route path="/mainpage" element={<MainPage />} /> */}
+          <Route path="/mainpage" element={<MainPage />} />
           {/* <Route path="/settings" element={<Settings />} /> */}
           <Route path="*" element={<Dashboard />} />
           <Route path="/usersemail" element={<Usersemail />} />
