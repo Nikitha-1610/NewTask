@@ -8,6 +8,10 @@ import {
 import img8 from "../assets/img8.jpeg";
 import img9 from "../assets/img9.jpeg";
 
+import GroupChat from "../components/chatComp/GroupChat";
+import IndividualChat from "../components/chatComp/IndividualChat";
+// Updated list of contacts
+
 const contacts = [
   {
     name: "Sanjay",
@@ -73,6 +77,36 @@ const contacts = [
 
 const pinnedContacts = [
   {
+    name: "Revathy",
+    image: img8,
+    lastMessage: "Hi, I am having a doubt ",
+    time: "1:35 PM",
+  },
+
+  {
+    name: "Sanjay",
+    image: img9,
+    lastMessage: "Can you help me with?",
+    time: "2:00 PM",
+  },
+  {
+    name: "Raj",
+    image: img9,
+    lastMessage: "I sent the project details.",
+    time: "6:00 PM",
+  },
+  {
+    name: "Maya",
+    image: img8,
+    lastMessage: "Can we schedule a call?",
+    time: "7:00 PM",
+
+    name: "Revathy",
+    image: img8,
+    lastMessage: "Hi, I am having a doubt",
+    time: "1:35 PM",
+  },
+  {
     name: "Sanjay",
     image: img9,
     lastMessage: "Can you help me with?",
@@ -91,12 +125,6 @@ const pinnedContacts = [
     time: "7:00 PM",
   },
   {
-    name: "Revathy",
-    image: img8,
-    lastMessage: "Hi, I am having a doubt",
-    time: "1:35 PM",
-  },
-  {
     name: "Design Group",
     image: img9,
     lastMessage: "Hi, I am having a doubt",
@@ -113,13 +141,13 @@ const removeDuplicates = (array) => {
 
 const ChatApp = () => {
   const [searchQuery, setSearchQuery] = useState("");
-  const [filteredContacts, setFilteredContacts] = useState(
-    removeDuplicates(contacts)
+  const [filteredContacts, setFilteredContacts] = useState(contacts);
+  const [filteredPinnedContacts, setFilteredPinnedContacts] =
+    useState(pinnedContacts);
+  const [selectedContact, setSelectedContact] = useState(
+    pinnedContacts.find((contact) => contact.name === "Design Group") // Default to "Design Group"
   );
-  const [filteredPinnedContacts, setFilteredPinnedContacts] = useState(
-    removeDuplicates(pinnedContacts)
-  );
-  const [selectedContact, setSelectedContact] = useState(null);
+  // Define selectedContact state
 
   const handleSearchChange = (event) => {
     const query = event.target.value;
@@ -151,7 +179,13 @@ const ChatApp = () => {
   };
 
   const handleBackToContacts = () => {
-    setSelectedContact(null);
+    setSelectedContact(null); // Go back to the contact list
+  };
+
+  // Refresh the page on mobile after clicking the "Go Back" button
+  const handleMobileBack = () => {
+    setSelectedContact(null); // Clear the selected contact
+    window.location.reload(); // Refresh the page to show the contact list again
   };
 
   return (
@@ -225,7 +259,7 @@ const ChatApp = () => {
           {filteredContacts.map((contact, index) => (
             <div
               key={index}
-              className="flex items-start p-1 bg-gray-100 rounded-md hover:bg-gray-200 max-w-full"
+              className="flex items-start p-1 bg-gray-100 rounded-md hover:bg-gray-200 max-w-full cursor-pointer"
               onClick={() => handleContactClick(contact)}
             >
               <img
@@ -271,5 +305,4 @@ const ChatApp = () => {
     </div>
   );
 };
-
 export default ChatApp;
