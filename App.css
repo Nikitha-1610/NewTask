@@ -1,0 +1,84 @@
+body {
+  font-family: Arial, sans-serif;
+}
+
+.task-page {
+  display: flex;
+}
+
+.sidebar {
+  width: 200px;
+  background-color: #f4f4f4;
+  padding: 20px;
+}
+
+.sidebar ul {
+  list-style-type: none;
+  padding: 0;
+}
+
+.sidebar ul li {
+  margin: 10px 0;
+}
+
+.main-content {
+  flex: 1;
+  padding: 20px;
+}
+
+.header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.add-task-btn {
+  background-color: #007bff;
+  color: white;
+  padding: 5px 10px;
+  border: none;
+  cursor: pointer;
+}
+
+.add-task-btn:hover {
+  background-color: #0056b3;
+}
+
+.task-details {
+  margin-top: 20px;
+}
+
+.task-status,
+.task-due-date,
+.task-assigned,
+.task-assigned-by,
+.task-description,
+.task-attachments,
+.task-comments,
+.task-status-change {
+  margin-bottom: 15px;
+}
+
+.task-status input,
+.task-status-change input {
+  margin-left: 10px;
+}
+
+.attachment {
+  display: flex;
+  align-items: center;
+}
+
+.attachment span {
+  margin-right: 10px;
+}
+
+.comments-list {
+  margin-bottom: 10px;
+}
+
+.comment {
+  background-color: #f4f4f4;
+  padding: 5px;
+  margin-bottom: 5px;
+}

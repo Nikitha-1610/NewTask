@@ -1,0 +1,31 @@
+.sidebar ul {
+  list-style-type: none;
+  padding: 0;
+}
+
+.sidebar li {
+  display: flex;
+  align-items: center;
+  margin: 15px 0;
+  font-size: 16px;
+  color:rgb(97, 94, 94);
+  font-size: smaller;
+  font-weight: bold;
+  
+}
+
+.icon {
+  margin-right: 10px;
+  font-size: 20px;
+}
+
+.highlight {
+  color:rgba(18, 101, 101, 0.733);
+  font-weight: bold; 
+  background-color: rgba(0, 255, 255, 0.307);
+}
+
+.sidebar{
+  /* border-right: solid 1px grey; */
+  box-shadow: 1px 1px gray;
+}
