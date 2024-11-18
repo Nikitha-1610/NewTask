@@ -4,13 +4,9 @@ import Dashboard from "./pages/Dashboard";
 import Profile from "./pages/Profile";
 import People from "./pages/People";
 import Teams from "./pages/Teams";
-import Screen2 from "./pages/Screen2";
-
-
-
-import Position from "./pages/Position"
+import Assign from "./pages/Assigntask";
+import Position from "./pages/Position";
 import MainPage from "./pages/MainPage";
-
 
 // import Settings from "./pages/Settings";
 import Usersemail from "./pages/Usersemail";
@@ -19,7 +15,6 @@ import AddTasks from "./pages/AddTasks";
 import DesignTeam from "./pages/DesignTeam";
 import Chats from "./pages/Chats";
 import InTest from "./pages/InTest";
-import MainPage from "./pages/MainPage";
 const App = () => {
   return (
     <Router>
