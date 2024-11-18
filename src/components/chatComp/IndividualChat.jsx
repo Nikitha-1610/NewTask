@@ -6,9 +6,11 @@ import {
   FaUserCircle,
   FaFilePdf,
 } from "react-icons/fa";
-
+import VideoCall from "./VideoCall";
+import VoiceCall from "./VoiceCall";
 const IndividualChat = ({ contact }) => {
   const [selectedOption, setSelectedOption] = useState("Chat");
+  const [activeFeature, setActiveFeature] = useState(null);
 
   const menuOptions = ["Chat", "Files", "Media"];
 
@@ -39,6 +41,14 @@ const IndividualChat = ({ contact }) => {
     { type: "image", src: "https://via.placeholder.com/150", alt: "Image 2" },
     { type: "image", src: "https://via.placeholder.com/150", alt: "Image 3" },
   ];
+
+  const handleIconClick = (feature) => {
+    setActiveFeature(feature); // Set the feature (VideoCall or VoiceCall)
+  };
+
+  const closeFeature = () => {
+    setActiveFeature(null); // Close the overlay
+  };
 
   return (
     <>
@@ -74,14 +84,41 @@ const IndividualChat = ({ contact }) => {
             ))}
           </div>
         </div>
-
-        {/* Right Side */}
         <div className="flex items-center gap-4">
-          <FaPhone className="text-gray-700 sm:w-5 sm:h-5 w-3 h-3 cursor-pointer" />
-          <FaVideo className="text-gray-700 sm:w-5 sm:h-5 w-3 h-3 cursor-pointer" />
+          <FaPhone
+            className="text-gray-700 sm:w-5 sm:h-5 w-3 h-3 cursor-pointer"
+            onClick={() => handleIconClick("VoiceCall")}
+          />
+          <FaVideo
+            className="text-gray-700 sm:w-5 sm:h-5 w-3 h-3 cursor-pointer"
+            onClick={() => handleIconClick("VideoCall")}
+          />
           <FaEllipsisV className="text-gray-700 sm:w-5 sm:h-5 w-3 h-3 cursor-pointer" />
         </div>
       </div>
+
+      {/* Overlay for Active Feature */}
+   {/* Overlay for Active Feature */}
+   {activeFeature && (
+  <div className="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center z-50">
+    <div className="relative bg-white w-full max-w-[800px] h-[90%] p-6 rounded-lg shadow-lg">
+      {/* Close Button */}
+      <button
+        className="absolute top-3 right-3 text-red-600 font-bold"
+        onClick={closeFeature} // Call to close the overlay
+      >
+        Close
+      </button>
+
+      {/* Render Active Feature */}
+      {activeFeature === "VideoCall" && <VideoCall closeFeature={closeFeature} />}
+      {activeFeature === "VoiceCall" && <VoiceCall closeFeature={closeFeature} />}
+    </div>
+  </div>
+)}
+
+
+
 
       {/* Content Section */}
       <div className="p-4">

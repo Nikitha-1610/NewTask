@@ -209,7 +209,7 @@ const ChatApp = () => {
   };
 
   return (
-    
+
     <div className="flex flex-col sm:flex-row min-h-screen">
       {/* Contacts List Section */}
       {(!selectedContact || window.innerWidth >= 1024) && (
@@ -294,15 +294,18 @@ const ChatApp = () => {
         </div>
       )}
 
+    
       {/* Chat Content Section */}
   
       {selectedContact && (
-        <div className="flex-1 flex flex-col bg-gray-100 overflow-y-auto scrollbar-hide h-screen sm:sticky top-0">
+        <div className="flex-1 flex flex-col bg-gray-100 overflow-y-auto scrollbar-hide h-screen sticky top-0">
           {/* Back Button with Arrow Icon */}
-          <button onClick={() => { console.log("Back button clicked"); handleBackToContacts(); }} className="p-2 text-blue-500 ">
-  <FaArrowLeft className="text-3xl"/>
-</button>
-
+          <button
+            onClick={handleBackToContacts}
+            className="p-2 text-blue-500 lg:hidden"
+          >
+            <FaArrowLeft className="text-3xl"/> {/* Use the backward arrow icon */}
+          </button>
 
       
 
