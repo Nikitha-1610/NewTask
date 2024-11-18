@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { FaArrowLeft } from "react-icons/fa";
 import Picker from "emoji-picker-react";
 import Chat from "../components/chatComp/Chat";
 import { FaUserCircle, FaPhone, FaVideo, FaEllipsisV } from "react-icons/fa";
@@ -142,7 +143,6 @@ const removeDuplicates = (array) => {
 };
 
 
-
 const ChatApp = () => {
   const [searchQuery, setSearchQuery] = useState("");
   const [filteredContacts, setFilteredContacts] = useState(contacts);
@@ -153,7 +153,7 @@ const ChatApp = () => {
 
   const [showEmojiPicker, setShowEmojiPicker] = useState(false);
   const [message, setMessage] = useState("");
-
+  const [isLeftVisible, setIsLeftVisible] = useState(false);
   const handleEmojiClick = (event, emojiObject) => {
     setMessage((prevMessage) => prevMessage + emojiObject.emoji);
   };
@@ -204,10 +204,12 @@ const ChatApp = () => {
 
   // Handle returning to the contact list
   const handleBackToContacts = () => {
-    setSelectedContact(null);
+    console.log("Back button clicked");
+    setIsLeftVisible(true); // Show the left container on desktop
   };
 
   return (
+    
     <div className="flex flex-col sm:flex-row min-h-screen">
       {/* Contacts List Section */}
       {(!selectedContact || window.innerWidth >= 1024) && (
@@ -239,7 +241,7 @@ const ChatApp = () => {
           </div>
 
           {/* Pinned Contacts */}
-          <h3 className="text-black-500 font-semibold mb-1 sm:text-xl text-[22px]">Pinned</h3>
+          <h3 className="text-black-500 font-semibold mb-1 text-xl">Pinned</h3>
           <div className="space-y-1 overflow-y-auto">
             {filteredPinnedContacts.map((contact, index) => (
               <div
@@ -295,14 +297,12 @@ const ChatApp = () => {
       {/* Chat Content Section */}
   
       {selectedContact && (
-       <div className="flex-1 flex flex-col bg-gray-100 overflow-y-auto scrollbar-hide h-screen sticky top-0">
-          {/* Back Button for Mobile */}
-          <button
-            onClick={handleBackToContacts}
-            className="p-2 text-blue-500 lg:hidden"
-          >
-            Go Back
-          </button>
+        <div className="flex-1 flex flex-col bg-gray-100 overflow-y-auto scrollbar-hide h-screen sm:sticky top-0">
+          {/* Back Button with Arrow Icon */}
+          <button onClick={() => { console.log("Back button clicked"); handleBackToContacts(); }} className="p-2 text-blue-500 ">
+  <FaArrowLeft className="text-3xl"/>
+</button>
+
 
       
 

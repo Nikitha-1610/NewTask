@@ -1,12 +1,12 @@
-// import ReactFlow, {
-//   MiniMap,
-//   Controls,
-//   Background,
-//   useNodesState,
-//   useEdgesState,
-//   addEdge,
-// } from "reactflow";
-// import "reactflow/dist/style.css";
+import ReactFlow, {
+  MiniMap,
+  Controls,
+  Background,
+  useNodesState,
+  useEdgesState,
+  addEdge,
+} from "reactflow";
+import "reactflow/dist/style.css";
 import MessageCard from "./MessageCard";
 
 // Custom Node Content Component with Tailwind CSS styling

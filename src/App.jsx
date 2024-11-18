@@ -4,13 +4,8 @@ import Dashboard from "./pages/Dashboard";
 import Profile from "./pages/Profile";
 import People from "./pages/People";
 import Teams from "./pages/Teams";
-
-
-
-
-import Position from "./pages/Position"
+import Position from "./pages/Position";
 import MainPage from "./pages/MainPage";
-
 
 // import Settings from "./pages/Settings";
 import Usersemail from "./pages/Usersemail";
@@ -41,8 +36,7 @@ const App = () => {
           <Route path="/addtasks" element={<AddTasks />} />
           <Route path="/designteam" element={<DesignTeam />} />
           <Route path="/chats" element={<Chats />} />
-          <Route path="/assign" element={<AssignTask/>} />
-
+          <Route path="/assign" element={<AssignTask />} />
         </Routes>
       </Layout>
     </Router>

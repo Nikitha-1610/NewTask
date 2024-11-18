@@ -71,9 +71,7 @@ const Side = () => {
             <Link to="/profile">Profile</Link>
           </MenuItem>
 
-          <MenuItem
-            icon={<Icon icon="logos:microsoft-teams" height={22} width={22} />}
-          >
+          <MenuItem icon={<Icon icon="la:teamspeak" height={22} width={22} />}>
             <Link to="/teams">Teams</Link>
           </MenuItem>
 
