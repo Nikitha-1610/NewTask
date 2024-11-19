@@ -74,11 +74,16 @@ const Side = () => {
           <MenuItem icon={<Icon icon="la:teamspeak" height={22} width={22} />}>
             <Link to="/teams">Teams</Link>
           </MenuItem>
+          <MenuItem
+            icon={<Icon icon="ic:twotone-update" height={22} width={22} />}
+          >
+            <Link to="/employee">New Employee</Link>
+          </MenuItem>
 
-          <SubMenu label="Charts" icon={<Icon icon="logos:highcharts" />}>
+          {/* <SubMenu label="Charts" icon={<Icon icon="logos:highcharts" />}>
             <MenuItem>Pie charts</MenuItem>
             <MenuItem>Line charts</MenuItem>
-          </SubMenu>
+          </SubMenu> */}
 
           <MenuItem
             icon={<Icon icon="iconamoon:profile" height={22} width={22} />}

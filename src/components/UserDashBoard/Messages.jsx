@@ -23,8 +23,10 @@ const Messages = () => {
   ];
 
   return (
-    <div className="bg-white shadow-md rounded-lg p-6 w-full">
-      <h3 className="text-lg font-semibold mb-4">Message</h3>
+    <div className=" bg-teal-100 shadow-md rounded-lg p-6 w-full">
+      <h3 className="text-lg font-semibold mb-4 p-2  bg-white rounded-md">
+        Message
+      </h3>
       <div className="space-y-4">
         {messages.map((msg, index) => (
           <div key={index} className="flex items-center space-x-4">

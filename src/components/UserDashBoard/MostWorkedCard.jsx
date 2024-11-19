@@ -18,7 +18,7 @@ const MostWorkedCard = () => {
   const offsets = calculateOffset(data);
 
   return (
-    <div className="bg-white shadow-md rounded-lg p-6 w-72">
+    <div className="w-80 mx-auto p-4 h-80 rounded-lg shadow-lg bg-white">
       <h3 className="text-lg font-semibold mb-4">Most Worked</h3>
       <div className="relative flex items-center justify-center mb-6">
         {/* Circular Progress Bar */}

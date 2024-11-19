@@ -1,9 +1,10 @@
-import React from "react";
-
 const ProductivityChart = () => {
   return (
     <div className="bg-white shadow-md rounded-lg p-6 w-full">
-      <h3 className="text-lg font-semibold mb-4">Productivity</h3>
+      <div className=" flex justify-between">
+        <h3 className="text-lg font-semibold mb-4">Productivity</h3>
+        <div className="text-sm text-gray-500 mt-4">23 hours 24 min</div>
+      </div>
       <div className="relative">
         {/* Productivity Bars */}
         <div className="flex items-end space-x-4">
@@ -24,7 +25,6 @@ const ProductivityChart = () => {
             </div>
           ))}
         </div>
-        <div className="text-sm text-gray-500 mt-4">23 hours 24 min</div>
       </div>
     </div>
   );

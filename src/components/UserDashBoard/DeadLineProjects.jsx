@@ -1,8 +1,8 @@
 import { Icon } from "@iconify-icon/react";
-const ProjectList = ({ projects }) => {
+const DeadLineProjects = ({ projects }) => {
   return (
     <div className="bg-white shadow-md rounded-lg p-4">
-      <h2 className="text-lg font-bold mb-4">Projects</h2>
+      <h2 className="text-lg font-bold mb-4">Upcoming Daedlines</h2>
       <div className="space-y-4">
         {projects.map((project, index) => (
           <div
@@ -20,15 +20,15 @@ const ProjectList = ({ projects }) => {
             </div>
 
             {/* Time */}
-            <div className="bg-green-100 text-green-600 px-4 py-1 rounded-lg text-sm font-semibold">
+            <div className="bg-red-100 px-4 py-1 rounded-lg text-sm font-semibold">
               {project.time}
             </div>
 
             {/* Progress Bar */}
             <div className="w-1/3">
-              <div className="relative h-2 bg-green-200 rounded-full overflow-hidden">
+              <div className="relative h-2 bg-red-200 rounded-full overflow-hidden">
                 <div
-                  className="absolute h-full bg-green-500"
+                  className="absolute h-full bg-red-500"
                   style={{ width: `${project.progress}%` }}
                 ></div>
               </div>
@@ -40,4 +40,4 @@ const ProjectList = ({ projects }) => {
   );
 };
 
-export default ProjectList;
+export default DeadLineProjects;

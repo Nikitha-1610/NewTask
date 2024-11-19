@@ -2,7 +2,7 @@ import { FaRegSmile, FaEllipsisV } from "react-icons/fa";
 import { Icon } from "@iconify-icon/react";
 const MessageCard = () => {
   return (
-    <div className="w-72 p-4 bg-white rounded-lg shadow-lg border border-gray-200">
+    <div className="w-72 p-4 bg-teal-100 rounded-lg shadow-lg border border-gray-200">
       <div className="flex items-center justify-between">
         <div className=" flex gap-2">
           <img

@@ -31,14 +31,14 @@ const ProjectProgress = () => {
           ))}
         </div>
         {/* Progress Bar */}
-        <div>
+        <div className=" flex">
           <div className="w-full bg-gray-200 rounded-full h-2">
             <div
               className="bg-yellow-400 h-2 rounded-full"
               style={{ width: `${projectData.progress}%` }}
             ></div>
           </div>
-          <span className="text-sm text-gray-500 mt-2 inline-block">
+          <span className="text-base -my-6 text-yellow-400 font inline-block">
             {projectData.progress}%
           </span>
         </div>

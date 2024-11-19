@@ -15,6 +15,7 @@ import DesignTeam from "./pages/DesignTeam";
 import Chats from "./pages/Chats";
 import InTest from "./pages/InTest";
 import AssignTask from "./pages/Assigntask";
+import EmployeeForm from "./pages/EmployeeForm";
 const App = () => {
   return (
     <Router>
@@ -37,6 +38,7 @@ const App = () => {
           <Route path="/designteam" element={<DesignTeam />} />
           <Route path="/chats" element={<Chats />} />
           <Route path="/assign" element={<AssignTask />} />
+          <Route path="/employee" element={<EmployeeForm />} />
         </Routes>
       </Layout>
     </Router>
