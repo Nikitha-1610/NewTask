@@ -1,81 +1,54 @@
-import { useState } from "react";
-import {
-  Sidebar as ProSidebar,
-  Menu,
-  MenuItem,
-  SubMenu,
-} from "react-pro-sidebar";
+import { Sidebar as ProSidebar, Menu, MenuItem } from "react-pro-sidebar";
 import { Icon } from "@iconify-icon/react";
-import { Link } from "react-router-dom";
-import MenuIcon from "@mui/icons-material/Menu";
+import { Link, useLocation } from "react-router-dom";
 
-const Side = () => {
-  const [isOpen, setIsOpen] = useState(false);
-  const [isCollapsed, setIsCollapsed] = useState(false);
+const Side = ({ isOpen, toggleSidebar, isCollapsed }) => {
+  const location = useLocation();
 
-  const toggleSidebar = () => {
-    setIsOpen(!isOpen);
-  };
-
-  const handleResize = () => {
-    // Automatically collapse the sidebar on medium screens
-    if (window.innerWidth >= 768 && window.innerWidth < 1024) {
-      setIsCollapsed(true);
-    } else {
-      setIsCollapsed(false);
-    }
-  };
-
-  // Add resize event listener
-  useState(() => {
-    handleResize();
-    window.addEventListener("resize", handleResize);
-    return () => {
-      window.removeEventListener("resize", handleResize);
-    };
-  }, []);
+  const isActive = (path) => location.pathname === path;
 
   return (
-    <div className="h-screen fixed">
-      {/* Toggle button for mobile */}
-      <button
-        onClick={toggleSidebar}
-        className="md:hidden fixed top-1 p-1 left-4 z-50 bg-gray-500 text-white rounded-full"
-      >
-        {isOpen ? <Icon icon="maki:cross" /> : <MenuIcon />}
-      </button>
-
+    <>
       {/* Sidebar */}
       <ProSidebar
         collapsed={isCollapsed}
-        className={`fixed top-0 left-0 h-full z-40 transition-transform duration-300 bg-white shadow-lg ${
+        className={`fixed top-0 left-0 h-screen z-50 transition-transform duration-300 bg-white shadow-lg ${
           isOpen ? "translate-x-0" : "-translate-x-full"
         } md:translate-x-0`}
+        style={{ overflowY: "auto" }}
       >
+        <div className="flex justify-end p-2 md:hidden">
+          <button
+            onClick={toggleSidebar}
+            className="p-2 px-3 text-white bg-gray-500 rounded-full"
+          >
+            <Icon icon="maki:cross" />
+          </button>
+        </div>
         <Menu>
           <MenuItem
-            icon={
+            className={
+              isActive("/dashboard") ? "bg-teal-100 text-teal-600" : ""
+            }
+          >
+            <Link to="/dashboard" className="flex items-center gap-5">
               <Icon
                 icon="material-symbols:dashboard-outline"
                 height={22}
                 width={22}
               />
-            }
-          >
-            <Link to="/dashboard">Dashboard</Link>
+              Dashboard
+            </Link>
           </MenuItem>
-
           <MenuItem
-            icon={<Icon icon="iconamoon:profile" height={22} width={22} />}
+            icon={<Icon icon="la:teamspeak" height={22} width={22} />}
+            className={isActive("/teams") ? "bg-teal-100 text-teal-600" : ""}
           >
-            <Link to="/profile">Profile</Link>
-          </MenuItem>
-
-          <MenuItem icon={<Icon icon="la:teamspeak" height={22} width={22} />}>
             <Link to="/teams">Teams</Link>
           </MenuItem>
           <MenuItem
             icon={<Icon icon="ic:twotone-update" height={22} width={22} />}
+            className={isActive("/employee") ? "bg-teal-100 text-teal-600" : ""}
           >
             <Link to="/employee">New Employee</Link>
           </MenuItem>
@@ -87,6 +60,7 @@ const Side = () => {
 
           <MenuItem
             icon={<Icon icon="iconamoon:profile" height={22} width={22} />}
+            className={isActive("/people") ? "bg-teal-100 text-teal-600" : ""}
           >
             <Link to="/people">People</Link>
           </MenuItem>
@@ -95,21 +69,30 @@ const Side = () => {
             icon={
               <Icon icon="material-symbols:action-key" height={22} width={22} />
             }
+            className={
+              isActive("/usersemail") ? "bg-teal-100 text-teal-600" : ""
+            }
           >
             <Link to="/usersemail">Users Email</Link>
           </MenuItem>
 
-          <MenuItem icon={<Icon icon="bi:list-task" height={22} width={22} />}>
+          <MenuItem
+            icon={<Icon icon="bi:list-task" height={22} width={22} />}
+            className={
+              isActive("/designteam") ? "bg-teal-100 text-teal-600" : ""
+            }
+          >
             <Link to="/designteam">Task</Link>
           </MenuItem>
 
           <MenuItem
             icon={<Icon icon="mdi:plus-circle" height={22} width={22} />}
+            className={isActive("/addtasks") ? "bg-teal-100 text-teal-600" : ""}
           >
             <Link to="/addtasks">Add Tasks</Link>
           </MenuItem>
 
-          <MenuItem
+          {/* <MenuItem
             icon={<Icon icon="pajamas:list-task" height={22} width={22} />}
           >
             <Link to="/task">Inprogress Task</Link>
@@ -124,10 +107,11 @@ const Side = () => {
             icon={<Icon icon="arcticons:serialtest" height={22} width={22} />}
           >
             <Link to="/intest">In Test</Link>
-          </MenuItem>
+          </MenuItem> */}
 
           <MenuItem
             icon={<Icon icon="iconoir:position-align" height={22} width={22} />}
+            className={isActive("/position") ? "bg-teal-100 text-teal-600" : ""}
           >
             <Link to="/position">Position</Link>
           </MenuItem>
@@ -139,25 +123,27 @@ const Side = () => {
                 width={22}
               />
             }
+            className={isActive("/chats") ? "bg-teal-100 text-teal-600" : ""}
           >
             <Link to="/chats">Chats</Link>
           </MenuItem>
           <MenuItem
             icon={<Icon icon="duo-icons:dashboard" height={22} width={22} />}
+            className={isActive("/mainpage") ? "bg-teal-100 text-teal-600" : ""}
           >
             <Link to="/mainpage">MainPage</Link>
           </MenuItem>
         </Menu>
       </ProSidebar>
 
-      {/* Overlay to close sidebar on mobile */}
+      {/* Overlay for closing sidebar in mobile view */}
       {isOpen && (
         <div
           onClick={toggleSidebar}
-          className="fixed inset-0 bg-black opacity-50 z-30 md:hidden"
+          className="fixed inset-0 bg-black opacity-50 z-40 md:hidden"
         ></div>
       )}
-    </div>
+    </>
   );
 };
 

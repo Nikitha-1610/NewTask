@@ -1,13 +1,22 @@
 import Avatar from "@mui/material/Avatar";
 import Badge from "@mui/material/Badge";
 import NotificationsIcon from "@mui/icons-material/Notifications";
+import MenuIcon from "@mui/icons-material/Menu";
 
-const Navbar = () => {
+const Navbar = ({ toggleSidebar }) => {
   return (
-    <header className=" w-full h-16  flex items-center justify-between p-4 bg-white shadow-lg">
-      <div className="font-semibold text-lg md:text-xl">
+    <header className="w-full h-16 flex items-center justify-between p-4 bg-white shadow-lg fixed top-0 left-0 z-40">
+      {/* Sidebar toggle button */}
+      <button
+        onClick={toggleSidebar}
+        className="block md:hidden p-2 rounded-full bg-gray-500 text-white"
+      >
+        <MenuIcon />
+      </button>
+
+      {/* <div className="font-semibold text-lg md:text-xl">
         <span className="hidden md:inline">Dashboard</span>
-      </div>
+      </div> */}
 
       <div className="flex-1 max-w-md mx-auto hidden sm:block">
         <input
@@ -22,7 +31,7 @@ const Navbar = () => {
           <NotificationsIcon />
         </Badge>
 
-        <div className=" hidden md:block">
+        <div className="hidden md:block">
           <h2 className="font-semibold text-sm">Mr.xyz</h2>
           <h6 className="text-slate-700 text-xs tracking-tight">
             Software Developer

@@ -28,7 +28,7 @@ const MainPage = () => {
   ];
 
   return (
-    <div className="min-h-screen p-6 bg-gray-50">
+    <div className="min-h-screen p-6">
       {/* Header Section */}
       <header className="mb-8">
         <h1 className="text-2xl font-bold text-gray-800">Hello User</h1>
