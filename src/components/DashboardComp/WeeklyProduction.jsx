@@ -93,8 +93,8 @@ const WeeklyProduction = () => {
         grid: {
           display: false,
         },
-        barPercentage: 0.5,
-        categoryPercentage: 1.5,
+        barPercentage: 0.3, // Decrease this to increase the space between bars
+        categoryPercentage: 0.9, // Increase this to reduce the gap between categories
       },
       y: {
         beginAtZero: true,
@@ -107,6 +107,7 @@ const WeeklyProduction = () => {
       },
     },
   };
+  
 
   // Handle selector box change
   const handleSelectorChange = (e) => {
@@ -114,18 +115,29 @@ const WeeklyProduction = () => {
   };
 
   return (
-    <div className="w-[90%] mx-auto p-5">
+    <div className="w-[90%] mx-auto p-2">
       <div className="flex justify-between items-center mb-3">
-        <h2 className="text-xl font-semibold">Production</h2>
-        <select
-          value={period}
-          onChange={handleSelectorChange}
-          className="px-4 py-1 text-base border border-gray-300 rounded-md"
-        >
-          <option value="Weekly">Weekly</option>
-          <option value="Monthly">Monthly</option>
-          <option value="Yearly">Yearly</option>
-        </select>
+        <h2 className="sm:text-2xl text-[25px] font-[500] font-sans text-[#3A3541] align-self sm:relative left-[-58px] top-[-20px] mb-[80px] sm:mb-0">Weekly Production</h2>
+
+        <div className="relative flex items-center gap-1n sm:right-[-50px] top-[-10px]">
+      {/* Select Dropdown */}
+      <select
+        value={period}
+        onChange={handleSelectorChange}
+        className="appearance-none sm:px-7  px-3 py-1 text-base border-[2px] border-gray-200 text-[12px]sm:text-[18px] rounded-2xl cursor-pointer font-sans font-[500]"
+      >
+        <option value="Weekly">Weekly</option>
+        <option value="Monthly">Monthly</option>
+        <option value="Yearly">Yearly</option>
+      </select>
+      {/* SVG Icon */}
+      <div className="absolute right-2 top-1/2 -translate-y-1/2 pointer-events-none">
+        <svg xmlns="http://www.w3.org/2000/svg" width="13" height="8" viewBox="0 0 13 8" fill="none">
+          <path d="M0.895102 1.68394C0.296353 1.04528 0.749199 0 1.62464 0H12.0082C12.8836 0 13.3365 1.04528 12.7377 1.68394L7.54594 7.22183C7.15087 7.64324 6.48194 7.64324 6.08687 7.22183L0.895102 1.68394Z" fill="#01C2B5"/>
+        </svg>
+      </div>
+    </div>
+  
       </div>
       <div className="relative h-[300px] flex justify-center">
         <Bar data={getChartData()} options={options} />
