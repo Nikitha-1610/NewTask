@@ -6,11 +6,13 @@ import {
   FaUserCircle,
   FaFilePdf,
 } from "react-icons/fa";
-
+import VideoCall from "./VideoCall";
+import VoiceCall from "./VoiceCall";
 
 const GroupChat = ({ contact }) => {
   // Managing menu options and selected option with useState
   const [selectedOption, setSelectedOption] = useState("Chat");
+  const [activeFeature, setActiveFeature] = useState(null);
 
   const menuOptions = ["Chat", "Files", "Media"];
 
@@ -61,6 +63,14 @@ const GroupChat = ({ contact }) => {
   ];
   const handleMenuClick = (option) => {
     setSelectedOption(option);
+  };
+
+  const handleIconClick = (feature) => {
+    setActiveFeature(feature); // Set the feature (VideoCall or VoiceCall)
+  };
+
+  const closeFeature = () => {
+    setActiveFeature(null); // Close the overlay
   };
 
   const renderContent = () => {
@@ -275,42 +285,70 @@ const GroupChat = ({ contact }) => {
     return (
       <div>
         {/* Header */}
-        <div className="flex items-center justify-between sm:w-[100%] w-[95%] h-[60px] bg-white shadow-md px-5 sticky top-0 z-10 mb-2">
-          <div className="flex items-center gap-3">
-            {contact?.image ? (
-              <img
-                src={contact.image}
-                alt="Profile"
-                className="sm:w-[38px] sm:h-[38px] w-[30px] h-[30px] rounded-full object-cover"
-              />
-            ) : (
-              <FaUserCircle className="w-[38px] h-[38px] text-pink-700" />
-            )}
-            <span className="text-black font-semibold text-[12px] sm:text-[15px]">
-              {contact?.name || "Group Chat"}
-            </span>
-            <div className="flex items-center gap-4 ml-4">
-              {["Chat", "Files", "Media"].map((option, index) => (
-                <span
-                  key={index}
-                  onClick={() => handleMenuClick(option)}
-                  className={`cursor-pointer text-[15px] font-[500] ${
-                    selectedOption === option
-                      ? "border-b-2 border-[#01C2B5]"
-                      : "text-gray-500"
-                  }`}
-                >
-                  {option}
-                </span>
-              ))}
-            </div>
-          </div>
-          <div className="flex items-center gap-4">
-            <FaPhone className="text-gray-700 sm:w-5 sm:h-5 w-3 h-3 cursor-pointer" />
-            <FaVideo className="text-gray-700 sm:w-5 sm:h-5 w-3 h-3 cursor-pointer" />
-            <FaEllipsisV className="text-gray-700 sm:w-5 sm:h-5 w-3 h-3 cursor-pointer" />
+        {/* Header */}
+      <div className="flex items-center justify-between sm:w-full w-[97%] h-[60px] bg-white shadow-md px-5 sticky top-0 z-10 mb-2 mt-0">
+        {/*Left Side */}
+        <div className="flex items-center sm:gap-3 gap-2">
+          {contact?.image ? (
+            <img
+              src={contact.image}
+              alt="Profile"
+              className="sm:w-[38px] sm:h-[38px] w-[32px] h-[32px] rounded-full object-cover"
+            />
+          ) : (
+            <FaUserCircle className="w-[38px] h-[38px] text-pink-700" />
+          )}
+          <span className="text-black font-semibold text-[14px] sm:text-[15px]">
+            {contact?.name}
+          </span>
+          <div className="flex items-center gap-4 ml-4">
+            {menuOptions.map((option, index) => (
+              <span
+                key={index}
+                onClick={() => setSelectedOption(option)}
+                className={`cursor-pointer sm:text-[17px] text-[17px] font-[500] ${
+                  selectedOption === option
+                    ? "border-b-2 border-[#01C2B5]"
+                    : "text-gray-500"
+                }`}
+              >
+                {option}
+              </span>
+            ))}
           </div>
         </div>
+        <div className="flex items-center gap-4">
+          <FaPhone
+            className="text-gray-700 sm:w-5 sm:h-5 w-3 h-3 cursor-pointer"
+            onClick={() => handleIconClick("VoiceCall")}
+          />
+          <FaVideo
+            className="text-gray-700 sm:w-5 sm:h-5 w-3 h-3 cursor-pointer"
+            onClick={() => handleIconClick("VideoCall")}
+          />
+          <FaEllipsisV className="text-gray-700 sm:w-5 sm:h-5 w-3 h-3 cursor-pointer" />
+        </div>
+      </div>
+
+      {/* Overlay for Active Feature */}
+   {/* Overlay for Active Feature */}
+   {activeFeature && (
+  <div className="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center z-50">
+    <div className="relative bg-white w-full max-w-[800px] h-[90%] top-9 p-6 rounded-lg shadow-lg">
+      {/* Close Button */}
+      <button
+        className="absolute top-3 right-3 text-red-600 font-bold"
+        onClick={closeFeature} // Call to close the overlay
+      >
+        Close
+      </button>
+
+      {/* Render Active Feature */}
+      {activeFeature === "VideoCall" && <VideoCall closeFeature={closeFeature} />}
+      {activeFeature === "VoiceCall" && <VoiceCall closeFeature={closeFeature} />}
+    </div>
+  </div>
+)}
   
         {/* Content */}
         <div className="mb-6 flex-1 p-4 overflow-y-auto">{renderContent()}</div>
