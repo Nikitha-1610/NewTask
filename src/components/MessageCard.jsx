@@ -2,7 +2,7 @@ import { FaRegSmile, FaEllipsisV } from "react-icons/fa";
 import { Icon } from "@iconify-icon/react";
 const MessageCard = () => {
   return (
-    <div className="w-72 p-4 bg-teal-100 rounded-lg shadow-lg border border-gray-200">
+    <div className="w-72 h-auto p-4  rounded-lg shadow-lg border border-gray-200">
       <div className="flex items-center justify-between">
         <div className=" flex gap-2">
           <img
@@ -29,7 +29,7 @@ const MessageCard = () => {
         ></textarea>
       </div>
 
-      <div className="flex items-center justify-between mt-4">
+      <div className=" mt-4">
         <div className="flex items-center space-x-2">
           <Icon
             icon="ion:attach"
@@ -40,14 +40,20 @@ const MessageCard = () => {
           <FaRegSmile className="text-gray-500 cursor-pointer" />
           {/* <button className="text-gray-500 cursor-pointer">🙂</button> */}
         </div>
-        <button className="px-4 py-2 text-sm text-white bg-teal-500 rounded-md hover:bg-teal-600">
-          Send
+        <div className=" flex justify-end gap-2 mt-3">
+          <button className="px-4 py-2 text-sm text-white bg-gray-300 rounded-md hover:bg-teal-600">
+            Close
+          </button>
+          <button className="px-4 py-2 text-sm text-white bg-teal-500 rounded-md hover:bg-teal-600">
+            Send
+          </button>
+        </div>
+      </div>
+      <div className="flex justify-end mt-3">
+        <button className="p-2 mt-2 text-center text-white rounded-md bg-teal-500 text-sm font-semibold focus:outline-none">
+          Gp to Chat
         </button>
       </div>
-
-      <button className="w-full mt-2 text-center text-teal-500 text-sm font-semibold focus:outline-none">
-        Go to Chat
-      </button>
     </div>
   );
 };

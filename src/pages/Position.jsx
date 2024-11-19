@@ -1,3 +1,4 @@
+import React, { useState } from 'react';
 const users = [
   {
     username: "Sandhiya Ravikumar",
@@ -17,6 +18,7 @@ const users = [
 ];
 
 const Position = () => {
+  const [show, setShow]= useState(false)
   return (
     <>
       <div className="p-5">
@@ -104,7 +106,7 @@ const Position = () => {
               </td>
               <td className="p-2 text-left border-b-2 border-gray-400/60">
                 <div className="flex items-center">
-                  <button className="px-2.5 py-1 bg-[#4D50FD] text-white border-none cursor-pointer rounded-lg">
+                  <button className="px-2.5 py-1 bg-[#4D50FD] text-white border-none cursor-pointer rounded-lg" onClick={() => setShow(!show)}>
                     Tag
                   </button>
                   <i className="fas fa-ellipsis-v ml-2 text-lg cursor-pointer text-gray-800 hover:text-blue-500"></i>
@@ -123,20 +125,20 @@ const Position = () => {
           Next
         </button>
       </div>
-      <div
+      {show && <div
         className="w-[190px] h-[90px] absolute top-80
             left-50 right-2 bg-[#FFFFFF] border-[0.2px]  rounded p-2 border-black shadow-[2px_2px_4px_0px_#7F767626]border-black shadow-[2px_2px_4px_0px_#7F767626]"
       >
         {/* <div className="flex justify-center gap-5 mb-5 relative -left-[480px]"> */}
         <select className="w-[170px] h-[30px]  text-base rounded-2xl border border-gray-300 bg-white cursor-pointer ">
           <option value="all">Design Team Lead</option>
-          <option value="option1">Option 1</option>
-          <option value="option2">Option 2</option>
+          <option value="option1">UX UI Designer</option>
+          <option value="option2">Backend Developer</option>
         </select>
-        <button className="w-[80px] h-[25px] relative left-8 top-4 bg-[#01C2B5] text-white border-2 border-white cursor-pointer mx-2.5 rounded-3xl hover:bg-[#0056b3]">
+        <button onClick={() => setShow(!show)} className="w-[80px] h-[25px] relative left-8 top-4 bg-[#01C2B5] text-white border-2 border-white cursor-pointer mx-2.5 rounded-3xl hover:bg-[#0056b3]">
           Submit
         </button>
-      </div>
+      </div>}
       {/* </div> */}
     </>
   );

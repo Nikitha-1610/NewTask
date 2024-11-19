@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import { useState } from "react";
 
 const EmployeeForm = () => {
   const [formData, setFormData] = useState({

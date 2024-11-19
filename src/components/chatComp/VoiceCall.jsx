@@ -13,16 +13,22 @@ const VoiceCall = ({ closeFeature }) => {
           </div>
           <div className="w-full h-[80px] flex justify-around items-center absolute bottom-5 left-1/2 transform -translate-x-1/2">
             <button className="w-[50px] h-[50px] bg-red-700 rounded-full">
-              <div className="relative left-4"><BsFillMicMuteFill /></div>
+              <div className="relative left-4">
+                <BsFillMicMuteFill />
+              </div>
             </button>
             <button
               onClick={closeFeature}
               className="w-[50px] h-[50px] bg-red-700 rounded-full"
             >
-              <div className="relative left-4"><MdCallEnd /></div>
+              <div className="relative left-4">
+                <MdCallEnd />
+              </div>
             </button>
             <button className="w-[50px] h-[50px] bg-red-700 rounded-full">
-              <div className="relative left-4"><HiSpeakerWave /></div>
+              <div className="relative left-4">
+                <HiSpeakerWave />
+              </div>
             </button>
           </div>
         </div>
