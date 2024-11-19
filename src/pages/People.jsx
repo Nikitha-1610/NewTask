@@ -1,3 +1,4 @@
+
 const users = [
     {
       username: 'Sandhiya Ravikumar',
@@ -9,14 +10,37 @@ const users = [
     // Duplicate user data for demonstration purposes
     ...Array(7).fill({
       username: 'Sandhiya Ravikumar',
+
       email: 'sandyva@gmail.com',
       phone: '+91 6789054321',
       position: 'UX UI Designer',
       joiningDate: '02-11-2024',
     })
   ];
+  // const usersdetails = [
+  //   {
+  //     username: 'Sandhiya kumar',
+  //     email: 'sandyva@gmail.com',
+  //     phone: '+91 6789054321',
+  //     position: 'UX UI Designer',
+  //     joiningDate: '02-11-2024',
+  //   },
+  //   // Duplicate user data for demonstration purposes
+  //   ...Array(7).fill({
+  //     username: 'Sandhiya kumar',
+  //     email: 'sandyva@gmail.com',
+  //     phone: '+91 6789054321',
+  //     position: 'UX UI Designer',
+  //     joiningDate: '02-11-2024',
+  //   })
+  // ];
+ 
 
 const People = () => {
+  // const handleNextPage = () =>
+  //   currentPage < totalPages && setCurrentPage(currentPage + 1);
+  // const handlePrevPage = () =>
+  //   currentPage > 1 && setCurrentPage(currentPage - 1);
     return (
       <>
       <div className="p-5 p-5">
