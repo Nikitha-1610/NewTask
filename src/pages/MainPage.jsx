@@ -66,17 +66,17 @@ const MainPage = () => {
           </div>
 
           {/* Task List and Timer */}
-          <div className="grid grid-cols-1 lg:grid-cols-4 gap-6 h-64">
-            <div className="lg:col-span-2">
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-8">
+            <div className="lg:col-span-1">
               <TaskList tasks={tasks} />
             </div>
-            <div className="lg:col-span-2">
+            <div className="lg:col-span-1">
               <TaskManager />
             </div>
           </div>
 
           {/* Project Lists */}
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 mt-36">
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 mt-8">
             <ProjectList title="Projects" projects={projects} />
             <DeadLineProjects title="Upcoming Deadlines" projects={projects} />
           </div>

@@ -1,11 +1,12 @@
 import { useState, useEffect } from "react";
 import { Icon } from "@iconify-icon/react";
+
 const TaskManager = () => {
   const [tasks, setTasks] = useState([
-    { id: 1, name: "Slack Logo Design", duration: 1800, isActive: false },
-    { id: 2, name: "Dashboard Design", duration: 1800, isActive: true },
-    { id: 3, name: "Create Wireframe", duration: 1500, isActive: true },
-    // { id: 4, name: "Create Wireframe", duration: 1500, isActive: false },
+    { id: 1, name: "Slack Logo Design", duration: 1800 },
+    { id: 2, name: "Dashboard Design", duration: 1800 },
+    { id: 3, name: "Create Wireframe", duration: 1500 },
+    { id: 4, name: "Create Wireframe", duration: 1500 },
   ]);
 
   const [activeTask, setActiveTask] = useState(tasks[2]); // Pre-select one task for demo
@@ -80,11 +81,16 @@ const TaskManager = () => {
       </div>
 
       {/* Main Project Section */}
-      <div className=" flex justify-between">
+      <div className="flex justify-between">
         <h2 className="font-bold text-lg mb-4 text-gray-800">Main Project</h2>
         <Icon icon="stash:play-btn-light" height={22} width={22} />
       </div>
-      <div className="space-y-2">
+
+      {/* Task List Section */}
+      <div
+        className="space-y-2 overflow-y-auto max-h-48"
+        style={{ maxHeight: "calc(100% - 180px)" }} // Adjust height based on layout
+      >
         {tasks.map((task) => (
           <div
             key={task.id}
@@ -92,13 +98,13 @@ const TaskManager = () => {
               task.isActive ? "bg-green-50 border-green-400" : "bg-gray-50"
             }`}
           >
-            <div className=" flex gap-1">
+            <div className="flex gap-1">
               <div>
                 <Icon icon="stash:stopwatch-solid" />
               </div>
               <h3 className="font-medium text-gray-800">{task.name}</h3>
             </div>
-            <div className=" flex gap-1">
+            <div className="flex gap-1">
               <div>
                 <p className="text-sm text-gray-500">
                   {Math.floor(task.duration / 60)}m {task.duration % 60}s
