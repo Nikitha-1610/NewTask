@@ -27,8 +27,8 @@ const AddTasks = () => {
       const sidebar = document.querySelector(".sidebar");
       const navbar = document.querySelector(".navbar");
     
-      if (sidebar) sidebar.style.filter = "blur(1px)";
-      if (navbar) navbar.style.filter = "blur(1px)";
+      if (sidebar) sidebar.style.filter = "blur(2px)";
+      if (navbar) navbar.style.filter = "blur(2px)";
       // document.querySelector(".add-tasks-container").style.filter = "blur(2px)";
       document.querySelector(".left-container").style.filter = "blur(2px)";
       document.querySelector(".right").style.filter = "blur(2px)";
@@ -79,7 +79,7 @@ const AddTasks = () => {
     window.location.reload();
   };
   return (
-<div className="add-tasks-container flex flex-col md:flex-row h-full p-4 relative">
+<div className="add-tasks-container flex flex-col md:flex-row h-full p-2 relative min-h-screen">
       {/* Left Container */}
       <div className={`left-container flex flex-col gap-6 p-4 sm:w-[340px] md:w-[500px] lg:w-[713px] ${isSubmitted ? "blur-sm" : ""}`}>
   <TaskForm taskData={taskData} setTaskData={setTaskData} />
@@ -98,8 +98,8 @@ const AddTasks = () => {
   </Link>
 
   <Link
-    to="/filter"
-    className="filter-btn flex items-center gap-2 text-[#475569] p-3 rounded-md shadow-lg hover:bg-transparent font-sans font-[600] sm:p-2 sm:w-[120px] sm:h-[40px] w-[100px] text-[12px] sm:text-[18px]"
+   
+    className="filter-btn flex items-center gap-2 text-[#475569] p-3 rounded-md hover:bg-transparent font-sans font-[400] sm:p-2 sm:w-[120px] sm:h-[40px] w-[100px] text-[12px] sm:text-[18px]"
   >
     <svg xmlns="http://www.w3.org/2000/svg" width={14} height={13} viewBox="0 0 14 13" fill="none">
       <path fillRule="evenodd" clipRule="evenodd" d="M2.33333 6.77344C2.6555 6.77344 2.91667 7.0346 2.91667 7.35677V11.4401C2.91667 11.7623 2.6555 12.0234 2.33333 12.0234C2.01117 12.0234 1.75 11.7623 1.75 11.4401V7.35677C1.75 7.0346 2.01117 6.77344 2.33333 6.77344Z" fill="#475569"/>
@@ -120,7 +120,7 @@ const AddTasks = () => {
       {/* Success Message */}
       {isSubmitted && (
  <div className="success-message fixed top-0 left-0 w-full h-full flex justify-center items-center">
-    <div className="success-container flex flex-col items-center gap-10 p-10 w-[500px] font-sans bg-white rounded-lg shadow-lg relative sm:w-[400px] sm:p-8 border-2 border-black z-90">
+    <div className="success-container flex flex-col items-center gap-10 p-10 w-[500px] font-sans bg-white rounded-lg shadow-lg relative sm:w-[500px] sm:p-8 border-2 border-black z-90">
       {/* Close Icon */}
       <button onClick={handleClose} className="absolute top-4 right-4">
         <svg xmlns="http://www.w3.org/2000/svg" width="33" height="33" viewBox="0 0 36 36" fill="none">
@@ -156,10 +156,10 @@ const AddTasks = () => {
 
       {/* Submit Button */}
       {!isSubmitted && ( 
-        <div className="submit-btn-container flex justify-center mt-4">
+        <div className="submit-btn-container absolute bottom-[-240px] right-5 flex justify-center ">
           <button 
             onClick={handleSubmit}
-            className="submit-btn absolute bottom-0 right-5 rounded-[var(--Spacing-8,8px)] bg-[#01C2B5] w-[85px] py-[10px] px-[12px] text-white shadow-lg flex items-center justify-center hover:bg-[#019F97] font-sans font-[600] sm:w-[150px] sm:h-[44px] sm:text-[20px] text-[12px]"
+            className="submit-btn   rounded-[var(--Spacing-8,8px)] bg-[#01C2B5] w-[85px] py-[10px] px-[12px] text-white shadow-lg flex items-center justify-center hover:bg-[#019F97] font-sans font-[600] sm:w-[150px] sm:h-[44px] sm:text-[20px] text-[12px]"
           >
             Submit
           </button>
