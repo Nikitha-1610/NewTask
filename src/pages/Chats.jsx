@@ -182,15 +182,16 @@ const ChatApp = () => {
   // Handle returning to the contact list
   const handleBackToContacts = () => {
     console.log("Back button clicked");
-    setIsLeftVisible(true); // Show the left container on desktop
+    setIsLeftVisible(true);// Show the left container on desktop
+     setSelectedContact(null);
   };
 
   return (
 
-    <div className="flex flex-col sm:flex-row min-h-screen">
+    <div className="flex flex-col sm:flex-row min-h-screen ">
       {/* Contacts List Section */}
       {(!selectedContact || window.innerWidth >= 1024) && (
-       <div className="w-full lg:w-1/4 border-r border-gray-300 p-2 overflow-y-auto scrollbar-hide h-screen sticky top-0">
+       <div className="w-full lg:w-1/4 border-r border-gray-300  overflow-y-auto scrollbar-hide h-screen sticky top-0 bg-white z-20 ">
           {/* Header */}
           <div className="mb-2 sticky top-0 bg-white z-10">
             <div className="flex items-center justify-between mb-2">
