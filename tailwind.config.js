@@ -7,5 +7,17 @@ export default {
     'xs': '400px', // Custom breakpoint for under 400px
   },
   theme: {},
-  plugins: [],
+  plugins: [
+     function ({ addUtilities }) {
+      addUtilities({
+        '.scrollbar-hide': {
+          '-ms-overflow-style': 'none', /* IE 10+ */
+          'scrollbar-width': 'none', /* Firefox */
+        },
+        '.scrollbar-hide::-webkit-scrollbar': {
+          display: 'none', /* Chrome, Safari, Edge */
+        },
+      });
+    },
+  ],
 };

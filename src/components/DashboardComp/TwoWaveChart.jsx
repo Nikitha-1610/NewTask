@@ -4,7 +4,7 @@ import { MdBarChart } from 'react-icons/md';
 
 const TwoWaveChart = () => {
   return (
-    <div className="p-5 bg-gray-100 rounded-lg w-full max-w-[1037px] mx-auto relative flex flex-col items-center font-[sans-serif]">
+    <div className="p-5 bg-gray-100 rounded-lg w-full max-w-[1037px] mx-auto relative flex flex-col sm: items-center font-[sans-serif]">
       {/* Calendar Icon on the Top Left */}
       <div className="absolute top-2 left-2 flex items-center text-[#A3AED0] bg-[#F4F7FE] p-1.5 rounded-md">
         <FaCalendarAlt size={17} />
@@ -17,7 +17,7 @@ const TwoWaveChart = () => {
       </div>
 
       {/* Heading */}
-      <div className="mt-10 text-[#2B3674] font-bold text-2xl sm:text-3xl">
+      <div className="mt-10 text-[#2B3674] font-bold text-2xl sm:text-3xl sm:align start">
         3 Projects
       </div>
 
@@ -53,7 +53,7 @@ const TwoWaveChart = () => {
       </div>
 
       {/* Month Labels */}
-      <div className="w-full max-w-[727px] mt-4 flex justify-between text-sm text-[#A3AED0]">
+      <div className="w-full max-w-[727px] sm:max-w[600px] mt-4 flex justify-between text-sm text-[#A3AED0]">
         <span>SEP</span>
         <span>OCT</span>
         <span>NOV</span>
