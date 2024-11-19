@@ -9,17 +9,35 @@ const users = [
   // Duplicate user data for demonstration purposes
   ...Array(7).fill({
     username: "Sandhiya Ravikumar",
+
     email: "sandyva@gmail.com",
     phone: "+91 6789054321",
     position: "UX UI Designer",
     joiningDate: "02-11-2024",
   }),
 ];
+// const usersdetails = [
+//   {
+//     username: 'Sandhiya kumar',
+//     email: 'sandyva@gmail.com',
+//     phone: '+91 6789054321',
+//     position: 'UX UI Designer',
+//     joiningDate: '02-11-2024',
+//   },
+//   // Duplicate user data for demonstration purposes
+//   ...Array(7).fill({
+//     username: 'Sandhiya kumar',
+//     email: 'sandyva@gmail.com',
+//     phone: '+91 6789054321',
+//     position: 'UX UI Designer',
+//     joiningDate: '02-11-2024',
+//   })
+// ];
 
 const People = () => {
   return (
     <>
-      <div className="p-5">
+      <div className="p-5 p-5">
         <div className="mx-auto w-1/2 flex space-x-20 gap-2 my-5">
           <div className="flex flex-col items-start justify-center w-[200px] h-[100px] text-[20px]  text-[#333] text-center ">
             <span className="text-center text-[42.52px] font-medium leading-[49.83px] tracking-[0.09966778010129929px] ">
