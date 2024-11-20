@@ -121,7 +121,11 @@ const IndividualChat = ({ contact }) => {
 
 
       {/* Content Section */}
+<<<<<<< HEAD
       <div className="p-4 overflow-y-auto min-h-screen">
+=======
+      <div className="p-4 overflow-y-auto">
+>>>>>>> 32c04385b25e6881496612b664b51a0e5edf25cd
         {selectedOption === "Chat" && (
           <div>
             {userMessages.map((userMessage, index) => (

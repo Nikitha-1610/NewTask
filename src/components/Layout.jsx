@@ -3,9 +3,9 @@ import Sidebar from "./Side";
 import Navbar from "./Navbar";
 
 const Layout = ({ children }) => {
-  const [isOpen, setIsOpen] = useState(false); // Sidebar open/close state for mobile
-  const [isCollapsed, setIsCollapsed] = useState(false); // Sidebar collapsed state for medium/large screens
-  const [isMobile, setIsMobile] = useState(false); // Track mobile view
+  const [isOpen, setIsOpen] = useState(false);
+  const [isCollapsed, setIsCollapsed] = useState(false);
+  const [isMobile, setIsMobile] = useState(false);
 
   const toggleSidebar = () => {
     setIsOpen(!isOpen);
@@ -15,14 +15,14 @@ const Layout = ({ children }) => {
     const width = window.innerWidth;
 
     if (width < 768) {
-      setIsMobile(true); // Mobile view
-      setIsCollapsed(false); // No marginLeft adjustments for mobile
+      setIsMobile(true);
+      setIsCollapsed(false);
     } else {
-      setIsMobile(false); // Larger screens
+      setIsMobile(false);
       if (width >= 768 && width < 1024) {
-        setIsCollapsed(true); // Sidebar collapsed
+        setIsCollapsed(true);
       } else {
-        setIsCollapsed(false); // Sidebar expanded
+        setIsCollapsed(false);
       }
     }
   };
@@ -48,7 +48,7 @@ const Layout = ({ children }) => {
       <div
         className="flex-1 flex flex-col"
         style={{
-          paddingTop: "4rem", // Space for fixed Navbar
+          paddingTop: "4rem",
           marginLeft:
             !isMobile && !isCollapsed ? "px" : isCollapsed ? "0px" : "-250px", // Adjust only for visible sidebar
           transition: "margin-left 0.3s ease",

@@ -79,7 +79,11 @@ const AddTasks = () => {
     window.location.reload();
   };
   return (
+<<<<<<< HEAD
 <div className="add-tasks-container w-full flex flex-col md:flex-row h-full p-2 relative min-h-screen">
+=======
+<div className="add-tasks-container flex flex-col md:flex-row h-full p-2 relative min-h-screen">
+>>>>>>> 32c04385b25e6881496612b664b51a0e5edf25cd
       {/* Left Container */}
       <div className={`left-container flex flex-col gap-6 p-4 sm:w-[340px] md:w-[500px] lg:w-[713px] ${isSubmitted ? "blur-sm" : ""}`}>
   <TaskForm taskData={taskData} setTaskData={setTaskData} />
