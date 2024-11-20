@@ -295,7 +295,6 @@ const ChatApp = () => {
       {selectedContact && (
         <div className="top-0 sticky flex flex-col flex-1 bg-gray-100 min-h-screen">
 
-<<<<<<< HEAD
           {/* Back Button with Arrow Icon */}
           <button
             onClick={handleBackToContacts}
@@ -303,19 +302,6 @@ const ChatApp = () => {
           >
             <FaArrowLeft className="text-3xl" />
           </button>
-=======
-         
-   <button
-  onClick={handleBackToContacts}
-  className="text-blue-500 flex items-center sm:absolute sm:left-4 sm:top-1/2 sm:-translate-y-1/2 md:relative md:top-0 md:left-0 md:mt-4 lg:absolute lg:left-4 lg:top-4 z-10"
->
-  <FaArrowLeft className="text-1xl" />
-</button>
-
-
-       
-
->>>>>>> d8e14f0f65eb7babff7f16d09ab706dc3cc215d0
 
 
 
