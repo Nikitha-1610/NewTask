@@ -89,7 +89,7 @@ const Dashboard = () => {
             ].map((card, index) => (
               <div
                 key={index}
-                className="min-w-[220px] bg-white p-3 rounded-lg border-4 border-gray-200 transform transition-transform duration-300 hover:scale-105"
+                className="min-w-[220px] bg-white p-3 rounded-lg border-4 border-gray-100 transform transition-transform duration-300 hover:scale-105"
               >
                 <div className="flex justify-between items-center space-x-0">
                   <div
@@ -112,13 +112,13 @@ const Dashboard = () => {
         </div>
 
         {/* Remaining containers as placeholders */}
-        <div className=" sm:p-5 p-3 rounded-xl border-4 border-gray-200 sm:w-full w-96 mt-0">
+        <div className=" sm:p-5 p-3 rounded-xl border-4 border-gray-100 sm:w-full w-96 mt-0">
           <WeeklyProduction />
         </div>
         <div className="sm:py-1 p-0 rounded-xl  sm:w-full w-96 ">
           <Production />
         </div>
-        <div className="sm:p-4 p-3 rounded-xl border-4 border-gray-200 sm:w-full w-96">
+        <div className="sm:p-4 p-3 rounded-xl border-4 border-gray-100 sm:w-full w-96">
           <TwoWaveChart />
         </div>
       </div>

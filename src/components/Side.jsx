@@ -18,15 +18,15 @@ const Side = ({ isOpen, toggleSidebar, isCollapsed }) => {
       {/* Sidebar */}
       <ProSidebar
         collapsed={isCollapsed}
-        className={`sidebar fixed top-0 left-0 h-screen z-50 transition-transform duration-300 bg-white shadow-lg ${
+        className={`sidebar  fixed top-0 left-0 h-screen z-50 transition-transform duration-300 bg-white shadow-lg ${
           isOpen ? "translate-x-0" : "-translate-x-full"
         } md:translate-x-0`}
         style={{ overflowY: "auto" }}
       >
-        {/* <div className="flex justify-end p-2 md:hidden">
+        {/* <div className="flex justify-end md:hidden p-2">
           <button
             onClick={toggleSidebar}
-            className="p-2 px-3 text-white bg-gray-500 rounded-full"
+            className="bg-gray-500 px-3 p-2 rounded-full text-white"
           >
             <Icon icon="maki:cross" />
           </button>
@@ -169,7 +169,7 @@ const Side = ({ isOpen, toggleSidebar, isCollapsed }) => {
       {isOpen && (
         <div
           onClick={toggleSidebar}
-          className="fixed inset-0 bg-black opacity-50 z-40 md:hidden"
+          className="z-40 fixed inset-0 md:hidden bg-black opacity-50"
         ></div>
       )}
     </>

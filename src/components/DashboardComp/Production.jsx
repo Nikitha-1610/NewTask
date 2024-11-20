@@ -6,8 +6,8 @@ const Production = () => {
     <div className="flex flex-col gap-2 md:flex-row h-auto md:h-[400px] justify-between items-center p-0">
       {/* Left Section */}
       {/* Left Section */}
-      <div className="flex flex-col gap-4 border-4 border-gray-200 p-6 w-96 sm:w-96 h-auto md:h-full rounded-xl relative mb-0 md:mb-0">
-  <h2 className="text-lg sm:text-2xl font-bold text-gray-800">Production (Overall)</h2>
+      <div className="flex flex-col gap-4 border-4 border-gray-100 p-6 w-96 sm:w-96 h-auto md:h-full rounded-xl relative mb-0 md:mb-0">
+  <h2 className="text-lg sm:text-2xl font-bold  text-gray-800">Production (Overall)</h2>
 
 
         {/* SVG Display as a Progress Representation */}
@@ -63,7 +63,7 @@ const Production = () => {
 </div>
 
       {/* Right Section */}
-      <div className="border-4 border-gray-200 bg-white p-6 w-96 md:w-[720px] h-auto md:h-full rounded-xl">
+      <div className="border-4 border-gray-100 bg-white p-6 w-96 md:w-[720px] h-auto md:h-full rounded-xl">
   <h3 className="text-xl md:text-2xl font-bold text-blue-800 leading-tight mb-4 text-center md:text-left">
     Complex Table
   </h3>
