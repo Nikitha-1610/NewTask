@@ -6,6 +6,9 @@ import { faPhone, faVideo, faEllipsisV } from "@fortawesome/free-solid-svg-icons
 const Chat = ({ contact }) => {
     return (
         <div className="flex items-center p-4 bg-white shadow-sm">
+              {/* Back Button with Arrow Icon */}
+    
+
             {/* Profile Picture */}
             <div className="flex items-center justify-center w-16 h-16 ">
                 <img
@@ -46,7 +49,4 @@ const Chat = ({ contact }) => {
 };
 
 export default Chat;
-
-
-
 

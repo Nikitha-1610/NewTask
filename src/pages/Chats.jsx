@@ -196,11 +196,9 @@ const ChatApp = () => {
       {(!selectedContact || window.innerWidth >= 1024) && (
         <div className="w-full lg:w-1/4 border-r border-gray-300  overflow-y-auto scrollbar-hide h-screen sticky top-0 bg-white z-20 ">
           {/* Header */}
-          <div className="mb-2 sticky top-0 bg-white z-10">
-            <div className="flex items-center justify-between mb-2">
-              {/* <h3 className="sm:text-2xl text-[28px] font-semibold text-gray-800">
-                Chats
-              </h3> */}
+          <div className="mb-2 sticky top-0 bg-white z-10 ">
+            <div className="flex items-center justify-between mb-2 mr-4">
+
               <h3 className="text-lg sm:text-2xl text-[28px] font-semibold text-gray-800">
                 Chats
               </h3>
@@ -296,17 +294,19 @@ const ChatApp = () => {
 
       {selectedContact && (
         <div className="flex-1 flex flex-col bg-gray-100 overflow-y-auto scrollbar-hide h-screen sticky top-0">
+
           {/* Back Button with Arrow Icon */}
           <button
             onClick={handleBackToContacts}
-            className="p-2 text-blue-500 lg:hidden"
+            className="text-blue-500 flex items-center sm:absolute sm:left-4 sm:top-1/2 sm:-translate-y-1/2 lg:hidden"
           >
-            <FaArrowLeft className="text-3xl" />{" "}
-            {/* Use the backward arrow icon */}
+            <FaArrowLeft className="text-3xl" />
           </button>
 
+
+
           {/* Chat Body */}
-          <div className="flex-1 p-1 mt-0">
+          <div className="flex-1 p-1 mt-0 ">
             {selectedContact.name === "Design Group" ? (
               <GroupChat contact={selectedContact} />
             ) : (
@@ -314,9 +314,14 @@ const ChatApp = () => {
             )}
           </div>
 
-          <div className="bottom-0 mt-4 flex mx-3 w-[97%] h-10 p-2 justify-between items-center bg-white border border-[#9B9797] rounded-full shadow-lg sticky">            {/* Icons */}
+          {/* Bottom Bar with Message Input and Icons */}
+          <div className="bottom-0 mt-4 flex mx-3 w-[97%] h-10 p-2 justify-between items-center bg-white border border-[#9B9797] rounded-full shadow-lg sticky">
+            {/* Icons */}
             <div className="flex gap-3 relative">
+
               {/* Emoji Icon */}
+
+
               <svg
                 xmlns="http://www.w3.org/2000/svg"
                 width="24"
@@ -326,8 +331,6 @@ const ChatApp = () => {
                 onClick={() => setShowEmojiPicker((prev) => !prev)}
                 className="cursor-pointer"
               >
-                {/* Emoji icon paths */}
-
                 <path
                   d="M7.9987 14.6673C4.3167 14.6673 1.33203 11.6827 1.33203 8.00065C1.33203 4.31865 4.3167 1.33398 7.9987 1.33398C11.6807 1.33398 14.6654 4.31865 14.6654 8.00065C14.6654 11.6827 11.6807 14.6673 7.9987 14.6673Z"
                   stroke="#39383A"
@@ -369,7 +372,6 @@ const ChatApp = () => {
                 onClick={handleAttachmentClick}
                 className="cursor-pointer"
               >
-                {/* Attachment icon paths */}
                 <path
                   d="M7.59531 6.7507V11.8079C7.60115 12.1777 7.75216 12.5304 8.01574 12.7899C8.27932 13.0493 8.63435 13.1947 9.0042 13.1947C9.37405 13.1947 9.72907 13.0493 9.99266 12.7899C10.2562 12.5304 10.4072 12.1777 10.4131 11.8079L10.4177 5.17921C10.4215 4.86313 10.3625 4.54944 10.2442 4.25631C10.1259 3.96318 9.95062 3.69645 9.72847 3.47158C9.50631 3.2467 9.24172 3.06817 8.95005 2.94632C8.65838 2.82446 8.34542 2.76172 8.02932 2.76172C7.71321 2.76172 7.40025 2.82446 7.10858 2.94632C6.81691 3.06817 6.55232 3.2467 6.33017 3.47158C6.10801 3.69645 5.93269 3.96318 5.81439 4.25631C5.69608 4.54944 5.63714 4.86313 5.64098 5.17921V11.8526C5.63454 12.2976 5.71662 12.7394 5.88246 13.1524C6.04829 13.5654 6.29457 13.9413 6.60698 14.2582C6.91938 14.5752 7.29168 14.8269 7.70222 14.9987C8.11276 15.1705 8.55336 15.2589 8.9984 15.2589C9.44344 15.2589 9.88403 15.1705 10.2946 14.9987C10.7051 14.8269 11.0774 14.5752 11.3898 14.2582C11.7022 13.9413 11.9485 13.5654 12.1143 13.1524C12.2802 12.7394 12.3623 12.2976 12.3558 11.8526V5.61656"
                   stroke="#5D5B6C"
@@ -384,7 +386,6 @@ const ChatApp = () => {
                 onChange={handleFileChange}
               />
             </div>
-
 
             <input
               type="text"
