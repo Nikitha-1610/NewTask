@@ -1,3 +1,4 @@
+
 import { useState } from "react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { FaArrowLeft } from "react-icons/fa";
@@ -182,8 +183,10 @@ const ChatApp = () => {
   // Handle returning to the contact list
   const handleBackToContacts = () => {
     console.log("Back button clicked");
-    setIsLeftVisible(true);// Show the left container on desktop
-     setSelectedContact(null);
+    setIsLeftVisible(true);
+    setSelectedContact(null);
+
+
   };
 
   return (
@@ -191,13 +194,17 @@ const ChatApp = () => {
     <div className="flex flex-col sm:flex-row min-h-screen ">
       {/* Contacts List Section */}
       {(!selectedContact || window.innerWidth >= 1024) && (
-       <div className="w-full lg:w-1/4 border-r border-gray-300 sticky top-0 bg-white z-20 ">
+        <div className="w-full lg:w-1/4 border-r border-gray-300  overflow-y-auto scrollbar-hide h-screen sticky top-0 bg-white z-20 ">
           {/* Header */}
           <div className="mb-2 sticky top-0 bg-white z-10">
             <div className="flex items-center justify-between mb-2">
-              <h3 className="sm:text-2xl text-[28px] font-semibold text-gray-800">
+              {/* <h3 className="sm:text-2xl text-[28px] font-semibold text-gray-800">
+                Chats
+              </h3> */}
+              <h3 className="text-lg sm:text-2xl text-[28px] font-semibold text-gray-800">
                 Chats
               </h3>
+
               <FontAwesomeIcon
                 icon={faEllipsisVertical}
                 className="text-gray-500 text-lg cursor-pointer"
@@ -221,7 +228,7 @@ const ChatApp = () => {
           </div>
 
           {/* Pinned Contacts */}
-          <h3 className="text-black-500 font-semibold mb-1 text-xl overflow-y-auto scrollbar-hide">Pinned</h3>
+          {/* <h3 className="text-black-500 font-semibold mb-1 text-xl">Pinned</h3>
           <div className="space-y-1 overflow-y-auto">
             {filteredPinnedContacts.map((contact, index) => (
               <div
@@ -244,7 +251,37 @@ const ChatApp = () => {
                 </div>
               </div>
             ))}
+          </div> */}
+
+          {/* Pinned Contacts */}
+          <h3 className="text-black-500 font-semibold mb-1 text-xl">Pinned</h3>
+          <div className="space-y-1 overflow-y-auto">
+            {filteredPinnedContacts.map((contact, index) => (
+              <div
+                key={index}
+                className="flex items-start p-2 bg-gray-100 rounded-md hover:bg-gray-200"
+                onClick={() => handleContactClick(contact)}
+              >
+                <img
+                  src={contact.image}
+                  alt="User"
+                  className="w-8 h-8 rounded-full mr-2"
+                />
+                <div className="flex-1">
+
+                  <p className="font-bold text-lg sm:text-xs text-[14px] leading-tight">
+                    {contact.name}
+                  </p>
+                  <p className="text-base sm:text-xs text-[14px] text-gray-600 truncate">
+                    {contact.lastMessage}
+                  </p>
+                </div>
+              </div>
+            ))}
           </div>
+
+
+
 
           {/* Recent Contacts */}
           <h3 className="text-black-500 font-semibold mb-1 sm:text-xl text-[22px]">
@@ -263,12 +300,14 @@ const ChatApp = () => {
                   className="w-8 h-8 rounded-full mr-2"
                 />
                 <div className="flex-1">
-                  <p className="font-bold sm:text-xs text-[14px] leading-tight">
+
+                  <p className="font-bold text-lg sm:text-xs text-[14px] leading-tight">
                     {contact.name}
                   </p>
-                  <p className="sm:text-xs text-[14px] text-gray-600 truncate">
+                  <p className="text-base sm:text-xs text-[14px] text-gray-600 truncate">
                     {contact.lastMessage}
                   </p>
+
                 </div>
               </div>
             ))}
@@ -279,7 +318,7 @@ const ChatApp = () => {
       {/* Chat Content Section */}
 
       {selectedContact && (
-        <div className="flex-1 flex flex-col bg-gray-100 sticky top-0 ">
+        <div className="flex-1 flex flex-col bg-gray-100 overflow-y-auto scrollbar-hide h-screen sticky top-0">
           {/* Back Button with Arrow Icon */}
           <button
             onClick={handleBackToContacts}
@@ -298,10 +337,7 @@ const ChatApp = () => {
             )}
           </div>
 
-          {/* Chat Input */}
-          {/* Typing Box */}
-          <div className="bottom-0 mt-4 flex mx-3 w-[97%] h-10 p-2 justify-between items-center bg-white border border-[#9B9797] rounded-full shadow-lg sticky">
-            {/* Icons */}
+          <div className="bottom-0 mt-4 flex mx-3 w-[97%] h-10 p-2 justify-between items-center bg-white border border-[#9B9797] rounded-full shadow-lg sticky">            {/* Icons */}
             <div className="flex gap-3 relative">
               {/* Emoji Icon */}
               <svg
@@ -372,14 +408,15 @@ const ChatApp = () => {
               />
             </div>
 
-            {/* Message Input */}
+
             <input
               type="text"
               value={message}
               onChange={(e) => setMessage(e.target.value)}
               placeholder="Type a message..."
-              className="flex-grow text-gray-700 border-none outline-none px-2 font-[700]"
+              className="flex-grow text-base sm:text-sm text-gray-700 border-none outline-none px-2 font-[700]"
             />
+
 
             {/* Send Button */}
             <div class="flex items-center justify-center bg-[#01C2B5] rounded-full w-10 h-10 right-0">
