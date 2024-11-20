@@ -31,7 +31,7 @@ import user19 from '../assets/users/user19.png'
 
 
 import { Link, useNavigate } from 'react-router-dom';
-import { DragDropContext, Droppable, Draggable } from "react-beautiful-dnd";
+// import { DragDropContext, Droppable, Draggable } from "react-beautiful-dnd";
 
 const Board = () => {
   const [filterLabel, setFilterLabel] = useState("");
