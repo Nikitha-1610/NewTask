@@ -1,5 +1,5 @@
 import { useState } from "react";
-
+import { IoClose } from "react-icons/io5";
 const users = [
   {
     username: "Sandhiya Ravikumar",
@@ -9,7 +9,7 @@ const users = [
     joiningDate: "02-11-2024",
   },
   // Duplicate user data for demonstration purposes
-  ...Array(20).fill({
+  ...Array(25).fill({
     username: "Sandhiya Ravikumar",
     email: "sandyva@gmail.com",
     phone: "+91 6789054321",
@@ -44,6 +44,16 @@ const People = () => {
       setCurrentPage(currentPage + 1);
     }
   };
+  const [show, setShow]= useState(false)
+  
+  // function myfun(){
+  //   if(setstate==="white"){
+  //     setstate("green")
+  //   }
+  //   else{
+  //     setstate("white")
+  //   }
+  // }
 
   return (
     <>
@@ -69,7 +79,7 @@ const People = () => {
           <div className="h-[130px] min-h-[1em] w-px self-stretch bg-gradient-to-tr from-transparent via-neutral-500 to-transparent opacity-25 dark:via-neutral-400"></div>
         </div>
       </div>
-      <div className="flex justify-center gap-5 mb-5 relative -left-[500px]">
+      <div className="flex justify-center gap-5 mb-5 relative right-[470px]">
         <select className="p-2 text-base rounded border border-gray-300 bg-white cursor-pointer">
           <option value="all">All</option>
           <option value="option1">Option 1</option>
@@ -83,7 +93,7 @@ const People = () => {
         </select>
       </div>
 
-      <table className="w-full border-collapse mt-5 outline-none">
+      <table className="w-full h-[600px] border-spacing-0 mt-5 outline-none">
         <thead className="bg-[rgba(128,128,128,0.266)]">
           <tr>
             <th className="p-2 text-left border-b-2 border-gray-400/60">
@@ -132,7 +142,7 @@ const People = () => {
               </td>
               <td className="p-2 text-left border-b-2 border-gray-400/60">
                 <div className="flex items-center">
-                  <button className="px-2.5 py-1 bg-[#0ee540] text-white border-none cursor-pointer rounded-lg">
+                  <button onClick={() => setShow(!show)} className="px-2.5 py-1 bg-white text-black border-2 border-black cursor-pointer mx-2.5 rounded-lg">
                     Approve
                   </button>
                   <i className="fas fa-ellipsis-v ml-2 text-lg cursor-pointer text-gray-800 hover:text-blue-500"></i>
@@ -163,6 +173,20 @@ const People = () => {
           Next
         </button>
       </div>
+      {show && <div className="w-[290px] h-[150px] p-5 absolute top-80
+            left-[1200px]  bg-[#FFFFFF] border-[0.2px]  rounded p-2 border-black shadow-[2px_2px_4px_0px_#7F767626]border-black shadow-[2px_2px_4px_0px_#7F767626]">
+               <button onClick={() => setShow(!show)} className="w-[23px] h-[20px] relative left-[240px] bottom-[18px] bg-red-500 rounded-lg"><div className="relative left-1"><IoClose /></div></button>
+              <span className="relative left-5">Are you sure to Approve</span>
+              <div className="flex relative top-10 justify-around">
+              <button onClick={() => setShow(!show) } className="px-2.5 py-1 bg-[#0ee540] text-white border-none cursor-pointer rounded-lg">
+                    Approve
+                  </button>
+                  <button onClick={() => setShow(!show)} className="px-2.5 py-1 bg-[#ed3030] text-white border-none cursor-pointer rounded-lg">
+                    Reject
+                  </button>
+              </div>
+             
+            </div>}
     </>
   );
 };
