@@ -84,7 +84,7 @@ const TaskForm = () => {
   };
 
   return (
-    <div className="w-full max-w-[480px] sm:max-w-[880px] mx-auto p-4 mt-1 font-sans rounded-md">
+    <div className="w-full max-w-[380px] sm:max-w-[880px] mx-auto p-4 mt-1 font-sans rounded-md h-full">
   {/* Project Name & Due Date */}
       {/* Project Name & Due Date */}
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-6">

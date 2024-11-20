@@ -3,14 +3,15 @@ import { FaCheckCircle, FaExclamationCircle } from 'react-icons/fa';
 
 const Production = () => {
   return (
-    <div className="flex flex-col md:flex-row h-auto md:h-[400px] justify-between items-center p-0">
+    <div className="flex flex-col gap-2 md:flex-row h-auto md:h-[400px] justify-between items-center p-0">
       {/* Left Section */}
       {/* Left Section */}
-      <div className="flex flex-col gap-6 border-[3px] border-gray-200  p-6 w-[380px] sm:w-[370px]  h-auto md:h-full  rounded-xl relative mb-0 md:mb-0">
-        <h2 className="sm:text-2xl text-[18px] font-bold text-gray-800">Production (Overall)</h2>
+      <div className="flex flex-col gap-4 border-4 border-gray-200 p-6 w-96 sm:w-96 h-auto md:h-full rounded-xl relative mb-0 md:mb-0">
+  <h2 className="text-lg sm:text-2xl font-bold text-gray-800">Production (Overall)</h2>
+
 
         {/* SVG Display as a Progress Representation */}
-        <div className="flex align-center justify-center mt-0 sm:mt-[50px] sm:w-47 sm:h-30 w-47 h-15"> 
+        <div className="flex items-center justify-center mt-0 sm:mt-12 sm:w-47 sm:h-30 w-47 h-15"> 
   <svg xmlns="http://www.w3.org/2000/svg" class="" viewBox="0 0 245 128" fill="none"> 
     <mask id="path-1-inside-1_102_17964" fill="white">
       <path d="M4.73691 125.919C2.13835 125.979 -0.0254685 123.919 0.015233 121.32C0.294616 103.48 4.41132 85.8992 12.0975 69.8246C20.459 52.3376 32.8026 37.1398 48.0995 25.4977C63.3963 13.8556 81.2033 6.10664 100.036 2.89651C117.34 -0.0529379 135.049 0.9078 151.916 5.68684C154.396 6.38964 155.744 9.023 154.971 11.4822L152.323 19.8988C151.538 22.3957 148.868 23.7598 146.344 23.0663C132.232 19.1886 117.447 18.4444 102.995 20.9078C86.98 23.6376 71.8375 30.2271 58.8296 40.1271C45.8216 50.0271 35.325 62.9509 28.2147 77.8213C21.7786 91.2814 18.2857 105.984 17.9535 120.915C17.8957 123.51 15.8505 125.663 13.255 125.722L4.73691 125.919Z"/>
@@ -40,87 +41,85 @@ const Production = () => {
 </div>
 
 
-        {/* Dot Containers for Monthly Data */}
-        <div className="absolute sm:bottom-2 bottom-0 left-4 flex items-center">
-        <svg xmlns="http://www.w3.org/2000/svg" class="w-3 h-3 sm:w-5 sm:h-5" viewBox="0 0 20 21" fill="none">
-            <circle cx="10" cy="10.5" r="10" fill="#FCC590" />
-          </svg>
-          <div className="ml-2">
-            <div className="sm:text-[20px] text-[15px] font-bold text-gray-800">46%</div>
-            <div className="sm:text-[18px] text-[13px]  text-gray-500">October</div>
-          </div>
-        </div>
+<div className="absolute sm:bottom-2 bottom-0 left-4 flex items-center">
+    <svg xmlns="http://www.w3.org/2000/svg" className="w-3 h-3 sm:w-5 sm:h-5" viewBox="0 0 20 21" fill="none">
+      <circle cx="10" cy="10.5" r="10" fill="#FCC590" />
+    </svg>
+    <div className="ml-2">
+      <div className="text-sm sm:text-lg font-bold text-gray-800">46%</div>
+      <div className="text-xs sm:text-base text-gray-500">October</div>
+    </div>
+  </div>
 
-        <div className="absolute sm:bottom-2 bottom-0 right-4 flex items-center">
-        <svg xmlns="http://www.w3.org/2000/svg" class="w-3 h-3 sm:w-5 sm:h-5" viewBox="0 0 20 21" fill="none">
-            <circle cx="10" cy="10.5" r="10" fill="#C25F01" />
-          </svg>
-          <div className="ml-2">
-            <div className="sm:text-[20px] text-[12px] font-bold text-gray-800">56%</div>
-            <div className="sm:text-[18px] text-[12px] text-gray-500">This Month</div>
-          </div>
-        </div>
-      </div>
+  <div className="absolute sm:bottom-2 bottom-0 right-4 flex items-center">
+    <svg xmlns="http://www.w3.org/2000/svg" className="w-3 h-3 sm:w-5 sm:h-5" viewBox="0 0 20 21" fill="none">
+      <circle cx="10" cy="10.5" r="10" fill="#C25F01" />
+    </svg>
+    <div className="ml-2">
+      <div className="text-sm sm:text-lg font-bold text-gray-800">56%</div>
+      <div className="text-xs sm:text-base text-gray-500">This Month</div>
+    </div>
+  </div>
+</div>
 
       {/* Right Section */}
-<div className="border-[3px] border-gray-200 bg-white p-6 w-[380px] sm:w-[710px] h-auto md:h-full shadow-md rounded-xl">
-  <h3 className="text-xl md:text-[28px] font-bold text-[#2B3674] leading-tight mb-4 text-center md:text-left">
+      <div className="border-4 border-gray-200 bg-white p-6 w-96 md:w-[720px] h-auto md:h-full rounded-xl">
+  <h3 className="text-xl md:text-2xl font-bold text-blue-800 leading-tight mb-4 text-center md:text-left">
     Complex Table
   </h3>
   <table className="w-full border-separate border-spacing-y-1 sm:border-spacing-y-2 md:border-spacing-y-4 text-xs sm:text-sm md:text-base">
   <thead>
-      <tr className="border-b-2 border-gray-300"> {/* Gray line below the heading */}
-        <th className="font-medium text-[#A3AED0] text-[16px] sm:text-[18px] md:text-[17.661px] font-[DM Sans] leading-[18px] sm:leading-[20px] md:leading-[21.705px] tracking-[-0.253px] p-1 sm:p-2 text-center"> {/* Centered text */}
-          NAME
-        </th>
-        <th className="font-medium text-[#A3AED0] text-[16px] sm:text-[18px] md:text-[17.661px] font-[DM Sans] leading-[18px] sm:leading-[20px] md:leading-[21.705px] tracking-[-0.253px] p-1 sm:p-2 text-center"> {/* Centered text */}
-          STATUS
-        </th>
-        <th className="font-medium text-[#A3AED0] text-[16px] sm:text-[18px] md:text-[17.661px] font-[DM Sans] leading-[18px] sm:leading-[20px] md:leading-[21.705px] tracking-[-0.253px] p-1 sm:p-2 text-center"> {/* Centered text */}
-          DATE
-        </th>
-        <th className="font-medium text-[#A3AED0] text-[16px] sm:text-[18px] md:text-[17.661px] font-[DM Sans] leading-[18px] sm:leading-[20px] md:leading-[21.705px] tracking-[-0.253px] p-1 sm:p-2 text-center"> {/* Centered text */}
-          PROGRESS
-        </th>
-      </tr>
-     
-    </thead>
-   
+    <tr className="border-b-2 border-gray-300"> {/* Gray line below the heading */}
+      <th className="font-medium text-[#A3AED0] text-xs sm:text-sm md:text-base font-[DM Sans] leading-tight sm:leading-snug md:leading-snug tracking-tight p-1 sm:p-2 text-center"> {/* Centered text */}
+        NAME
+      </th>
+      <th className="font-medium text-[#A3AED0] text-xs sm:text-sm md:text-base font-[DM Sans] leading-tight sm:leading-snug md:leading-snug tracking-tight p-1 sm:p-2 text-center"> {/* Centered text */}
+        STATUS
+      </th>
+      <th className="font-medium text-[#A3AED0] text-xs sm:text-sm md:text-base font-[DM Sans] leading-tight sm:leading-snug md:leading-snug tracking-tight p-1 sm:p-2 text-center"> {/* Centered text */}
+        DATE
+      </th>
+      <th className="font-medium text-[#A3AED0] text-xs sm:text-sm md:text-base font-[DM Sans] leading-tight sm:leading-snug md:leading-snug tracking-tight p-1 sm:p-2 text-center"> {/* Centered text */}
+        PROGRESS
+      </th>
+    </tr>
+  </thead>
 
-    <tbody>
-      {data.map((row, index) => (
-        <tr key={index} className="border-b-[1px] border-white"> {/* Hide row borders */}
-          <td className="p-1 sm:p-2 text-[#2B3674] font-[sans-serif] text-[14px] sm:text-[13px] md:text-[15.661px] font-bold leading-[18px] sm:leading-[21px] tracking-[-0.253px] text-center"> {/* Centered text */}
-            {row.name}
-          </td>
-          <td className="p-1 sm:p-2 text-[#2B3674] font-[sans-serif] text-[14px] sm:text-[13px] md:text-[15.661px] font-bold leading-[18px] sm:leading-[21px] tracking-[-0.253px] flex items-center justify-center"> {/* Centered text */}
-            {row.status === 'Assigned' ? (
-              <FaCheckCircle className="text-[#05CD99] mr-1 sm:mr-2" size={12} sm:size={19} md:size={22} />
-            ) : (
-              <FaExclamationCircle className="text-[#FFCE20] mr-1 sm:mr-2" size={12} sm:size={19} md:size={22} />
-            )}
-            {row.status}
-          </td>
-          <td className="p-1 sm:p-2 text-[#2B3674] font-[sans-serif] text-[14px] sm:text-[13px] md:text-[15.661px] font-bold leading-[18px] sm:leading-[21px] tracking-[-0.253px] text-center"> {/* Centered text */}
-            {row.date}
-          </td>
-          <td className="p-1 sm:p-2 text-center"> {/* Centered progress bar */}
-            <svg xmlns="http://www.w3.org/2000/svg" 
-                 className="w-24 sm:w-40 md:w-30 lg:w-30"   // Adjust the width based on the screen size
-                 height="10"  // Default height
-                 sm:height="10"  // Height for small screens
-                 md:height="10"  // Height for medium screens
-                 viewBox="0 0 99 9" fill="none">
-              {/* Background Color for Progress Bar */}
-              <rect x="0.966797" y="0.958984" width="80.6744" height="7.23514" rx="3.61757" fill="#E4F8F6" />
-              {/* Progress Color - Dynamically set width based on row.progress */}
-              <rect x="0.966797" y="0.958984" width={`${(row.progress / 100) * 97.6744}`} height="7.23514" rx="3.61757" fill="#01C2B5" />
-            </svg>
-          </td>
-        </tr>
-      ))}
-    </tbody>
-  </table>
+  <tbody>
+    {data.map((row, index) => (
+      <tr key={index} className="border-b-[1px] border-white"> {/* Hide row borders */}
+        <td className="p-1 sm:p-2 text-[#2B3674] font-sans text-xs sm:text-sm md:text-base font-bold leading-tight sm:leading-snug md:leading-snug tracking-tight text-center"> {/* Centered text */}
+          {row.name}
+        </td>
+        <td className="p-1 sm:p-2 text-[#2B3674] font-sans text-xs sm:text-sm md:text-base font-bold leading-tight sm:leading-snug md:leading-snug tracking-tight flex items-center justify-center"> {/* Centered text */}
+          {row.status === 'Assigned' ? (
+            <FaCheckCircle className="text-[#05CD99] mr-1 sm:mr-2" size={12} sm:size={19} md:size={22} />
+          ) : (
+            <FaExclamationCircle className="text-[#FFCE20] mr-1 sm:mr-2" size={12} sm:size={19} md:size={22} />
+          )}
+          {row.status}
+        </td>
+        <td className="p-1 sm:p-2 text-[#2B3674] font-sans text-xs sm:text-sm md:text-base font-bold leading-tight sm:leading-snug md:leading-snug tracking-tight text-center"> {/* Centered text */}
+          {row.date}
+        </td>
+        <td className="p-1 sm:p-2 text-center"> {/* Centered progress bar */}
+          <svg xmlns="http://www.w3.org/2000/svg"
+               className="w-24 sm:w-40 md:w-30 lg:w-30"   // Adjust the width based on the screen size
+               height="10"  // Default height
+               viewBox="0 0 99 9" fill="none">
+            {/* Background Color for Progress Bar */}
+            <rect x="0.966797" y="0.958984" width="80.6744" height="7.23514" rx="3.61757" fill="#E4F8F6" />
+            {/* Progress Color - Dynamically set width based on row.progress */}
+            <rect x="0.966797" y="0.958984" width={`${(row.progress / 100) * 97.6744}`} height="7.23514" rx="3.61757" fill="#01C2B5" />
+          </svg>
+        </td>
+      </tr>
+    ))}
+  </tbody>
+</table>
+
+
+
 </div>
 
 

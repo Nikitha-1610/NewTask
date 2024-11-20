@@ -115,16 +115,18 @@ const WeeklyProduction = () => {
   };
 
   return (
-    <div className="w-[90%] mx-auto p-2">
-      <div className="flex justify-between items-center mb-3">
-        <h2 className="sm:text-2xl text-[25px] font-[500] font-sans text-[#3A3541] align-self sm:relative left-[-58px] top-[-20px] mb-[80px] sm:mb-0">Weekly Production</h2>
+ <div className="w-11/12 mx-auto p-0">
+  <div className="flex justify-between items-center mb-3">
+    <h2 className="sm:text-2xl text-lg font-medium font-sans text-gray-800 self-auto sm:relative sm:left-0 sm:top-0 sm:mb-0 -left-14 -top-5 mb-20">
+      Weekly Production
+    </h2>
 
-        <div className="relative flex items-center gap-1n sm:right-[-50px] top-[-10px]">
+    <div className="relative flex items-center gap-1 sm:-right-12 -top-2">
       {/* Select Dropdown */}
       <select
         value={period}
         onChange={handleSelectorChange}
-        className="appearance-none sm:px-7  px-3 py-1 text-base border-[2px] border-gray-200 text-[12px]sm:text-[18px] rounded-2xl cursor-pointer font-sans font-[500]"
+        className="appearance-none sm:px-7 px-3 py-1 text-sm sm:text-base border border-gray-200 rounded-2xl cursor-pointer font-sans font-medium"
       >
         <option value="Weekly">Weekly</option>
         <option value="Monthly">Monthly</option>
@@ -137,12 +139,12 @@ const WeeklyProduction = () => {
         </svg>
       </div>
     </div>
-  
-      </div>
-      <div className="relative h-[300px] flex justify-center">
-        <Bar data={getChartData()} options={options} />
-      </div>
-    </div>
+  </div>
+  <div className="relative h-72 flex justify-center">
+    <Bar data={getChartData()} options={options} />
+  </div>
+</div>
+
   );
 };
 

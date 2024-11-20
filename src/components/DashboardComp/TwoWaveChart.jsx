@@ -4,38 +4,42 @@ import { MdBarChart } from 'react-icons/md';
 
 const TwoWaveChart = () => {
   return (
-    <div className=" w-full max-w-[1037px] mx-auto relative flex flex-col sm: items-center font-[sans-serif]">
-      {/* Calendar Icon on the Top Left */}
-      <div className="sm:absolute sm:top-1 sm:left-1 absolute top-0 left-0 flex items-center text-[#A3AED0] bg-[#F4F7FE] sm:p-1.5 rounded-md">
-        <FaCalendarAlt size={16} />
-        <span className="sm:ml-2 sm:text-[18px] text-[8px]md:text-base">This Month</span>
-      </div>
+    <div className="s:w-full  h-96 max-w-screen-lg mx-auto relative flex flex-col sm:items-center font-sans">
+    {/* Calendar Icon on the Top Left */}
+    <div className="sm:absolute absolute top-0 left-0 flex items-center text-gray-400 bg-blue-50 sm:p-1 p-0.5 rounded-md">
+      <FaCalendarAlt className="text-sm" />
+      <span className=" ml-0 text-xs sm:text-base md:text-lg">This Month</span>
+    </div>
 
       {/* Bar Graph Icon on the Top Right */}
-      <div className="absolute top-2 right-2 items-center justify-center text-[#01C2B5] text-2xl sm:text-3xl rounded-full bg-[#F4F7FE] w-12 h-12">
-        <MdBarChart size={35} />
-      </div>
-
+      <div className="absolute top-0 right-0 flex items-center justify-center text-teal-500 text-2xl sm:text-3xl rounded-full bg-blue-50 w-12 h-12">
+    <MdBarChart className="text-4xl" />
+  </div>
       {/* Heading */}
-      <div className=" sm:absolute sm:top-[70px] left-2 top-[70px] text-[#2B3674] font-bold text-2xl sm:text-3xl sm:align start">
-        3 Projects
-      </div>
+      <div className="sm:absolute sm:top-16 sm:left-0 sm:mt-2 mt-12 top-24 text-blue-900 font-bold text-2xl sm:text-3xl">
+    3 Projects
+  </div>
 
-      {/* On Track Word */}
-      <div className="sm:absolute sm:top-[95px] left-2 sm:mt-4 flex items-center text-darkgreen text-lg">
-        <svg xmlns="http://www.w3.org/2000/svg" width="23" height="23" viewBox="0 0 23 23" fill="none">
-          <path
-            d="M11.5166 2.41797C6.52434 2.41797 2.47266 6.46965 2.47266 11.4619C2.47266 16.4541 6.52434 20.5058 11.5166 20.5058C16.5088 20.5058 20.5605 16.4541 20.5605 11.4619C20.5605 6.46965 16.5088 2.41797 11.5166 2.41797ZM9.06568 15.3417L5.81891 12.095C5.4662 11.7423 5.4662 11.1725 5.81891 10.8198C6.17162 10.4671 6.74139 10.4671 7.0941 10.8198L9.7078 13.4244L15.93 7.20221C16.2827 6.84949 16.8525 6.84949 17.2052 7.20221C17.5579 7.55492 17.5579 8.12469 17.2052 8.4774L10.3409 15.3417C9.9972 15.6945 9.41839 15.6945 9.06568 15.3417Z"
-            fill="#05CD99"
-          />
-        </svg>
-        <span className="ml-2 text-lg left-1 text-[#01C2B5] font-bold">On Track</span>
-      </div>
+  {/* On Track Word */}
+  <div className="sm:absolute sm:top-24 sm:left-0 sm:mt-4 mt-0 flex items-center text-green-600 text-lg">
+    <svg
+      xmlns="http://www.w3.org/2000/svg"
+      className="w-6 h-6"
+      fill="none"
+      viewBox="0 0 23 23"
+    >
+      <path
+        d="M11.5166 2.41797C6.52434 2.41797 2.47266 6.46965 2.47266 11.4619C2.47266 16.4541 6.52434 20.5058 11.5166 20.5058C16.5088 20.5058 20.5605 16.4541 20.5605 11.4619C20.5605 6.46965 16.5088 2.41797 11.5166 2.41797ZM9.06568 15.3417L5.81891 12.095C5.4662 11.7423 5.4662 11.1725 5.81891 10.8198C6.17162 10.4671 6.74139 10.4671 7.0941 10.8198L9.7078 13.4244L15.93 7.20221C16.2827 6.84949 16.8525 6.84949 17.2052 7.20221C17.5579 7.55492 17.5579 8.12469 17.2052 8.4774L10.3409 15.3417C9.9972 15.6945 9.41839 15.6945 9.06568 15.3417Z"
+        fill="#05CD99"
+      />
+    </svg>
+    <span className="ml-2 text-lg font-bold text-teal-500">On Track</span>
+  </div>
 
       {/* Wave Section */}
-      <div className="relative mt-[50px] sm:mt-[120px] w-full flex flex-col items-center">
+      <div className="relative mt-20 sm:mt-36 w-full flex flex-col items-center">
   {/* Green SVG with white dot */}
-  <div className="relative w-full max-w-[300px] sm:max-w-[600px] mb-[-20px]">
+  <div className="relative w-full max-w-xs sm:max-w-2xl mb--3">
     {/* Green SVG */}
     <svg
       className="absolute top-1/2 left-1/2"
@@ -104,7 +108,7 @@ const TwoWaveChart = () => {
 
   {/* Blue SVG */}
   <svg
-    className="w-full max-w-[300px] sm:max-w-[600px]"
+     className="w-full max-w-xs sm:max-w-2xl"
     xmlns="http://www.w3.org/2000/svg"
     viewBox="0 0 727 115"
     fill="none"
@@ -120,7 +124,7 @@ const TwoWaveChart = () => {
 
 
       {/* Month Labels */}
-      <div className="w-full max-w-[300px] sm:max-w-[600px] mt-4 flex justify-between text-sm text-[#A3AED0]">
+      <div className="w-full max-w-xs sm:max-w-2xl mt-3 flex justify-between text-sm text-gray-300 sm:bottom-3">
         <span>SEP</span>
         <span>OCT</span>
         <span>NOV</span>

@@ -216,7 +216,7 @@ const AddTasks = () => {
 
       {/* Submit Button */}
       {!isSubmitted && (
-        <div className="submit-btn-container absolute bottom-[-240px] right-5 flex justify-center ">
+        <div className="submit-btn-container absolute sm:bottom-[-240px] bottom-0 right-5 flex justify-center ">
           <button
             onClick={handleSubmit}
             className="submit-btn   rounded-[var(--Spacing-8,8px)] bg-[#01C2B5] w-[85px] py-[10px] px-[12px] text-white shadow-lg flex items-center justify-center hover:bg-[#019F97] font-sans font-[600] sm:w-[150px] sm:h-[44px] sm:text-[20px] text-[12px]"
