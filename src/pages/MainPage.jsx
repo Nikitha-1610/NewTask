@@ -10,15 +10,16 @@ import Assignments from "../components/UserDashBoard/Assignments";
 import TaskSchedule from "../components/UserDashBoard/Taskschedule";
 import DeadLineProjects from "../components/UserDashBoard/DeadLineProjects";
 import TaskManager from "../components/UserDashBoard/TaskManager";
+import { useState } from "react";
 
 const MainPage = () => {
-  const tasks = [
+  const [tasks, setTasks] = useState([
     { name: "Create Wireframe", completed: true },
     { name: "Slack Logo Design", subtasks: 3, completed: false },
     { name: "Dashboard Design", completed: false },
     { name: "Create Wireframe", completed: true },
     { name: "App Icon Design", completed: false },
-  ];
+  ]);
 
   const projects = [
     { name: "Project Four", time: "00:30:00", progress: 25 },
@@ -26,6 +27,11 @@ const MainPage = () => {
     { name: "Project Four", time: "00:30:00", progress: 75 },
     { name: "Project Four", time: "00:30:00", progress: 90 },
   ];
+  const handleAddTask = (newTask) => {
+    console.log("clicking");
+
+    setTasks([...tasks, newTask]);
+  };
 
   return (
     <div className="min-h-screen p-6">
@@ -68,7 +74,7 @@ const MainPage = () => {
           {/* Task List and Timer */}
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-8">
             <div className="lg:col-span-1">
-              <TaskList tasks={tasks} />
+              <TaskList tasks={tasks} onAddTask={handleAddTask} />
             </div>
             <div className="lg:col-span-1">
               <TaskManager />

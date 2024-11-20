@@ -7,6 +7,12 @@ const Side = ({ isOpen, toggleSidebar, isCollapsed }) => {
 
   const isActive = (path) => location.pathname === path;
 
+  const handleLinkClick = () => {
+    if (isOpen) {
+      toggleSidebar(); // Close the sidebar when a link is clicked
+    }
+  };
+
   return (
     <>
       {/* Sidebar */}
@@ -17,21 +23,25 @@ const Side = ({ isOpen, toggleSidebar, isCollapsed }) => {
         } md:translate-x-0`}
         style={{ overflowY: "auto" }}
       >
-        <div className="flex justify-end p-2 md:hidden">
+        {/* <div className="flex justify-end p-2 md:hidden">
           <button
             onClick={toggleSidebar}
             className="p-2 px-3 text-white bg-gray-500 rounded-full"
           >
             <Icon icon="maki:cross" />
           </button>
-        </div>
+        </div> */}
         <Menu>
           <MenuItem
             className={
               isActive("/dashboard") ? "bg-teal-100 text-teal-600" : ""
             }
           >
-            <Link to="/dashboard" className="flex items-center gap-5">
+            <Link
+              to="/dashboard"
+              onClick={handleLinkClick}
+              className="flex items-center gap-5"
+            >
               <Icon
                 icon="material-symbols:dashboard-outline"
                 height={22}
@@ -44,25 +54,27 @@ const Side = ({ isOpen, toggleSidebar, isCollapsed }) => {
             icon={<Icon icon="la:teamspeak" height={22} width={22} />}
             className={isActive("/teams") ? "bg-teal-100 text-teal-600" : ""}
           >
-            <Link to="/teams">Teams</Link>
+            <Link to="/teams" onClick={handleLinkClick}>
+              Teams
+            </Link>
           </MenuItem>
           <MenuItem
             icon={<Icon icon="ic:twotone-update" height={22} width={22} />}
             className={isActive("/employee") ? "bg-teal-100 text-teal-600" : ""}
           >
-            <Link to="/employee">New Employee</Link>
+            <Link to="/employee" onClick={handleLinkClick}>
+              New Employee
+            </Link>
           </MenuItem>
 
-          {/* <SubMenu label="Charts" icon={<Icon icon="logos:highcharts" />}>
-            <MenuItem>Pie charts</MenuItem>
-            <MenuItem>Line charts</MenuItem>
-          </SubMenu> */}
-
+          {/* Add the same `onClick` to other links */}
           <MenuItem
             icon={<Icon icon="iconamoon:profile" height={22} width={22} />}
             className={isActive("/people") ? "bg-teal-100 text-teal-600" : ""}
           >
-            <Link to="/people">People</Link>
+            <Link to="/people" onClick={handleLinkClick}>
+              People
+            </Link>
           </MenuItem>
 
           <MenuItem
@@ -73,8 +85,15 @@ const Side = ({ isOpen, toggleSidebar, isCollapsed }) => {
               isActive("/usersemail") ? "bg-teal-100 text-teal-600" : ""
             }
           >
-            <Link to="/usersemail">Users Email</Link>
+            <Link to="/usersemail" onClick={handleLinkClick}>
+              Users Email
+            </Link>
           </MenuItem>
+
+          {/* <SubMenu label="Charts" icon={<Icon icon="logos:highcharts" />}>
+            <MenuItem>Pie charts</MenuItem>
+            <MenuItem>Line charts</MenuItem>
+          </SubMenu> */}
 
           <MenuItem
             icon={<Icon icon="bi:list-task" height={22} width={22} />}
@@ -82,14 +101,18 @@ const Side = ({ isOpen, toggleSidebar, isCollapsed }) => {
               isActive("/designteam") ? "bg-teal-100 text-teal-600" : ""
             }
           >
-            <Link to="/designteam">Task</Link>
+            <Link to="/designteam" onClick={handleLinkClick}>
+              Task
+            </Link>
           </MenuItem>
 
           <MenuItem
             icon={<Icon icon="mdi:plus-circle" height={22} width={22} />}
             className={isActive("/addtasks") ? "bg-teal-100 text-teal-600" : ""}
           >
-            <Link to="/addtasks">Add Tasks</Link>
+            <Link to="/addtasks" onClick={handleLinkClick}>
+              Add Tasks
+            </Link>
           </MenuItem>
 
           {/* <MenuItem
@@ -113,7 +136,9 @@ const Side = ({ isOpen, toggleSidebar, isCollapsed }) => {
             icon={<Icon icon="iconoir:position-align" height={22} width={22} />}
             className={isActive("/position") ? "bg-teal-100 text-teal-600" : ""}
           >
-            <Link to="/position">Position</Link>
+            <Link to="/position" onClick={handleLinkClick}>
+              Position
+            </Link>
           </MenuItem>
           <MenuItem
             icon={
@@ -125,13 +150,17 @@ const Side = ({ isOpen, toggleSidebar, isCollapsed }) => {
             }
             className={isActive("/chats") ? "bg-teal-100 text-teal-600" : ""}
           >
-            <Link to="/chats">Chats</Link>
+            <Link to="/chats" onClick={handleLinkClick}>
+              Chats
+            </Link>
           </MenuItem>
           <MenuItem
             icon={<Icon icon="duo-icons:dashboard" height={22} width={22} />}
             className={isActive("/mainpage") ? "bg-teal-100 text-teal-600" : ""}
           >
-            <Link to="/mainpage">MainPage</Link>
+            <Link to="/mainpage" onClick={handleLinkClick}>
+              MainPage
+            </Link>
           </MenuItem>
         </Menu>
       </ProSidebar>

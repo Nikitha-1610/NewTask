@@ -1,5 +1,26 @@
+import { useState } from "react";
 import { Icon } from "@iconify-icon/react";
-const TaskList = ({ tasks }) => {
+
+const TaskList = ({ tasks, onAddTask }) => {
+  const [isModalOpen, setIsModalOpen] = useState(false); // Tracks if the modal is open
+  const [newTask, setNewTask] = useState({ name: "", completed: false }); // Holds the new task data
+
+  const handleModalOpen = () => {
+    setNewTask({ name: "", completed: false }); // Reset the new task data
+    setIsModalOpen(true); // Open the modal
+  };
+
+  const handleModalClose = () => {
+    setIsModalOpen(false); // Close the modal
+  };
+
+  const handleSaveTask = () => {
+    if (newTask.name.trim()) {
+      onAddTask(newTask); // Call parent function to add a new task
+      setIsModalOpen(false); // Close the modal after saving
+    }
+  };
+
   return (
     <div className="bg-white shadow-md rounded-lg p-4 h-96">
       {/* Header */}
@@ -8,7 +29,10 @@ const TaskList = ({ tasks }) => {
           My Tasks{" "}
           <span className="text-gray-500 text-sm">({tasks.length})</span>
         </h2>
-        <button className="text-gray-500 hover:text-gray-700">
+        <button
+          className="text-gray-500 hover:text-gray-700"
+          onClick={handleModalOpen} // Open the modal when clicked
+        >
           <Icon icon="material-symbols-light:add" height={22} width={22} />
         </button>
       </div>
@@ -30,20 +54,14 @@ const TaskList = ({ tasks }) => {
                 {String(index + 1).padStart(2, "0")}
               </span>
               <span className="text-gray-800">{task.name}</span>
-              {task.subtasks && (
-                <span className="text-gray-400 text-sm flex items-center space-x-1">
-                  <Icon icon="basil:comment-outline" height={22} width={22} />
-                  <span>{task.subtasks}</span>
-                </span>
-              )}
             </div>
 
             {/* Completion Icon */}
             <button
               className={`p-1 rounded-full ${
                 task.completed
-                  ? " text-green-400"
-                  : " text-gray-500 hover:bg-gray-100"
+                  ? "text-green-400"
+                  : "text-gray-500 hover:bg-gray-100"
               }`}
             >
               {task.completed ? (
@@ -59,6 +77,62 @@ const TaskList = ({ tasks }) => {
           </li>
         ))}
       </ul>
+
+      {/* Modal */}
+      {isModalOpen && (
+        <div className="fixed inset-0 bg-black bg-opacity-25 flex items-center justify-center z-50">
+          <div className="bg-white rounded-lg shadow-lg p-6 w-96">
+            <h3 className="text-lg font-bold text-gray-800 mb-4">
+              Add New Task
+            </h3>
+            <div className="space-y-4">
+              {/* Task Name */}
+              <div>
+                <label className="block text-gray-700 font-medium mb-2">
+                  Task Name
+                </label>
+                <input
+                  type="text"
+                  value={newTask.name}
+                  onChange={(e) =>
+                    setNewTask({ ...newTask, name: e.target.value })
+                  }
+                  className="w-full border rounded-lg px-3 py-2 text-gray-800 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  placeholder="Enter task name"
+                />
+              </div>
+
+              {/* Completed */}
+              <div className="flex items-center space-x-3">
+                <label className="text-gray-700 font-medium">Completed:</label>
+                <input
+                  type="checkbox"
+                  checked={newTask.completed}
+                  onChange={(e) =>
+                    setNewTask({ ...newTask, completed: e.target.checked })
+                  }
+                />
+              </div>
+            </div>
+
+            {/* Action Buttons */}
+            <div className="mt-6 flex justify-end space-x-3">
+              <button
+                className="px-4 py-2 bg-gray-200 text-gray-800 rounded-lg hover:bg-gray-300"
+                onClick={handleModalClose}
+              >
+                Cancel
+              </button>
+              <button
+                className="px-4 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600"
+                onClick={handleSaveTask}
+              >
+                Save
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 };
