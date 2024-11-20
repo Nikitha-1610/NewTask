@@ -50,10 +50,10 @@ const TaskDetails = ({ task }) => {
         </div>
 
         {/* Assigned By */}
-        <div className="flex flex-wrap items-center gap-4">
+        <div className="flex flex-wrap items-center">
           <Icon icon="mdi:user-outline" height={22} width={22} />
           <span className="ml-2">Assigned by:</span>
-          <div className="flex items-center">
+          <div className="flex items-center gap-2 ml-3">
             <img
               src={task.assignedBy.image}
               alt={task.assignedBy.name}
@@ -80,11 +80,23 @@ const TaskDetails = ({ task }) => {
 
       {/* Attachments Section */}
       <div className="mt-4">
-        <div className="flex items-center gap-2">
-          <Icon icon="cuida:attachment-clip-outline" height={22} width={22} />
-          <h4 className="text-base font-semibold">
-            Attachments ({task.attachments.length})
-          </h4>
+        <div className="flex justify-between">
+          <div className=" flex gap-2">
+            <Icon icon="cuida:attachment-clip-outline" height={22} width={22} />
+            <h4 className="text-base font-semibold text-gray-400">
+              Attachments ({task.attachments.length})
+            </h4>
+          </div>
+          <div className=" flex gap-2 text-blue-400 cursor-pointer">
+            <h2>Download</h2>
+            <div>
+              <Icon
+                icon="material-symbols-light:download"
+                height={22}
+                width={22}
+              />
+            </div>
+          </div>
         </div>
         <div className="flex flex-wrap gap-4 mt-2">
           {task.attachments.map((file, index) => (
@@ -106,6 +118,12 @@ const TaskDetails = ({ task }) => {
                   <a href="#" className="ml-2 text-blue-600 underline">
                     Download
                   </a>
+                  <Icon
+                    icon="material-symbols-light:download"
+                    height={20}
+                    width={20}
+                    className=" text-blue-600"
+                  />
                 </div>
               </div>
               {file.status === "completed" ? (
@@ -141,7 +159,7 @@ const TaskDetails = ({ task }) => {
           {task.comments.map((comment, index) => (
             <div
               key={index}
-              className="flex items-center gap-2 p-2 text-sm text-gray-700 bg-gray-100 border border-gray-300 rounded-md"
+              className="flex items-center gap-2 p-2 text-sm text-gray-700 bg-blue-100 border border-gray-300 rounded-md"
             >
               <img
                 src={comment.userImage}
@@ -157,7 +175,7 @@ const TaskDetails = ({ task }) => {
       {/* Status Change Section */}
       <div
         className={`mt-4 flex flex-wrap gap-2 items-center ${
-          task.status === "In Test" ? "bg-red-300" : "bg-gray-300"
+          task.status === "In Test" ? "bg-red-300" : "bg-orange-100"
         } p-4 rounded-md`}
       >
         <span className="text-sm font-semibold">Change Status</span>

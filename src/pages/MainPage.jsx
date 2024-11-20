@@ -88,16 +88,6 @@ const MainPage = () => {
           </div>
 
           {/* Productivity and Progress */}
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mt-8">
-            <ProductivityChart />
-            <ProjectProgress />
-          </div>
-
-          {/* Messages and Assignments */}
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mt-8">
-            <Messages />
-            <Assignments />
-          </div>
         </div>
 
         {/* Right Section */}
@@ -105,6 +95,16 @@ const MainPage = () => {
           <TaskSchedule />
           <MostWorkedCard />
         </div>
+      </div>
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mt-8">
+        <ProductivityChart />
+        <ProjectProgress />
+      </div>
+
+      {/* Messages and Assignments */}
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mt-8">
+        <Messages />
+        <Assignments />
       </div>
     </div>
   );
