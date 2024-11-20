@@ -191,7 +191,7 @@ const ChatApp = () => {
     <div className="flex flex-col sm:flex-row min-h-screen ">
       {/* Contacts List Section */}
       {(!selectedContact || window.innerWidth >= 1024) && (
-       <div className="w-full lg:w-1/4 border-r border-gray-300  overflow-y-auto scrollbar-hide h-screen sticky top-0 bg-white z-20 ">
+       <div className="w-full lg:w-1/4 border-r border-gray-300 sticky top-0 bg-white z-20 ">
           {/* Header */}
           <div className="mb-2 sticky top-0 bg-white z-10">
             <div className="flex items-center justify-between mb-2">
@@ -221,7 +221,7 @@ const ChatApp = () => {
           </div>
 
           {/* Pinned Contacts */}
-          <h3 className="text-black-500 font-semibold mb-1 text-xl">Pinned</h3>
+          <h3 className="text-black-500 font-semibold mb-1 text-xl overflow-y-auto scrollbar-hide">Pinned</h3>
           <div className="space-y-1 overflow-y-auto">
             {filteredPinnedContacts.map((contact, index) => (
               <div
@@ -279,7 +279,7 @@ const ChatApp = () => {
       {/* Chat Content Section */}
 
       {selectedContact && (
-        <div className="flex-1 flex flex-col bg-gray-100 overflow-y-auto scrollbar-hide h-screen sticky top-0">
+        <div className="flex-1 flex flex-col bg-gray-100 sticky top-0 ">
           {/* Back Button with Arrow Icon */}
           <button
             onClick={handleBackToContacts}

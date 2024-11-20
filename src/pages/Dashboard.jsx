@@ -5,7 +5,7 @@ import TwoWaveChart from "../components/DashboardComp/TwoWaveChart";
 
 const Dashboard = () => {
   return (
-    <div className="flex flex-col items-center p-2 pt-0 font-montserrat">
+    <div className="flex flex-col items-center p-2 pt-0 font-montserrat ml-6">
       <div className="grid grid-cols-1 gap-4 w-full max-w-screen-xl">
         {/* First Container with 4 inner containers */}
      {/* First Container with 5 inner containers */}
