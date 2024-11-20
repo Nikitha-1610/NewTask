@@ -295,13 +295,17 @@ const ChatApp = () => {
       {selectedContact && (
         <div className="flex-1 flex flex-col bg-gray-100 overflow-y-auto scrollbar-hide h-screen sticky top-0">
 
-          {/* Back Button with Arrow Icon */}
-          <button
-            onClick={handleBackToContacts}
-            className="text-blue-500 flex items-center sm:absolute sm:left-4 sm:top-1/2 sm:-translate-y-1/2 lg:hidden"
-          >
-            <FaArrowLeft className="text-3xl" />
-          </button>
+         
+   <button
+  onClick={handleBackToContacts}
+  className="text-blue-500 flex items-center sm:absolute sm:left-4 sm:top-1/2 sm:-translate-y-1/2 md:relative md:top-0 md:left-0 md:mt-4 lg:absolute lg:left-4 lg:top-4 z-10"
+>
+  <FaArrowLeft className="text-1xl" />
+</button>
+
+
+       
+
 
 
 
