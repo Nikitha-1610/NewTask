@@ -1,4 +1,5 @@
-import React, { useState } from 'react';
+import { useState } from "react";
+
 const users = [
   {
     username: "Sandhiya Ravikumar",
@@ -8,7 +9,7 @@ const users = [
     joiningDate: "02-11-2024",
   },
   // Duplicate user data for demonstration purposes
-  ...Array(7).fill({
+  ...Array(20).fill({
     username: "Sandhiya Ravikumar",
     email: "sandyva@gmail.com",
     phone: "+91 6789054321",
@@ -18,6 +19,31 @@ const users = [
 ];
 
 const Position = () => {
+  const [currentPage, setCurrentPage] = useState(1);
+  const usersPerPage = 10;
+
+  // Calculate the index of the last user to be shown on the current page
+  const lastUserIndex = currentPage * usersPerPage;
+  const firstUserIndex = lastUserIndex - usersPerPage;
+
+  // Slice the users array to get the current page's users
+  const currentUsers = users.slice(firstUserIndex, lastUserIndex);
+
+  // Total pages
+  const totalPages = Math.ceil(users.length / usersPerPage);
+
+  // Handle page change
+  const goToPreviousPage = () => {
+    if (currentPage > 1) {
+      setCurrentPage(currentPage - 1);
+    }
+  };
+
+  const goToNextPage = () => {
+    if (currentPage < totalPages) {
+      setCurrentPage(currentPage + 1);
+    }
+  };
   const [show, setShow]= useState(false)
   return (
     <>
@@ -25,7 +51,7 @@ const Position = () => {
         <div className="mx-auto w-1/2 flex space-x-20 gap-2 my-5">
           <div className="flex flex-col items-start justify-center w-[200px] h-[100px] text-[20px]  text-[#333] text-center ">
             <span className="text-center text-[42.52px] font-medium leading-[49.83px] tracking-[0.09966778010129929px] ">
-              12
+              {users.length}
             </span>
             <span className="text-center text-[9.97px] font-medium leading-[11.68px] tracking-[0.1px] text-[#C4C4C4] underline decoration-skip-ink-none">
               People
@@ -43,7 +69,7 @@ const Position = () => {
           <div className="h-[130px] min-h-[1em] w-px self-stretch bg-gradient-to-tr from-transparent via-neutral-500 to-transparent opacity-25 dark:via-neutral-400"></div>
         </div>
       </div>
-      <div className="flex justify-center gap-5 mb-5 relative -left-[480px]">
+      <div className="flex justify-center gap-5 mb-5 relative -left-[500px]">
         <select className="p-2 text-base rounded border border-gray-300 bg-white cursor-pointer">
           <option value="all">All</option>
           <option value="option1">Option 1</option>
@@ -84,7 +110,7 @@ const Position = () => {
           </tr>
         </thead>
         <tbody>
-          {users.map((user, index) => (
+          {currentUsers.map((user, index) => (
             <tr key={index}>
               <td className="p-2 text-left border-b-2 border-gray-400/60">
                 <input type="checkbox" className="checkbox" />
@@ -117,11 +143,21 @@ const Position = () => {
         </tbody>
       </table>
       <div className="flex justify-center items-center mt-5 space-x-80">
-        <button className="px-5 py-2.5 bg-white text-black border-2 border-black cursor-pointer mx-2.5 rounded-md hover:bg-[#0056b3]">
+        <button
+          className="px-5 py-2.5 bg-white text-black border-2 border-black cursor-pointer mx-2.5 rounded-md hover:bg-[#0056b3]"
+          onClick={goToPreviousPage}
+          disabled={currentPage === 1}
+        >
           Previous
         </button>
-        <span className="text-base mx-2">Page 1 of 10</span>
-        <button className="px-5 py-2.5 bg-white text-black border-2 border-black cursor-pointer mx-2.5 rounded-md hover:bg-[#0056b3]">
+        <span className="text-base mx-2">
+          Page {currentPage} of {totalPages}
+        </span>
+        <button
+          className="px-5 py-2.5 bg-white text-black border-2 border-black cursor-pointer mx-2.5 rounded-md hover:bg-[#0056b3]"
+          onClick={goToNextPage}
+          disabled={currentPage === totalPages}
+        >
           Next
         </button>
       </div>
