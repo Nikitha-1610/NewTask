@@ -6,6 +6,7 @@ const Layout = ({ children }) => {
   const [isOpen, setIsOpen] = useState(false);
   const [isCollapsed, setIsCollapsed] = useState(false);
   const [isMobile, setIsMobile] = useState(false);
+  const [windowWidth, setWindowWidth] = useState(window.innerWidth);
 
   const toggleSidebar = () => {
     setIsOpen(!isOpen);
@@ -13,7 +14,7 @@ const Layout = ({ children }) => {
 
   const handleResize = () => {
     const width = window.innerWidth;
-
+    setWindowWidth(width); // Update window width
     if (width < 768) {
       setIsMobile(true);
       setIsCollapsed(false);
@@ -28,12 +29,22 @@ const Layout = ({ children }) => {
   };
 
   useEffect(() => {
-    handleResize();
+    handleResize(); // Initial calculation
     window.addEventListener("resize", handleResize);
     return () => {
       window.removeEventListener("resize", handleResize);
     };
   }, []);
+
+  const getMarginLeft = () => {
+    if (isMobile) {
+      return "-200px"; // No margin for mobile
+    }
+    if (isCollapsed) {
+      return "70px"; // Collapsed sidebar width
+    }
+    return isOpen ? "250px" : "0px"; // Full sidebar width or no margin
+  };
 
   return (
     <div className="flex h-screen">
@@ -49,8 +60,7 @@ const Layout = ({ children }) => {
         className="flex-1 flex flex-col"
         style={{
           paddingTop: "4rem",
-          marginLeft:
-            !isMobile && !isCollapsed ? "px" : isCollapsed ? "0px" : "-250px", // Adjust only for visible sidebar
+          marginLeft: getMarginLeft(),
           transition: "margin-left 0.3s ease",
         }}
       >
