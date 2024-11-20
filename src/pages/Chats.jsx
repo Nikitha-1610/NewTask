@@ -191,15 +191,15 @@ const ChatApp = () => {
 
   return (
 
-    <div className="flex flex-col sm:flex-row min-h-screen ">
+    <div className="flex sm:flex-row flex-col min-h-screen">
       {/* Contacts List Section */}
       {(!selectedContact || window.innerWidth >= 1024) && (
-        <div className="w-full lg:w-1/4 border-r border-gray-300  overflow-y-auto scrollbar-hide h-screen sticky top-0 bg-white z-20 ">
+        <div className="top-0 z-20 sticky border-gray-300 bg-white border-r w-full lg:w-1/4 h-screen overflow-y-auto scrollbar-hide">
           {/* Header */}
-          <div className="mb-2 sticky top-0 bg-white z-10 ">
-            <div className="flex items-center justify-between mb-2 mr-4">
+          <div className="top-0 z-10 sticky bg-white mb-2">
+            <div className="flex justify-between items-center mr-4 mb-2">
 
-              <h3 className="text-lg sm:text-2xl text-[28px] font-semibold text-gray-800">
+              <h3 className="font-semibold text-[28px] text-gray-800 text-lg sm:text-2xl">
                 Chats
               </h3>
 
@@ -210,17 +210,17 @@ const ChatApp = () => {
             </div>
 
             {/* Search Bar */}
-            <div className="relative ">
+            <div className="relative">
               <input
                 type="text"
                 value={searchQuery}
                 onChange={handleSearchChange}
                 placeholder="Search contacts"
-                className="w-full p-2 pr-10 pl-4 border rounded-md sm:text-sm text-[18px] focus:outline-none focus:border-blue-500"
+                className="p-2 pr-10 pl-4 border focus:border-blue-500 rounded-md w-full text-[18px] focus:outline-none sm:text-sm"
               />
               <FontAwesomeIcon
                 icon={faSearch}
-                className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-500"
+                className="top-1/2 right-3 absolute text-gray-500 transform -translate-y-1/2"
               />
             </div>
           </div>
@@ -229,25 +229,25 @@ const ChatApp = () => {
 
 
           {/* Pinned Contacts */}
-          <h3 className="text-black-500 font-semibold mb-1 text-xl">Pinned</h3>
+          <h3 className="mb-1 font-semibold text-black-500 text-xl">Pinned</h3>
           <div className="space-y-1 overflow-y-auto">
             {filteredPinnedContacts.map((contact, index) => (
               <div
                 key={index}
-                className="flex items-start p-2 bg-gray-100 rounded-md hover:bg-gray-200"
+                className="flex items-start bg-gray-100 hover:bg-gray-200 p-2 rounded-md"
                 onClick={() => handleContactClick(contact)}
               >
                 <img
                   src={contact.image}
                   alt="User"
-                  className="w-8 h-8 rounded-full mr-2"
+                  className="mr-2 rounded-full w-8 h-8"
                 />
                 <div className="flex-1">
 
-                  <p className="font-bold text-lg sm:text-xs text-[14px] leading-tight">
+                  <p className="font-bold text-[14px] text-lg sm:text-xs leading-tight">
                     {contact.name}
                   </p>
-                  <p className="text-base sm:text-xs text-[14px] text-gray-600 truncate">
+                  <p className="text-[14px] text-base text-gray-600 sm:text-xs truncate">
                     {contact.lastMessage}
                   </p>
                 </div>
@@ -259,27 +259,27 @@ const ChatApp = () => {
 
 
           {/* Recent Contacts */}
-          <h3 className="text-black-500 font-semibold mb-1 sm:text-xl text-[22px]">
+          <h3 className="mb-1 font-semibold text-[22px] text-black-500 sm:text-xl">
             Recent
           </h3>
           <div className="space-y-1 overflow-y-auto">
             {filteredContacts.map((contact, index) => (
               <div
                 key={index}
-                className="flex items-start p-2 bg-gray-100 rounded-md hover:bg-gray-200"
+                className="flex items-start bg-gray-100 hover:bg-gray-200 p-2 rounded-md"
                 onClick={() => handleContactClick(contact)}
               >
                 <img
                   src={contact.image}
                   alt="User"
-                  className="w-8 h-8 rounded-full mr-2"
+                  className="mr-2 rounded-full w-8 h-8"
                 />
                 <div className="flex-1">
 
-                  <p className="font-bold text-lg sm:text-xs text-[14px] leading-tight">
+                  <p className="font-bold text-[14px] text-lg sm:text-xs leading-tight">
                     {contact.name}
                   </p>
-                  <p className="text-base sm:text-xs text-[14px] text-gray-600 truncate">
+                  <p className="text-[14px] text-base text-gray-600 sm:text-xs truncate">
                     {contact.lastMessage}
                   </p>
 
@@ -293,12 +293,12 @@ const ChatApp = () => {
       {/* Chat Content Section */}
 
       {selectedContact && (
-        <div className="flex-1 flex flex-col bg-gray-100 overflow-y-auto scrollbar-hide h-screen sticky top-0">
+        <div className="top-0 sticky flex flex-col flex-1 bg-gray-100 min-h-screen">
 
           {/* Back Button with Arrow Icon */}
           <button
             onClick={handleBackToContacts}
-            className="text-blue-500 flex items-center sm:absolute sm:left-4 sm:top-1/2 sm:-translate-y-1/2 lg:hidden"
+            className="sm:top-1/2 sm:left-4 sm:absolute flex items-center lg:hidden text-blue-500 sm:-translate-y-1/2"
           >
             <FaArrowLeft className="text-3xl" />
           </button>
@@ -306,7 +306,7 @@ const ChatApp = () => {
 
 
           {/* Chat Body */}
-          <div className="flex-1 p-1 mt-0 ">
+          <div className="flex-1 mt-0 p-1">
             {selectedContact.name === "Design Group" ? (
               <GroupChat contact={selectedContact} />
             ) : (
@@ -315,9 +315,9 @@ const ChatApp = () => {
           </div>
 
           {/* Bottom Bar with Message Input and Icons */}
-          <div className="bottom-0 mt-4 flex mx-3 w-[97%] h-10 p-2 justify-between items-center bg-white border border-[#9B9797] rounded-full shadow-lg sticky">
+          <div className="bottom-0 sticky flex justify-between items-center border-[#9B9797] bg-white shadow-lg sm:mx-3 mt-4 sm:px-2 border rounded-full w-[99%] h-12">
             {/* Icons */}
-            <div className="flex gap-3 relative">
+            <div className="relative flex gap-3 px-2 sm:px-0">
 
               {/* Emoji Icon */}
 
@@ -357,7 +357,7 @@ const ChatApp = () => {
 
               {/* Emoji Picker */}
               {showEmojiPicker && (
-                <div className="absolute top-10 left-0">
+                <div className="top-10 left-0 absolute">
                   <Picker onEmojiClick={handleEmojiClick} />
                 </div>
               )}
@@ -392,12 +392,12 @@ const ChatApp = () => {
               value={message}
               onChange={(e) => setMessage(e.target.value)}
               placeholder="Type a message..."
-              className="flex-grow text-lg sm:text-lg md:text-clip text-gray-700 border-none outline-none px-2 font-[700]"
+              className="flex-grow px-2 border-none font-[700] text-gray-700 text-lg sm:text-lg md:text-clip outline-none"
             />
 
 
             {/* Send Button */}
-            <div class="flex items-center justify-center bg-[#01C2B5] rounded-full w-10 h-10 right-0">
+            <div class="right-0 flex justify-center items-center bg-[#01C2B5] rounded-full w-10 h-10">
               <svg
                 xmlns="http://www.w3.org/2000/svg"
                 width="14"

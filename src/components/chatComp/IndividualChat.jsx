@@ -53,58 +53,58 @@ const IndividualChat = ({ contact }) => {
   return (
     <>
       {/* Header */}
-      <div className="flex items-center justify-between sm:w-full w-[97%] h-[60px] bg-white shadow-md px-5 sticky top-0 z-10 mb-2 mt-0">
-        {/*Left Side */}
-        <div className="flex items-center sm:gap-3 gap-2">
-          {contact?.image ? (
-            <img
-              src={contact.image}
-              alt="Profile"
-              className="sm:w-[38px] sm:h-[38px] w-[32px] h-[32px] rounded-full object-cover"
-            />
-          ) : (
-            <FaUserCircle className="w-[38px] h-[38px] text-pink-700" />
-          )}
-          <span className="text-black font-semibold text-[14px] sm:text-[15px]">
-            {contact?.name}
-          </span>
-          <div className="flex items-center gap-4 ml-4">
-            {menuOptions.map((option, index) => (
-              <span
-                key={index}
-                onClick={() => setSelectedOption(option)}
-                className={`cursor-pointer sm:text-[17px] text-[17px] font-[500] ${
-                  selectedOption === option
-                    ? "border-b-2 border-[#01C2B5]"
-                    : "text-gray-500"
-                }`}
-              >
-                {option}
-              </span>
-            ))}
-          </div>
-        </div>
-        <div className="flex items-center gap-4">
-          <FaPhone
-            className="text-gray-700 sm:w-5 sm:h-5 w-3 h-3 cursor-pointer"
-            onClick={() => handleIconClick("VoiceCall")}
-          />
-          <FaVideo
-            className="text-gray-700 sm:w-5 sm:h-5 w-3 h-3 cursor-pointer"
-            onClick={() => handleIconClick("VideoCall")}
-          />
-          <FaEllipsisV className="text-gray-700 sm:w-5 sm:h-5 w-3 h-3 cursor-pointer" />
-        </div>
-      </div>
+      <div className="top-0 z-10 sticky flex justify-between items-center bg-white shadow-md mt-0 mb-2 px-1 sm:px-5 w-full h-14">
+  {/* Left Side */}
+  <div className="flex items-center gap-1 sm:gap-3">
+    {contact?.image ? (
+      <img
+        src={contact.image}
+        alt="Profile"
+        className="rounded-full w-8 sm:w-9 h-8 sm:h-9 object-cover"
+      />
+    ) : (
+      <FaUserCircle className="w-9 h-9 text-pink-700" />
+    )}
+    <span className="font-semibold text-black text-sm sm:text-base">
+      {contact?.name}
+    </span>
+    <div className="flex items-center gap-4 ml-4">
+      {menuOptions.map((option, index) => (
+        <span
+          key={index}
+          onClick={() => setSelectedOption(option)}
+          className={`cursor-pointer sm:text-lg text-lg font-medium ${
+            selectedOption === option
+              ? "border-b-2 border-teal-500"
+              : "text-gray-500"
+          }`}
+        >
+          {option}
+        </span>
+      ))}
+    </div>
+  </div>
+  <div className="flex items-center gap-2 sm:gap-4">
+    <FaPhone
+      className="w-5 h-5 text-gray-700 cursor-pointer"
+      onClick={() => handleIconClick("VoiceCall")}
+    />
+    <FaVideo
+      className="w-5 h-5 text-gray-700 cursor-pointer"
+      onClick={() => handleIconClick("VideoCall")}
+    />
+    <FaEllipsisV className="w-5 h-5 text-gray-700 cursor-pointer" />
+  </div>
+</div>
 
       {/* Overlay for Active Feature */}
       {/* Overlay for Active Feature */}
       {activeFeature && (
-        <div className="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center z-50">
-          <div className="relative bg-white w-full max-w-[800px] h-[90%] top-9 p-6 rounded-lg shadow-lg">
+        <div className="z-50 fixed inset-0 flex justify-center items-center bg-black bg-opacity-50">
+          <div className="relative top-9 bg-white shadow-lg p-6 rounded-lg w-full max-w-[800px] h-[90%]">
             {/* Close Button */}
             <button
-              className="absolute top-3 right-3 text-red-600 font-bold"
+              className="top-3 right-3 absolute font-bold text-red-600"
               onClick={closeFeature} // Call to close the overlay
             >
               Close
@@ -121,94 +121,88 @@ const IndividualChat = ({ contact }) => {
         </div>
       )}
 
-      {/* Content Section */}
-      <div className="p-4 overflow-y-auto min-h-screen">
-        {selectedOption === "Chat" && (
+<div className="p-4 overflow-y-auto">
+  {selectedOption === "Chat" && (
+    <div>
+      {userMessages.map((userMessage, index) => (
+        <div key={index} className="flex-1 overflow-y-auto">
+          {/* Contact's Message */}
+          <div className="flex items-start gap-3">
+            {contact?.image ? (
+              <img
+                src={contact.image}
+                alt="Profile"
+                className="rounded-full w-8 sm:w-8 h-8 sm:h-8 object-cover"
+              />
+            ) : (
+              <FaUserCircle className="w-8 h-8 text-gray-700" />
+            )}
+            <div className="flex flex-col mt-2 mb-2">
+              <div className="bg-white shadow-md p-2 rounded-lg w-auto max-w-md">
+                <div className="flex justify-between mb-1">
+                  <span className="font-semibold text-base text-black">
+                    {contact?.name}
+                  </span>
+                  <span className="text-gray-500 text-sm">10:30 AM</span>
+                </div>
+                <p className="text-base text-black">
+                  {index === 0
+                    ? contact.lastMessage
+                    : contactMessages[
+                        Math.floor(Math.random() * contactMessages.length)
+                      ]}
+                </p>
+              </div>
+            </div>
+          </div>
+
+          {/* User's Message */}
+          <div className="flex justify-end mt-2 mb-2">
+            <div className="bg-teal-100 shadow-md p-2 rounded-lg w-auto max-w-md">
+              <div className="flex justify-between mb-1">
+                <span className="font-semibold text-base text-black">You</span>
+                <span className="text-gray-500 text-sm">10:45 AM</span>
+              </div>
+              <p className="text-base text-black">{userMessage}</p>
+            </div>
+          </div>
+        </div>
+      ))}
+    </div>
+  )}
+
+  {selectedOption === "Files" && (
+    <div className="gap-4 grid grid-cols-1 sm:grid-cols-2">
+      {dummyFiles.map((file, index) => (
+        <div
+          key={index}
+          className="flex items-center gap-4 bg-white shadow-md p-4 rounded-lg"
+        >
+          <FaFilePdf className="w-6 h-6 text-red-500" />
           <div>
-            {userMessages.map((userMessage, index) => (
-              <div key={index} className="mb-3 flex-1 overflow-y-auto">
-                {/* Contact's Message */}
-                <div className="flex items-start gap-3">
-                  {contact?.image ? (
-                    <img
-                      src={contact.image}
-                      alt="Profile"
-                      className="sm:w-[35px] sm:h-[35px] w-[25px] h-[25px] rounded-full object-cover"
-                    />
-                  ) : (
-                    <FaUserCircle className="w-[35px] h-[35px] text-gray-700" />
-                  )}
-                  <div className="flex flex-col gap-1">
-                    <div className="p-2 w-auto max-w-md bg-white shadow rounded-lg">
-                      <div className="flex justify-between mb-1">
-                        <span className="text-black font-semibold text-[14px]">
-                          {contact?.name}
-                        </span>
-                        <span className="text-gray-500 text-[12px]">
-                          10:30 AM
-                        </span>
-                      </div>
-                      <p className="text-black text-[14px]">
-                        {index === 0
-                          ? contact.lastMessage
-                          : contactMessages[
-                              Math.floor(Math.random() * contactMessages.length)
-                            ]}
-                      </p>
-                    </div>
-                  </div>
-                </div>
-
-                {/* User's Message */}
-                <div className="flex justify-end mt-2">
-                  <div className="p-2 w-auto max-w-md bg-[#E5FDF7] shadow rounded-lg">
-                    <div className="flex justify-between mb-1">
-                      <span className="text-black font-semibold text-[14px]">
-                        You
-                      </span>
-                      <span className="text-gray-500 text-[12px]">
-                        10:45 AM
-                      </span>
-                    </div>
-                    <p className="text-black text-[14px]">{userMessage}</p>
-                  </div>
-                </div>
-              </div>
-            ))}
+            <p className="font-semibold text-sm">{file.name}</p>
+            <p className="text-gray-500 text-xs">{file.size}</p>
           </div>
-        )}
+        </div>
+      ))}
+    </div>
+  )}
 
-        {selectedOption === "Files" && (
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-            {dummyFiles.map((file, index) => (
-              <div
-                key={index}
-                className="flex items-center gap-4 bg-white shadow p-4 rounded-lg"
-              >
-                <FaFilePdf className="text-red-500 w-6 h-6" />
-                <div>
-                  <p className="font-semibold">{file.name}</p>
-                  <p className="text-sm text-gray-500">{file.size}</p>
-                </div>
-              </div>
-            ))}
-          </div>
-        )}
+  {selectedOption === "Media" && (
+    <div className="gap-4 grid grid-cols-3">
+      {dummyMedia.map((media, index) => (
+        <div key={index} className="p-2">
+          <img
+            src={media.src}
+            alt={media.alt}
+            className="shadow-md rounded-lg w-full h-full object-cover"
+          />
+        </div>
+      ))}
+    </div>
+  )}
+</div>
 
-        {selectedOption === "Media" && (
-          <div className="grid grid-cols-3 gap-4">
-            {dummyMedia.map((media, index) => (
-              <div key={index} className="p-2">
-                <img
-                  src={media.src}
-                  alt={media.alt}
-                  className="w-full h-full object-cover rounded-lg shadow"
-                />
-              </div>
-            ))}
-          </div>
-        )}
-      </div>
     </>
   );
 };
