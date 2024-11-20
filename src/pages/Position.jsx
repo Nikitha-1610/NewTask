@@ -1,5 +1,5 @@
 import { useState } from "react";
-
+import { IoClose } from "react-icons/io5";
 const users = [
   {
     username: "Sandhiya Ravikumar",
@@ -9,7 +9,7 @@ const users = [
     joiningDate: "02-11-2024",
   },
   // Duplicate user data for demonstration purposes
-  ...Array(20).fill({
+  ...Array(25).fill({
     username: "Sandhiya Ravikumar",
     email: "sandyva@gmail.com",
     phone: "+91 6789054321",
@@ -69,8 +69,8 @@ const Position = () => {
           <div className="h-[130px] min-h-[1em] w-px self-stretch bg-gradient-to-tr from-transparent via-neutral-500 to-transparent opacity-25 dark:via-neutral-400"></div>
         </div>
       </div>
-      <div className="flex justify-center gap-5 mb-5 relative -left-[500px]">
-        <select className="p-2 text-base rounded border border-gray-300 bg-white cursor-pointer">
+      <div className="flex justify-center gap-5 mb-5 relative right-[470px]">
+        <select className="p-2 text-base rounded border border-gray-300 bg-white cursor-pointer relative ">
           <option value="all">All</option>
           <option value="option1">Option 1</option>
           <option value="option2">Option 2</option>
@@ -83,7 +83,7 @@ const Position = () => {
         </select>
       </div>
 
-      <table className="w-full border-collapse mt-5 outline-none">
+      <table className="w-full h-[600px] border-spacing-0 mt-5 outline-none">
         <thead className="bg-[rgba(128,128,128,0.266)]">
           <tr>
             <th className="p-2 text-left border-b-2 border-gray-400/60">
@@ -162,16 +162,20 @@ const Position = () => {
         </button>
       </div>
       {show && <div
-        className="w-[190px] h-[90px] absolute top-80
+        className="w-[230px] h-[110px] absolute top-80
             left-50 right-2 bg-[#FFFFFF] border-[0.2px]  rounded p-2 border-black shadow-[2px_2px_4px_0px_#7F767626]border-black shadow-[2px_2px_4px_0px_#7F767626]"
       >
         {/* <div className="flex justify-center gap-5 mb-5 relative -left-[480px]"> */}
+        <div className="flex justify-between">
         <select className="w-[170px] h-[30px]  text-base rounded-2xl border border-gray-300 bg-white cursor-pointer ">
+        
           <option value="all">Design Team Lead</option>
           <option value="option1">UX UI Designer</option>
           <option value="option2">Backend Developer</option>
         </select>
-        <button onClick={() => setShow(!show)} className="w-[80px] h-[25px] relative left-8 top-4 bg-[#01C2B5] text-white border-2 border-white cursor-pointer mx-2.5 rounded-3xl hover:bg-[#0056b3]">
+        <button onClick={() => setShow(!show)} className="w-[23px] h-[20px] bg-red-500 rounded-lg"><div className="relative left-1"><IoClose /></div></button>
+        </div>
+        <button onClick={() => setShow(!show)} className="w-[80px] h-[25px] relative left-14 top-6 bg-[#01C2B5] text-white border-2 border-white cursor-pointer mx-2.5 rounded-3xl hover:bg-[#0056b3]">
           Submit
         </button>
       </div>}
