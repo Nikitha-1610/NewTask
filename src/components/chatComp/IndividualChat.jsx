@@ -53,8 +53,8 @@ const IndividualChat = ({ contact }) => {
   return (
     <>
       {/* Header */}
-      <div className="flex items-center justify-between w-full h-[60px] bg-white shadow-md px-5 sticky top-0 z-10 mb-2 mt-0">
-        {/* Left Side */}
+      <div className="flex items-center justify-between sm:w-full w-[97%] h-[60px] bg-white shadow-md px-5 sticky top-0 z-10 mb-2 mt-0">
+        {/*Left Side */}
         <div className="flex items-center sm:gap-3 gap-2">
           {contact?.image ? (
             <img
@@ -101,7 +101,7 @@ const IndividualChat = ({ contact }) => {
    {/* Overlay for Active Feature */}
    {activeFeature && (
   <div className="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center z-50">
-    <div className="relative bg-white w-full max-w-[800px] h-[90%] p-6 rounded-lg shadow-lg">
+    <div className="relative bg-white w-full max-w-[800px] h-[90%] top-9 p-6 rounded-lg shadow-lg">
       {/* Close Button */}
       <button
         className="absolute top-3 right-3 text-red-600 font-bold"
@@ -121,11 +121,11 @@ const IndividualChat = ({ contact }) => {
 
 
       {/* Content Section */}
-      <div className="p-4">
+      <div className="p-4 overflow-y-auto">
         {selectedOption === "Chat" && (
           <div>
             {userMessages.map((userMessage, index) => (
-              <div key={index} className="mb-6 flex-1 overflow-y-auto">
+              <div key={index} className="mb-3 flex-1 overflow-y-auto">
                 {/* Contact's Message */}
                 <div className="flex items-start gap-3">
                   {contact?.image ? (

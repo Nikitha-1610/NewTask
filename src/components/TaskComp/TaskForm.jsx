@@ -84,7 +84,7 @@ const TaskForm = () => {
   };
 
   return (
-    <div className="w-full max-w-[480px] sm:max-w-[880px] mx-auto p-4 mt-4 font-sans bg-white shadow-lg rounded-md">
+    <div className="w-full max-w-[480px] sm:max-w-[880px] mx-auto p-4 mt-1 font-sans rounded-md">
   {/* Project Name & Due Date */}
       {/* Project Name & Due Date */}
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-6">
@@ -277,7 +277,7 @@ const TaskForm = () => {
   <label className="block text-gray-700 font-medium mb-1 font-sans">Reference</label>
   <div className="flex items-center gap-4">
     {/* First container for selected files */}
-    <div className="flex flex-col w-[235px]  h-[68px] p-2 rounded bg-white shadow-md gap-2">
+    <div className="flex flex-col w-[238px]  h-[70px] p-2 rounded  shadow-md gap-2">
       {files.map((file, index) => (
         <div key={index} className="flex gap-2 items-start bg-gray-50 p-2 rounded">
           {/* File Icon */}
@@ -297,6 +297,12 @@ const TaskForm = () => {
               <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="currentColor" className="text-blue-600">
                 <path d="M5 20h14v-2H5v2zm7-18l-7 7h4v6h6v-6h4l-7-7z" />
               </svg>
+              <svg xmlns="http://www.w3.org/2000/svg" width="23" height="23" viewBox="0 0 23 23" fill="none">
+          <path
+            d="M11.5166 2.41797C6.52434 2.41797 2.47266 6.46965 2.47266 11.4619C2.47266 16.4541 6.52434 20.5058 11.5166 20.5058C16.5088 20.5058 20.5605 16.4541 20.5605 11.4619C20.5605 6.46965 16.5088 2.41797 11.5166 2.41797ZM9.06568 15.3417L5.81891 12.095C5.4662 11.7423 5.4662 11.1725 5.81891 10.8198C6.17162 10.4671 6.74139 10.4671 7.0941 10.8198L9.7078 13.4244L15.93 7.20221C16.2827 6.84949 16.8525 6.84949 17.2052 7.20221C17.5579 7.55492 17.5579 8.12469 17.2052 8.4774L10.3409 15.3417C9.9972 15.6945 9.41839 15.6945 9.06568 15.3417Z"
+            fill="#05CD99"
+          />
+        </svg>
             </div>
           </div>
         </div>

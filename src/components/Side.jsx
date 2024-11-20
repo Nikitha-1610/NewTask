@@ -12,7 +12,7 @@ const Side = ({ isOpen, toggleSidebar, isCollapsed }) => {
       {/* Sidebar */}
       <ProSidebar
         collapsed={isCollapsed}
-        className={`fixed top-0 left-0 h-screen z-50 transition-transform duration-300 bg-white shadow-lg ${
+        className={`sidebar fixed top-0 left-0 h-screen z-50 transition-transform duration-300 bg-white shadow-lg ${
           isOpen ? "translate-x-0" : "-translate-x-full"
         } md:translate-x-0`}
         style={{ overflowY: "auto" }}
