@@ -98,34 +98,31 @@ const IndividualChat = ({ contact }) => {
       </div>
 
       {/* Overlay for Active Feature */}
-   {/* Overlay for Active Feature */}
-   {activeFeature && (
-  <div className="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center z-50">
-    <div className="relative bg-white w-full max-w-[800px] h-[90%] top-9 p-6 rounded-lg shadow-lg">
-      {/* Close Button */}
-      <button
-        className="absolute top-3 right-3 text-red-600 font-bold"
-        onClick={closeFeature} // Call to close the overlay
-      >
-        Close
-      </button>
+      {/* Overlay for Active Feature */}
+      {activeFeature && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center z-50">
+          <div className="relative bg-white w-full max-w-[800px] h-[90%] top-9 p-6 rounded-lg shadow-lg">
+            {/* Close Button */}
+            <button
+              className="absolute top-3 right-3 text-red-600 font-bold"
+              onClick={closeFeature} // Call to close the overlay
+            >
+              Close
+            </button>
 
-      {/* Render Active Feature */}
-      {activeFeature === "VideoCall" && <VideoCall closeFeature={closeFeature} />}
-      {activeFeature === "VoiceCall" && <VoiceCall closeFeature={closeFeature} />}
-    </div>
-  </div>
-)}
-
-
-
+            {/* Render Active Feature */}
+            {activeFeature === "VideoCall" && (
+              <VideoCall closeFeature={closeFeature} />
+            )}
+            {activeFeature === "VoiceCall" && (
+              <VoiceCall closeFeature={closeFeature} />
+            )}
+          </div>
+        </div>
+      )}
 
       {/* Content Section */}
-<<<<<<< HEAD
       <div className="p-4 overflow-y-auto min-h-screen">
-=======
-      <div className="p-4 overflow-y-auto">
->>>>>>> 32c04385b25e6881496612b664b51a0e5edf25cd
         {selectedOption === "Chat" && (
           <div>
             {userMessages.map((userMessage, index) => (
@@ -147,7 +144,9 @@ const IndividualChat = ({ contact }) => {
                         <span className="text-black font-semibold text-[14px]">
                           {contact?.name}
                         </span>
-                        <span className="text-gray-500 text-[12px]">10:30 AM</span>
+                        <span className="text-gray-500 text-[12px]">
+                          10:30 AM
+                        </span>
                       </div>
                       <p className="text-black text-[14px]">
                         {index === 0
@@ -167,7 +166,9 @@ const IndividualChat = ({ contact }) => {
                       <span className="text-black font-semibold text-[14px]">
                         You
                       </span>
-                      <span className="text-gray-500 text-[12px]">10:45 AM</span>
+                      <span className="text-gray-500 text-[12px]">
+                        10:45 AM
+                      </span>
                     </div>
                     <p className="text-black text-[14px]">{userMessage}</p>
                   </div>

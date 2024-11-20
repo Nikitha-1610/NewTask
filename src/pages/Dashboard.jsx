@@ -1,24 +1,18 @@
-import { MdBarChart, MdArrowForward } from "react-icons/md"; 
+import { MdBarChart, MdArrowForward } from "react-icons/md";
 import WeeklyProduction from "../components/DashboardComp/WeeklyProduction";
 import Production from "../components/DashboardComp/Production";
 import TwoWaveChart from "../components/DashboardComp/TwoWaveChart";
 
 const Dashboard = () => {
   return (
-<<<<<<< HEAD
     <div className="flex flex-col items-center p-2 pt-0 font-montserrat ml-6">
-=======
-    <div className="flex flex-col items-center p-2 pt-0 font-montserrat">
->>>>>>> 32c04385b25e6881496612b664b51a0e5edf25cd
       <div className="grid grid-cols-1 gap-4 w-full max-w-screen-xl">
         {/* First Container with 4 inner containers */}
-     {/* First Container with 5 inner containers */}
-     <div className="flex justify-center mb-1 lg:hidden right-0">
-    <MdArrowForward size={32} color="#01C2B5" />
-  </div>
-     <div className="p-1 rounded-lg overflow-x-auto scrollbar-hide">
-  
-
+        {/* First Container with 5 inner containers */}
+        <div className="flex justify-center mb-1 lg:hidden right-0">
+          <MdArrowForward size={32} color="#01C2B5" />
+        </div>
+        <div className="p-1 rounded-lg overflow-x-auto scrollbar-hide">
           <div className="flex space-x-2">
             {[
               {
@@ -35,10 +29,10 @@ const Dashboard = () => {
               },
               {
                 title: "AI/ ML",
-                
+
                 color: "#FFA500",
                 count: 35,
-                
+
                 bgColor: "#FFF5E6",
               },
               {

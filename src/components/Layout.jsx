@@ -38,10 +38,10 @@ const Layout = ({ children }) => {
 
   const getMarginLeft = () => {
     if (isMobile) {
-      return "-200px"; // No margin for mobile
+      return "-250px"; // No margin for mobile
     }
     if (isCollapsed) {
-      return "70px"; // Collapsed sidebar width
+      return "0px"; // Collapsed sidebar width
     }
     return isOpen ? "250px" : "0px"; // Full sidebar width or no margin
   };
