@@ -227,31 +227,8 @@ const ChatApp = () => {
             </div>
           </div>
 
-          {/* Pinned Contacts */}
-          {/* <h3 className="text-black-500 font-semibold mb-1 text-xl">Pinned</h3>
-          <div className="space-y-1 overflow-y-auto">
-            {filteredPinnedContacts.map((contact, index) => (
-              <div
-                key={index}
-                className="flex items-start p-2 bg-gray-100 rounded-md hover:bg-gray-200"
-                onClick={() => handleContactClick(contact)}
-              >
-                <img
-                  src={contact.image}
-                  alt="User"
-                  className="w-8 h-8 rounded-full mr-2"
-                />
-                <div className="flex-1">
-                  <p className="font-bold sm:text-xs text-[14px] leading-tight">
-                    {contact.name}
-                  </p>
-                  <p className="sm:text-xs text-[14px] text-gray-600 truncate">
-                    {contact.lastMessage}
-                  </p>
-                </div>
-              </div>
-            ))}
-          </div> */}
+
+
 
           {/* Pinned Contacts */}
           <h3 className="text-black-500 font-semibold mb-1 text-xl">Pinned</h3>
@@ -414,7 +391,7 @@ const ChatApp = () => {
               value={message}
               onChange={(e) => setMessage(e.target.value)}
               placeholder="Type a message..."
-              className="flex-grow text-base sm:text-sm text-gray-700 border-none outline-none px-2 font-[700]"
+              className="flex-grow text-lg sm:text-lg md:text-clip text-gray-700 border-none outline-none px-2 font-[700]"
             />
 
 
