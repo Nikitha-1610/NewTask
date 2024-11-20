@@ -48,7 +48,7 @@ const Layout = ({ children }) => {
       <div
         className="flex-1 flex flex-col"
         style={{
-          paddingTop: "4rem", // Space for fixed Navbar
+          paddingTop: "4rem",
           marginLeft:
             !isMobile && !isCollapsed ? "px" : isCollapsed ? "0px" : "-250px", // Adjust only for visible sidebar
           transition: "margin-left 0.3s ease",
