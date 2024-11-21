@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import { Icon } from "@iconify/react";
+import { IoClose } from "react-icons/io5";
 import axiosInstance from "../utilities/axios/axiosInstance";
 
 const People = () => {
@@ -12,7 +13,7 @@ const People = () => {
   //   joiningDate: "02-11-2024",
   //   actionType: "Approve", // Default action
   // });
-  const [allUsers, setAllusers] = useState([]);
+  const [allUsers, setAllUsers] = useState([]);
   const [currentPage, setCurrentPage] = useState(1);
   const [usersPerPage] = useState(7);
   const [selectedDepartment, setSelectedDepartment] = useState("All");
@@ -29,14 +30,14 @@ const People = () => {
         //   Authorization: `Bearer ${token}`, // Include token in the header
         // },
       });
-      console.log("here is users data", response.data.message);
-      setAllusers(response?.data?.message);
+      console.log("here is all users data", response.data.message);
+      setAllUsers(response?.data?.message);
     } catch (error) {
       console.error("Error syncing with server:", error);
     }
   };
   useEffect(() => {
-    console.log(allUsers);
+    console.log("all users", allUsers);
 
     getAllusers();
   }, []);
@@ -50,9 +51,9 @@ const People = () => {
 
   const indexOfLastUser = currentPage * usersPerPage;
   const indexOfFirstUser = indexOfLastUser - usersPerPage;
-  const currentUsers = filteredUsers?.slice(indexOfFirstUser, indexOfLastUser);
+  const currentUsers = filteredUsers.slice(indexOfFirstUser, indexOfLastUser);
 
-  const totalPages = Math.ceil(filteredUsers?.length / usersPerPage);
+  const totalPages = Math.ceil(filteredUsers.length / usersPerPage);
 
   const openConfirmModal = (userIndex) => {
     setSelectedUserIndex(userIndex);
@@ -86,24 +87,33 @@ const People = () => {
   };
 
   return (
-    <div className="p-4 md:p-8">
-      {/* Summary Section */}
-      <div className="flex justify-center gap-6 items-center mb-4">
-        <div className="text-center">
-          <h2 className="text-2xl font-bold">{filteredUsers?.length}</h2>
-          <p className="text-gray-500">People</p>
+    <div className="p-5">
+      {/* Stats Section */}
+      <div className="mx-auto w-1/2 flex space-x-20 gap-2 my-5">
+        <div className="flex flex-col relative left-10 items-start justify-center w-[200px] h-[100px] text-[20px]  text-[#333] text-center ">
+          <span className="text-center text-[42.52px] font-medium leading-[49.83px] tracking-[0.09966778010129929px] ">
+            {allUsers.length}
+          </span>
+          <span className="text-center text-[9.97px] font-medium leading-[11.68px] tracking-[0.1px] text-[#C4C4C4] underline decoration-skip-ink-none">
+            People
+          </span>
         </div>
-        <div className="bg-slate-300 h-24 w-0.5"></div>
-        <div className="text-center">
-          <h2 className="text-2xl font-bold">{departments.length - 1}</h2>
-          <p className="text-gray-500">Departments</p>
+        <div className="h-[130px] min-h-[1em] w-px self-stretch bg-gradient-to-tr from-transparent via-neutral-500 to-transparent opacity-25 dark:via-neutral-400"></div>
+        <div className="flex flex-col relative left-14 items-start justify-center w-[200px] h-[100px] text-[20px]  text-[#333] text-center  ">
+          <span className="text-center text-[42.52px] font-medium leading-[49.83px] tracking-[0.09966778010129929px] ">
+            5
+          </span>
+          <span className="text-center text-[9.97px] font-medium leading-[11.68px] tracking-[0.1px] text-[#C4C4C4] underline decoration-skip-ink-none">
+            Department
+          </span>
         </div>
+        <div className="h-[130px] min-h-[1em] w-px self-stretch bg-gradient-to-tr from-transparent via-neutral-500 to-transparent opacity-25 dark:via-neutral-400"></div>
       </div>
 
       {/* Filter Section */}
       <div className="flex flex-wrap gap-2 items-center mb-4">
         <select
-          className="border border-gray-300 rounded-lg p-2 text-gray-700"
+          className="border border-gray-300 bg-gray-200 rounded-lg p-2 text-gray-700"
           onChange={(e) => setSelectedDepartment(e.target.value)}
         >
           {departments.map((dept) => (
@@ -111,6 +121,12 @@ const People = () => {
               {dept}
             </option>
           ))}
+        </select>
+        <select className="p-2 border rounded bg-gray-200">
+          <option value="all-departments">All Departments</option>
+          <option value="hr">HR</option>
+          <option value="finance">Finance</option>
+          <option value="marketing">Marketing</option>
         </select>
       </div>
 
@@ -144,21 +160,21 @@ const People = () => {
               </tr>
             </thead>
             <tbody>
-              {currentUsers?.map((user, index) => (
+              {currentUsers.map((user, index) => (
                 <tr key={index} className="border-b hover:bg-gray-50">
                   <td className="px-4 py-2">
                     <input type="checkbox" />
                   </td>
-                  <td className="px-4 py-2">{user.name}</td>
+                  <td className="px-4 py-2">{user.username}</td>
                   <td className="px-4 py-2 hidden md:table-cell">
-                    {user.email}
+                    {user.mailId}
                   </td>
                   <td className="px-4 py-2 hidden md:table-cell">
-                    {user.mobile}
+                    {user.phoneNumber}
                   </td>
                   <td className="px-4 py-2">{user.position}</td>
                   <td className="px-4 py-2 hidden md:table-cell">
-                    {user.createdOn}
+                    {user.joiningDate}
                   </td>
                   <td className="px-4 py-2 flex gap-2">
                     {/* Display action button based on the selected action */}
@@ -248,8 +264,18 @@ const People = () => {
       {modalVisible && (
         <div className="fixed inset-0 bg-gray-800 bg-opacity-50 flex items-center justify-center z-50">
           <div className="bg-white p-6 rounded-lg shadow-lg w-80">
-            <h3 className="text-lg font-bold mb-4">Select Action</h3>
-            <div className="flex flex-col space-y-4">
+            <div className="flex justify-between">
+              <h3 className="text-lg font-bold mb-4">Select Action</h3>
+              <div className="">
+                <button
+                  className="ml-2 p-1 h-6 bg-red-500 text-white rounded"
+                  onClick={() => closeModal(false)}
+                >
+                  <IoClose />
+                </button>
+              </div>
+            </div>
+            <div className="flex justify-between space-x-4">
               <button
                 className="bg-red-500 text-white px-4 py-2 rounded-lg hover:bg-red-600"
                 onClick={() => {
@@ -260,7 +286,7 @@ const People = () => {
                 Reject
               </button>
               <button
-                className="bg-yellow-500 text-white px-4 py-2 rounded-lg hover:bg-yellow-600"
+                className="bg-gray-500 text-white px-4 py-2 rounded-lg hover:bg-gray-600"
                 onClick={() => {
                   setActionType("Hold");
                   confirmAction();
