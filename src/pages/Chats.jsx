@@ -194,7 +194,7 @@ const ChatApp = () => {
     <div className="flex sm:flex-row flex-col min-h-screen">
       {/* Contacts List Section */}
       {(!selectedContact || window.innerWidth >= 1024) && (
-        <div className="top-0 z-20 sticky border-gray-300 bg-white border-r w-full lg:w-1/4 h-screen overflow-y-auto scrollbar-hide">
+        <div className="top-0 z-20 sticky border-gray-300 bg-white border-r w-full lg:w-1/4 h-screen overflow-y-auto scrollbar-hide ">
           {/* Header */}
           <div className="top-0 z-10 sticky bg-white mb-2">
             <div className="flex justify-between items-center mr-4 mb-2">
@@ -259,7 +259,7 @@ const ChatApp = () => {
 
 
           {/* Recent Contacts */}
-          <h3 className="mb-1 font-semibold text-[22px] text-black-500 sm:text-xl">
+          <h3 className="mb-1 font-semibold text-[22px] text-black-500 sm:text-xl ">
             Recent
           </h3>
           <div className="space-y-1 overflow-y-auto">
@@ -306,7 +306,7 @@ const ChatApp = () => {
 
 
           {/* Chat Body */}
-          <div className="flex-1 mt-0 p-1">
+          <div className="flex-1 mt-0 p-0 overflow-y-auto">
             {selectedContact.name === "Design Group" ? (
               <GroupChat contact={selectedContact} handleBackToContacts={handleBackToContacts} />
             ) : (
@@ -315,7 +315,7 @@ const ChatApp = () => {
           </div>
 
           {/* Bottom Bar with Message Input and Icons */}
-          <div className="bottom-0 sticky flex justify-between items-center border-[#9B9797] bg-white shadow-lg sm:mx-3 mt-4 sm:px-2 border rounded-full w-[99%] h-12">
+          <div className="sm:bottom-0 bottom-0 fixed flex justify-between items-center border-[#9B9797] bg-white shadow-lg sm:mx-2 mt-4 sm:px-2 border rounded-full w-[92%] sm:w-[58%] h-12">
             {/* Icons */}
             <div className="relative flex gap-3 px-2 sm:px-0">
 
