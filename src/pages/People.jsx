@@ -143,7 +143,7 @@ const People = () => {
             <thead className="bg-gray-100 sticky top-0">
               <tr>
                 <th className="px-4 py-2 text-left">
-                  <input type="checkbox" />
+                  {/* <input type="checkbox" /> */}
                 </th>
                 <th className="px-4 py-2 text-left">Username</th>
                 <th className="px-4 py-2 text-left hidden md:table-cell">
@@ -165,16 +165,16 @@ const People = () => {
                   <td className="px-4 py-2">
                     <input type="checkbox" />
                   </td>
-                  <td className="px-4 py-2">{user.username}</td>
+                  <td className="px-4 py-2">{user.name}</td>
                   <td className="px-4 py-2 hidden md:table-cell">
-                    {user.mailId}
+                    {user.email}
                   </td>
                   <td className="px-4 py-2 hidden md:table-cell">
-                    {user.phoneNumber}
+                    {user.mobile}
                   </td>
                   <td className="px-4 py-2">{user.position}</td>
                   <td className="px-4 py-2 hidden md:table-cell">
-                    {user.joiningDate}
+                    {user.appliedDate}
                   </td>
                   <td className="px-4 py-2 flex gap-2">
                     {/* Display action button based on the selected action */}
@@ -193,7 +193,8 @@ const People = () => {
                             : "bg-yellow-500"
                         } text-white px-4 py-2 rounded-lg hover:opacity-90`}
                       >
-                        {user.actionType}
+                        hold
+                        {/* {user.actionType} */}
                       </button>
                     )}
                     <Icon
