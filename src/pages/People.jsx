@@ -122,7 +122,7 @@ const People = () => {
                   </td>
                   <td className="px-4 py-2 flex">
                     <button
-                      className="bg-green-500 text-white px-4 py-2 rounded-lg hover:bg-green-600"
+                      className="bg-green-400 text-white px-4 py-2 rounded-lg hover:bg-green-600"
                       onClick={() => openModal(user)}
                     >
                       Approve
