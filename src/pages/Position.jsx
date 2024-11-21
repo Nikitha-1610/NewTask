@@ -39,7 +39,7 @@ const Position = () => {
     <div className="p-5">
       {/* Stats Section */}
       <div className="mx-auto w-1/2 flex space-x-20 gap-2 my-5">
-          <div className="flex flex-col items-start justify-center w-[200px] h-[100px] text-[20px]  text-[#333] text-center ">
+          <div className="flex flex-col relative left-10 items-start justify-center w-[200px] h-[100px] text-[20px]  text-[#333] text-center ">
             <span className="text-center text-[42.52px] font-medium leading-[49.83px] tracking-[0.09966778010129929px] ">
               {users.length}
             </span>
@@ -48,7 +48,7 @@ const Position = () => {
             </span>
           </div>
           <div className="h-[130px] min-h-[1em] w-px self-stretch bg-gradient-to-tr from-transparent via-neutral-500 to-transparent opacity-25 dark:via-neutral-400"></div>
-          <div className="flex flex-col items-start justify-center w-[200px] h-[100px] text-[20px]  text-[#333] text-center  ">
+          <div className="flex flex-col relative left-14 items-start justify-center w-[200px] h-[100px] text-[20px]  text-[#333] text-center  ">
             <span className="text-center text-[42.52px] font-medium leading-[49.83px] tracking-[0.09966778010129929px] ">
               5
             </span>
@@ -62,7 +62,7 @@ const Position = () => {
 
       {/* Filters */}
       <div className="flex flex-col sm:flex-row justify-center items-center gap-4 mb-6">
-        <select className="p-2 border rounded bg-gray-200 ">
+        <select className="p-2 border rounded bg-gray-200">
           <option value="all">All</option>
           <option value="option1">Option 1</option>
           <option value="option2">Option 2</option>
@@ -76,7 +76,15 @@ const Position = () => {
       </div>
 
       {/* Responsive Table */}
-      <div className="overflow-x-auto">
+      <div
+        className="relative w-full border border-gray-300 rounded-lg overflow-hidden"
+        style={{ height: "400px" }} // Set fixed height for the container
+      >
+        {/* Scrollable Table Content */}
+        <div
+          className="overflow-y-auto h-full"
+          style={{ maxHeight: "calc(100% - 50px)" }} // Adjust space for pagination
+        >
         <table className="w-full border-collapse border border-white-300">
           <thead className="bg-gray-100">
             <tr>
@@ -113,13 +121,11 @@ const Position = () => {
           </tbody>
         </table>
       </div>
-
-      {/* Pagination */}
-      <div className="flex justify-center items-center mt-5 gap-4">
+      <div className="absolute bottom-0 w-full bg-white border-t border-gray-300 py-2 flex justify-between items-center px-4">
         <button
-          className="px-4 py-2 border rounded bg-white hover:bg-gray-100"
           onClick={goToPreviousPage}
           disabled={currentPage === 1}
+          className="px-4 py-2 border rounded disabled:opacity-50"
         >
           Previous
         </button>
@@ -127,13 +133,18 @@ const Position = () => {
           Page {currentPage} of {totalPages}
         </span>
         <button
-          className="px-4 py-2 border rounded bg-white hover:bg-gray-100"
           onClick={goToNextPage}
           disabled={currentPage === totalPages}
+          className="px-4 py-2 border rounded disabled:opacity-50"
         >
           Next
         </button>
       </div>
+      </div>
+    
+
+
+      
 
       {/* Modal */}
       {show && (

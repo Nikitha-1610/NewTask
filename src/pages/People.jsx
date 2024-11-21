@@ -1,5 +1,6 @@
 import { useState } from "react"; 
 import { IoClose } from "react-icons/io5";
+import { Icon } from "@iconify/react";
 
 const initialUsers = [
   {
@@ -9,6 +10,7 @@ const initialUsers = [
     position: "UX UI Designer",
     joiningDate: "02-11-2024",
     isApproved: false,
+    isRejected: false,
   },
   ...Array(25).fill({
     username: "Sandhiya Ravikumar",
@@ -17,6 +19,7 @@ const initialUsers = [
     position: "UX UI Designer",
     joiningDate: "02-11-2024",
     isApproved: false,
+    isRejected: false,
   }),
 ];
 
@@ -26,11 +29,40 @@ const People = () => {
   const usersPerPage = 10;
   const [show, setShow] = useState(false);
   const [selectedUser, setSelectedUser] = useState(null);
+  const [modalVisible, setModalVisible] = useState(false);
 
   const lastUserIndex = currentPage * usersPerPage;
   const firstUserIndex = lastUserIndex - usersPerPage;
   const currentUsers = users.slice(firstUserIndex, lastUserIndex);
   const totalPages = Math.ceil(users.length / usersPerPage);
+
+  const openModal = (user) => {
+    setSelectedUser(user);
+    setModalVisible(true);
+  };
+  const closeModal = () => {
+    setModalVisible(false);
+    setSelectedUser(null);
+    setShow(false);
+  };
+  // const confirmAction = (index) => {
+  //       closeModal();
+   
+  //   setShow(false);
+  //   const updatedUsers = users.map((user, idx) =>
+  //     idx === index ? { ...user, isApproved: true } : user
+  //   );
+  //   setUsers(updatedUsers);
+  // };
+  const confirmAction = (index) => {
+    const updatedUsers = users.map((user, idx) =>
+      idx === index ? { ...user, isApproved: true } : user
+    );
+    setShow(false);
+    setUsers(updatedUsers);
+    approveUser(selectedUser);
+                  
+  };
 
   const goToPreviousPage = () => {
     if (currentPage > 1) setCurrentPage(currentPage - 1);
@@ -46,6 +78,12 @@ const People = () => {
     );
     setUsers(updatedUsers);
   };
+  // const rejectUser = (index) => {
+  //   const updatedUsers = users.map((user, idx) =>
+  //     idx === index ? { ...user, isRejected: true } : user
+  //   );
+  //   setUsers(updatedUsers);
+  // };
 
   const approvedDenied = (index) => {
     const updatedUsers = users.map((user, idx) =>
@@ -53,12 +91,18 @@ const People = () => {
     );
     setUsers(updatedUsers);
   };
-
+  
+  // const approvedHold = (index) => {
+  //   const updatedUsers = users.map((user, idx) =>
+  //     idx === index ? { ...user, isRejected: false } : user
+  //   );
+  //   setUsers(updatedUsers);
+  // };
   return (
     <div className="p-5">
       {/* Statistics Section */}
       <div className="mx-auto w-1/2 flex space-x-20 gap-2 my-5">
-          <div className="flex flex-col items-start justify-center w-[200px] h-[100px] text-[20px]  text-[#333] text-center ">
+          <div className="flex flex-col relative left-10 items-start justify-center w-[200px] h-[100px] text-[20px]  text-[#333] text-center ">
             <span className="text-center text-[42.52px] font-medium leading-[49.83px] tracking-[0.09966778010129929px] ">
               {users.length}
             </span>
@@ -67,7 +111,7 @@ const People = () => {
             </span>
           </div>
           <div className="h-[130px] min-h-[1em] w-px self-stretch bg-gradient-to-tr from-transparent via-neutral-500 to-transparent opacity-25 dark:via-neutral-400"></div>
-          <div className="flex flex-col items-start justify-center w-[200px] h-[100px] text-[20px]  text-[#333] text-center  ">
+          <div className="flex flex-col relative left-14 items-start justify-center w-[200px] h-[100px] text-[20px]  text-[#333] text-center  ">
             <span className="text-center text-[42.52px] font-medium leading-[49.83px] tracking-[0.09966778010129929px] ">
               5
             </span>
@@ -95,7 +139,15 @@ const People = () => {
       </div>
 
       {/* Table */}
-      <div className="overflow-x-auto">
+      <div
+        className="relative w-full border border-gray-300 rounded-lg overflow-hidden"
+        style={{ height: "400px" }} // Set fixed height for the container
+      >
+        {/* Scrollable Table Content */}
+        <div
+          className="overflow-y-auto h-full"
+          style={{ maxHeight: "calc(100% - 50px)" }} // Adjust space for pagination
+        >
         <table className="min-w-full border-none">
           <thead className="bg-white">
             <tr className="bg-gray-200">
@@ -119,7 +171,7 @@ const People = () => {
                 <td className="p-2 ">{user.phone}</td>
                 <td className="p-2 ">{user.position}</td>
                 <td className="p-2 ">{user.joiningDate}</td>
-                <td className="p-2  text-center">
+                <td className="p-2  text-center flex">
                   <button
                     onClick={() => {
                       setSelectedUser(index + firstUserIndex);
@@ -131,15 +183,18 @@ const People = () => {
                   >
                     {user.isApproved ? "Approved" : "Approve"}
                   </button>
+                  <Icon onClick={() => openModal(user)}
+                      icon="pepicons-pencil:dots-y"
+                      height={22}
+                      width={22}
+                    />
                 </td>
-              </tr>
+              </tr> 
             ))}
           </tbody>
         </table>
       </div>
-
-      {/* Pagination */}
-      <div className="flex justify-center items-center gap-6 mt-6">
+      <div className="absolute bottom-0 w-full bg-white border-t border-gray-300 py-2 flex justify-between items-center px-4">
         <button
           onClick={goToPreviousPage}
           disabled={currentPage === 1}
@@ -158,15 +213,15 @@ const People = () => {
           Next
         </button>
       </div>
+      </div>
 
+     
       {/* Modal */}
       {show && (
         <div className="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center">
           <div className="bg-white p-6 rounded shadow-md max-w-sm w-full">
             <div className="flex justify-end">
-              <button onClick={() => setShow(false)} className="text-red-500">
-                <IoClose size={24} />
-              </button>
+             
             </div>
             <p className="mb-4 text-center">Are you sure to Approve?</p>
             <div className="flex justify-around">
@@ -177,7 +232,7 @@ const People = () => {
                 }}
                 className="px-4 py-2 bg-green-500 text-white rounded"
               >
-                Approve
+                Confirm
               </button>
               <button
                 onClick={() => {
@@ -185,6 +240,38 @@ const People = () => {
                   setShow(false);
                 }}
                 className="px-4 py-2 bg-red-500 text-white rounded"
+              >
+                Cancel
+              </button>
+            </div>
+          </div>
+        </div>
+        
+      )}
+        {modalVisible && (
+        <div className="fixed inset-0 bg-gray-800 bg-opacity-50 flex items-center justify-center z-50">
+          <div className="bg-white p-6 rounded-lg shadow-lg w-80">
+          <div className="flex justify-around">
+              
+            
+            <h3 className="text-lg font-bold mb-4 relative left-8">Reject or Hold</h3>
+            <div className="relative left-8 bottom-3">
+            <button onClick={() => setShow(false)} className="text-red-500" >
+                <IoClose size={24} />
+              </button>
+              </div>
+            </div>
+            <div className="flex justify-around space-x-4 mt-4">
+              <button
+                className="bg-gray-500 text-white px-4 py-2 rounded-lg hover:bg-gray-600"
+                onClick={closeModal}
+              >
+                Hold
+              </button>
+              <button
+                className="bg-red-300 text-white px-4 py-2 rounded-lg hover:bg-red-500"
+                onClick={confirmAction}
+                
               >
                 Reject
               </button>
