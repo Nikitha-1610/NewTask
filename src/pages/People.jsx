@@ -1,17 +1,18 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Icon } from "@iconify/react";
+import axiosInstance from "../utilities/axios/axiosInstance";
 
 const People = () => {
-  const allUsers = Array(24).fill({
-    username: "Sandhiya Ravikumar",
-    mailId: "sandyva@gmail.com",
-    phoneNumber: "+91 6789054321",
-    position: "UX UI Designer",
-    department: "Design",
-    joiningDate: "02-11-2024",
-    actionType: "Approve", // Default action
-  });
-
+  // const allUsers = Array(24).fill({
+  //   username: "Sandhiya Ravikumar",
+  //   mailId: "sandyva@gmail.com",
+  //   phoneNumber: "+91 6789054321",
+  //   position: "UX UI Designer",
+  //   department: "Design",
+  //   joiningDate: "02-11-2024",
+  //   actionType: "Approve", // Default action
+  // });
+  const [allUsers, setAllusers] = useState([]);
   const [currentPage, setCurrentPage] = useState(1);
   const [usersPerPage] = useState(7);
   const [selectedDepartment, setSelectedDepartment] = useState("All");
@@ -19,6 +20,26 @@ const People = () => {
   const [actionType, setActionType] = useState(""); // To store the selected action (Approve, Reject, Hold)
   const [selectedUserIndex, setSelectedUserIndex] = useState(null);
   const [confirmModalVisible, setConfirmModalVisible] = useState(false);
+
+  const getAllusers = async () => {
+    try {
+      const response = await axiosInstance.get("user/getUsers", {
+        // headers: {
+        //   "Content-Type": "application/json",
+        //   Authorization: `Bearer ${token}`, // Include token in the header
+        // },
+      });
+      console.log("here is users data", response.data.message);
+      setAllusers(response?.data?.message);
+    } catch (error) {
+      console.error("Error syncing with server:", error);
+    }
+  };
+  useEffect(() => {
+    console.log(allUsers);
+
+    getAllusers();
+  }, []);
 
   const departments = ["All", "Design", "Development", "Marketing"];
 
@@ -29,9 +50,9 @@ const People = () => {
 
   const indexOfLastUser = currentPage * usersPerPage;
   const indexOfFirstUser = indexOfLastUser - usersPerPage;
-  const currentUsers = filteredUsers.slice(indexOfFirstUser, indexOfLastUser);
+  const currentUsers = filteredUsers?.slice(indexOfFirstUser, indexOfLastUser);
 
-  const totalPages = Math.ceil(filteredUsers.length / usersPerPage);
+  const totalPages = Math.ceil(filteredUsers?.length / usersPerPage);
 
   const openConfirmModal = (userIndex) => {
     setSelectedUserIndex(userIndex);
@@ -69,7 +90,7 @@ const People = () => {
       {/* Summary Section */}
       <div className="flex justify-center gap-6 items-center mb-4">
         <div className="text-center">
-          <h2 className="text-2xl font-bold">{filteredUsers.length}</h2>
+          <h2 className="text-2xl font-bold">{filteredUsers?.length}</h2>
           <p className="text-gray-500">People</p>
         </div>
         <div className="bg-slate-300 h-24 w-0.5"></div>
@@ -123,21 +144,21 @@ const People = () => {
               </tr>
             </thead>
             <tbody>
-              {currentUsers.map((user, index) => (
+              {currentUsers?.map((user, index) => (
                 <tr key={index} className="border-b hover:bg-gray-50">
                   <td className="px-4 py-2">
                     <input type="checkbox" />
                   </td>
-                  <td className="px-4 py-2">{user.username}</td>
+                  <td className="px-4 py-2">{user.name}</td>
                   <td className="px-4 py-2 hidden md:table-cell">
-                    {user.mailId}
+                    {user.email}
                   </td>
                   <td className="px-4 py-2 hidden md:table-cell">
-                    {user.phoneNumber}
+                    {user.mobile}
                   </td>
                   <td className="px-4 py-2">{user.position}</td>
                   <td className="px-4 py-2 hidden md:table-cell">
-                    {user.joiningDate}
+                    {user.createdOn}
                   </td>
                   <td className="px-4 py-2 flex gap-2">
                     {/* Display action button based on the selected action */}
