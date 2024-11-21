@@ -112,13 +112,13 @@ const Dashboard = () => {
         </div>
 
         {/* Remaining containers as placeholders */}
-        <div className=" sm:p-5 p-3 rounded-xl border-4 border-gray-100 sm:w-full w-96 mt-0">
+        <div className=" sm:p-5 p-3 rounded-xl border-4 border-gray-100 sm:w-full w-auto mt-0">
           <WeeklyProduction />
         </div>
-        <div className="sm:py-1 p-0 rounded-xl  sm:w-full w-96 ">
+        <div className="sm:py-1 p-0 rounded-xl  sm:w-full w-auto ">
           <Production />
         </div>
-        <div className="sm:p-4 p-3 rounded-xl border-4 border-gray-100 sm:w-full w-96">
+        <div className="sm:p-4 p-3 rounded-xl border-4 border-gray-100 sm:w-full w-auto">
           <TwoWaveChart />
         </div>
       </div>

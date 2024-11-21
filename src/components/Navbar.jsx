@@ -5,7 +5,7 @@ import MenuIcon from "@mui/icons-material/Menu";
 
 const Navbar = ({ toggleSidebar }) => {
   return (
-    <header className="navbar w-full h-16 flex items-center justify-between p-4 bg-white shadow-lg fixed top-0 left-0 z-40">
+    <header className="navbar w-full h-16 flex items-center justify-between p-4 bg-white shadow-lg fixed top-0 left-0 z-40 mb-0">
       {/* Sidebar toggle button */}
       <button
         onClick={toggleSidebar}

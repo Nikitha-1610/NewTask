@@ -109,7 +109,7 @@ const GroupChat = ({ contact, handleBackToContacts }) => {
           default:
             return (
 
-              <div className="flex-1 mb-1 sm:p-4 min-h-screen overflow-x-hidden overflow-y-auto scrollbar-hide" style={{overflowY: 'auto' }}>
+              <div className="flex-1 overflow-y-auto scrollbar-hide p-4 mt-10 mb-10">
               {/* Chat Screen */}
          <div className="mt-0">
            {/* First User Message */}
@@ -288,7 +288,8 @@ const GroupChat = ({ contact, handleBackToContacts }) => {
       <div>
         {/* Header */}
         {/* Header */}
-        <div className="top-0 z-10 sticky flex justify-between items-center bg-white shadow-md mt-0 mb-0 px-1 sm:px-5 w-full h-14">
+        <div className="flex flex-col flex-1 overflow-hidden">
+        <div className="fixed top-14 sm:mt-2 mt-2 sm:w-[59%] w-[91%] z-10 bg-white shadow-md p-2 sm:mx-0 sm:px-5 flex justify-between items-center h-14">
   {/* Left Side */}
   <div className="flex items-center gap-2 sm:gap-3">
           <button
@@ -361,6 +362,7 @@ const GroupChat = ({ contact, handleBackToContacts }) => {
   
         {/* Content */}
         <div className="flex-1 mb-6 p-4 overflow-y-auto">{renderContent()}</div>
+      </div>
       </div>
     );
   };
