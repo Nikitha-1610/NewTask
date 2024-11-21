@@ -8,8 +8,9 @@ import {
 } from "react-icons/fa";
 import VideoCall from "./VideoCall";
 import VoiceCall from "./VoiceCall";
+import { FaArrowLeft } from "react-icons/fa";
 
-const GroupChat = ({ contact }) => {
+const GroupChat = ({ contact, handleBackToContacts }) => {
   // Managing menu options and selected option with useState
   const [selectedOption, setSelectedOption] = useState("Chat");
   const [activeFeature, setActiveFeature] = useState(null);
@@ -290,6 +291,12 @@ const GroupChat = ({ contact }) => {
         <div className="top-0 z-10 sticky flex justify-between items-center bg-white shadow-md mt-0 mb-0 px-1 sm:px-5 w-full h-14">
   {/* Left Side */}
   <div className="flex items-center gap-2 sm:gap-3">
+          <button
+                    onClick={handleBackToContacts}
+                    className="sm:top-1/2 sm:left-4 sm:absolute flex items-center lg:hidden text-blue-500 sm:-translate-y-1/2"
+                  >
+            <FaArrowLeft className="text-3xl" />
+          </button>
     {contact?.image ? (
       <img
         src={contact.image}

@@ -296,21 +296,21 @@ const ChatApp = () => {
         <div className="top-0 sticky flex flex-col flex-1 bg-gray-100 min-h-screen">
 
           {/* Back Button with Arrow Icon */}
-          <button
+          {/* <button
             onClick={handleBackToContacts}
             className="sm:top-1/2 sm:left-4 sm:absolute flex items-center lg:hidden text-blue-500 sm:-translate-y-1/2"
           >
             <FaArrowLeft className="text-3xl" />
-          </button>
+          </button> */}
 
 
 
           {/* Chat Body */}
           <div className="flex-1 mt-0 p-1">
             {selectedContact.name === "Design Group" ? (
-              <GroupChat contact={selectedContact} />
+              <GroupChat contact={selectedContact} handleBackToContacts={handleBackToContacts} />
             ) : (
-              <IndividualChat contact={selectedContact} />
+              <IndividualChat contact={selectedContact} handleBackToContacts={handleBackToContacts} />
             )}
           </div>
 
