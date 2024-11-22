@@ -14,6 +14,7 @@ const Position = () => {
   const [selectedTeamLead, setSelectedTeamLead] = useState("");
   const [selectedEmployee, setSelectedEmployee] = useState(null);
 
+
   const [isMobile, setIsMobile] = useState(false); // Track screen size
   const [selectedRow, setSelectedRow] = useState(null);
 
@@ -79,7 +80,8 @@ const Position = () => {
   
   const handleCardClick = (user) => {
     setSelectedEmployee(user);
-  };
+};
+
 
   const filterUsers = () => {
     let filtered = [...users];
@@ -117,17 +119,37 @@ const Position = () => {
       }
     }
   }, [show]);
+  // const handleSubmit = () => {
+  //   if (selectedEmployee && selectedTeamLead) {
+  //     console.log("Employee:", selectedEmployee.name);
+  //     console.log("Assigned to TeamLead:", selectedTeamLead);
+  //     setShow(false);
+  //     setSelectedTeamLead("");
+  //     setSelectedEmployee(null);
+  //   } else {
+  //     console.log("No employee or team lead selected");
+  //   }
+  // };
+
+
+
+
   const handleSubmit = () => {
+    console.log('Selected Employee:', selectedEmployee);
+    console.log('Selected TeamLead:', selectedTeamLead);
+
     if (selectedEmployee && selectedTeamLead) {
-      console.log("Employee:", selectedEmployee.name);
-      console.log("Assigned to TeamLead:", selectedTeamLead);
+      console.log('Employee:', selectedEmployee.name);
+      console.log('Assigned to TeamLead:', selectedTeamLead);
       setShow(false);
-      setSelectedTeamLead("");
+      setSelectedTeamLead('');
       setSelectedEmployee(null);
     } else {
-      console.log("No employee or team lead selected");
+      console.log('No employee or team lead selected');
     }
   };
+
+
 
   return (
     <div className="p-5">
@@ -159,47 +181,46 @@ const Position = () => {
       </div>
 
       {isMobile ? (
-    <div className="grid grid-cols-1 gap-4">
-    {users.map((user, index) => (
-      <div
-        key={index}
-        className={`p-6 border rounded-lg shadow bg-white transition-transform duration-300 hover:scale-105 ${
-          selectedEmployee?.name === user.name ? "bg-green-300" : ""
-        }`}
-        onClick={() => handleCardClick(user)}
-      >
-        <div className="text-left">
-          <p className="text-xl mb-2">
-            <span className="font-bold">Name:</span> {user.name}
-          </p>
-          <p className="text-xl mb-2">
-            <span className="font-bold">Email:</span> {user.email}
-          </p>
-          <p className="text-xl mb-2">
-            <span className="font-bold">Phone:</span> {user.mobile}
-          </p>
-          <p className="text-xl mb-2">
-            <span className="font-bold">Position:</span> {user.position}
-          </p>
-          <p className="text-xl mb-4">
-            <span className="font-bold">Joining Date:</span> {user.appliedDate}
-          </p>
-        </div>
-        <div className="text-center text-xl">
-          <button
-            className="px-2 py-1 bg-blue-500 text-white rounded"
-            onClick={(e) => {
-              e.stopPropagation();
-              setShow(true);
-            }}
-          >
-            Tag
-          </button>
-        </div>
-      </div>
-    ))}
-  </div>
-  
+   <div className="grid grid-cols-1 gap-4">
+   {users.map((user, index) => (
+       <div
+           key={index}
+           className={`p-6 border rounded-lg shadow bg-white transition-transform duration-300 hover:scale-105`}style={{
+            backgroundColor: selectedEmployee?.name === user.name ? "#90ee90" : "white"
+        }}
+           onClick={() => handleCardClick(user)}
+       >
+           <div className="text-left">
+               <p className="text-xl mb-2">
+                   <span className="font-bold">Name:</span> {user.name}
+               </p>
+               <p className="text-xl mb-2">
+                   <span className="font-bold">Email:</span> {user.email}
+               </p>
+               <p className="text-xl mb-2">
+                   <span className="font-bold">Phone:</span> {user.mobile}
+               </p>
+               <p className="text-xl mb-2">
+                   <span className="font-bold">Position:</span> {user.position}
+               </p>
+               <p className="text-xl mb-4">
+                   <span className="font-bold">Joining Date:</span> {user.appliedDate}
+               </p>
+           </div>
+           <div className="text-center text-xl">
+               <button
+                   className="px-2 py-1 bg-blue-500 text-white rounded"
+                   onClick={(e) => {
+                       e.stopPropagation();
+                       setShow(true);
+                   }}
+               >
+                   Tag
+               </button>
+           </div>
+       </div>
+   ))}
+</div>
   
      
       ) : (
