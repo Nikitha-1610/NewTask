@@ -39,8 +39,10 @@ import toast from 'react-hot-toast';
         );
         const data = await response.json();
         if (Array.isArray(data.message)) {
+        if (Array.isArray(data.message)) {
           setUsers(data.message);
           setFilteredUsers(data.message);
+
 
           const uniquePositions = [
             ...new Set(data.message.map((user) => user.position)),
@@ -74,6 +76,21 @@ import toast from 'react-hot-toast';
     };
     fetchTeamLeads();
   }, []);
+
+  useEffect(() => {
+    const handleResize = () => {
+      setIsMobile(window.innerWidth <= 768);
+    };
+    window.addEventListener("resize", handleResize);
+    handleResize();
+    return () => window.removeEventListener("resize", handleResize);
+  }, []);
+
+  
+  const handleCardClick = (user) => {
+    setSelectedEmployee(user);
+};
+
 
   const filterUsers = () => {
     let filtered = [...users];
@@ -220,7 +237,6 @@ import toast from 'react-hot-toast';
             </option>
           ))}
         </select>
-
         <select
           className="p-2 border rounded bg-gray-200"
           value={selectedDepartment}
@@ -258,7 +274,13 @@ import toast from 'react-hot-toast';
             </thead>
             <tbody>
               {currentUsers.map((user, index) => (
-                <tr key={index} className="even:bg-white-50 odd:bg-white">
+               <tr
+               key={index}
+               className={`even:bg-white-50 odd:bg-white ${
+                 selectedRow === index ? "bg-sky-100" : "" // Add faint sky blue background color
+               }`}
+               onClick={() => setSelectedRow(index)} // Set the selected row on click
+             >
                   <td className="p-2 text-center">
 
                     <input
