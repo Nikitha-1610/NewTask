@@ -167,7 +167,7 @@ const TaskForm = () => {
       {/* Designer */}
       <div className="relative mb-6">
   <label className="block mb-2 font-medium font-sans text-gray-700">
-    Designer
+    Reviewer
   </label>
   <div className="relative flex justify-between items-center">
     {selectedDesigner && (

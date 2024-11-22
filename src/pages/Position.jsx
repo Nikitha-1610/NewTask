@@ -262,7 +262,7 @@ useEffect(() => {
         ))}
       </select>
       <select
-        className="p-2 border rounded bg-gray-200 sm:w-auto w-[140px]"
+        className="p-2 border rounded bg-gray-200 w-full sm:w-auto"
         value={selectedDepartment}
         onChange={(e) => setSelectedDepartment(e.target.value)}
       >

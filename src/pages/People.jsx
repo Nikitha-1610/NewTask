@@ -1,327 +1,366 @@
 import { useEffect, useState } from "react";
 import { Icon } from "@iconify/react";
+import axiosInstance from "../utilities/axios/axiosInstance";
+import toast, { Toaster } from "react-hot-toast";
+
 const People = () => {
-//   const allUsers = Array(24).fill({
-// import { useState } from "react"; 
-// import { IoClose } from "react-icons/io5";
-// import { Icon } from "@iconify/react";
+  const [allUsers, setAllUsers] = useState([]);
+  const [currentPage, setCurrentPage] = useState(1);
+  const [usersPerPage] = useState(7);
+  const [modalVisible, setModalVisible] = useState(false);
+  const [modalActionVisible, setModalActionVisible] = useState(false);
+  const [confirmModalVisible, setConfirmModalVisible] = useState(false);
+  const [modalType, setModalType] = useState("");
+  const [selectedUserIndex, setSelectedUserIndex] = useState(null);
+  const [selectedDepartment, setSelectedDepartment] = useState("All");
+  const [selectedUserType, setSelectedUserType] = useState("All");
 
-// const initialUsers = [
-//   {
-//     username: "Sandhiya Ravikumar",
-//     mailId: "sandyva@gmail.com",
-//     phoneNumber: "+91 6789054321",
-//     position: "UX UI Designer",
-//     department: "Design",
-//     joiningDate: "02-11-2024",
-//   });
-//     isApproved: false,
-//     isRejected: false,
-//   },
-//   ...Array(25).fill({
-//     username: "Sandhiya Ravikumar",
-//     email: "sandyva@gmail.com",
-//     phone: "+91 6789054321",
-//     position: "UX UI Designer",
-//     joiningDate: "02-11-2024",
-//     isApproved: false,
-//     isRejected: false,
-//   }),
-// ];
+  const getAllusers = async () => {
+    try {
+      const response = await axiosInstance.get("user/getUsers");
+      console.log(response.data.message);
 
-//   const [currentPage, setCurrentPage] = useState(1);
-//   const [usersPerPage] = useState(7);
-//   const [selectedDepartment, setSelectedDepartment] = useState("All");
-//   const [modalVisible, setModalVisible] = useState(false);
-//   const [selectedUser, setSelectedUser] = useState(null);
-//   const [modalVisible, setModalVisible] = useState(false);
+      setAllUsers(response?.data?.message);
+    } catch (error) {
+      console.error("Error syncing with server:", error);
+      toast.error("Failed to fetch users.");
+    }
+  };
 
-//   const departments = ["All", "Design", "Development", "Marketing"];
+  useEffect(() => {
+    getAllusers();
+  }, []);
 
-//   const filteredUsers =
-//     selectedDepartment === "All"
-//       ? allUsers
-//       : allUsers.filter((user) => user.department === selectedDepartment);
+  const departments = ["All", "Tester", "HR", "Marketing"];
+  const userType = ["All", "On-Hold", "Init"];
 
-//   const indexOfLastUser = currentPage * usersPerPage;
-//   const indexOfFirstUser = indexOfLastUser - usersPerPage;
-//   const currentUsers = filteredUsers.slice(indexOfFirstUser, indexOfLastUser);
+  const filteredUsers = allUsers.filter((user) => {
+    // Filter by selected department
+    const matchesDepartment =
+      selectedDepartment === "All" || user.department === selectedDepartment;
 
-//   const totalPages = Math.ceil(filteredUsers.length / usersPerPage);
-//   const lastUserIndex = currentPage * usersPerPage;
-//   const firstUserIndex = lastUserIndex - usersPerPage;
-//   const currentUsers = users.slice(firstUserIndex, lastUserIndex);
-//   const totalPages = Math.ceil(users.length / usersPerPage);
+    // Filter by selected user type (status)
+    const matchesUserType =
+      selectedUserType === "All" || user.status === selectedUserType;
 
-//   const openModal = (user) => {
-//     setSelectedUser(user);
-//     setModalVisible(true);
-//   };
-//   const closeModal = () => {
-//     setModalVisible(false);
-//     setSelectedUser(null);
-//     setShow(false);
-//   };
-//   // const confirmAction = (index) => {
-//   //       closeModal();
-   
-//   //   setShow(false);
-//   //   const updatedUsers = users.map((user, idx) =>
-//   //     idx === index ? { ...user, isApproved: true } : user
-//   //   );
-//   //   setUsers(updatedUsers);
-//   // };
-//   const confirmAction = (index) => {
-//     const updatedUsers = users.map((user, idx) =>
-//       idx === index ? { ...user, isApproved: true } : user
-//     );
-//     setShow(false);
-//     setUsers(updatedUsers);
-//     approveUser(selectedUser);
-                  
-//   };
+    return matchesDepartment && matchesUserType;
+  });
 
-//   const openModal = (user) => {
-//     setSelectedUser(user);
-//     setModalVisible(true);
-//   };
+  const indexOfLastUser = currentPage * usersPerPage;
+  const indexOfFirstUser = indexOfLastUser - usersPerPage;
+  const currentUsers = filteredUsers.slice(indexOfFirstUser, indexOfLastUser);
 
-//   const closeModal = () => {
-//     setModalVisible(false);
-//     setSelectedUser(null);
-//   };
-//   // const rejectUser = (index) => {
-//   //   const updatedUsers = users.map((user, idx) =>
-//   //     idx === index ? { ...user, isRejected: true } : user
-//   //   );
-//   //   setUsers(updatedUsers);
-//   // };
+  const totalPages = Math.ceil(filteredUsers.length / usersPerPage);
 
-//   const confirmAction = () => {
-//     alert(`Approved ${selectedUser?.username}`);
-//     closeModal();
-//   };
-  
-//   // const approvedHold = (index) => {
-//   //   const updatedUsers = users.map((user, idx) =>
-//   //     idx === index ? { ...user, isRejected: false } : user
-//   //   );
-//   //   setUsers(updatedUsers);
-//   // };
-//   return (
-//     <div className="p-4 md:p-8">
-//       {/* Summary Section */}
-//       <div className="flex justify-center gap-6 items-center mb-4">
-//         <div className="text-center">
-//           <h2 className="text-2xl font-bold">{filteredUsers.length}</h2>
-//           <p className="text-gray-500">People</p>
-//         </div>
-//         <div className=" bg-slate-300 h-24 w-0.5"></div>
-//         <div className="text-center">
-//           <h2 className="text-2xl font-bold">{departments.length - 1}</h2>
-//           <p className="text-gray-500">Departments</p>
-//         </div>
-//       </div>
+  const openConfirmModal = (index) => {
+    setSelectedUserIndex(index);
+    setModalType("approve");
+    setConfirmModalVisible(true);
+  };
 
-//       {/* Filter Section */}
-//       <div className="flex flex-wrap gap-2 items-center mb-4">
-//         <select
-//           className="border border-gray-300 rounded-lg p-2 text-gray-700"
-//           onChange={(e) => setSelectedDepartment(e.target.value)}
-//         >
-//           {departments.map((dept) => (
-//             <option key={dept} value={dept}>
-//               {dept}
-//             </option>
-//           ))}
-//     <div className="p-5">
-//       {/* Statistics Section */}
-//       <div className="mx-auto w-1/2 flex space-x-20 gap-2 my-5">
-//           <div className="flex flex-col relative left-10 items-start justify-center w-[200px] h-[100px] text-[20px]  text-[#333] text-center ">
-//             <span className="text-center text-[42.52px] font-medium leading-[49.83px] tracking-[0.09966778010129929px] ">
-//               {users.length}
-//             </span>
-//             <span className="text-center text-[9.97px] font-medium leading-[11.68px] tracking-[0.1px] text-[#C4C4C4] underline decoration-skip-ink-none">
-//               People
-//             </span>
-//           </div>
-//           <div className="h-[130px] min-h-[1em] w-px self-stretch bg-gradient-to-tr from-transparent via-neutral-500 to-transparent opacity-25 dark:via-neutral-400"></div>
-//           <div className="flex flex-col relative left-14 items-start justify-center w-[200px] h-[100px] text-[20px]  text-[#333] text-center  ">
-//             <span className="text-center text-[42.52px] font-medium leading-[49.83px] tracking-[0.09966778010129929px] ">
-//               5
-//             </span>
-//             <span className="text-center text-[9.97px] font-medium leading-[11.68px] tracking-[0.1px] text-[#C4C4C4] underline decoration-skip-ink-none">
-//               Department
-//             </span>
-//           </div>
-//           <div className="h-[130px] min-h-[1em] w-px self-stretch bg-gradient-to-tr from-transparent via-neutral-500 to-transparent opacity-25 dark:via-neutral-400"></div>
-//         </div>
-      
+  const openActionModal = (index) => {
+    setSelectedUserIndex(index);
+    setModalType("action");
+    setModalVisible(true);
+  };
+  const openHoldActionModal = (index) => {
+    setSelectedUserIndex(index);
+    setModalType("action");
+    setModalActionVisible(true);
+  };
 
-//       {/* Filters */}
-//       <div className="flex flex-col sm:flex-row justify-center items-center gap-4 mb-6">
-//         <select className="p-2 border rounded bg-gray-200">
-//           <option value="all">All</option>
-//           <option value="option1">Option 1</option>
-//           <option value="option2">Option 2</option>
-//         </select>
-//         <select className="p-2 border rounded bg-gray-200">
-//           <option value="all-departments">All Departments</option>
-//           <option value="hr">HR</option>
-//           <option value="finance">Finance</option>
-//           <option value="marketing">Marketing</option>
-//         </select>
-//       </div>
+  const closeModal = () => {
+    setModalVisible(false);
+    setModalActionVisible(false); // Added this line to ensure action modal is also closed
+    setConfirmModalVisible(false);
+    setSelectedUserIndex(null);
+    setModalType("");
+  };
 
-//       {/* Table */}
-//       <div
-//         className="relative w-full border border-gray-300 rounded-lg overflow-hidden"
-//         style={{ height: "400px" }} // Set fixed height for the container
-//       >
-//         {/* Scrollable Table Content */}
-//         <div
-//           className="overflow-y-auto h-full"
-//           style={{ maxHeight: "calc(100% - 50px)" }} // Adjust space for pagination
-//         >
-//         <table className="min-w-full border-none">
-//           <thead className="bg-white">
-//             <tr className="bg-gray-200">
-//               <th className="p-2 "><input type="checkbox" /></th>
-//               <th className="p-2 ">Username</th>
-//               <th className="p-2 ">Mail ID</th>
-//               <th className="p-2 bordr">Phone</th>
-//               <th className="p-2 ">Position</th>
-//               <th className="p-2 ">Joining Date</th>
-//               <th className="p-2 ">Activity</th>
-//             </tr>
-//           </thead>
-//           <tbody>
-//             {currentUsers.map((user, index) => (
-//               <tr key={index} className="odd:bg-white-50">
-//                 <td className="p-2  text-center">
-//                   <input type="checkbox" />
-//                 </td>
-//                 <td className="p-2 ">{user.username}</td>
-//                 <td className="p-2 ">{user.email}</td>
-//                 <td className="p-2 ">{user.phone}</td>
-//                 <td className="p-2 ">{user.position}</td>
-//                 <td className="p-2 ">{user.joiningDate}</td>
-//                 <td className="p-2  text-center flex">
-//                   <button
-//                     onClick={() => {
-//                       setSelectedUser(index + firstUserIndex);
-//                       setShow(true);
-//                     }}
-//                     className={`px-3 py-1 rounded ${
-//                       user.isApproved ? "bg-green-500 text-white" : "bg-gray-300"
-//                     }`}
-//                   >
-//                     {user.isApproved ? "Approved" : "Approve"}
-//                   </button>
-//                   <Icon onClick={() => openModal(user)}
-//                       icon="pepicons-pencil:dots-y"
-//                       height={22}
-//                       width={22}
-//                     />
-//                 </td>
-//               </tr> 
-//             ))}
-//           </tbody>
-//         </table>
-//       </div>
-//       <div className="absolute bottom-0 w-full bg-white border-t border-gray-300 py-2 flex justify-between items-center px-4">
-//         <button
-//           onClick={goToPreviousPage}
-//           disabled={currentPage === 1}
-//           className="px-4 py-2 border rounded disabled:opacity-50"
-//         >
-//           Previous
-//         </button>
-//         <span>
-//           Page {currentPage} of {totalPages}
-//         </span>
-//         <button
-//           onClick={goToNextPage}
-//           disabled={currentPage === totalPages}
-//           className="px-4 py-2 border rounded disabled:opacity-50"
-//         >
-//           Next
-//         </button>
-//       </div>
-//       </div>
+  const handleApprove = async () => {
+    if (selectedUserIndex !== null) {
+      const user = currentUsers[selectedUserIndex];
+      console.log(`User approved:`, user.email);
+      try {
+        await axiosInstance.put(`employee/apporve/${user.email}`);
+        toast.success(`${user.name} has been approved.`);
+        console.log(`User approved:`, user.email);
+        getAllusers(); // Refresh the user list after approval
+      } catch (error) {
+        console.error("Error approving user:", error);
+        toast.error("Failed to approve the user.");
+      }
+    }
+    closeModal();
+  };
 
-     
-//       {/* Modal */}
-//       {modalVisible && (
-//         <div className="fixed inset-0 bg-gray-800 bg-opacity-50 flex items-center justify-center z-50">
-//           <div className="bg-white p-6 rounded-lg shadow-lg w-80">
-//             <h3 className="text-lg font-bold mb-4">Approve User</h3>
-//             <p>Are you sure you want to approve {selectedUser?.username}?</p>
-//             <div className="flex justify-end space-x-4 mt-4">
-//       {show && (
-//         <div className="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center">
-//           <div className="bg-white p-6 rounded shadow-md max-w-sm w-full">
-//             <div className="flex justify-end">
-             
-//             </div>
-//             <p className="mb-4 text-center">Are you sure to Approve?</p>
-//             <div className="flex justify-around">
-//               <button
-//                 className="bg-gray-500 text-white px-4 py-2 rounded-lg hover:bg-gray-600"
-//                 onClick={closeModal}
-//               >
-//                 Cancel
-//                 Confirm
-//               </button>
-//               <button
-//                 className="bg-green-500 text-white px-4 py-2 rounded-lg hover:bg-green-600"
-//                 onClick={confirmAction}
-//                 onClick={() => {
-//                   approvedDenied(selectedUser);
-//                   setShow(false);
-//                 }}
-//                 className="px-4 py-2 bg-red-500 text-white rounded"
-//               >
-//                 Cancel
-//               </button>
-//             </div>
-//           </div>
-//         </div>
-        
-//       )}
-//         {modalVisible && (
-//         <div className="fixed inset-0 bg-gray-800 bg-opacity-50 flex items-center justify-center z-50">
-//           <div className="bg-white p-6 rounded-lg shadow-lg w-80">
-//           <div className="flex justify-around">
-              
-            
-//             <h3 className="text-lg font-bold mb-4 relative left-8">Reject or Hold</h3>
-//             <div className="relative left-8 bottom-3">
-//             <button onClick={() => setShow(false)} className="text-red-500" >
-//                 <IoClose size={24} />
-//               </button>
-//               </div>
-//             </div>
-//             <div className="flex justify-around space-x-4 mt-4">
-//               <button
-//                 className="bg-gray-500 text-white px-4 py-2 rounded-lg hover:bg-gray-600"
-//                 onClick={closeModal}
-//               >
-//                 Hold
-//               </button>
-//               <button
-//                 className="bg-red-300 text-white px-4 py-2 rounded-lg hover:bg-red-500"
-//                 onClick={confirmAction}
-                
-//               >
-//                 Confirm
-//               </button>
-//             </div>
-//           </div>
-//         </div>
-//       )}
-//     </div>
-//   );
+  const handleAction = async (action) => {
+    if (selectedUserIndex !== null) {
+      const user = currentUsers[selectedUserIndex];
+
+      try {
+        // Handle action based on the type (approve, on-hold, reject)
+        switch (action) {
+          case "approve":
+            await axiosInstance.put(`/employee/approve/${user.email}`);
+            toast.success(`${user.name} has been approved.`);
+            console.log(`User approved:`, user.email);
+            break;
+
+          case "on-hold":
+            // Pass status: "On-Hold" in the request body
+            await axiosInstance.put(`/user/updateDetails/${user.email}`, {
+              status: "On-Hold",
+            });
+            toast.success(`${user.name} has been placed on hold.`);
+            console.log(`User on-hold:`, user.email);
+            break;
+
+          case "reject":
+            await axiosInstance.delete(`/user/reject/${user.email}`);
+            toast.success(`${user.name} has been rejected.`);
+            console.log(`User rejected:`, user.email);
+            break;
+
+          default:
+            throw new Error("Unknown action");
+        }
+
+        // Refresh the user list after action
+        getAllusers();
+      } catch (error) {
+        console.error(`Error performing ${action} action:`, error);
+        toast.error(`Failed to ${action} the user.`);
+      } finally {
+        // Ensure modal is closed in both success and failure cases
+        closeModal();
+      }
+    }
+  };
+
+  return (
+    <div className="p-5">
+      <Toaster />
+      {/* Stats Section */}
+      <div className="flex flex-wrap items-center justify-center gap-6 md:gap-28 mb-5">
+        <div className="flex flex-col items-center text-center">
+          <span className="text-3xl font-medium">{allUsers.length}</span>
+          <span className="text-sm text-gray-400 underline">People</span>
+        </div>
+        <div className="w-[1px] h-16 bg-gray-300"></div>
+        <div className="flex flex-col items-center text-center">
+          <span className="text-3xl font-medium">5</span>
+          <span className="text-sm text-gray-400 underline">Departments</span>
+        </div>
+      </div>
+
+      {/* Filter Section */}
+      <div className="flex flex-wrap gap-4 items-center mb-4">
+        <select
+          className="border border-gray-300 bg-gray-200 rounded-lg p-2 text-gray-700"
+          onChange={(e) => setSelectedDepartment(e.target.value)}
+          value={selectedDepartment}
+        >
+          {departments.map((dept) => (
+            <option key={dept} value={dept}>
+              {dept}
+            </option>
+          ))}
+        </select>
+        <select
+          className="border border-gray-300 bg-gray-200 rounded-lg p-2 text-gray-700"
+          onChange={(e) => setSelectedUserType(e.target.value)}
+          value={selectedUserType}
+        >
+          {userType.map((type) => (
+            <option key={type} value={type}>
+              {type}
+            </option>
+          ))}
+        </select>
+      </div>
+
+      {/* Table with Fixed Height */}
+      <div
+        className="relative w-full border border-gray-300 rounded-lg"
+        style={{ height: "400px" }}
+      >
+        <div className="h-full overflow-y-auto">
+          <div className="overflow-x-auto">
+            <table className="min-w-full border-collapse">
+              <thead className="bg-gray-100 sticky top-0">
+                <tr>
+                  <th className="px-4 py-2 text-left"></th>
+                  <th className="px-4 py-2 text-left">Username</th>
+                  <th className="px-4 py-2 text-left hidden md:table-cell">
+                    Mail ID
+                  </th>
+                  <th className="px-4 py-2 text-left hidden md:table-cell">
+                    Phone Number
+                  </th>
+                  <th className="px-4 py-2 text-left">Position</th>
+                  <th className="px-4 py-2 text-left hidden md:table-cell">
+                    Joining Date
+                  </th>
+                  <th className="px-4 py-2 text-left">Activity</th>
+                </tr>
+              </thead>
+              <tbody>
+                {currentUsers.map((user, index) => (
+                  <tr key={index} className="border-b hover:bg-gray-50">
+                    <td className="px-4 py-2">
+                      <input type="checkbox" />
+                    </td>
+                    <td className="px-4 py-2">{user.name}</td>
+                    <td className="px-4 py-2 hidden md:table-cell">
+                      {user.email}
+                    </td>
+                    <td className="px-4 py-2 hidden md:table-cell">
+                      {user.mobile}
+                    </td>
+                    <td className="px-4 py-2">{user.position}</td>
+                    <td className="px-4 py-2 hidden md:table-cell">
+                      {user.appliedDate}
+                    </td>
+                    <td className="px-4 py-2 flex gap-2">
+                      {user.status === "Init" ? (
+                        <button
+                          className="bg-blue-500 text-white px-4 py-2 rounded-lg hover:opacity-90"
+                          onClick={() => openConfirmModal(index)}
+                        >
+                          Approve
+                        </button>
+                      ) : (
+                        <button
+                          className="bg-yellow-500 text-white px-4 py-2 rounded-lg hover:opacity-90"
+                          onClick={() => openActionModal(index)}
+                        >
+                          {user.status}
+                        </button>
+                      )}
+                      <Icon
+                        icon="pepicons-pencil:dots-y"
+                        height={22}
+                        width={22}
+                        className="cursor-pointer"
+                        onClick={() => openHoldActionModal(index)}
+                      />
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+        {/* Fixed Pagination */}
+        <div className="absolute bottom-0 w-full bg-white border-t border-gray-300 py-2 flex justify-between items-center px-4">
+          <button
+            className="text-gray-500 hover:text-black"
+            onClick={() => setCurrentPage((prev) => Math.max(prev - 1, 1))}
+            disabled={currentPage === 1}
+          >
+            Previous
+          </button>
+          <p>
+            Page {currentPage} of {totalPages}
+          </p>
+          <button
+            className="text-gray-500 hover:text-black"
+            onClick={() =>
+              setCurrentPage((prev) => Math.min(prev + 1, totalPages))
+            }
+            disabled={currentPage === totalPages}
+          >
+            Next
+          </button>
+        </div>
+      </div>
+
+      {/* Approve Confirmation Modal */}
+      {confirmModalVisible && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+          <div className="bg-white p-6 rounded-lg shadow-lg">
+            <p className="mb-4">Are you sure you want to approve this user?</p>
+            <div className="flex gap-4 justify-end">
+              <button
+                className="bg-blue-500 text-white px-4 py-2 rounded-lg"
+                onClick={handleApprove}
+              >
+                Confirm
+              </button>
+              <button
+                className="bg-gray-300 px-4 py-2 rounded-lg"
+                onClick={closeModal}
+              >
+                Cancel
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Action Modal (Reject/Hold) */}
+      {modalVisible && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+          <div className="bg-white p-6 rounded-lg shadow-lg">
+            <div className="flex justify-end">
+              <button
+                className="bg-gray-300 px-1 py-1 rounded-lg"
+                onClick={closeModal} // Fix: Ensures modal closes on clicking close icon
+              >
+                <Icon icon="material-symbols:close" />
+              </button>
+            </div>
+            <p className="mb-4">Choose an action for this user:</p>
+            <div className="flex gap-4 justify-end">
+              <button
+                className="bg-red-500 text-white px-4 py-2 rounded-lg"
+                onClick={() => handleAction("reject")}
+              >
+                Reject
+              </button>
+              <button
+                className="bg-blue-500 text-white px-4 py-2 rounded-lg"
+                onClick={() => handleAction("approve")}
+              >
+                Approve
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+      {modalActionVisible && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+          <div className="bg-white p-6 rounded-lg shadow-lg">
+            <div className="flex justify-end">
+              <button
+                className="bg-gray-300 px-1 py-1 rounded-lg"
+                onClick={closeModal} // Fix: Ensures modal closes on clicking close icon
+              >
+                <Icon icon="material-symbols:close" />
+              </button>
+            </div>
+            <p className="mb-4">Choose an action for this user:</p>
+            <div className="flex gap-4 justify-end">
+              <button
+                className="bg-red-500 text-white px-4 py-2 rounded-lg"
+                onClick={() => handleAction("reject")}
+              >
+                Reject
+              </button>
+              <button
+                className="bg-yellow-500 text-white px-4 py-2 rounded-lg"
+                onClick={() => handleAction("on-hold")}
+              >
+                On-Hold
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+    </div>
+  );
 };
 
 export default People;
