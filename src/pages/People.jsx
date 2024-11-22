@@ -177,8 +177,14 @@ const People = () => {
                     {user.appliedDate}
                   </td>
                   <td className="px-4 py-2 flex gap-2">
+                    <button
+                      className="bg-blue-500 text-white px-4 py-2 rounded-lg hover:opacity-90"
+                      onClick={handleApprove}
+                    >
+                      Approve
+                    </button>
                     {/* Display action button based on the selected action */}
-                    {user.actionType === "Approve" ? (
+                    {/* {user.actionType === "Approve" ? (
                       <button
                         className="bg-blue-500 text-white px-4 py-2 rounded-lg hover:opacity-90"
                         onClick={handleApprove}
@@ -193,10 +199,9 @@ const People = () => {
                             : "bg-yellow-500"
                         } text-white px-4 py-2 rounded-lg hover:opacity-90`}
                       >
-                        hold
-                        {/* {user.actionType} */}
+                        {user.actionType}
                       </button>
-                    )}
+                    )} */}
                     <Icon
                       icon="pepicons-pencil:dots-y"
                       height={22}
