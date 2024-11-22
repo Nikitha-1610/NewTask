@@ -14,16 +14,7 @@ import toast from 'react-hot-toast';
   const [selectedDepartment, setSelectedDepartment] = useState("all");
   const [selectedTeamLead, setSelectedTeamLead] = useState("");
   const [selectedEmployee, setSelectedEmployee] = useState(null);
-  const [taskName, setTaskName] = useState("");
-  const [taskDescription, setTaskDescription] = useState("");
-  const [priority, setPriority] = useState("Urgent");
-  const [assignedBy, setAssignedBy] = useState("");
-  const [assignedTo, setAssignedTo] = useState([]);
-  const [reviewer, setReviewer] = useState("");
-  const [referenceFileUrl, setReferenceFileUrl] = useState([]);
-  const [dueDate, setDueDate] = useState("");
-  const [score, setScore] = useState(85);
-  const [showTaskForm, setShowTaskForm] = useState(false);
+ 
   const [isMobile, setIsMobile] = useState(false);
   const [selectedRow, setSelectedRow] = useState(null);
 
