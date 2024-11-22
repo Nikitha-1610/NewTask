@@ -33,7 +33,7 @@ import toast from 'react-hot-toast';
   const currentUsers = filteredUsers.slice(firstUserIndex, lastUserIndex);
   const totalPages = Math.ceil(filteredUsers.length / usersPerPage);
 
-  
+
 
   useEffect(() => {
     const fetchUsers = async () => {
@@ -42,24 +42,24 @@ import toast from 'react-hot-toast';
           "https://3qhglx2bhd.execute-api.us-east-1.amazonaws.com/employee/getAll"
         );
         const data = await response.json();
-  
-        
+
+
         if (Array.isArray(data.message)) {
-          
+
           setUsers(data.message);
           setFilteredUsers(data.message);
-  
-         
+
+
           const uniquePositions = [
             ...new Set(data.message.map((user) => user.position)),
           ];
-  
-         
+
+
           const uniqueDepartments = [
             ...new Set(data.message.map((user) => user.team || "General")),
           ];
-  
-          
+
+
           setPositions(uniquePositions);
           setDepartments(uniqueDepartments);
         }
@@ -67,11 +67,11 @@ import toast from 'react-hot-toast';
         console.error("Error fetching users:", error);
       }
     };
-  
-   
+
+
     fetchUsers();
   }, []);
-  
+
 
   useEffect(() => {
     const fetchTeamLeads = async () => {
@@ -99,7 +99,7 @@ import toast from 'react-hot-toast';
     return () => window.removeEventListener("resize", handleResize);
   }, []);
 
-  
+
   const handleCardClick = (user) => {
     setSelectedEmployee(user);
 };
@@ -133,7 +133,7 @@ import toast from 'react-hot-toast';
   const handleSubmit = async () => {
     console.log("Selected Employee:", selectedEmployee);
     console.log("Selected TeamLead:", selectedTeamLead);
-  
+
     if (selectedEmployee && selectedTeamLead) {
       try {
         const response = await fetch("https://3qhglx2bhd.execute-api.us-east-1.amazonaws.com/employee/tag", {
@@ -146,9 +146,9 @@ import toast from 'react-hot-toast';
             teamLeadName: selectedTeamLead,
           }),
         });
-  
+
         const data = await response.json();
-  
+
         if (!response.ok) {
           console.error("Error:", data.message);
           toast.error(data.message); // Show error toast
@@ -169,49 +169,9 @@ import toast from 'react-hot-toast';
  };
 
 
- const handleSubmitTask = async () => {
-  if (!taskName || !taskDescription || !assignedTo.length || !reviewer || !dueDate) {
-    toast.error("Please fill in all the required fields.");
-    return;
-  }
 
-  const taskData = {
-    taskName,
-    taskDescription,
-    priority,
-    assignedBy,
-    assignedTo,
-    reviewer,
-    referenceFileUrl,
-    dueDate,
-    score,
-  };
 
-  try {
-    const response = await fetch("https://3qhglx2bhd.execute-api.us-east-1.amazonaws.com/task/addTask", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify(taskData),
-    });
 
-    const data = await response.json();
-
-    if (response.ok) {
-      toast.success("Task added successfully!");
-      setShowTaskForm(false); 
-    } else {
-      toast.error(data.message || "Failed to add the task.");
-    }
-  } catch (error) {
-    console.error("Error adding task:", error);
-    toast.error("Network error. Please try again.");
-  }
-};
-
- 
-  
 
   return (
     <div className="p-5">
@@ -264,7 +224,7 @@ import toast from 'react-hot-toast';
         </select>
       </div>
 
-     
+
          {/* Table */}
          <div
         className="relative w-full border border-gray-300 rounded-lg overflow-hidden"
@@ -344,7 +304,7 @@ import toast from 'react-hot-toast';
           </button>
         </div>
       </div>
-     
+
       {/* Tag Modal */}
       {show && (
         <div className="absolute top-1/3 right-4 bg-white shadow-lg rounded p-4">
@@ -377,142 +337,11 @@ import toast from 'react-hot-toast';
         </div>
       )}
 
-<div className="p-5">
-      {/* Task Form Toggle */}
-      <button
-        onClick={() => setShowTaskForm(!showTaskForm)}
-        className="px-4 py-2 bg-blue-500 text-white rounded"
-      >
-        Add Task
-      </button>
 
-      {/* Task Form Modal */}
-      {showTaskForm && (
-        <div className="absolute top-1/3 right-4 bg-white shadow-lg rounded p-4 w-96">
-          <div className="flex justify-between items-center mb-4">
-            <h3 className="text-lg font-semibold">Add New Task</h3>
-            <button
-              className="ml-2 p-1 bg-red-500 text-white rounded"
-              onClick={() => setShowTaskForm(false)}
-            >
-              <IoClose />
-            </button>
-          </div>
-
-          <form onSubmit={(e) => { e.preventDefault(); handleSubmitTask(); }}>
-            <div className="mb-4">
-              <label className="block text-sm font-semibold">Task Name</label>
-              <input
-                type="text"
-                className="w-full p-2 border rounded"
-                value={taskName}
-                onChange={(e) => setTaskName(e.target.value)}
-                required
-              />
-            </div>
-
-            <div className="mb-4">
-              <label className="block text-sm font-semibold">Task Description</label>
-              <textarea
-                className="w-full p-2 border rounded"
-                rows="4"
-                value={taskDescription}
-                onChange={(e) => setTaskDescription(e.target.value)}
-                required
-              />
-            </div>
-
-            <div className="mb-4">
-              <label className="block text-sm font-semibold">Priority</label>
-              <select
-                className="w-full p-2 border rounded"
-                value={priority}
-                onChange={(e) => setPriority(e.target.value)}
-              >
-                <option value="Urgent">Urgent</option>
-                <option value="High">High</option>
-                <option value="Medium">Medium</option>
-                <option value="Low">Low</option>
-              </select>
-            </div>
-
-            <div className="mb-4">
-              <label className="block text-sm font-semibold">Assigned By</label>
-              <input
-                type="text"
-                className="w-full p-2 border rounded"
-                placeholder="Enter comma-separated teamlead names"
-                onChange={(e) => setAssignedBy(e.target.value.split(",").map(name => name.trim()))}
-                required
-              />
-            </div>
-
-            <div className="mb-4">
-              <label className="block text-sm font-semibold">Assigned To</label>
-              <input
-                type="text"
-                className="w-full p-2 border rounded"
-                placeholder="Enter comma-separated employee names"
-                onChange={(e) => setAssignedTo(e.target.value.split(",").map(name => name.trim()))}
-                required
-              />
-            </div>
-
-            <div className="mb-4">
-              <label className="block text-sm font-semibold">Reviewer</label>
-              <input
-                type="text"
-                className="w-full p-2 border rounded"
-                value={reviewer}
-                onChange={(e) => setReviewer(e.target.value)}
-                required
-              />
-            </div>
-
-            <div className="mb-4">
-              <label className="block text-sm font-semibold">Reference Files (URLs)</label>
-              <input
-                type="text"
-                className="w-full p-2 border rounded"
-                placeholder="Enter comma-separated URLs"
-                onChange={(e) => setReferenceFileUrl(e.target.value.split(",").map(url => url.trim()))}
-              />
-            </div>
-
-            <div className="mb-4">
-              <label className="block text-sm font-semibold">Due Date</label>
-              <input
-                type="datetime-local"
-                className="w-full p-2 border rounded"
-                value={dueDate}
-                onChange={(e) => setDueDate(e.target.value)}
-                required
-              />
-            </div>
-
-            <div className="mb-4">
-              <label className="block text-sm font-semibold">Score</label>
-              <input
-                type="number"
-                className="w-full p-2 border rounded"
-                value={score}
-                onChange={(e) => setScore(e.target.value)}
-              />
-            </div>
-
-            <button
-              type="submit"
-              className="w-full py-2 bg-green-500 text-white rounded"
-            >
-              Submit Task
-            </button>
-          </form>
-        </div>
-      )}
-    </div>
     </div>
   );
 };
 
 export default Position;
+
 
