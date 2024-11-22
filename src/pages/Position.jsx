@@ -2,7 +2,7 @@ import { useState, useEffect } from "react";
 import { IoClose } from "react-icons/io5";
 import toast from 'react-hot-toast';
 
-  const Position = () => {
+const Position = () => {
   const [users, setUsers] = useState([]);
   const [teamLeads, setTeamLeads] = useState([]);
   const [currentPage, setCurrentPage] = useState(1);
@@ -14,7 +14,7 @@ import toast from 'react-hot-toast';
   const [selectedDepartment, setSelectedDepartment] = useState("all");
   const [selectedTeamLead, setSelectedTeamLead] = useState("");
   const [selectedEmployee, setSelectedEmployee] = useState(null);
- 
+
   const [isMobile, setIsMobile] = useState(false);
   const [selectedRow, setSelectedRow] = useState(null);
 
@@ -93,7 +93,7 @@ import toast from 'react-hot-toast';
 
   const handleCardClick = (user) => {
     setSelectedEmployee(user);
-};
+  };
 
 
   const filterUsers = () => {
@@ -157,7 +157,7 @@ import toast from 'react-hot-toast';
     } else {
       toast.error("Please select an employee and a team lead."); // Show validation error toast
     }
- };
+  };
 
 
 
@@ -216,8 +216,8 @@ import toast from 'react-hot-toast';
       </div>
 
 
-         {/* Table */}
-         <div
+      {/* Table */}
+      <div
         className="relative w-full border border-gray-300 rounded-lg overflow-hidden"
         style={{ height: "300px" }}
       >
@@ -238,13 +238,12 @@ import toast from 'react-hot-toast';
             </thead>
             <tbody>
               {currentUsers.map((user, index) => (
-               <tr
-               key={index}
-               className={`even:bg-white-50 odd:bg-white ${
-                 selectedRow === index ? "bg-sky-100" : "" 
-               }`}
-               onClick={() => setSelectedRow(index)} 
-             >
+                <tr
+                  key={index}
+                  className={`even:bg-white-50 odd:bg-white ${selectedRow === index ? "bg-sky-100" : ""
+                    }`}
+                  onClick={() => setSelectedRow(index)}
+                >
                   <td className="p-2 text-center">
 
                     <input
