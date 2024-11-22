@@ -27,9 +27,13 @@ const Position = () => {
           "https://3qhglx2bhd.execute-api.us-east-1.amazonaws.com/employee/getAll"
         );
         const data = await response.json();
-        if (Array.isArray(data.message)) {
+        
+        if (Array.isArray(data.message))
+           {
           setUsers(data.message);
           setFilteredUsers(data.message);
+          console.log(data.message)
+          
 
           // Extract unique positions and departments
           const uniquePositions = [
@@ -47,6 +51,7 @@ const Position = () => {
     };
     fetchUsers();
   }, []);
+ 
 
   useEffect(() => {
     const fetchTeamLeads = async () => {
