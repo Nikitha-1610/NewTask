@@ -24,12 +24,16 @@ import toast from 'react-hot-toast';
   const [dueDate, setDueDate] = useState("");
   const [score, setScore] = useState(85);
   const [showTaskForm, setShowTaskForm] = useState(false);
+  const [isMobile, setIsMobile] = useState(false);
+  const [selectedRow, setSelectedRow] = useState(null);
 
   const usersPerPage = 10;
   const lastUserIndex = currentPage * usersPerPage;
   const firstUserIndex = lastUserIndex - usersPerPage;
   const currentUsers = filteredUsers.slice(firstUserIndex, lastUserIndex);
   const totalPages = Math.ceil(filteredUsers.length / usersPerPage);
+
+  
 
   useEffect(() => {
     const fetchUsers = async () => {
@@ -38,18 +42,24 @@ import toast from 'react-hot-toast';
           "https://3qhglx2bhd.execute-api.us-east-1.amazonaws.com/employee/getAll"
         );
         const data = await response.json();
+  
+        
         if (Array.isArray(data.message)) {
-        if (Array.isArray(data.message)) {
+          
           setUsers(data.message);
           setFilteredUsers(data.message);
-
-
+  
+         
           const uniquePositions = [
             ...new Set(data.message.map((user) => user.position)),
           ];
+  
+         
           const uniqueDepartments = [
             ...new Set(data.message.map((user) => user.team || "General")),
           ];
+  
+          
           setPositions(uniquePositions);
           setDepartments(uniqueDepartments);
         }
@@ -57,8 +67,11 @@ import toast from 'react-hot-toast';
         console.error("Error fetching users:", error);
       }
     };
+  
+   
     fetchUsers();
   }, []);
+  
 
   useEffect(() => {
     const fetchTeamLeads = async () => {
@@ -187,7 +200,7 @@ import toast from 'react-hot-toast';
 
     if (response.ok) {
       toast.success("Task added successfully!");
-      setShowTaskForm(false); // Hide form after successful submission
+      setShowTaskForm(false); 
     } else {
       toast.error(data.message || "Failed to add the task.");
     }
@@ -277,9 +290,9 @@ import toast from 'react-hot-toast';
                <tr
                key={index}
                className={`even:bg-white-50 odd:bg-white ${
-                 selectedRow === index ? "bg-sky-100" : "" // Add faint sky blue background color
+                 selectedRow === index ? "bg-sky-100" : "" 
                }`}
-               onClick={() => setSelectedRow(index)} // Set the selected row on click
+               onClick={() => setSelectedRow(index)} 
              >
                   <td className="p-2 text-center">
 
