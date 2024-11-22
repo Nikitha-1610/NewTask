@@ -1,7 +1,8 @@
 import { useState, useEffect } from "react";
 import { IoClose } from "react-icons/io5";
+import toast from 'react-hot-toast';
 
-const Position = () => {
+  const Position = () => {
   const [users, setUsers] = useState([]);
   const [teamLeads, setTeamLeads] = useState([]);
   const [currentPage, setCurrentPage] = useState(1);
@@ -13,12 +14,26 @@ const Position = () => {
   const [selectedDepartment, setSelectedDepartment] = useState("all");
   const [selectedTeamLead, setSelectedTeamLead] = useState("");
   const [selectedEmployee, setSelectedEmployee] = useState(null);
+  const [taskName, setTaskName] = useState("");
+  const [taskDescription, setTaskDescription] = useState("");
+  const [priority, setPriority] = useState("Urgent");
+  const [assignedBy, setAssignedBy] = useState("");
+  const [assignedTo, setAssignedTo] = useState([]);
+  const [reviewer, setReviewer] = useState("");
+  const [referenceFileUrl, setReferenceFileUrl] = useState([]);
+  const [dueDate, setDueDate] = useState("");
+  const [score, setScore] = useState(85);
+  const [showTaskForm, setShowTaskForm] = useState(false);
+  const [isMobile, setIsMobile] = useState(false);
+  const [selectedRow, setSelectedRow] = useState(null);
 
   const usersPerPage = 10;
   const lastUserIndex = currentPage * usersPerPage;
   const firstUserIndex = lastUserIndex - usersPerPage;
   const currentUsers = filteredUsers.slice(firstUserIndex, lastUserIndex);
   const totalPages = Math.ceil(filteredUsers.length / usersPerPage);
+
+  
 
   useEffect(() => {
     const fetchUsers = async () => {
@@ -27,17 +42,24 @@ const Position = () => {
           "https://3qhglx2bhd.execute-api.us-east-1.amazonaws.com/employee/getAll"
         );
         const data = await response.json();
+  
+        
         if (Array.isArray(data.message)) {
+          
           setUsers(data.message);
           setFilteredUsers(data.message);
-
-          // Extract unique positions and departments
+  
+         
           const uniquePositions = [
             ...new Set(data.message.map((user) => user.position)),
           ];
+  
+         
           const uniqueDepartments = [
             ...new Set(data.message.map((user) => user.team || "General")),
           ];
+  
+          
           setPositions(uniquePositions);
           setDepartments(uniqueDepartments);
         }
@@ -45,8 +67,11 @@ const Position = () => {
         console.error("Error fetching users:", error);
       }
     };
+  
+   
     fetchUsers();
   }, []);
+  
 
   useEffect(() => {
     const fetchTeamLeads = async () => {
@@ -65,17 +90,29 @@ const Position = () => {
     fetchTeamLeads();
   }, []);
 
+  useEffect(() => {
+    const handleResize = () => {
+      setIsMobile(window.innerWidth <= 768);
+    };
+    window.addEventListener("resize", handleResize);
+    handleResize();
+    return () => window.removeEventListener("resize", handleResize);
+  }, []);
+
+  
+  const handleCardClick = (user) => {
+    setSelectedEmployee(user);
+};
+
+
   const filterUsers = () => {
     let filtered = [...users];
-
     if (selectedPosition !== "all") {
       filtered = filtered.filter((user) => user.position === selectedPosition);
     }
-
     if (selectedDepartment !== "all") {
       filtered = filtered.filter((user) => user.team === selectedDepartment);
     }
-
     setFilteredUsers(filtered);
     setCurrentPage(1);
   };
@@ -93,30 +130,94 @@ const Position = () => {
   };
 
 
-
-
-  const handleSubmit = () => {
-    console.log('Selected Employee:', selectedEmployee);
-    console.log('Selected TeamLead:', selectedTeamLead);
-
+  const handleSubmit = async () => {
+    console.log("Selected Employee:", selectedEmployee);
+    console.log("Selected TeamLead:", selectedTeamLead);
+  
     if (selectedEmployee && selectedTeamLead) {
-      console.log('Employee:', selectedEmployee.name);
-      console.log('Assigned to TeamLead:', selectedTeamLead);
-      setShow(false);
-      setSelectedTeamLead('');
-      setSelectedEmployee(null);
+      try {
+        const response = await fetch("https://3qhglx2bhd.execute-api.us-east-1.amazonaws.com/employee/tag", {
+          method: "PUT",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            employeeName: selectedEmployee.name,
+            teamLeadName: selectedTeamLead,
+          }),
+        });
+  
+        const data = await response.json();
+  
+        if (!response.ok) {
+          console.error("Error:", data.message);
+          toast.error(data.message); // Show error toast
+        } else {
+          console.log("Employee successfully tagged:", data);
+          toast.success("Employee tagged successfully!"); // Show success toast
+          setShow(false);
+          setSelectedTeamLead("");
+          setSelectedEmployee(null);
+        }
+      } catch (error) {
+        console.error("Network error:", error);
+        toast.error("Failed to tag the employee. Please try again."); // Show network error toast
+      }
     } else {
-      console.log('No employee or team lead selected');
+      toast.error("Please select an employee and a team lead."); // Show validation error toast
     }
+ };
+
+
+ const handleSubmitTask = async () => {
+  if (!taskName || !taskDescription || !assignedTo.length || !reviewer || !dueDate) {
+    toast.error("Please fill in all the required fields.");
+    return;
+  }
+
+  const taskData = {
+    taskName,
+    taskDescription,
+    priority,
+    assignedBy,
+    assignedTo,
+    reviewer,
+    referenceFileUrl,
+    dueDate,
+    score,
   };
 
+  try {
+    const response = await fetch("https://3qhglx2bhd.execute-api.us-east-1.amazonaws.com/task/addTask", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(taskData),
+    });
 
+    const data = await response.json();
+
+    if (response.ok) {
+      toast.success("Task added successfully!");
+      setShowTaskForm(false); 
+    } else {
+      toast.error(data.message || "Failed to add the task.");
+    }
+  } catch (error) {
+    console.error("Error adding task:", error);
+    toast.error("Network error. Please try again.");
+  }
+};
+
+ 
+  
 
   return (
     <div className="p-5">
       {/* Stats Section */}
       <div className="mx-auto w-1/2 flex space-x-20 gap-2 my-5">
-        <div className="flex flex-col relative left-10 items-start justify-center w-[200px] h-[100px] text-[20px]  text-[#333] text-center ">
+        <div className="flex flex-col relative left-10 items-start justify-center w-[200px] h-[100px] text-[20px] text-[#333] text-center">
           <span className="text-center text-[42.52px] font-medium leading-[49.83px]">
             {users.length}
           </span>
@@ -125,11 +226,11 @@ const Position = () => {
           </span>
         </div>
         <div className="h-[130px] min-h-[1em] w-px self-stretch bg-gradient-to-tr from-transparent via-neutral-500 to-transparent opacity-25 dark:via-neutral-400"></div>
-        <div className="flex flex-col relative left-14 items-start justify-center w-[200px] h-[100px] text-[20px]  text-[#333] text-center  ">
+        <div className="flex flex-col relative left-14 items-start justify-center w-[200px] h-[100px] text-[20px] text-[#333] text-center">
           <span className="text-center text-[42.52px] font-medium leading-[49.83px]">
             {departments.length}
           </span>
-          <span className="text-center  text-[10.80px] font-bold leading-[11.68px] tracking-[0.1px] text-[#C4C4C4] underline decoration-skip-ink-none">
+          <span className="text-center text-[10.80px] font-bold leading-[11.68px] tracking-[0.1px] text-[#C4C4C4] underline decoration-skip-ink-none">
             Departments
           </span>
         </div>
@@ -149,7 +250,6 @@ const Position = () => {
             </option>
           ))}
         </select>
-
         <select
           className="p-2 border rounded bg-gray-200"
           value={selectedDepartment}
@@ -164,8 +264,9 @@ const Position = () => {
         </select>
       </div>
 
-      {/* Table */}
-      <div
+     
+         {/* Table */}
+         <div
         className="relative w-full border border-gray-300 rounded-lg overflow-hidden"
         style={{ height: "300px" }}
       >
@@ -186,7 +287,13 @@ const Position = () => {
             </thead>
             <tbody>
               {currentUsers.map((user, index) => (
-                <tr key={index} className="even:bg-white-50 odd:bg-white">
+               <tr
+               key={index}
+               className={`even:bg-white-50 odd:bg-white ${
+                 selectedRow === index ? "bg-sky-100" : "" 
+               }`}
+               onClick={() => setSelectedRow(index)} 
+             >
                   <td className="p-2 text-center">
 
                     <input
@@ -237,10 +344,10 @@ const Position = () => {
           </button>
         </div>
       </div>
-
+     
       {/* Tag Modal */}
       {show && (
-        <div className="absolute top-1/3 left-1/2 transform -translate-x-1/2 -translate-y-1/2 bg-white shadow-lg rounded p-4">
+        <div className="absolute top-1/3 right-4 bg-white shadow-lg rounded p-4">
           <div className="flex justify-between items-center mb-4">
             <select
               className="p-2 border rounded"
@@ -263,18 +370,149 @@ const Position = () => {
           </div>
           <button
             className="w-full py-2 bg-green-500 text-white rounded"
-            onClick={() => {
-              console.log('Submit button clicked');
-              handleSubmit();
-            }
-            }
+            onClick={handleSubmit}
           >
             Submit
           </button>
         </div>
       )}
+
+<div className="p-5">
+      {/* Task Form Toggle */}
+      <button
+        onClick={() => setShowTaskForm(!showTaskForm)}
+        className="px-4 py-2 bg-blue-500 text-white rounded"
+      >
+        Add Task
+      </button>
+
+      {/* Task Form Modal */}
+      {showTaskForm && (
+        <div className="absolute top-1/3 right-4 bg-white shadow-lg rounded p-4 w-96">
+          <div className="flex justify-between items-center mb-4">
+            <h3 className="text-lg font-semibold">Add New Task</h3>
+            <button
+              className="ml-2 p-1 bg-red-500 text-white rounded"
+              onClick={() => setShowTaskForm(false)}
+            >
+              <IoClose />
+            </button>
+          </div>
+
+          <form onSubmit={(e) => { e.preventDefault(); handleSubmitTask(); }}>
+            <div className="mb-4">
+              <label className="block text-sm font-semibold">Task Name</label>
+              <input
+                type="text"
+                className="w-full p-2 border rounded"
+                value={taskName}
+                onChange={(e) => setTaskName(e.target.value)}
+                required
+              />
+            </div>
+
+            <div className="mb-4">
+              <label className="block text-sm font-semibold">Task Description</label>
+              <textarea
+                className="w-full p-2 border rounded"
+                rows="4"
+                value={taskDescription}
+                onChange={(e) => setTaskDescription(e.target.value)}
+                required
+              />
+            </div>
+
+            <div className="mb-4">
+              <label className="block text-sm font-semibold">Priority</label>
+              <select
+                className="w-full p-2 border rounded"
+                value={priority}
+                onChange={(e) => setPriority(e.target.value)}
+              >
+                <option value="Urgent">Urgent</option>
+                <option value="High">High</option>
+                <option value="Medium">Medium</option>
+                <option value="Low">Low</option>
+              </select>
+            </div>
+
+            <div className="mb-4">
+              <label className="block text-sm font-semibold">Assigned By</label>
+              <input
+                type="text"
+                className="w-full p-2 border rounded"
+                placeholder="Enter comma-separated teamlead names"
+                onChange={(e) => setAssignedBy(e.target.value.split(",").map(name => name.trim()))}
+                required
+              />
+            </div>
+
+            <div className="mb-4">
+              <label className="block text-sm font-semibold">Assigned To</label>
+              <input
+                type="text"
+                className="w-full p-2 border rounded"
+                placeholder="Enter comma-separated employee names"
+                onChange={(e) => setAssignedTo(e.target.value.split(",").map(name => name.trim()))}
+                required
+              />
+            </div>
+
+            <div className="mb-4">
+              <label className="block text-sm font-semibold">Reviewer</label>
+              <input
+                type="text"
+                className="w-full p-2 border rounded"
+                value={reviewer}
+                onChange={(e) => setReviewer(e.target.value)}
+                required
+              />
+            </div>
+
+            <div className="mb-4">
+              <label className="block text-sm font-semibold">Reference Files (URLs)</label>
+              <input
+                type="text"
+                className="w-full p-2 border rounded"
+                placeholder="Enter comma-separated URLs"
+                onChange={(e) => setReferenceFileUrl(e.target.value.split(",").map(url => url.trim()))}
+              />
+            </div>
+
+            <div className="mb-4">
+              <label className="block text-sm font-semibold">Due Date</label>
+              <input
+                type="datetime-local"
+                className="w-full p-2 border rounded"
+                value={dueDate}
+                onChange={(e) => setDueDate(e.target.value)}
+                required
+              />
+            </div>
+
+            <div className="mb-4">
+              <label className="block text-sm font-semibold">Score</label>
+              <input
+                type="number"
+                className="w-full p-2 border rounded"
+                value={score}
+                onChange={(e) => setScore(e.target.value)}
+              />
+            </div>
+
+            <button
+              type="submit"
+              className="w-full py-2 bg-green-500 text-white rounded"
+            >
+              Submit Task
+            </button>
+          </form>
+        </div>
+      )}
+    </div>
     </div>
   );
 };
 
 export default Position;
+
