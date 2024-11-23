@@ -2,6 +2,14 @@ import { useState, useEffect } from "react";
 import { IoClose } from "react-icons/io5";
 import { toast, ToastContainer  } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
+import axios from 'axios';
+
+const axiosInstance = axios.create({
+  baseURL: 'https://3qhglx2bhd.execute-api.us-east-1.amazonaws.com/employee',
+  headers: {
+    'Content-Type': 'application/json',
+  },
+});
 
 const Position = () => {
   const [users, setUsers] = useState([]);
@@ -29,10 +37,9 @@ const Position = () => {
   useEffect(() => {
     const fetchUsers = async () => {
       try {
-        const response = await fetch(
-          "https://3qhglx2bhd.execute-api.us-east-1.amazonaws.com/employee/getAll"
-        );
-        const data = await response.json();
+        const response = await axiosInstance.get("/getAll");
+        const data = response.data;
+
         if (Array.isArray(data.message)) {
           setUsers(data.message);
           setFilteredUsers(data.message);
@@ -56,10 +63,9 @@ const Position = () => {
   useEffect(() => {
     const fetchTeamLeads = async () => {
       try {
-        const response = await fetch(
-          "https://3qhglx2bhd.execute-api.us-east-1.amazonaws.com/employee/getOption/TeamLead"
-        );
-        const data = await response.json();
+        const response = await axiosInstance.get("/getOption/TeamLead");
+        const data = response.data;
+
         if (Array.isArray(data.message)) {
           setTeamLeads(data.message);
         }
@@ -68,7 +74,7 @@ const Position = () => {
       }
     };
     fetchTeamLeads();
-  }, []);
+  }, [])
 
   useEffect(() => {
     const handleResize = () => {
@@ -106,27 +112,19 @@ const handleSubmit = async () => {
 
   if (selectedEmployee && selectedTeamLead) {
     try {
-      const response = await fetch("https://3qhglx2bhd.execute-api.us-east-1.amazonaws.com/employee/tag", {
-        method: "PUT",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
+      const response = await axiosInstance.put("/tag", {
           employeeName: selectedEmployee.name,
           teamLeadName: selectedTeamLead,
-        }),
       });
 
-      const data = await response.json();
+      const data = response.data;
 
-      if (!response.ok) {
+      if (!response.status === 200) {
         console.error("Error:", data.message);
         toast.error(data.message); // Show error toast
       } else {
         console.log("Employee successfully tagged:", data);
         toast.success("Employee tagged successfully!"); // Show success toast
-        console.log("Success toast triggered");
-        // Reset fields after success
         setShow(false);
         setSelectedTeamLead("");
         setSelectedEmployee(null);
@@ -212,34 +210,17 @@ useEffect(() => {
     <div className="py-0 px-5">
     <ToastContainer />
       {/* Stats Section */}
-      <div className="sm:flex sm:flex-row justify-center flex flex-col items-center">
-  <div className="flex sm:flex-row flex-col items-center">
-    <div className="flex flex-col relative left-10 items-start justify-center w-[200px] h-[100px] text-[20px] text-[#333] text-center sm:ml-1 ml-24">
-      <span className="text-center text-[42.52px] font-medium leading-[49.83px]">
-        {users.length}
-      </span>
-      <span className="text-center text-[10.97px] font-bold leading-[11.68px] tracking-[0.1px] text-[#C4C4C4] underline decoration-skip-ink-none">
-        People
-      </span>
+      <div className="flex flex-wrap items-center justify-center gap-6 md:gap-28 mb-5">
+        <div className="flex flex-col items-center text-center">
+          <span className="text-3xl font-medium">{users.length}</span>
+          <span className="text-sm text-gray-400 underline">People</span>
     </div>
-    
-    {/* Horizontal line, visible only on mobile and centered */}
-    <div className="lg:hidden w-[150px] h-px bg-gradient-to-tr from-transparent via-neutral-500 to-transparent opacity-25 dark:via-neutral-400 mx-4"></div>
-    
-    {/* Vertical line, visible only on desktop */}
-    <div className="hidden lg:block h-[130px] w-px bg-gradient-to-tr from-transparent via-neutral-500 to-transparent opacity-25 dark:via-neutral-400 mx-4"></div>
-    
-    <div className="flex flex-col relative left-14 items-start justify-center w-[200px] h-[100px] sm:ml-1 ml-24 text-[20px] text-[#333] text-center">
-      <span className="text-center text-[42.52px] font-medium leading-[49.83px]">
-        {departments.length}
-      </span>
-      <span className="text-center text-[10.80px] font-bold leading-[11.68px] tracking-[0.1px] text-[#C4C4C4] underline decoration-skip-ink-none">
-        Departments
-      </span>
-    </div>
+        <div className="w-[1px] h-16 bg-gray-300"></div>
+        <div className="flex flex-col items-center text-center">
+          <span className="text-3xl font-medium">{departments.length}</span>
+          <span className="text-sm text-gray-400 underline">Departments</span>
   </div>
 </div>
-
   
 
      
@@ -262,7 +243,7 @@ useEffect(() => {
         ))}
       </select>
       <select
-        className="p-2 border rounded bg-gray-200 w-full sm:w-auto"
+        className="p-2 border rounded bg-gray-200 sm:w-auto w-[140px]"
         value={selectedDepartment}
         onChange={(e) => setSelectedDepartment(e.target.value)}
       >
