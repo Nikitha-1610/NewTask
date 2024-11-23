@@ -1,53 +1,50 @@
 import { useEffect, useState } from "react";
 import { Icon } from "@iconify/react";
-import { IoClose } from "react-icons/io5";
 import axiosInstance from "../utilities/axios/axiosInstance";
+import toast, { Toaster } from "react-hot-toast";
 
 const People = () => {
-  // const allUsers = Array(24).fill({
-  //   username: "Sandhiya Ravikumar",
-  //   mailId: "sandyva@gmail.com",
-  //   phoneNumber: "+91 6789054321",
-  //   position: "UX UI Designer",
-  //   department: "Design",
-  //   joiningDate: "02-11-2024",
-  //   actionType: "Approve", // Default action
-  // });
   const [allUsers, setAllUsers] = useState([]);
   const [currentPage, setCurrentPage] = useState(1);
   const [usersPerPage] = useState(7);
-  const [selectedDepartment, setSelectedDepartment] = useState("All");
   const [modalVisible, setModalVisible] = useState(false);
-  const [actionType, setActionType] = useState(""); // To store the selected action (Approve, Reject, Hold)
-  const [selectedUserIndex, setSelectedUserIndex] = useState(null);
+  const [modalActionVisible, setModalActionVisible] = useState(false);
   const [confirmModalVisible, setConfirmModalVisible] = useState(false);
+  const [modalType, setModalType] = useState("");
+  const [selectedUserIndex, setSelectedUserIndex] = useState(null);
+  const [selectedDepartment, setSelectedDepartment] = useState("All");
+  const [selectedUserType, setSelectedUserType] = useState("All");
 
   const getAllusers = async () => {
     try {
-      const response = await axiosInstance.get("user/getUsers", {
-        // headers: {
-        //   "Content-Type": "application/json",
-        //   Authorization: `Bearer ${token}`, // Include token in the header
-        // },
-      });
-      console.log("here is all users data", response.data.message);
+      const response = await axiosInstance.get("user/getUsers");
+      console.log(response.data.message);
+
       setAllUsers(response?.data?.message);
     } catch (error) {
       console.error("Error syncing with server:", error);
+      toast.error("Failed to fetch users.");
     }
   };
-  useEffect(() => {
-    console.log("all users", allUsers);
 
+  useEffect(() => {
     getAllusers();
   }, []);
 
-  const departments = ["All", "Design", "Development", "Marketing"];
+  const departments = ["All Position", "Tester", "HR Manager", "Marketing", "Project Lead"];
+  const userType = ["All Department", "On-Hold", "Init"];
 
-  const filteredUsers =
-    selectedDepartment === "All"
-      ? allUsers
-      : allUsers.filter((user) => user.department === selectedDepartment);
+  const filteredUsers = allUsers.filter((user) => {
+    // Filter by selected department
+    const matchesDepartment =
+      selectedDepartment === "All" || user.department === selectedDepartment;
+
+    // Filter by selected user type (status)
+    const matchesUserType =
+      selectedUserType === "All" || user.status === selectedUserType;
+
+    return matchesDepartment && matchesUserType;
+  });
 
   const indexOfLastUser = currentPage * usersPerPage;
   const indexOfFirstUser = indexOfLastUser - usersPerPage;
@@ -55,165 +52,208 @@ const People = () => {
 
   const totalPages = Math.ceil(filteredUsers.length / usersPerPage);
 
-  const openConfirmModal = (userIndex) => {
-    setSelectedUserIndex(userIndex);
+  const openConfirmModal = (index) => {
+    setSelectedUserIndex(index);
+    setModalType("approve");
     setConfirmModalVisible(true);
   };
 
-  const openActionModal = (userIndex) => {
-    setSelectedUserIndex(userIndex);
+  const openActionModal = (index) => {
+    setSelectedUserIndex(index);
+    setModalType("action");
     setModalVisible(true);
+  };
+  const openHoldActionModal = (index) => {
+    setSelectedUserIndex(index);
+    setModalType("action");
+    setModalActionVisible(true);
   };
 
   const closeModal = () => {
     setModalVisible(false);
+    setModalActionVisible(false); // Added this line to ensure action modal is also closed
     setConfirmModalVisible(false);
     setSelectedUserIndex(null);
-    setActionType("");
+    setModalType("");
   };
 
-  const confirmAction = () => {
+  const handleApprove = async () => {
     if (selectedUserIndex !== null) {
-      // Update the selected user's action type based on modal choice
-      if (actionType) {
-        currentUsers[selectedUserIndex].actionType = actionType;
+      const user = currentUsers[selectedUserIndex];
+      console.log(`User approved:`, user.email);
+      try {
+        await axiosInstance.put(`employee/apporve/${user.email}`);
+        toast.success(`${user.name} has been approved.`);
+        console.log(`User approved:`, user.email);
+        getAllusers(); // Refresh the user list after approval
+      } catch (error) {
+        console.error("Error approving user:", error);
+        toast.error("Failed to approve the user.");
       }
     }
     closeModal();
   };
 
-  const handleApprove = () => {
-    openConfirmModal(selectedUserIndex); // Open confirm modal when clicking approve
+  const handleAction = async (action) => {
+    if (selectedUserIndex !== null) {
+      const user = currentUsers[selectedUserIndex];
+
+      try {
+        // Handle action based on the type (approve, on-hold, reject)
+        switch (action) {
+          case "approve":
+            await axiosInstance.put(`/employee/approve/${user.email}`);
+            toast.success(`${user.name} has been approved.`);
+            console.log(`User approved:`, user.email);
+            break;
+
+          case "on-hold":
+            // Pass status: "On-Hold" in the request body
+            await axiosInstance.put(`/user/updateDetails/${user.email}`, {
+              status: "On-Hold",
+            });
+            toast.success(`${user.name} has been placed on hold.`);
+            console.log(`User on-hold:`, user.email);
+            break;
+
+          case "reject":
+            await axiosInstance.delete(`/user/reject/${user.email}`);
+            toast.success(`${user.name} has been rejected.`);
+            console.log(`User rejected:`, user.email);
+            break;
+
+          default:
+            throw new Error("Unknown action");
+        }
+
+        // Refresh the user list after action
+        getAllusers();
+      } catch (error) {
+        console.error(`Error performing ${action} action:`, error);
+        toast.error(`Failed to ${action} the user.`);
+      } finally {
+        // Ensure modal is closed in both success and failure cases
+        closeModal();
+      }
+    }
   };
 
   return (
     <div className="p-5">
+      <Toaster />
       {/* Stats Section */}
-      <div className="mx-auto w-1/2 flex space-x-20 gap-2 my-5">
-        <div className="flex flex-col relative left-10 items-start justify-center w-[200px] h-[100px] text-[20px]  text-[#333] text-center ">
-          <span className="text-center text-[42.52px] font-medium leading-[49.83px] tracking-[0.09966778010129929px] ">
-            {allUsers.length}
-          </span>
-          <span className="text-center text-[9.97px] font-medium leading-[11.68px] tracking-[0.1px] text-[#C4C4C4] underline decoration-skip-ink-none">
-            People
-          </span>
+      <div className="flex flex-wrap items-center justify-center gap-6 md:gap-28 mb-5">
+        <div className="flex flex-col items-center text-center">
+          <span className="text-3xl font-medium">{allUsers.length}</span>
+          <span className="text-sm text-gray-400 underline">People</span>
         </div>
-        <div className="h-[130px] min-h-[1em] w-px self-stretch bg-gradient-to-tr from-transparent via-neutral-500 to-transparent opacity-25 dark:via-neutral-400"></div>
-        <div className="flex flex-col relative left-14 items-start justify-center w-[200px] h-[100px] text-[20px]  text-[#333] text-center  ">
-          <span className="text-center text-[42.52px] font-medium leading-[49.83px] tracking-[0.09966778010129929px] ">
-            5
-          </span>
-          <span className="text-center text-[9.97px] font-medium leading-[11.68px] tracking-[0.1px] text-[#C4C4C4] underline decoration-skip-ink-none">
-            Department
-          </span>
+        <div className="w-[1px] h-16 bg-gray-300"></div>
+        <div className="flex flex-col items-center text-center">
+          <span className="text-3xl font-medium">5</span>
+          <span className="text-sm text-gray-400 underline">Departments</span>
         </div>
-        <div className="h-[130px] min-h-[1em] w-px self-stretch bg-gradient-to-tr from-transparent via-neutral-500 to-transparent opacity-25 dark:via-neutral-400"></div>
       </div>
 
-      {/* Filter Section */}
-      <div className="flex flex-wrap gap-2 items-center mb-4">
+      {/* Filter Section */}   
+      <div className="flex flex-col sm:flex-row justify-center items-center gap-4 mb-6">
         <select
-          className="border border-gray-300 bg-gray-200 rounded-lg p-2 text-gray-700"
-          onChange={(e) => setSelectedDepartment(e.target.value)}
+          className="p-2 border rounded bg-gray-200"
+          value={selectedDepartment}
+          onChange={(e) => setSelectedUserType(e.target.value)}
         >
+          {/* <option value="all">All Positions</option> */}
           {departments.map((dept) => (
             <option key={dept} value={dept}>
               {dept}
             </option>
           ))}
         </select>
-        <select className="p-2 border rounded bg-gray-200">
-          <option value="all-departments">All Departments</option>
-          <option value="hr">HR</option>
-          <option value="finance">Finance</option>
-          <option value="marketing">Marketing</option>
+
+        <select
+          className="p-2 border rounded bg-gray-200"
+          value={selectedDepartment}
+          onChange={(e) => setSelectedUserType(e.target.value)}
+        >
+          {/* <option value="selectedUserType">All Departments</option> */}
+          {userType.map((type) => (
+            <option key={type} value={type}>
+              {type}
+            </option>
+          ))}
         </select>
-      </div>
+        </div>
 
       {/* Table with Fixed Height */}
       <div
-        className="relative w-full border border-gray-300 rounded-lg overflow-hidden"
+        className="relative w-full border border-gray-300 rounded-lg"
         style={{ height: "400px" }}
       >
-        <div
-          className="overflow-y-auto h-full"
-          style={{ maxHeight: "calc(100% - 50px)" }}
-        >
-          <table className="w-full">
-            <thead className="bg-gray-100 sticky top-0">
-              <tr>
-                <th className="px-4 py-2 text-left">
-                  {/* <input type="checkbox" /> */}
-                </th>
-                <th className="px-4 py-2 text-left">Username</th>
-                <th className="px-4 py-2 text-left hidden md:table-cell">
-                  Mail ID
-                </th>
-                <th className="px-4 py-2 text-left hidden md:table-cell">
-                  Phone Number
-                </th>
-                <th className="px-4 py-2 text-left">Position</th>
-                <th className="px-4 py-2 text-left hidden md:table-cell">
-                  Joining Date
-                </th>
-                <th className="px-4 py-2 text-left">Activity</th>
-              </tr>
-            </thead>
-            <tbody>
-              {currentUsers.map((user, index) => (
-                <tr key={index} className="border-b hover:bg-gray-50">
-                  <td className="px-4 py-2">
-                    <input type="checkbox" />
-                  </td>
-                  <td className="px-4 py-2">{user.name}</td>
-                  <td className="px-4 py-2 hidden md:table-cell">
-                    {user.email}
-                  </td>
-                  <td className="px-4 py-2 hidden md:table-cell">
-                    {user.mobile}
-                  </td>
-                  <td className="px-4 py-2">{user.position}</td>
-                  <td className="px-4 py-2 hidden md:table-cell">
-                    {user.appliedDate}
-                  </td>
-                  <td className="px-4 py-2 flex gap-2">
-                    <button
-                      className="bg-blue-500 text-white px-4 py-2 rounded-lg hover:opacity-90"
-                      onClick={handleApprove}
-                    >
-                      Approve
-                    </button>
-                    {/* Display action button based on the selected action */}
-                    {/* {user.actionType === "Approve" ? (
-                      <button
-                        className="bg-blue-500 text-white px-4 py-2 rounded-lg hover:opacity-90"
-                        onClick={handleApprove}
-                      >
-                        Approve
-                      </button>
-                    ) : (
-                      <button
-                        className={`${
-                          user.actionType === "Reject"
-                            ? "bg-red-500"
-                            : "bg-yellow-500"
-                        } text-white px-4 py-2 rounded-lg hover:opacity-90`}
-                      >
-                        {user.actionType}
-                      </button>
-                    )} */}
-                    <Icon
-                      icon="pepicons-pencil:dots-y"
-                      height={22}
-                      width={22}
-                      className="cursor-pointer"
-                      onClick={() => openActionModal(index)}
-                    />
-                  </td>
+        <div className="h-full overflow-y-auto">
+          <div className="overflow-x-auto">
+            <table className="min-w-full border-collapse">
+              <thead className="bg-gray-100 sticky top-0">
+                <tr>
+                  <th className="px-4 py-2 text-left"></th>
+                  <th className="px-4 py-2 text-left">Username</th>
+                  <th className="px-4 py-2 text-left hidden md:table-cell">
+                    Mail ID
+                  </th>
+                  <th className="px-4 py-2 text-left hidden md:table-cell">
+                    Phone Number
+                  </th>
+                  <th className="px-4 py-2 text-left">Position</th>
+                  <th className="px-4 py-2 text-left hidden md:table-cell">
+                    Joining Date
+                  </th>
+                  <th className="px-4 py-2 text-left">Activity</th>
                 </tr>
-              ))}
-            </tbody>
-          </table>
+              </thead>
+              <tbody>
+                {currentUsers.map((user, index) => (
+                  <tr key={index} className="border-b hover:bg-gray-50">
+                    <td className="px-4 py-2">
+                      <input type="checkbox" />
+                    </td>
+                    <td className="px-4 py-2">{user.name}</td>
+                    <td className="px-4 py-2 hidden md:table-cell">
+                      {user.email}
+                    </td>
+                    <td className="px-4 py-2 hidden md:table-cell">
+                      {user.mobile}
+                    </td>
+                    <td className="px-4 py-2">{user.position}</td>
+                    <td className="px-4 py-2 hidden md:table-cell">
+                      {user.appliedDate}
+                    </td>
+                    <td className="px-4 py-2 flex gap-2">
+                      {user.status === "Init" ? (
+                        <button
+                          className="bg-blue-500 text-white px-4 py-2 rounded-lg hover:opacity-90"
+                          onClick={() => openConfirmModal(index)}
+                        >
+                          Approve
+                        </button>
+                      ) : (
+                        <button
+                          className="bg-yellow-500 text-white px-4 py-2 rounded-lg hover:opacity-90"
+                          onClick={() => openActionModal(index)}
+                        >
+                          {user.status}
+                        </button>
+                      )}
+                      <Icon
+                        icon="pepicons-pencil:dots-y"
+                        height={22}
+                        width={22}
+                        className="cursor-pointer"
+                        onClick={() => openHoldActionModal(index)}
+                      />
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
         </div>
 
         {/* Fixed Pagination */}
@@ -240,23 +280,20 @@ const People = () => {
         </div>
       </div>
 
-      {/* Confirm Action Modal */}
+      {/* Approve Confirmation Modal */}
       {confirmModalVisible && (
-        <div className="fixed inset-0 bg-gray-800 bg-opacity-50 flex items-center justify-center z-50">
-          <div className="bg-white p-6 rounded-lg shadow-lg w-80">
-            <h3 className="text-lg font-bold mb-4">Confirm Approve</h3>
-            <div className="flex justify-between space-x-4">
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+          <div className="bg-white p-6 rounded-lg shadow-lg">
+            <p className="mb-4">Are you sure you want to approve this user?</p>
+            <div className="flex gap-4 justify-end">
               <button
-                className="bg-green-500 text-white px-4 py-2 rounded-lg hover:bg-green-600"
-                onClick={() => {
-                  setActionType("Approve");
-                  confirmAction();
-                }}
+                className="bg-blue-500 text-white px-4 py-2 rounded-lg"
+                onClick={handleApprove}
               >
                 Confirm
               </button>
               <button
-                className="bg-gray-500 text-white px-4 py-2 rounded-lg hover:bg-gray-600"
+                className="bg-gray-300 px-4 py-2 rounded-lg"
                 onClick={closeModal}
               >
                 Cancel
@@ -266,39 +303,60 @@ const People = () => {
         </div>
       )}
 
-      {/* Reject/Hold Action Modal */}
+      {/* Action Modal (Reject/Hold) */}
       {modalVisible && (
-        <div className="fixed inset-0 bg-gray-800 bg-opacity-50 flex items-center justify-center z-50">
-          <div className="bg-white p-6 rounded-lg shadow-lg w-80">
-            <div className="flex justify-between">
-              <h3 className="text-lg font-bold mb-4">Select Action</h3>
-              <div className="">
-                <button
-                  className="ml-2 p-1 h-6 bg-red-500 text-white rounded"
-                  onClick={() => closeModal(false)}
-                >
-                  <IoClose />
-                </button>
-              </div>
-            </div>
-            <div className="flex justify-between space-x-4">
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+          <div className="bg-white p-6 rounded-lg shadow-lg">
+            <div className="flex justify-end">
               <button
-                className="bg-red-500 text-white px-4 py-2 rounded-lg hover:bg-red-600"
-                onClick={() => {
-                  setActionType("Reject");
-                  confirmAction();
-                }}
+                className="bg-gray-300 px-1 py-1 rounded-lg"
+                onClick={closeModal} // Fix: Ensures modal closes on clicking close icon
+              >
+                <Icon icon="material-symbols:close" />
+              </button>
+            </div>
+            <p className="mb-4">Choose an action for this user:</p>
+            <div className="flex gap-4 justify-end">
+              <button
+                className="bg-red-500 text-white px-4 py-2 rounded-lg"
+                onClick={() => handleAction("reject")}
               >
                 Reject
               </button>
               <button
-                className="bg-gray-500 text-white px-4 py-2 rounded-lg hover:bg-gray-600"
-                onClick={() => {
-                  setActionType("Hold");
-                  confirmAction();
-                }}
+                className="bg-blue-500 text-white px-4 py-2 rounded-lg"
+                onClick={() => handleAction("approve")}
               >
-                Hold
+                Approve
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+      {modalActionVisible && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+          <div className="bg-white p-6 rounded-lg shadow-lg">
+            <div className="flex justify-end">
+              <button
+                className="bg-gray-300 px-1 py-1 rounded-lg"
+                onClick={closeModal} // Fix: Ensures modal closes on clicking close icon
+              >
+                <Icon icon="material-symbols:close" />
+              </button>
+            </div>
+            <p className="mb-4">Choose an action for this user:</p>
+            <div className="flex gap-4 justify-end">
+              <button
+                className="bg-red-500 text-white px-4 py-2 rounded-lg"
+                onClick={() => handleAction("reject")}
+              >
+                Reject
+              </button>
+              <button
+                className="bg-yellow-500 text-white px-4 py-2 rounded-lg"
+                onClick={() => handleAction("on-hold")}
+              >
+                On-Hold
               </button>
             </div>
           </div>
