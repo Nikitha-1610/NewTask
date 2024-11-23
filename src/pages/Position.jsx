@@ -2,18 +2,21 @@ import { useState, useEffect } from "react";
 import { IoClose } from "react-icons/io5";
 import { toast, ToastContainer  } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
-import axios from 'axios';
+import axiosInstance from "../utilities/axios/axiosInstance";
+import { Icon } from "@iconify/react";
+import { FaUser, FaEnvelope, FaPhoneAlt, FaBriefcase, FaCalendarAlt, FaTag } from 'react-icons/fa';
 
-const axiosInstance = axios.create({
-  baseURL: 'https://3qhglx2bhd.execute-api.us-east-1.amazonaws.com/employee',
-  headers: {
-    'Content-Type': 'application/json',
-  },
-});
+// const axiosInstance = axios.create({
+//   baseURL: 'https://3qhglx2bhd.execute-api.us-east-1.amazonaws.com/employee',
+//   headers: {
+//     'Content-Type': 'application/json',
+//   },
+// });
 
 const Position = () => {
   const [users, setUsers] = useState([]);
   const [teamLeads, setTeamLeads] = useState([]);
+  const [untaggedUsers, setUntaggedUsers] = useState([]);
   const [currentPage, setCurrentPage] = useState(1);
   const [show, setShow] = useState(false);
   const [positions, setPositions] = useState([]);
@@ -23,9 +26,11 @@ const Position = () => {
   const [selectedDepartment, setSelectedDepartment] = useState("all");
   const [selectedTeamLead, setSelectedTeamLead] = useState("");
   const [selectedEmployee, setSelectedEmployee] = useState(null);
+  const [selectedCheckbox, setSelectedCheckbox] = useState(null);
 
 
-  const [isMobile, setIsMobile] = useState(window.innerWidth <= 768);
+
+  const [isMobile, setIsMobile] = useState(window.innerWidth <= 700);
   const [selectedRow, setSelectedRow] = useState(null);
 
   const usersPerPage = 10;
@@ -34,16 +39,36 @@ const Position = () => {
   const currentUsers = filteredUsers.slice(firstUserIndex, lastUserIndex);
   const totalPages = Math.ceil(filteredUsers.length / usersPerPage);
 
+
+  
+  
+
+  
   useEffect(() => {
     const fetchUsers = async () => {
       try {
-        const response = await axiosInstance.get("/getAll");
+        const response = await axiosInstance.get("employee/getAll");
         const data = response.data;
-
+  
         if (Array.isArray(data.message)) {
+          // Store users in state
           setUsers(data.message);
-          setFilteredUsers(data.message);
-
+  
+          // Get tagged employees from localStorage
+          const taggedEmployees = JSON.parse(localStorage.getItem("taggedEmployees")) || [];
+  
+          // Filter out tagged employees
+          let untaggedUsers = data.message.filter(user => 
+            !taggedEmployees.includes(user.name)
+          );
+  
+          // Update untagged users state
+          setUntaggedUsers(untaggedUsers);
+  
+          // Set filtered users without tagged ones
+          setFilteredUsers(untaggedUsers);
+  
+          // Extract unique positions and departments
           const uniquePositions = [
             ...new Set(data.message.map((user) => user.position)),
           ];
@@ -57,13 +82,16 @@ const Position = () => {
         console.error("Error fetching users:", error);
       }
     };
+  
     fetchUsers();
   }, []);
+  
+  
 
   useEffect(() => {
     const fetchTeamLeads = async () => {
       try {
-        const response = await axiosInstance.get("/getOption/TeamLead");
+        const response = await axiosInstance.get("employee/getOption/TeamLead");
         const data = response.data;
 
         if (Array.isArray(data.message)) {
@@ -78,7 +106,7 @@ const Position = () => {
 
   useEffect(() => {
     const handleResize = () => {
-      setIsMobile(window.innerWidth <= 768);
+      setIsMobile(window.innerWidth <= 700);
       if (isMobile) {
         document.body.style.height = "auto"; // Reset height on mobile
       } else {
@@ -91,10 +119,15 @@ const Position = () => {
   }, [isMobile]);
   
 
+
+  
   
   const handleCardClick = (user) => {
     setSelectedEmployee(user);
 };
+
+
+
 
 const handleTagButtonClick = () => {
   if (!selectedEmployee) {
@@ -106,37 +139,45 @@ const handleTagButtonClick = () => {
   setShow(true);
 };
 
-const handleSubmit = async () => {
-  console.log("Selected Employee:", selectedEmployee);
-  console.log("Selected TeamLead:", selectedTeamLead);
 
+
+
+const handleSubmit = async () => {
   if (selectedEmployee && selectedTeamLead) {
     try {
-      const response = await axiosInstance.put("/tag", {
-          employeeName: selectedEmployee.name,
-          teamLeadName: selectedTeamLead,
+      const response = await axiosInstance.put("employee/tag", {
+        employeeName: selectedEmployee.name,
+        teamLeadName: selectedTeamLead,
       });
 
-      const data = response.data;
+      if (response.status === 200) {
+        toast.success(response.data.message || "Operation successful!");
 
-      if (!response.status === 200) {
-        console.error("Error:", data.message);
-        toast.error(data.message); // Show error toast
-      } else {
-        console.log("Employee successfully tagged:", data);
-        toast.success("Employee tagged successfully!"); // Show success toast
+        // Remove the tagged user from the lists
+        setUsers((prevUsers) =>
+          prevUsers.filter((user) => user.name !== selectedEmployee.name)
+        );
+        setFilteredUsers((prevFilteredUsers) =>
+          prevFilteredUsers.filter((user) => user.name !== selectedEmployee.name)
+        );
+
+
+        // Reset states
         setShow(false);
         setSelectedTeamLead("");
         setSelectedEmployee(null);
+      } else {
+        toast.error(response.data.message || "Error occurred.");
       }
     } catch (error) {
-      console.error("Network error:", error);
-      toast.error("Failed to tag the employee. Please try again."); // Show network error toast
+      toast.error(error.response?.data?.message || "Failed to tag the employee. Please try again.");
     }
   } else {
-    toast.error("Please select an employee and a team lead."); // Show validation error toast
+    toast.error("Please select an employee and a team lead.");
   }
 };
+
+
 
 
 const filterUsers = () => {
@@ -159,10 +200,12 @@ useEffect(() => {
 }, [selectedPosition, selectedDepartment, users]);
 
 
-  useEffect(() => {
-    filterUsers();
-  }, [selectedPosition, selectedDepartment]);
 
+
+
+
+  
+ 
   const goToPreviousPage = () => {
     if (currentPage > 1) setCurrentPage(currentPage - 1);
   };
@@ -170,6 +213,8 @@ useEffect(() => {
   const goToNextPage = () => {
     if (currentPage < totalPages) setCurrentPage(currentPage + 1);
   };
+
+  
   useEffect(() => {
     const sidebar = document.querySelector(".sidebar");
     if (sidebar) {
@@ -180,6 +225,8 @@ useEffect(() => {
       }
     }
   }, [show]);
+
+
   // const handleSubmit = () => {
   //   if (selectedEmployee && selectedTeamLead) {
   //     console.log("Employee:", selectedEmployee.name);
@@ -193,34 +240,64 @@ useEffect(() => {
   // };
 
 
+  
+  const handleCheckboxChange = (user, userIndex) => {
+    // Toggle checkbox selection
+    const isAlreadySelected = selectedCheckbox === userIndex;
+    setSelectedCheckbox(isAlreadySelected ? null : userIndex);
+  
+    // Synchronize with selectedEmployee state
+    setSelectedEmployee(isAlreadySelected ? null : user);
+  
+    // Log selection status
+    if (!isAlreadySelected) {
+      console.log("Employee selected:", user.name);
+    } else {
+      console.log("Employee deselected.");
+    }
+  };
+
+
+
+  
+  const handleRowClick = (user) => {
+    // Toggle row selection
+    const isAlreadySelected = selectedEmployee?.name === user.name;
+    setSelectedEmployee(isAlreadySelected ? null : user);
+    setSelectedCheckbox(isAlreadySelected ? null : users.indexOf(user)); // Sync checkbox
+  
+    // Log selection status
+    if (!isAlreadySelected) {
+      console.log("Employee selected via row click:", user.name);
+    } else {
+      console.log("Employee deselected.");
+    }
+  };
+  
 
 
   
   
 
-  useEffect(() => {
-    const handleResize = () => setIsMobile(window.innerWidth <= 768);
-    window.addEventListener("resize", handleResize);
-    return () => window.removeEventListener("resize", handleResize);
-  }, []);
+ 
 
   
 
   return (
-    <div className="py-0 px-5">
+    <div className="py-0 sm:px-5 px-0">
     <ToastContainer />
       {/* Stats Section */}
       <div className="flex flex-wrap items-center justify-center gap-6 md:gap-28 mb-5">
         <div className="flex flex-col items-center text-center">
           <span className="text-3xl font-medium">{users.length}</span>
           <span className="text-sm text-gray-400 underline">People</span>
-    </div>
+        </div>
         <div className="w-[1px] h-16 bg-gray-300"></div>
         <div className="flex flex-col items-center text-center">
           <span className="text-3xl font-medium">{departments.length}</span>
           <span className="text-sm text-gray-400 underline">Departments</span>
-  </div>
-</div>
+        </div>
+      </div>
   
 
      
@@ -258,57 +335,68 @@ useEffect(() => {
 
 
     {/* User Display */}
-      {isMobile ? (
-   <div className="grid grid-cols-1 gap-4">
-   {filteredUsers.length > 0 ? (
-     filteredUsers.map((user, index) => (
-       <div
-         key={index}
-         className={`p-6 border rounded-lg shadow-lg bg-white transition-transform duration-300 hover:scale-105 hover:shadow-2xl transform`}
-         style={{
-           backgroundColor: selectedEmployee?.name === user.name ? "#98fb98" : "white",
-           boxShadow: "0px 4px 10px rgba(0, 123, 255, 0.5)",
-         }}
-         onClick={() => handleCardClick(user)}
-       >
-         <div className="text-left">
-           <p className="text-xl mb-2">
-             <span className="font-bold">Name:</span> {user.name}
-           </p>
-           <p className="text-xl mb-2">
-             <span className="font-bold">Email:</span> {user.email}
-           </p>
-           <p className="text-xl mb-2">
-             <span className="font-bold">Phone:</span> {user.mobile}
-           </p>
-           <p className="text-xl mb-2">
-             <span className="font-bold">Position:</span> {user.position}
-           </p>
-           <p className="text-xl mb-4">
-             <span className="font-bold">Joining Date:</span> {user.appliedDate}
-           </p>
-         </div>
-         <div className="text-center text-xl">
-           <button
-             className="px-2 py-1 bg-blue-500 text-white rounded"
-             onClick={(e) => {
-               e.stopPropagation();
-               setShow(true);
-             }}
-           >
-             Tag
-           </button>
-         </div>
-       </div>
-     ))
-   ) : (
-     <div className="text-center text-xl font-bold text-gray-500">
-       No users found for the selected filters.
-     </div>
-   )}
- </div>
- 
-) : (
+    {isMobile ? (
+  <div className="grid grid-cols-2 gap-4"> {/* Increased gap between cards */}
+    {filteredUsers.length > 0 ? (
+      filteredUsers.map((user, index) => (
+        <div
+          key={index}
+          className={`border-4 border-white rounded-lg bg-white transform transition-all duration-300`} // Removed hover effects
+          style={{
+            borderColor: selectedEmployee?.name === user.name ? "blue" : "", 
+            boxShadow: "0px 4px 10px rgba(105, 105, 105, 0.6)",
+            width: '45vw',  // Slightly increased width for the card
+            height: '32vh',  // Slightly increased height for more content space
+            padding: 0,  // Removed padding from the card
+            position: 'relative',  // For absolute positioning of the button
+          }}
+          onClick={() => handleCardClick(user)}
+        >
+          <div className="text-left" style={{ padding: '8px', wordWrap: 'break-word', height: '80%' }}> {/* Allow text to wrap */}
+            <p className="text-base " style={{ whiteSpace: 'normal' }}>
+              <FaUser className="text-gray-500 inline-block mr-1 text-base" /> {/* Icon for Name */}
+               {user.name}
+            </p>
+            <p className="text-base " style={{ whiteSpace: 'normal' }}>
+              <FaEnvelope className="text-gray-500 inline-block mr-1 text-base" /> {/* Icon for Email */}
+              {user.email}
+            </p>
+            <p className="text-base " style={{ whiteSpace: 'normal' }}>
+              <FaPhoneAlt className="text-gray-500 inline-block mr-1 text-base" /> {/* Icon for Phone */}
+              {user.mobile}
+            </p>
+            <p className="text-base" style={{ whiteSpace: 'normal' }}>
+              <FaBriefcase className="text-gray-500 inline-block mr-1 text-base" /> {/* Icon for Position */}
+              {user.position}
+            </p>
+            <p className="text-base" style={{ whiteSpace: 'normal' }}>
+              <FaCalendarAlt className="text-gray-500 inline-block mr-1 text-base" /> {/* Icon for Joining Date */}
+              {user.appliedDate}
+            </p>
+          </div>
+          <div className="text-right text-base" style={{ position: 'absolute', bottom: '10px', right: '10px' }}>
+            <FaTag
+              className="text-blue-500 cursor-pointer"  // Tag icon with color and pointer cursor
+              onClick={(e) => {
+                e.stopPropagation();
+                setShow(true);  // Show tag functionality
+              }}
+              style={{
+                fontSize: '20px',  // Adjust size of the icon
+              }}
+            />
+          </div>
+        </div>
+      ))
+    ) : (
+      <div className="text-center text-xl font-bold text-gray-500">
+        No users found for the selected filters.
+      </div>
+    )}
+  </div>
+) 
+
+ : (
         <div
         className="relative w-full border border-gray-300 rounded-lg overflow-hidden"
         style={{ height: "300px" }}
@@ -330,23 +418,20 @@ useEffect(() => {
             </thead>
             <tbody>
               {currentUsers.length > 0 ? (currentUsers.map((user, index) => (
-               <tr
-               key={index}
-               className={`even:bg-white-50 odd:bg-white ${
-                 selectedRow === index ? "bg-sky-100" : "" // Add faint sky blue background color
-               }`}
-               onClick={() => setSelectedRow(index)} // Set the selected row on click
-             >
+              <tr
+              key={index}
+              className={`hover:bg-gray-200 cursor-pointer ${
+                selectedEmployee?.name === user.name ? "bg-green-100" : ""
+              }`}
+              onClick={() => handleRowClick(user)}
+            >
                   <td className="p-2 text-center">
 
-                    <input
-                      type="checkbox"
-                      onClick={(e) => {
-
-                        setSelectedEmployee(user);
-
-                      }}
-                    />
+                  <input
+          type="checkbox"
+          checked={selectedCheckbox === index}
+          onChange={() => handleCheckboxChange(user, index)}
+        />
 
                   </td>
                   <td className="p-2 text-center">{user.name}</td>
