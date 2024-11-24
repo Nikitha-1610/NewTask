@@ -2,7 +2,6 @@ import { useEffect, useState } from "react";
 import { Icon } from "@iconify/react";
 import axiosInstance from "../utilities/axios/axiosInstance";
 import toast, { Toaster } from "react-hot-toast";
-import CountUp from "react-countup";
 
 const People = () => {
   const [allUsers, setAllUsers] = useState([]);
@@ -32,8 +31,14 @@ const People = () => {
     getAllusers();
   }, []);
 
-  const departments = ["All", "Tester", "HR", "Marketing"];
-  const userType = ["All", "On-Hold", "Init"];
+  const departments = [
+    "All Position",
+    "Tester",
+    "HR Manager",
+    "Marketing",
+    "Project Lead",
+  ];
+  const userType = ["All Department", "On-Hold", "Init"];
 
   const filteredUsers = allUsers.filter((user) => {
     // Filter by selected department
@@ -145,38 +150,37 @@ const People = () => {
       {/* Stats Section */}
       <div className="flex flex-wrap items-center justify-center gap-6 md:gap-28 mb-5">
         <div className="flex flex-col items-center text-center">
-          <span className="text-3xl font-medium">
-            <CountUp end={allUsers.length} duration={2} />
-          </span>
+          <span className="text-3xl font-medium">{allUsers.length}</span>
           <span className="text-sm text-gray-400 underline">People</span>
         </div>
         <div className="w-[1px] h-16 bg-gray-300"></div>
         <div className="flex flex-col items-center text-center">
-          <span className="text-3xl font-medium">
-            <CountUp end={5} duration={2} />
-          </span>
+          <span className="text-3xl font-medium">5</span>
           <span className="text-sm text-gray-400 underline">Departments</span>
         </div>
       </div>
 
       {/* Filter Section */}
-      <div className="flex flex-wrap gap-4 items-center mb-4">
+      <div className="flex flex-col sm:flex-row justify-center items-center gap-4 mb-6">
         <select
-          className="border border-gray-300 bg-gray-200 rounded-lg p-2 text-gray-700"
-          onChange={(e) => setSelectedDepartment(e.target.value)}
+          className="p-2 border rounded bg-gray-200"
           value={selectedDepartment}
+          onChange={(e) => setSelectedUserType(e.target.value)}
         >
+          {/* <option value="all">All Positions</option> */}
           {departments.map((dept) => (
             <option key={dept} value={dept}>
               {dept}
             </option>
           ))}
         </select>
+
         <select
-          className="border border-gray-300 bg-gray-200 rounded-lg p-2 text-gray-700"
+          className="p-2 border rounded bg-gray-200"
+          value={selectedDepartment}
           onChange={(e) => setSelectedUserType(e.target.value)}
-          value={selectedUserType}
         >
+          {/* <option value="selectedUserType">All Departments</option> */}
           {userType.map((type) => (
             <option key={type} value={type}>
               {type}
