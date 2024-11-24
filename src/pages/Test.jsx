@@ -1,29 +1,36 @@
 import { useEffect, useState } from "react";
 import { Icon } from "@iconify/react";
 import axiosInstance from "../utilities/axios/axiosInstance";
+import AWS from "aws-sdk"; // Import AWS SDK
+
 const AddTasks = () => {
   const [formData, setFormData] = useState({
     projectName: "",
     dueDate: "",
     members: [],
-    reviewers: "", // Single reviewer as a string
+    reviewers: "",
     priority: "Low",
     description: "",
-    references: [], // Reference as an array
+    references: [],
   });
 
   const [showUserList, setShowUserList] = useState(false);
   const [selectedUserType, setSelectedUserType] = useState("");
   const [users, setUsers] = useState([]);
+
+  // Configure AWS S3
+  const s3 = new AWS.S3({
+    accessKeyId: "YOUR_AWS_ACCESS_KEY", // Replace with your AWS Access Key
+    secretAccessKey: "YOUR_AWS_SECRET_KEY", // Replace with your AWS Secret Key
+    region: "YOUR_AWS_REGION", // Replace with your AWS region
+  });
+
   const getAllEmp = async () => {
     try {
       const response = await axiosInstance.get("employee/getMembers/24110004");
-      console.log(response.data.message);
-
       setUsers(response?.data?.message);
     } catch (error) {
       console.error("Error syncing with server:", error);
-      // toast.error("Failed to fetch users.");
     }
   };
 
@@ -43,18 +50,40 @@ const AddTasks = () => {
     setFormData((prev) => ({
       ...prev,
       [selectedUserType]:
-        selectedUserType === "members" ? [...prev.members, user] : user, // Reviewer is stored as a string
+        selectedUserType === "members" ? [...prev.members, user] : user,
     }));
     setShowUserList(false);
   };
 
-  const handleAddReference = (e) => {
-    const file = e.target.files[0];
-    if (file) {
+  const handleFileUpload = async (event) => {
+    const file = event.target.files[0];
+    if (!file) return;
+
+    const fileDetails = {
+      name: file.name,
+      size: (file.size / (1024 * 1024)).toFixed(2) + " MB", // Convert size to MB
+      lastModified: new Date(file.lastModified).toLocaleDateString(),
+    };
+
+    try {
+      // Upload file to AWS S3
+      const params = {
+        Bucket: "YOUR_S3_BUCKET_NAME", // Replace with your bucket name
+        Key: `uploads/${file.name}`, // Specify the folder path in S3
+        Body: file,
+        ContentType: file.type,
+      };
+
+      const uploadResult = await s3.upload(params).promise();
+      const fileUrl = uploadResult.Location; // Retrieve the uploaded file's URL
+
+      // Update formData with the uploaded file
       setFormData((prev) => ({
         ...prev,
-        references: [...prev.references, file],
+        references: [...prev.references, { ...fileDetails, url: fileUrl }],
       }));
+    } catch (error) {
+      console.error("Error uploading file:", error);
     }
   };
 
@@ -66,25 +95,10 @@ const AddTasks = () => {
 
   return (
     <div className="w-full p-6">
-      <div className="flex md:justify-end justify-center mb-5">
-        <div className="flex flex-wrap justify-end gap-4">
-          {/* Add Task Button */}
-          <button className="flex items-center gap-2 bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded-md shadow-md transition">
-            <Icon icon="ic:round-add" height={22} width={22} />
-            <span>Add Task</span>
-          </button>
-
-          {/* Filter Button */}
-          <button className="flex items-center gap-2 border border-gray-300 hover:border-gray-400 text-gray-600 px-4 py-2 rounded-md shadow-md transition">
-            <Icon icon="lets-icons:filter" height={22} width={22} />
-            <span>Filter</span>
-          </button>
-        </div>
-      </div>
-      <form onSubmit={handleSubmit} className="w-full md:w-8/12">
+      <form onSubmit={handleSubmit} className="w-8/12">
         {/* Project Name and Due Date */}
-        <div className="flex flex-wrap space-y-4 md:space-y-0 md:space-x-4 mb-4">
-          <div className="w-full md:flex-1">
+        <div className="flex space-x-4 mb-4">
+          <div className="flex-1">
             <label className="block text-sm font-semibold">Project Name</label>
             <input
               type="text"
@@ -95,7 +109,7 @@ const AddTasks = () => {
               placeholder="Enter project name"
             />
           </div>
-          <div className="w-full md:flex-1">
+          <div className="flex-1">
             <label className="block text-sm font-semibold">Due Date</label>
             <input
               type="date"
@@ -106,20 +120,22 @@ const AddTasks = () => {
             />
           </div>
         </div>
-
-        {/* Members Section */}
         <div className="mb-4">
           <label className="block text-sm font-semibold text-gray-800 mb-2">
             Members
           </label>
           <div className="flex items-center justify-between border-b border-gray-300 pb-2">
+            {/* Left Section: Icon and Added Members */}
             <div className="flex items-center gap-2">
+              {/* Add Member Icon */}
               <Icon
                 icon="ic:sharp-person-add"
                 className="text-gray-600"
                 height={22}
                 width={22}
               />
+
+              {/* Dynamically Render Members */}
               {formData.members.map((member, index) => (
                 <span
                   key={index}
@@ -129,6 +145,8 @@ const AddTasks = () => {
                 </span>
               ))}
             </div>
+
+            {/* Right Section: Add Button */}
             <button
               type="button"
               className="flex items-center justify-center w-8 h-8 rounded-full border border-dashed border-gray-400"
@@ -146,26 +164,30 @@ const AddTasks = () => {
             </button>
           </div>
         </div>
-
-        {/* Reviewer Section */}
+        {/* Members Section */}
         <div className="mb-4">
           <label className="block text-sm font-semibold text-gray-800 mb-2">
             Reviewer
           </label>
           <div className="flex items-center justify-between border-b border-gray-300 pb-2">
+            {/* Left Section: Icon and Added Members */}
             <div className="flex items-center gap-2">
+              {/* Add Member Icon */}
               <Icon
                 icon="ic:sharp-person-add"
                 className="text-gray-600"
                 height={22}
                 width={22}
               />
+
               {formData.reviewers && (
                 <span className="bg-green-200 text-green-700 px-2 py-1 rounded-full text-xs">
                   {formData.reviewers}
                 </span>
               )}
             </div>
+
+            {/* Right Section: Add Button */}
             <button
               type="button"
               className="flex items-center justify-center w-8 h-8 rounded-full border border-dashed border-gray-400"
@@ -245,44 +267,47 @@ const AddTasks = () => {
           />
         </div>
 
-        {/* File Reference */}
+        {/* File References */}
         <div className="mb-4">
           <label className="block text-sm font-semibold mb-2">References</label>
-          <div className="flex flex-wrap gap-3">
+          <div className="flex gap-3 flex-wrap">
             {formData.references.map((ref, index) => (
               <div
                 key={index}
-                className="flex flex-wrap gap-2 items-center shadow-md p-4 w-auto border border-gray-300 rounded-lg bg-gray-50"
+                className="flex gap-2 items-center shadow-md p-4 border border-gray-300 rounded-lg bg-gray-50 w-full"
               >
-                <Icon
-                  icon="fa6-solid:file-pdf"
-                  height={22}
-                  width={22}
-                  className="text-red-500"
-                />
-                <div>
-                  <p className="text-sm font-medium text-gray-800">
-                    {ref.name}
-                  </p>
-                  <p className="text-xs text-gray-500">
-                    {new Date().toLocaleDateString()}
-                  </p>
-                  <p className="text-xs text-gray-500">
-                    Size: {(ref.size / 1024).toFixed(1)} KB
-                  </p>
+                <div className="flex gap-3 items-center">
+                  <Icon
+                    icon="fa6-solid:file-pdf"
+                    height={22}
+                    width={22}
+                    className="text-red-500"
+                  />
+                  <div>
+                    <p className="text-sm font-medium text-gray-800">
+                      {ref.name}
+                    </p>
+                    <p className="text-xs text-gray-500">
+                      Last Modified: {ref.lastModified}
+                    </p>
+                    <p className="text-xs text-gray-500">Size: {ref.size}</p>
+                    <a
+                      href={ref.url}
+                      className="text-blue-600 text-sm font-medium"
+                      target="_blank"
+                      rel="noopener noreferrer"
+                    >
+                      View File
+                    </a>
+                  </div>
                 </div>
               </div>
             ))}
-            <input
-              type="file"
-              id="fileInput"
-              hidden
-              onChange={handleAddReference}
-            />
-            <button
-              type="button"
-              className="flex items-center justify-center font-medium h-24 w-14 rounded-md shadow-md"
-              onClick={() => document.getElementById("fileInput").click()}
+
+            {/* File Upload Input */}
+            <label
+              htmlFor="file-upload"
+              className="flex items-center justify-center h-24 w-14 rounded-md shadow-md bg-gray-100 cursor-pointer"
             >
               <Icon
                 icon="mdi:add-bold"
@@ -290,10 +315,17 @@ const AddTasks = () => {
                 height={30}
                 width={30}
               />
-            </button>
+            </label>
+            <input
+              type="file"
+              id="file-upload"
+              className="hidden"
+              onChange={handleFileUpload}
+            />
           </div>
         </div>
 
+        {/* Submit Button */}
         <div className="flex justify-end">
           <button
             type="submit"
@@ -303,32 +335,6 @@ const AddTasks = () => {
           </button>
         </div>
       </form>
-
-      {/* User List Popup */}
-      {showUserList && (
-        <div className="absolute top-0 left-0 right-0 bottom-0 bg-black bg-opacity-50 flex items-center justify-center">
-          <div className="bg-white p-4 rounded-lg w-full md:w-1/3 max-w-lg">
-            <h3 className="font-semibold text-lg mb-2">Select a User</h3>
-            <ul>
-              {users.map((user, index) => (
-                <li
-                  key={index}
-                  className="py-2 cursor-pointer hover:bg-gray-100"
-                  onClick={() => handleSelectUser(user)}
-                >
-                  {user}
-                </li>
-              ))}
-            </ul>
-            <button
-              className="mt-4 text-red-600"
-              onClick={() => setShowUserList(false)}
-            >
-              Close
-            </button>
-          </div>
-        </div>
-      )}
     </div>
   );
 };
