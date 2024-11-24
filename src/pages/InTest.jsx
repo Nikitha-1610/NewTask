@@ -1,7 +1,25 @@
 import TaskDetails from "../components/TaskDetails";
 import { Icon } from "@iconify/react";
+import { useEffect, useState } from "react";
+import axiosInstance from "../utilities/axios/axiosInstance";
+import toast, { Toaster } from "react-hot-toast";
 
 const InProgressTask = () => {
+  const [allUsers, setAllUsers] = useState([]);
+  const postAllusers = async () => {
+    try {
+      const response = await axiosInstance.post("task/getTaskByStatus");
+      console.log(response.data.message);
+
+      setAllUsers(response?.data?.message);
+    } catch (error) {
+      console.error("Error syncing with server:", error);
+      toast.error("Failed to fetch users.");
+    }
+  };
+  useEffect(() => {
+    postAllusers();
+  }, []);
   const sampleTask = [
     {
       id: 1,
@@ -65,6 +83,8 @@ const InProgressTask = () => {
   ];
 
   return (
+    <>
+    <Toaster />
     <div className=" space-y-5">
       <div className="flex items-center justify-between pb-4 border-gray-300">
         <h2 className="text-xl font-bold bg-red-300 px-2 p-1 rounded-md text-gray-700">
@@ -84,6 +104,7 @@ const InProgressTask = () => {
         <TaskDetails key={task.id} task={task} className=" gap-6" />
       ))}
     </div>
+    </>
   );
 };
 
