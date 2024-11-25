@@ -21,7 +21,7 @@ const Side = ({ isOpen, toggleSidebar, isCollapsed }) => {
         className={`sidebar  fixed top-0 left-0 h-screen z-50 transition-transform duration-300 bg-white shadow-lg ${
           isOpen ? "translate-x-0" : "-translate-x-full"
         } md:translate-x-0`}
-        style={{ overflowY: "auto" }} 
+        style={{ overflowY: "auto" }}
       >
         {/* <div className="flex justify-end md:hidden p-2">
           <button
@@ -160,6 +160,16 @@ const Side = ({ isOpen, toggleSidebar, isCollapsed }) => {
           >
             <Link to="/mainpage" onClick={handleLinkClick}>
               MainPage
+            </Link>
+          </MenuItem>
+          <MenuItem
+            icon={<Icon icon="ix:project-new" height={22} width={22} />}
+            className={
+              isActive("/addproject") ? "bg-teal-100 text-teal-600" : ""
+            }
+          >
+            <Link to="/addproject" onClick={handleLinkClick}>
+              Add Project
             </Link>
           </MenuItem>
         </Menu>

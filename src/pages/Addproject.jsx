@@ -4,7 +4,7 @@ import axiosInstance from "../utilities/axios/axiosInstance";
 import { s3Client } from "../utilities/aws/awsconfig";
 import { PutObjectCommand } from "@aws-sdk/client-s3";
 // import toast, { Toaster } from "react-hot-toast";
-const AddTasks = () => {
+const AddProject = () => {
   const [formData, setFormData] = useState({
     taskName: "",
     dueDate: "",
@@ -143,22 +143,16 @@ const AddTasks = () => {
       <div className="flex md:justify-end justify-center mb-5">
         <div className="flex flex-wrap justify-end gap-4">
           {/* Add Task Button */}
-          <button className="flex items-center gap-2 bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded-md shadow-md transition">
+          <button className="flex items-center gap-2  bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded-3xl shadow-md transition">
             <Icon icon="ic:round-add" height={22} width={22} />
-            <span>Add Task</span>
-          </button>
-
-          {/* Filter Button */}
-          <button className="flex items-center gap-2 border border-gray-300 hover:border-gray-400 text-gray-600 px-4 py-2 rounded-md shadow-md transition">
-            <Icon icon="lets-icons:filter" height={22} width={22} />
-            <span>Filter</span>
+            <span>Add project</span>
           </button>
         </div>
       </div>
-      <form onSubmit={handleSubmit} className="w-full md:w-8/12">
+      <form onSubmit={handleSubmit} className="w-full ">
         {/* Project Name and Due Date */}
-        <div className="flex flex-wrap space-y-4 md:space-y-0 md:space-x-4 mb-4">
-          <div className="w-full md:flex-1">
+        <div className="flex flex-wrap space-y-4 md:space-y-0 gap-5 mb-4">
+          <div className="w-full">
             <label className="block text-sm font-semibold">Project Name</label>
             <input
               type="text"
@@ -169,22 +163,110 @@ const AddTasks = () => {
               placeholder="Enter project name"
             />
           </div>
-          <div className="w-full md:flex-1">
-            <label className="block text-sm font-semibold">Due Date</label>
-            <input
-              type="date"
-              className="w-full p-2 border border-gray-300 rounded mt-2"
-              name="dueDate"
-              value={formData.dueDate}
-              onChange={handleInputChange}
-            />
+          <div className=" flex w-full md:w-8/12 gap-4">
+            <div className="w-full md:flex-1">
+              <label className="block text-sm font-semibold">Start Date</label>
+              <input
+                type="date"
+                className="w-full p-2 border border-gray-300 rounded mt-2"
+                name="dueDate"
+                value={formData.dueDate}
+                onChange={handleInputChange}
+              />
+            </div>
+            <div className="w-full md:flex-1">
+              <label className="block text-sm font-semibold">Due Date</label>
+              <input
+                type="date"
+                className="w-full p-2 border border-gray-300 rounded mt-2"
+                name="dueDate"
+                value={formData.dueDate}
+                onChange={handleInputChange}
+              />
+            </div>
           </div>
         </div>
 
         {/* assignedTo Section */}
         <div className="mb-4">
           <label className="block text-sm font-semibold text-gray-800 mb-2">
-            assignedTo
+            Team&apos;s
+          </label>
+          <div className="flex items-center justify-between border-b border-gray-300 pb-2">
+            <div className="flex items-center gap-2">
+              <Icon
+                icon="ic:sharp-person-add"
+                className="text-gray-600"
+                height={22}
+                width={22}
+              />
+              {formData.assignedTo.map((member, index) => (
+                <span
+                  key={index}
+                  className="bg-blue-200 text-blue-700 px-2 py-1 rounded-full text-xs"
+                >
+                  {member}
+                </span>
+              ))}
+            </div>
+            <button
+              type="button"
+              className="flex items-center justify-center w-8 h-8 rounded-full border border-dashed border-gray-400"
+              onClick={() => {
+                setSelectedUserType("assignedTo");
+                setShowUserList(true);
+              }}
+            >
+              <Icon
+                icon="ic:outline-add"
+                className="text-gray-600"
+                height={20}
+                width={20}
+              />
+            </button>
+          </div>
+        </div>
+        <div className="mb-4">
+          <label className="block text-sm font-semibold text-gray-800 mb-2">
+            Members
+          </label>
+          <div className="flex items-center justify-between border-b border-gray-300 pb-2">
+            <div className="flex items-center gap-2">
+              <Icon
+                icon="ic:sharp-person-add"
+                className="text-gray-600"
+                height={22}
+                width={22}
+              />
+              {formData.assignedTo.map((member, index) => (
+                <span
+                  key={index}
+                  className="bg-blue-200 text-blue-700 px-2 py-1 rounded-full text-xs"
+                >
+                  {member}
+                </span>
+              ))}
+            </div>
+            <button
+              type="button"
+              className="flex items-center justify-center w-8 h-8 rounded-full border border-dashed border-gray-400"
+              onClick={() => {
+                setSelectedUserType("assignedTo");
+                setShowUserList(true);
+              }}
+            >
+              <Icon
+                icon="ic:outline-add"
+                className="text-gray-600"
+                height={20}
+                width={20}
+              />
+            </button>
+          </div>
+        </div>
+        <div className="mb-4">
+          <label className="block text-sm font-semibold text-gray-800 mb-2">
+            assigned By
           </label>
           <div className="flex items-center justify-between border-b border-gray-300 pb-2">
             <div className="flex items-center gap-2">
@@ -420,4 +502,4 @@ const AddTasks = () => {
   );
 };
 
-export default AddTasks;
+export default AddProject;
