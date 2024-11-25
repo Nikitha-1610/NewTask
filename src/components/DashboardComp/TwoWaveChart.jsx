@@ -4,11 +4,11 @@ import { MdBarChart } from 'react-icons/md';
 
 const TwoWaveChart = () => {
   return (
-    <div className="s:w-full  h-96 max-w-screen-lg mx-auto relative flex flex-col sm:items-center font-sans">
-    {/* Calendar Icon on the Top Left */}
+    <div className="s:w-full  h-80 max-w-screen-lg mx-auto relative flex flex-col sm:items-center font-sans">
+    {/* Calendar Icon on the Top Left */} 
     <div className="sm:absolute absolute top-0 left-0 flex items-center text-gray-400 bg-blue-50 sm:p-1 p-0.5 rounded-md">
       <FaCalendarAlt className="text-sm" />
-      <span className=" ml-0 text-xs sm:text-base md:text-lg">This Month</span>
+      <span className="ml-0 text-sm sm:text-base md:text-lg">This Month</span>
     </div>
 
       {/* Bar Graph Icon on the Top Right */}
@@ -19,7 +19,7 @@ const TwoWaveChart = () => {
       <div className="sm:absolute sm:top-16 sm:left-0 sm:mt-2 mt-12 top-24 text-blue-900 font-bold text-2xl sm:text-3xl">
     3 Projects
   </div>
-
+  
   {/* On Track Word */}
   <div className="sm:absolute sm:top-24 sm:left-0 sm:mt-4 mt-0 flex items-center text-green-600 text-lg">
     <svg
@@ -36,10 +36,10 @@ const TwoWaveChart = () => {
     <span className="ml-2 text-lg font-bold text-teal-500">On Track</span>
   </div>
 
-      {/* Wave Section */}
-      <div className="relative mt-20 sm:mt-36 w-full flex flex-col items-center">
+      {/* Wave Section */}  
+      <div className="relative  sm:mt-36 w-full flex flex-col items-center">
   {/* Green SVG with white dot */}
-  <div className="relative w-full max-w-xs sm:max-w-2xl mb--3">
+  <div className="relative w-full  sm:max-w-2xl ">
     {/* Green SVG */}
     <svg
       className="absolute top-1/2 left-1/2"
@@ -49,7 +49,7 @@ const TwoWaveChart = () => {
       viewBox="0 0 15 15"
       fill="none"
       style={{
-        top: "27%", // Approximate vertical placement (adjust based on wave path)
+        top: "25%", // Approximate vertical placement (adjust based on wave path)
         left: "48%", // Approximate horizontal placement (adjust based on wave path)
         transform: "translate(-50%, -50%)",
         position: "absolute",
@@ -123,17 +123,20 @@ const TwoWaveChart = () => {
 </div>
 
 
-      {/* Month Labels */}
-      <div className="w-full max-w-xs sm:max-w-2xl mt-3 flex justify-between text-sm text-gray-300 sm:bottom-3">
-        <span>SEP</span>
-        <span>OCT</span>
-        <span>NOV</span>
-        <span>DEC</span>
-        <span>JAN</span>
-        <span>FEB</span>
-      </div>
+     
+<div className="w-full max-w-xs sm:max-w-2xl flex justify-between text-sm text-gray-500 mt-2 relative overflow-hidden px-2 sm:px-4">
+
+  <span className="truncate">SEP</span>
+  <span className="truncate">OCT</span>
+  <span className="truncate">NOV</span>
+  <span className="truncate">DEC</span>
+  <span className="truncate">JAN</span>
+  <span className="truncate">FEB</span>
+</div>
+
     </div>
   );
 };
 
 export default TwoWaveChart;
+

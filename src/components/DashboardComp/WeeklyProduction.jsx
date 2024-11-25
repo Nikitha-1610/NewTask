@@ -85,10 +85,11 @@ const WeeklyProduction = () => {
       x: {
         ticks: {
           display: true,
-          color: 'grey',
+          color: 'gray',
           font: {
             size: 12,
           },
+         
         },
         grid: {
           display: false,
@@ -115,9 +116,9 @@ const WeeklyProduction = () => {
   };
 
   return (
- <div className="w-11/12 mx-auto p-0">
-  <div className="flex justify-between items-center mb-3">
-    <h2 className="sm:text-2xl text-lg font-medium font-sans text-gray-800 self-auto sm:relative sm:left-0 sm:top-0 sm:mb-0 -left-14 -top-5 mb-20">
+ <div className="w-11/12 mx-auto  my-0 p-0  ">
+  <div className="flex justify-between items-center  ">
+    <h2 className="sm:text-2xl text-lg  font-medium font-sans text-gray-800 self-auto sm:relative sm:left-0 sm:top-0 sm:mb-0 ">
       Weekly Production
     </h2>
 
@@ -133,14 +134,14 @@ const WeeklyProduction = () => {
         <option value="Yearly">Yearly</option>
       </select>
       {/* SVG Icon */}
-      <div className="absolute right-2 top-1/2 -translate-y-1/2 pointer-events-none">
-        <svg xmlns="http://www.w3.org/2000/svg" width="13" height="8" viewBox="0 0 13 8" fill="none">
+      <div className="absolute right-2 top-1/2 -translate-y-1/2 pointer-events-none ">
+        <svg xmlns="http://www.w3.org/2000/svg" width="13" height="10" viewBox="0 0 13 8" fill="none">
           <path d="M0.895102 1.68394C0.296353 1.04528 0.749199 0 1.62464 0H12.0082C12.8836 0 13.3365 1.04528 12.7377 1.68394L7.54594 7.22183C7.15087 7.64324 6.48194 7.64324 6.08687 7.22183L0.895102 1.68394Z" fill="#01C2B5"/>
         </svg>
       </div>
     </div>
   </div>
-  <div className="relative h-72 flex justify-center">
+  <div className="relative h-52 flex justify-center ">
     <Bar data={getChartData()} options={options} />
   </div>
 </div>
