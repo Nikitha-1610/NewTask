@@ -187,7 +187,7 @@ const Board = () => {
                     className="bg-white shadow rounded-lg p-4 mb-4 relative border border-gray-400 w-full"
                   >
                     {/* Task Header */}
-                    <div className="absolute top-2 right-2">
+                    {/* <div className="absolute top-2 right-2">
                       {task.taskStatus === "Completed" ? (
                         <div className="flex items-center text-teal-600 text-xs font-bold">
                           <span className="mr-1">✔✔</span>
@@ -199,12 +199,32 @@ const Board = () => {
                           <span>{task.deadline}</span>
                         </div>
                       )}
-                    </div>
+                    </div> */}
+
+<div className="absolute top-2 right-2">
+  {task.taskStatus === "Completed" ? (
+    <div className="flex items-center text-teal-600 text-xs font-bold">
+      <span className="mr-1">✔✔</span>
+      <span>Done</span>
+    </div>
+  ) : (
+    <div className="flex items-center text-gray-500 text-sm ">
+      <FontAwesomeIcon icon={faCalendarAlt} className="mr-1" />
+      <span>
+        {new Date(task.deadline).toLocaleDateString('en-US', {
+          month: 'short',
+          day: 'numeric',
+        })}
+      </span>
+    </div>
+  )}
+</div>
+
 
                     {/* Task Name */}
                     {task.taskName && (
                       <span
-                        className={`text-xs font-semibold mb-2 mt-8 inline-block px-2 py-1 rounded ${generateRandomColor()}`}
+                        className={`text-xs font-semibold mb-4 mt-3 inline-block px-2 py-1 rounded ${generateRandomColor()}`}
                       >
                         {task.taskName}
                       </span>
