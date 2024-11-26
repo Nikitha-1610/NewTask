@@ -2,28 +2,13 @@ import { useState, useEffect } from "react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
   faCalendarAlt,
-  faUsers,
-  faComment,
   faSliders,
   faPlus,
   faChevronDown,
-  faLink,
   faChevronUp,
 } from "@fortawesome/free-solid-svg-icons";
 import axiosInstance from "../utilities/axios/axiosInstance";
-import { Link, useNavigate } from "react-router-dom";
-import TaskDetails from "../components/TaskDetails";
-
-// DateDisplay component
-const DateDisplay = ({ isoDate }) => {
-  if (!isoDate) return "No Date";
-  const formatDate = (isoDate) => {
-    const date = new Date(isoDate);
-    const options = { month: "long", day: "numeric" };
-    return new Intl.DateTimeFormat("en-US", options).format(date);
-  };
-  return <span>{formatDate(isoDate)}</span>;
-};
+import { useNavigate } from "react-router-dom";
 
 const Board = () => {
   const [taskData, setTaskData] = useState({
@@ -35,7 +20,6 @@ const Board = () => {
   const [filterLabel, setFilterLabel] = useState("");
   const [showFilterDropdown, setShowFilterDropdown] = useState(false);
   const [collapsedColumns, setCollapsedColumns] = useState({});
-  const [selectedTask, setSelectedTask] = useState(null);
   const navigate = useNavigate();
 
   // Fetch tasks from the API
@@ -71,6 +55,20 @@ const Board = () => {
     setShowFilterDropdown(false);
   };
 
+  const handleColumnClick = (status, assignedBy, path) => {
+    // Make a POST request with the passed parameters
+    axiosInstance
+      .post("task/getTaskByStatus", { status, assignedBy })
+      .then((response) => {
+        console.log("API Response:", response.data);
+        // Navigate to the specified path after successful API call
+        navigate(path, { state: response.data.message || [] });
+      })
+      .catch((error) => {
+        console.error("Error making POST request:", error);
+      });
+  };
+
   const filteredColumns = [
     {
       title: "TODAY ASSIGNED",
@@ -79,6 +77,8 @@ const Board = () => {
         filterLabel ? task.taskName === filterLabel : true
       ),
       path: "/assign",
+      status: "Today-Assigned",
+      assignedBy: "TeamLead1",
     },
     {
       title: "IN PROGRESS",
@@ -87,6 +87,8 @@ const Board = () => {
         filterLabel ? task.taskName === filterLabel : true
       ),
       path: "/inprogress",
+      status: "In-Progress",
+      assignedBy: "TeamLead1",
     },
     {
       title: "IN TEST",
@@ -95,6 +97,8 @@ const Board = () => {
         filterLabel ? task.taskName === filterLabel : true
       ),
       path: "/intest",
+      status: "In-Test",
+      assignedBy: "TeamLead1",
     },
     {
       title: "COMPLETED",
@@ -102,21 +106,11 @@ const Board = () => {
       tasks: taskData.completedTasks.filter((task) =>
         filterLabel ? task.taskName === filterLabel : true
       ),
+      path: "/completed",
+      status: "Completed",
+      assignedBy: "TeamLead1",
     },
   ];
-
-  const generateRandomColor = () => {
-    const colors = [
-      "bg-green-200",
-      "bg-blue-200",
-      "bg-yellow-200",
-      "bg-red-200",
-      "bg-teal-200",
-      "bg-purple-200",
-      "bg-pink-200",
-    ];
-    return colors[Math.floor(Math.random() * colors.length)];
-  };
 
   const toggleColumn = (colIndex) => {
     setCollapsedColumns((prev) => ({
@@ -183,12 +177,18 @@ const Board = () => {
             className="flex-2 w-full sm:w-full md:w-full lg:basis-1/3 lg:max-w-lg"
           >
             <div className="flex items-center justify-between border-b-2 pb-2">
-              <Link
-                to={column.path}
+              <button
+                onClick={() =>
+                  handleColumnClick(
+                    column.status,
+                    column.assignedBy,
+                    column.path
+                  )
+                }
                 className={`font-semibold p-2 ${column.color}-600 flex-grow`}
               >
                 {column.title}
-              </Link>
+              </button>
               <span className="flex items-center justify-center w-6 h-6 bg-gray-200 text-xs rounded-full ml-auto">
                 {column.tasks.length}
               </span>
@@ -225,39 +225,28 @@ const Board = () => {
                             icon={faCalendarAlt}
                             className="mr-1"
                           />
-                          <DateDisplay isoDate={task.deadline} />
+                          <span>
+                            {new Date(task.deadline).toLocaleDateString(
+                              "en-US",
+                              {
+                                day: "numeric",
+                                month: "short",
+                                year: "numeric",
+                              }
+                            )}
+                          </span>
                         </div>
                       )}
                     </div>
                     {task.taskName && (
                       <span
-                        className={`text-xs font-semibold mb-2 mt-8 inline-block px-2 py-1 rounded ${generateRandomColor()}`}
+                        className={`text-xs font-semibold mb-2 mt-8 inline-block px-2 py-1 rounded bg-blue-200`}
                       >
                         {task.taskName}
                       </span>
                     )}
-                    <div className="flex justify-between">
-                      <div>
-                        <div className="text-sm text-black-100">
-                          {task.taskDescription || "No description available."}
-                        </div>
-                        <div className="flex items-center text-sm text-gray-600 mt-2 space-x-4">
-                          <div className="flex items-center">
-                            <FontAwesomeIcon
-                              icon={faComment}
-                              className="mr-1"
-                            />
-                            {task.comment?.length || 0}
-                          </div>
-                          <div className="flex items-center">
-                            <FontAwesomeIcon
-                              icon={faLink}
-                              className="mr-1 text-black-500"
-                            />
-                            {task.referenceFileUrl?.length || 0}
-                          </div>
-                        </div>
-                      </div>
+                    <div className="text-sm text-gray-800">
+                      {task.taskDescription || "No description available."}
                     </div>
                   </div>
                 ))}
@@ -266,13 +255,6 @@ const Board = () => {
           </div>
         ))}
       </div>
-
-      {selectedTask && (
-        <TaskDetails
-          task={selectedTask.task}
-          onClose={() => setSelectedTask(null)}
-        />
-      )}
     </div>
   );
 };
