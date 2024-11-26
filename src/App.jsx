@@ -10,14 +10,14 @@ import MainPage from "./pages/MainPage";
 // import Settings from "./pages/Settings";
 import Usersemail from "./pages/Usersemail";
 import InProgressTask from "./pages/InProgressTask";
-import AddTasks from "./pages/AddTasks";
+import AddTasks from "./pages/addTasks";
+import Addproject from "./pages/Addproject";
 import DesignTeam from "./pages/DesignTeam";
 import Chats from "./pages/Chats";
 import InTest from "./pages/InTest";
 import AssignTask from "./pages/Assigntask";
 import EmployeeForm from "./pages/EmployeeForm";
 import TaskDetails from "./components/TaskDetails";
-
 
 const App = () => {
   return (

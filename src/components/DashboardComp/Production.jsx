@@ -2,9 +2,9 @@ import { FaCheckCircle, FaExclamationCircle } from "react-icons/fa";
 
 const Production = () => {
   return (
-    <div className="flex flex-col md:flex-row justify-between gap-4 items-stretch p-0 sm:h-auto h-auto mt-0">
+    <div className="flex flex-col md:flex-row justify-between gap-3 items-stretch">
       {/* Left Section */}
-      <div className="flex flex-col gap-4 border-2 border-gray-200 p-4 rounded-xl sm:basis-[40%] w-full h-auto sm:h-[350px]">
+      <div className="flex flex-col gap-4 border-2  border-gray-200 p-4 rounded-xl sm:basis-[40%] w-full ">
         <h2 className="text-lg sm:text-2xl font-bold text-gray-800 mb-4">
           Production (Overall)
         </h2>
@@ -133,7 +133,7 @@ const Production = () => {
       {/* right section */}
 
       {/* <div className="border-2 border-black-2 p-3 lg:p-4 rounded-xl flex flex-col sm:w-full md:w-full lg:w-[62.5%] xl:w-[62.5%] h-[400px]"> */}
-      <div className="border-2 p-3 lg:p-4 rounded-xl flex flex-col w-full lg:w-3/5 h-[300px] sm:h-[350px] md:h-[400px] lg:h-[350px] m-0">
+      <div className="border-2 p-3 lg:p-4 rounded-xl flex flex-col w-full lg:w-3/5  m-0">
         <h3 className="text-xl font-bold text-blue-800 leading-tight mb-3">
           Complex Table
         </h3>
