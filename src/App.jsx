@@ -10,7 +10,8 @@ import MainPage from "./pages/MainPage";
 // import Settings from "./pages/Settings";
 import Usersemail from "./pages/Usersemail";
 import InProgressTask from "./pages/InProgressTask";
-// import AddTasks from "./pages/addTasks";
+import AddTasks from "./pages/addTasks";
+import Addproject from "./pages/Addproject";
 import DesignTeam from "./pages/DesignTeam";
 import Chats from "./pages/Chats";
 import InTest from "./pages/InTest";
@@ -19,7 +20,6 @@ import EmployeeForm from "./pages/EmployeeForm";
 import TaskDetails from "./components/TaskDetails";
 import AddTasks from "./pages/addTasks";
 import AddProject from "./pages/Addproject";
-
 
 const App = () => {
   return (

@@ -25,18 +25,18 @@ const Dashboard = () => {
     }
   };
   return (
-    <div className="flex flex-col items-center pt-0 font-montserrat">
+    <div className="flex flex-col items-center pt-0">
       <div className="grid grid-cols-1 gap-4 w-9/10 max-w-screen-xl">
         {/* First Container with 4 inner containers */}
         {/* First Container with 5 inner containers */}
-        <div className="relative">
-  {/* Scroll Left and Right buttons - positioned absolutely on the left and right sides of the container */}
-  <div className="absolute top-1/2 left-0 transform -translate-y-1/2 z-10 lg:hidden cursor-pointer">
-    {/* Scroll Left button */}
-    <div onClick={scrollLeft}>
-      <MdArrowBack className="text-teal-500 text-4xl font-extrabold" />
-    </div>
-  </div>
+        <div className="flex justify-between top-16 left-4 right-4 z-10 lg:hidden">
+          {/* Scroll Left button */}
+          <div
+            className="cursor-pointer"
+            onClick={scrollLeft} // Add the onClick event to trigger scrollLeft
+          >
+            <MdArrowBack className="text-teal-500 text-3xl font-bold" />
+          </div>
 
           {/* Scroll Right button */}
           <div
@@ -47,47 +47,12 @@ const Dashboard = () => {
           </div>
         </div>
 
-  {/* Card container with horizontal scrolling enabled */}
-  <div
-    className="p-1 rounded-lg overflow-x-auto scrollbar-hide sm:mt-0"
-    ref={cardContainerRef} // Attach the ref to the card container
-  >
-    <div className="flex space-x-2">
-      {[{
-        title: "Design Team",
-        color: "text-pink-500",
-        count: 35,
-        bgColor: "bg-pink-100",
-      },
-      {
-        title: "Development",
-        color: "text-teal-600",
-        count: 35,
-        bgColor: "bg-teal-100",
-      },
-      {
-        title: "AI/ ML",
-        color: "text-orange-500",
-        count: 35,
-        bgColor: "bg-orange-100",
-      },
-      {
-        title: "Marketing",
-        color: "text-green-600",
-        count: 35,
-        bgColor: "bg-green-100",
-      },
-      {
-        title: "Advertising",
-        color: "text-orange-700",
-        count: 35,
-        bgColor: "bg-orange-200",
-      }].map((card, index) => (
+        {/* Card container with overflow-x-auto to enable horizontal scrolling */}
         <div
-          key={index}
-          className="min-w-[220px] bg-white p-3 rounded-lg border-4 border-gray-100 transform transition-transform duration-300 hover:scale-105"
+          className="p-1 rounded-lg overflow-x-auto scrollbar-hide sm:mt-0 "
+          ref={cardContainerRef} // Attach the ref to the card container
         >
-          <div className="flex space-x-2 ">
+          <div className="flex space-x-2">
             {[
               {
                 title: "Design Team",
@@ -122,7 +87,7 @@ const Dashboard = () => {
             ].map((card, index) => (
               <div
                 key={index}
-                className="min-w-[220px] bg-white p-3 rounded-xl border-2 border-black-2   transform transition-transform duration-300 hover:scale-105"
+                className="min-w-[220px] bg-white p-3 rounded-lg border-2 border-gray-100 transform transition-transform duration-300 hover:scale-105"
               >
                 <div className="flex justify-between items-center space-x-0">
                   <div
@@ -143,25 +108,19 @@ const Dashboard = () => {
             ))}
           </div>
         </div>
-      ))}
-    </div>
-  </div>
-</div>
-
 
         {/* Remaining containers as placeholders */}
-        <div className=" sm:p-5 p-3 rounded-xl border-2 border-black-2 sm:w-full w-auto mt-0">
+        <div className=" p-5 md:p-3 rounded-xl border-2 border-gray-100 w-full">
           <WeeklyProduction />
         </div>
-        <div className="sm:py-1 p-0 rounded-xl  sm:w-full w-auto ">
+        <div className="rounded-xl  w-full ">
           <Production />
         </div>
-        <div className="sm:p-4 p-3 rounded-xl border-2 border-black-2  sm:w-full w-auto">
+        <div className="sm:p-4 p-3 rounded-xl border-2 border-gray-100 sm:w-full w-96">
           <TwoWaveChart />
         </div>
       </div>
-      
-    
+    </div>
   );
 };
 

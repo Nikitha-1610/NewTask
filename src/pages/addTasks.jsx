@@ -76,7 +76,7 @@ const AddTasks = () => {
         console.log("Region:", region);
         console.log("Bucket:", BUCKET_NAME);
         console.log("FileName:", fileName);
-        return `https://${BUCKET_NAME}.s3.${region}.amazonaws.com/${fileName}`;
+        return "https://${BUCKET_NAME}.s3.${region}.amazonaws.com/${fileName}";
       } catch (err) {
         console.error("Error uploading file to S3: ", err);
         return null;

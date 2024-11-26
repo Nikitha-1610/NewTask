@@ -146,9 +146,9 @@ const WeeklyProduction = () => {
   };
 
   return (
-    <div className="w-11/12 mx-auto  my-0 p-0  ">
+    <div className="w-11/12">
       <div className="flex justify-between items-center  ">
-        <h2 className="md:text-2xl text-lg  font-medium text-gray-800 self-auto sm:relative left-0 top-0 mb-0 ">
+        <h2 className="md:text-2xl text-lg  font-medium text-gray-800 self-auto sm:relative ">
           Weekly Production
         </h2>
 
