@@ -1,11 +1,10 @@
 import { MdBarChart, MdArrowForward, MdArrowBack } from "react-icons/md";
-import {React, useRef} from 'react';
+import { useRef } from "react";
 import WeeklyProduction from "../components/DashboardComp/WeeklyProduction";
 import Production from "../components/DashboardComp/Production";
 import TwoWaveChart from "../components/DashboardComp/TwoWaveChart";
 
 const Dashboard = () => {
-
   const cardContainerRef = useRef(null);
 
   // Function to scroll the cards horizontally
@@ -13,7 +12,7 @@ const Dashboard = () => {
     if (cardContainerRef.current) {
       cardContainerRef.current.scrollBy({
         left: 220, // Adjust this value to control the scroll distance
-        behavior: 'smooth', // Smooth scroll
+        behavior: "smooth", // Smooth scroll
       });
     }
   };
@@ -21,7 +20,7 @@ const Dashboard = () => {
     if (cardContainerRef.current) {
       cardContainerRef.current.scrollBy({
         left: -220, // Negative value to scroll left
-        behavior: 'smooth', // Smooth scroll
+        behavior: "smooth", // Smooth scroll
       });
     }
   };
@@ -47,7 +46,6 @@ const Dashboard = () => {
             <MdArrowForward className="text-teal-500 text-3xl font-bold" />
           </div>
         </div>
-     
 
         {/* Card container with overflow-x-auto to enable horizontal scrolling */}
         <div
@@ -127,4 +125,3 @@ const Dashboard = () => {
 };
 
 export default Dashboard;
-
