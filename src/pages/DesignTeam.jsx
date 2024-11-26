@@ -1,9 +1,9 @@
 import { useState, useEffect } from "react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faCalendarAlt, faUsers, faComment, faSliders, faPlus, faChevronDown, faChevronUp, faUserTie } from "@fortawesome/free-solid-svg-icons";
+import { faCalendarAlt, faUsers, faComment, faSliders, faPlus, faChevronDown, faLink, faChevronUp } from "@fortawesome/free-solid-svg-icons";
 import axiosInstance from "../utilities/axios/axiosInstance";
 import { Link, useNavigate } from 'react-router-dom';
-
+import TaskDetails from "../components/TaskDetails";
 
 const Board = () => {
   const [taskData, setTaskData] = useState({
@@ -27,7 +27,7 @@ const Board = () => {
           inProgressTasks: [],
           completedTasks: [],
           todayAssignedTasks: [],
-        });  
+        });
       })
       .catch(error => {
         console.error("Error fetching task data:", error);
@@ -53,25 +53,28 @@ const Board = () => {
       title: "TODAY ASSIGNED",
       color: "green",
       tasks: taskData.todayAssignedTasks.filter(task => filterLabel ? task.taskName === filterLabel : true),
-      path: "today-assigned", // Unique identifier for the column
+
+      path: "/assign"
     },
     {
       title: "IN PROGRESS",
       color: "yellow",
       tasks: taskData.inProgressTasks.filter(task => filterLabel ? task.taskName === filterLabel : true),
-      path: "in-progress",
+
+      path: "/inprogress"
     },
     {
       title: "IN TEST",
       color: "red",
       tasks: taskData.inTestTasks.filter(task => filterLabel ? task.taskName === filterLabel : true),
-      path: "in-test",
+
+      path: '/intest'
     },
     {
       title: "COMPLETED",
       color: "teal",
       tasks: taskData.completedTasks.filter(task => filterLabel ? task.taskName === filterLabel : true),
-      path:"completed",
+      // path: "completed",
     },
   ];
 
@@ -90,18 +93,10 @@ const Board = () => {
   };
 
   const handleAddTask = () => {
-    navigate('/addtasks'); 
+    navigate('/addtasks');
   };
 
-
-  // const handleTaskClick = (task) => {
-  //   navigate(`/task/${task.id}`, { state: { task } }); 
-  // };
-
-  // const handleTaskClick = (task) => {
-  //   setSelectedTask(task);
-  // };
-  const handleTaskStatusUpdate = (taskId, newStatus) => {
+const handleTaskStatusUpdate = (taskId, newStatus) => {
     // Find the task in the current list and update its status
     setTaskData(prevState => {
       const updatedInTestTasks = prevState.inTestTasks.map(task => 
@@ -122,23 +117,17 @@ const Board = () => {
       };
     });
   };
-  
-  // const handleTaskClick = (task, columnTitle) => {
-  //   setSelectedTask({ task, columnTitle, updateStatus: handleTaskStatusUpdate });
-  // };
-  
-
-  const handleColumnClick = (tasks, columnTitle) => {
+const handleColumnClick = (tasks, columnTitle) => {
     navigate(`/task-details`, { state: { tasks, columnTitle } });
   };
-  
+
 
   return (
-    <div className="p-2 bg-gray-100 min-h-screen">
-    {/* Header Section */}
-    <div className="flex flex-col sm:flex-row justify-between items-center mb-6 space-y-4 sm:space-y-0 md:space-y-0">
-      <h1 className="text-2xl font-bold text-gray-700 bg-teal-100 rounded-lg w-60 h-9 text-center">DESIGN TEAM</h1>
-      <div className="flex space-x-4 flex-wrap items-center sm:ml-auto sm:space-x-4 md:space-x-6">
+    <div className="p-2 bg-gray-100 min-h-screen ">
+      {/* Header Section */}
+      <div className="flex flex-col sm:flex-row justify-between items-center mb-6 space-y-4 sm:space-y-0 md:space-y-0 ml-5 mt-2">
+        <h1 className="text-2xl font-bold text-gray-700 bg-teal-100 rounded-lg w-60 h-9 text-center ">DESIGN TEAM</h1>
+        <div className="flex space-x-4 flex-wrap items-center sm:ml-auto sm:space-x-4 md:space-x-6">
           <button onClick={handleAddTask} className="flex items-center px-4 py-2 bg-teal-500 text-white font-bold rounded-2xl hover:bg-green-600">
             <FontAwesomeIcon icon={faPlus} className="mr-2" />
             Add a task
@@ -160,161 +149,121 @@ const Board = () => {
         </div>
       </div>
 
+
       {/* Board Columns */}
-      <div className="flex flex-col lg:flex-row space-y-4 lg:space-y-0 lg:space-x-4">
-      {filteredColumns.map((column, colIndex) => (
-   <div key={colIndex} className="flex-2">
-    {/* <Link to={column.path} className="w-full"> */}
-      <div className="flex items-center justify-between lg:justify-between cursor-pointer border-b-2 pb-2"
-        style={{
-          borderColor: column.color === "green" ? "green" :
-            column.color === "yellow" ? "yellow" :
-              column.color === "red" ? "red" :
-                column.color === "teal" ? "teal" : "gray"
-        }}
-        onClick={() => handleColumnClick(column.tasks, column.title)}
-      >
-                <h2 className={`font-semibold p-2 ${column.color === "green" ? "text-gray-600" :
-                  column.color === "yellow" ? "text-gray-600" :
-                    column.color === "red" ? "text-gray-600" :
-                      column.color === "teal" ? "text-gray-600" : "text-gray-600"} flex-grow`}>
-                  {column.title}
-                </h2>
+      <div className="flex flex-col md:flex-col lg:flex-row space-y-4 lg:space-y-0 lg:space-x-4">
+        {filteredColumns.map((column, colIndex) => (
+          <div
+            key={colIndex}
+            className="flex-2 w-full sm:w-full md:w-full lg:basis-1/3 lg:max-w-lg"
+          >
+            {/* Column Header */}
+            <div
+              className="flex items-center justify-between border-b-2 pb-2"
+              style={{
+                borderColor:
+                  column.color === "green"
+                    ? "green"
+                    : column.color === "yellow"
+                      ? "yellow"
+                      : column.color === "red"
+                        ? "red"
+                        : column.color === "teal"
+                          ? "teal"
+                          : "gray",
+              }}
+                onClick={() => handleColumnClick(column.tasks, column.title)}
+            >
+              {/* Title navigates to the specified path */}
+              <Link
+                to={column.path}
+                className={`font-semibold p-2 ${column.color}-600 flex-grow`}
+              >
+                {column.title}
+              </Link>
 
-                {/* Task Count */}
-                <span className="flex items-center justify-center w-6 h-6 bg-gray-200 text-xs rounded-full ml-auto">
-                  {column.tasks.length}
-                </span>
+              {/* Task Count */}
+              <span className="flex items-center justify-center w-6 h-6 bg-gray-200 text-xs rounded-full ml-auto">
+                {column.tasks.length}
+              </span>
 
-                {/* Toggle Icon for mobile */}
+              {/* Arrow visible only in Tabview and Mobileview */}
+              <div className="lg:hidden">
                 <FontAwesomeIcon
                   icon={collapsedColumns[colIndex] ? faChevronDown : faChevronUp}
-                  className="ml-5 lg:hidden cursor-pointer"
-                  onClick={(e) => { e.preventDefault(); toggleColumn(colIndex); }} // Only toggle visibility on click for mobile
+                  className="ml-5 cursor-pointer"
+                  onClick={(e) => {
+                    e.preventDefault(); // Prevent navigation when clicking the arrow
+                    toggleColumn(colIndex);
+                  }}
                 />
               </div>
-            {/* </Link> */}
-
-           {/* Mobile Dropdown */}
-{showFilterDropdown && (
-  <div className="absolute top-full left-0 mt-2 w-30 max-w-13 bg-white border rounded shadow-lg z-10">
-    <button onClick={() => handleFilterChange("")} className="block px-4 py-2 text-sm text-gray-800 hover:bg-gray-100">All</button>
-    {labels.map((label, index) => (
-      <button key={index} onClick={() => handleFilterChange(label)} className="block px-4 py-2 text-sm text-gray-800 hover:bg-gray-100">{label}</button>
-    ))}
-  </div>
-)} 
-
-            {/* Tasks - Visible on Desktop and toggled on Mobile */}
-            {!collapsedColumns[colIndex] && (
-  <div className="mt-4">
-    {column.tasks.map((task, taskIndex) => (
-      <div
-        key={taskIndex}
-        className="bg-white shadow rounded-lg p-4 mb-4 relative border border-gray-400"
-        onClick={() => handleTaskClick(task, column.title)}
-      >
-        {/* Task Status */}
-        <div className="absolute top-2 right-2">
-          {task.taskStatus === "Completed" ? (
-            <div className="flex items-center text-green-500 text-xs font-bold">
-              <span className="mr-1">✔</span>
-              <span>Done</span>
             </div>
-          ) : (
-            <div className="flex items-center text-gray-500 text-xs">
-              <FontAwesomeIcon icon={faCalendarAlt} className="mr-1" />
-              <span>{new Date(task.deadline).toLocaleDateString()}</span>
-            </div>
-          )}
-        </div>
 
-        {/* Task Name */}
-        <h3 className="text-lg font-semibold text-gray-800 mb-2">
-          {task.taskName}
-        </h3>
+            {/* Column Content */}
+            {(!collapsedColumns[colIndex] || window.innerWidth >= 1024) && (
+              <div className="mt-4">
+                {column.tasks.map((task, taskIndex) => (
+                  <div
+                    key={taskIndex}
+                    className="bg-white shadow rounded-lg p-4 mb-4 relative border border-gray-400 w-full"
+                  >
+                    {/* Task Header */}
+                    <div className="absolute top-2 right-2">
+                      {task.taskStatus === "Completed" ? (
+                        <div className="flex items-center text-teal-600 text-xs font-bold">
+                          <span className="mr-1">✔✔</span>
+                          <span>Done</span>
+                        </div>
+                      ) : (
+                        <div className="flex items-center text-gray-500 text-sm">
+                          <FontAwesomeIcon icon={faCalendarAlt} className="mr-1" />
+                          <span>{task.deadline}</span>
+                        </div>
+                      )}
+                    </div>
 
-        {/* Priority */}
-        <div className={`text-xs font-bold mb-2 py-1 px-2 rounded ${task.priority === 'Urgent' ? 'bg-red-500 text-white' : 'bg-gray-300 text-gray-800'}`}>
-          Priority: {task.priority}
-        </div>
+                    {/* Task Name */}
+                    {task.taskName && (
+                      <span
+                        className={`text-xs font-semibold mb-2 mt-8 inline-block px-2 py-1 rounded ${generateRandomColor()}`}
+                      >
+                        {task.taskName}
+                      </span>
+                    )}
 
-        {/* Task Description */}
-        {/* <p className="text-sm text-gray-600 mb-2">
-          {task.taskDescription}
-        </p> */}
+                    {/* Task Details */}
+                    <div className="flex justify-between">
+                      <div>
+                        <div className="text-sm text-black-100">
+                          {task.taskDescription || "No description available."}
+                        </div>
 
-        {/* Assigned To */}
-        <div className="text-sm text-gray-600 mb-2">
-          <FontAwesomeIcon icon={faUsers} className="mr-1" />
-          Assigned To:{" "}
-          {task.assignedTo.map((empId, index) => (
-            <span key={index} className="inline-block bg-gray-200 px-2 py-1 rounded-full text-xs mr-1">
-              {empId}
-            </span>
-          ))}
-        </div>
-
-        {/* Assigned By */}
-        <div className="text-sm text-gray-600 mb-2">
-          <FontAwesomeIcon icon={faUserTie} className="mr-1" />
-          Assigned By: {task.assignedBy}
-        </div>
-
-        {/* Comments */}
-        {task.comment && task.comment.length > 0 && (
-          <div className="bg-gray-100 p-2 rounded-lg text-sm text-gray-700 mb-2">
-            <FontAwesomeIcon icon={faComment} className="mr-1" />
-            <strong>Comments:</strong>
-            <ul>
-              {task.comment.map((c, idx) => (
-                <li key={idx} className="mt-1">
-                  {c.userName}: {c.message}
-                </li>
-              ))}
-            </ul>
-          </div>
-        )}
-
-        {/* Reference Files */}
-        {task.referenceFileUrl && task.referenceFileUrl.length > 0 && (
-          <div className="text-sm text-blue-500 underline mb-2">
-            <strong>Reference Files:</strong>
-            {task.referenceFileUrl.map((file, idx) => (
-              <a
-                key={idx}
-                href={file}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="block"
-              >
-                File {idx + 1}
-              </a>
-            ))}
-          </div>
-        )}
-
-        {/* Assigned Date */}
-        <div className="text-xs text-gray-500 mt-2">
-          Assigned on: {new Date(task.assignedDate).toLocaleDateString()}
-        </div>
-      </div>
-    ))}
-  </div>
-)}
-
-
+                        {/* Comments and References */}
+                        <div className="flex items-center text-sm text-gray-600 mt-2 space-x-4">
+                          <div className="flex items-center">
+                            <FontAwesomeIcon icon={faComment} className="mr-1" />
+                            {task.comment?.length || 0}
+                          </div>
+                          <div className="flex items-center">
+                            <FontAwesomeIcon icon={faLink} className="mr-1 text-black-500" />
+                            {task.referenceFileUrl?.length || 0}
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            )}
           </div>
         ))}
       </div>
-{/* Task Details Modal */}
-{/* {selectedTask && (
-  <TaskDetails task={selectedTask.task} onClose={() => setSelectedTask(null)} updateStatus={handleTaskStatusUpdate} />
 
 
-)} */}
+     
     </div>
   );
 };
 
-export default Board;
+export default Board; 

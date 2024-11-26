@@ -1,11 +1,10 @@
 import { MdBarChart, MdArrowForward, MdArrowBack } from "react-icons/md";
-import {React, useRef} from 'react';
+import { useRef } from "react";
 import WeeklyProduction from "../components/DashboardComp/WeeklyProduction";
 import Production from "../components/DashboardComp/Production";
 import TwoWaveChart from "../components/DashboardComp/TwoWaveChart";
 
 const Dashboard = () => {
-
   const cardContainerRef = useRef(null);
 
   // Function to scroll the cards horizontally
@@ -13,7 +12,7 @@ const Dashboard = () => {
     if (cardContainerRef.current) {
       cardContainerRef.current.scrollBy({
         left: 220, // Adjust this value to control the scroll distance
-        behavior: 'smooth', // Smooth scroll
+        behavior: "smooth", // Smooth scroll
       });
     }
   };
@@ -21,7 +20,7 @@ const Dashboard = () => {
     if (cardContainerRef.current) {
       cardContainerRef.current.scrollBy({
         left: -220, // Negative value to scroll left
-        behavior: 'smooth', // Smooth scroll
+        behavior: "smooth", // Smooth scroll
       });
     }
   };
@@ -39,12 +38,23 @@ const Dashboard = () => {
     </div>
   </div>
 
+<<<<<<< HEAD
   <div className="absolute top-1/2 right-0 transform -translate-y-1/2 z-10 lg:hidden cursor-pointer">
     {/* Scroll Right button */}
     <div onClick={scrollRight}>
       <MdArrowForward className="text-teal-500 text-4xl font-extrabold" />
     </div>
   </div>
+=======
+          {/* Scroll Right button */}
+          <div
+            className="cursor-pointer"
+            onClick={scrollRight} // Add the onClick event to trigger scrollRight
+          >
+            <MdArrowForward className="text-teal-500 text-3xl font-bold" />
+          </div>
+        </div>
+>>>>>>> fbf1fb956a300b6a33745c0ee20cdf5e469ae143
 
   {/* Card container with horizontal scrolling enabled */}
   <div
@@ -86,6 +96,7 @@ const Dashboard = () => {
           key={index}
           className="min-w-[220px] bg-white p-3 rounded-lg border-4 border-gray-100 transform transition-transform duration-300 hover:scale-105"
         >
+<<<<<<< HEAD
           <div className="flex justify-between items-center space-x-0">
             <div
               className={`flex justify-center items-center w-12 h-12 rounded-full ${card.bgColor}`}
@@ -100,6 +111,62 @@ const Dashboard = () => {
                 {card.count}
               </h1>
             </div>
+=======
+          <div className="flex space-x-2 ">
+            {[
+              {
+                title: "Design Team",
+                color: "text-pink-500",
+                count: 35,
+                bgColor: "bg-pink-100",
+              },
+              {
+                title: "Development",
+                color: "text-teal-600",
+                count: 35,
+                bgColor: "bg-teal-100",
+              },
+              {
+                title: "AI/ ML",
+                color: "text-orange-500",
+                count: 35,
+                bgColor: "bg-orange-100",
+              },
+              {
+                title: "Marketing",
+                color: "text-green-600",
+                count: 35,
+                bgColor: "bg-green-100",
+              },
+              {
+                title: "Advertising",
+                color: "text-orange-700",
+                count: 35,
+                bgColor: "bg-orange-200",
+              },
+            ].map((card, index) => (
+              <div
+                key={index}
+                className="min-w-[220px] bg-white p-3 rounded-xl border-2 border-black-2   transform transition-transform duration-300 hover:scale-105"
+              >
+                <div className="flex justify-between items-center space-x-0">
+                  <div
+                    className={`flex justify-center items-center w-12 h-12 rounded-full ${card.bgColor}`}
+                  >
+                    <MdBarChart size={34} className={card.color} />
+                  </div>
+                  <div>
+                    <h3 className="text-lg font-medium text-gray-400">
+                      {card.title}
+                    </h3>
+                    <h1 className="text-gray-800 text-2xl font-bold">
+                      {card.count}
+                    </h1>
+                  </div>
+                </div>
+              </div>
+            ))}
+>>>>>>> fbf1fb956a300b6a33745c0ee20cdf5e469ae143
           </div>
         </div>
       ))}
@@ -109,13 +176,13 @@ const Dashboard = () => {
 
 
         {/* Remaining containers as placeholders */}
-        <div className=" sm:p-5 p-3 rounded-xl border-4 border-gray-100 sm:w-full w-auto mt-0">
+        <div className=" sm:p-5 p-3 rounded-xl border-2 border-black-2 sm:w-full w-auto mt-0">
           <WeeklyProduction />
         </div>
         <div className="sm:py-1 p-0 rounded-xl  sm:w-full w-auto ">
           <Production />
         </div>
-        <div className="sm:p-4 p-3 rounded-xl border-4 border-gray-100 sm:w-full w-auto">
+        <div className="sm:p-4 p-3 rounded-xl border-2 border-black-2  sm:w-full w-auto">
           <TwoWaveChart />
         </div>
       </div>

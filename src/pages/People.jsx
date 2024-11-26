@@ -2,6 +2,8 @@ import { useEffect, useState } from "react";
 import { Icon } from "@iconify/react";
 import axiosInstance from "../utilities/axios/axiosInstance";
 import toast, { Toaster } from "react-hot-toast";
+import CountUp from "react-countup";
+import ReactLoading from "react-loading";
 
 const People = () => {
   const [allUsers, setAllUsers] = useState([]);
@@ -14,6 +16,7 @@ const People = () => {
   const [selectedUserIndex, setSelectedUserIndex] = useState(null);
   const [selectedDepartment, setSelectedDepartment] = useState("All");
   const [selectedUserType, setSelectedUserType] = useState("All");
+  const [loading, setLoading] = useState(true);
 
   const getAllusers = async () => {
     try {
@@ -24,6 +27,8 @@ const People = () => {
     } catch (error) {
       console.error("Error syncing with server:", error);
       toast.error("Failed to fetch users.");
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -31,8 +36,13 @@ const People = () => {
     getAllusers();
   }, []);
 
+<<<<<<< HEAD
   const departments = ["All Position", "Tester", "HR Manager", "Marketing", "Project Lead"];
   const userType = ["All Department", "On-Hold", "Init"];
+=======
+  const departments = ["All", "Tester", "HR", "Marketing"];
+  const userType = ["All", "On-Hold", "Init"];
+>>>>>>> fbf1fb956a300b6a33745c0ee20cdf5e469ae143
 
   const filteredUsers = allUsers.filter((user) => {
     // Filter by selected department
@@ -140,13 +150,11 @@ const People = () => {
 
   return (
     <div className="p-5">
-      <Toaster />
-      {/* Stats Section */}
-      <div className="flex flex-wrap items-center justify-center gap-6 md:gap-28 mb-5">
-        <div className="flex flex-col items-center text-center">
-          <span className="text-3xl font-medium">{allUsers.length}</span>
-          <span className="text-sm text-gray-400 underline">People</span>
+      {loading ? (
+        <div className="flex justify-center items-center h-screen">
+          <ReactLoading type="spin" color="#000" height={50} width={50} />
         </div>
+<<<<<<< HEAD
         <div className="w-[1px] h-16 bg-gray-300"></div>
         <div className="flex flex-col items-center text-center">
           <span className="text-3xl font-medium">5</span>
@@ -253,113 +261,236 @@ const People = () => {
                 ))}
               </tbody>
             </table>
+=======
+      ) : (
+        <div>
+          <Toaster />
+          <div className="flex flex-wrap items-center justify-center gap-6 md:gap-28 mb-5">
+            <div className="flex flex-col items-center text-center">
+              <span className="text-3xl font-medium">
+                <CountUp end={allUsers.length} duration={2} />
+              </span>
+              <span className="text-sm text-gray-400 underline">People</span>
+            </div>
+            <div className="w-[1px] h-16 bg-gray-300"></div>
+            <div className="flex flex-col items-center text-center">
+              <span className="text-3xl font-medium">
+                <CountUp end={5} duration={2} />
+              </span>
+              <span className="text-sm text-gray-400 underline">
+                Departments
+              </span>
+            </div>
+>>>>>>> fbf1fb956a300b6a33745c0ee20cdf5e469ae143
           </div>
-        </div>
 
-        {/* Fixed Pagination */}
-        <div className="absolute bottom-0 w-full bg-white border-t border-gray-300 py-2 flex justify-between items-center px-4">
-          <button
-            className="text-gray-500 hover:text-black"
-            onClick={() => setCurrentPage((prev) => Math.max(prev - 1, 1))}
-            disabled={currentPage === 1}
+          {/* Filter Section */}
+          <div className="flex flex-wrap gap-4 items-center mb-4">
+            <select
+              className="border border-gray-300 bg-gray-200 rounded-lg p-2 text-gray-700"
+              onChange={(e) => setSelectedDepartment(e.target.value)}
+              value={selectedDepartment}
+            >
+              {departments.map((dept) => (
+                <option key={dept} value={dept}>
+                  {dept}
+                </option>
+              ))}
+            </select>
+            <select
+              className="border border-gray-300 bg-gray-200 rounded-lg p-2 text-gray-700"
+              onChange={(e) => setSelectedUserType(e.target.value)}
+              value={selectedUserType}
+            >
+              {userType.map((type) => (
+                <option key={type} value={type}>
+                  {type}
+                </option>
+              ))}
+            </select>
+          </div>
+
+          {/* Table with Fixed Height */}
+          <div
+            className="relative w-full border border-gray-300 rounded-lg"
+            style={{ height: "400px" }}
           >
-            Previous
-          </button>
-          <p>
-            Page {currentPage} of {totalPages}
-          </p>
-          <button
-            className="text-gray-500 hover:text-black"
-            onClick={() =>
-              setCurrentPage((prev) => Math.min(prev + 1, totalPages))
-            }
-            disabled={currentPage === totalPages}
-          >
-            Next
-          </button>
-        </div>
-      </div>
+            <div className="h-full overflow-y-auto">
+              <div className="overflow-x-auto">
+                <table className="min-w-full border-collapse">
+                  <thead className="bg-gray-100 sticky top-0">
+                    <tr>
+                      <th className="px-4 py-2 text-left"></th>
+                      <th className="px-4 py-2 text-left">Username</th>
+                      <th className="px-4 py-2 text-left hidden md:table-cell">
+                        Mail ID
+                      </th>
+                      <th className="px-4 py-2 text-left hidden md:table-cell">
+                        Phone Number
+                      </th>
+                      <th className="px-4 py-2 text-left">Position</th>
+                      <th className="px-4 py-2 text-left hidden md:table-cell">
+                        Joining Date
+                      </th>
+                      <th className="px-4 py-2 text-left">Activity</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {currentUsers.map((user, index) => (
+                      <tr key={index} className="border-b hover:bg-gray-50">
+                        <td className="px-4 py-2">
+                          <input type="checkbox" />
+                        </td>
+                        <td className="px-4 py-2">{user.name}</td>
+                        <td className="px-4 py-2 hidden md:table-cell">
+                          {user.email}
+                        </td>
+                        <td className="px-4 py-2 hidden md:table-cell">
+                          {user.mobile}
+                        </td>
+                        <td className="px-4 py-2">{user.position}</td>
+                        <td className="px-4 py-2 hidden md:table-cell">
+                          {user.appliedDate}
+                        </td>
+                        <td className="px-4 py-2 flex gap-2">
+                          {user.status === "Init" ? (
+                            <button
+                              className="bg-blue-500 text-white px-4 py-2 rounded-lg hover:opacity-90"
+                              onClick={() => openConfirmModal(index)}
+                            >
+                              Approve
+                            </button>
+                          ) : (
+                            <button
+                              className="bg-yellow-500 text-white px-4 py-2 rounded-lg hover:opacity-90"
+                              onClick={() => openActionModal(index)}
+                            >
+                              {user.status}
+                            </button>
+                          )}
+                          <Icon
+                            icon="pepicons-pencil:dots-y"
+                            height={22}
+                            width={22}
+                            className="cursor-pointer"
+                            onClick={() => openHoldActionModal(index)}
+                          />
+                        </td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+            </div>
 
-      {/* Approve Confirmation Modal */}
-      {confirmModalVisible && (
-        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-          <div className="bg-white p-6 rounded-lg shadow-lg">
-            <p className="mb-4">Are you sure you want to approve this user?</p>
-            <div className="flex gap-4 justify-end">
+            {/* Fixed Pagination */}
+            <div className="absolute bottom-0 w-full bg-white border-t border-gray-300 py-2 flex justify-between items-center px-4">
               <button
-                className="bg-blue-500 text-white px-4 py-2 rounded-lg"
-                onClick={handleApprove}
+                className="text-gray-500 hover:text-black"
+                onClick={() => setCurrentPage((prev) => Math.max(prev - 1, 1))}
+                disabled={currentPage === 1}
               >
-                Confirm
+                Previous
               </button>
+              <p>
+                Page {currentPage} of {totalPages}
+              </p>
               <button
-                className="bg-gray-300 px-4 py-2 rounded-lg"
-                onClick={closeModal}
+                className="text-gray-500 hover:text-black"
+                onClick={() =>
+                  setCurrentPage((prev) => Math.min(prev + 1, totalPages))
+                }
+                disabled={currentPage === totalPages}
               >
-                Cancel
+                Next
               </button>
             </div>
           </div>
-        </div>
-      )}
 
-      {/* Action Modal (Reject/Hold) */}
-      {modalVisible && (
-        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-          <div className="bg-white p-6 rounded-lg shadow-lg">
-            <div className="flex justify-end">
-              <button
-                className="bg-gray-300 px-1 py-1 rounded-lg"
-                onClick={closeModal} // Fix: Ensures modal closes on clicking close icon
-              >
-                <Icon icon="material-symbols:close" />
-              </button>
+          {/* Approve Confirmation Modal */}
+          {confirmModalVisible && (
+            <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+              <div className="bg-white p-6 rounded-lg shadow-lg">
+                <p className="mb-4">
+                  Are you sure you want to approve this user?
+                </p>
+                <div className="flex gap-4 justify-end">
+                  <button
+                    className="bg-blue-500 text-white px-4 py-2 rounded-lg"
+                    onClick={handleApprove}
+                  >
+                    Confirm
+                  </button>
+                  <button
+                    className="bg-gray-300 px-4 py-2 rounded-lg"
+                    onClick={closeModal}
+                  >
+                    Cancel
+                  </button>
+                </div>
+              </div>
             </div>
-            <p className="mb-4">Choose an action for this user:</p>
-            <div className="flex gap-4 justify-end">
-              <button
-                className="bg-red-500 text-white px-4 py-2 rounded-lg"
-                onClick={() => handleAction("reject")}
-              >
-                Reject
-              </button>
-              <button
-                className="bg-blue-500 text-white px-4 py-2 rounded-lg"
-                onClick={() => handleAction("approve")}
-              >
-                Approve
-              </button>
+          )}
+
+          {/* Action Modal (Reject/Hold) */}
+          {modalVisible && (
+            <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+              <div className="bg-white p-6 rounded-lg shadow-lg">
+                <div className="flex justify-end">
+                  <button
+                    className="bg-gray-300 px-1 py-1 rounded-lg"
+                    onClick={closeModal} // Fix: Ensures modal closes on clicking close icon
+                  >
+                    <Icon icon="material-symbols:close" />
+                  </button>
+                </div>
+                <p className="mb-4">Choose an action for this user:</p>
+                <div className="flex gap-4 justify-end">
+                  <button
+                    className="bg-red-500 text-white px-4 py-2 rounded-lg"
+                    onClick={() => handleAction("reject")}
+                  >
+                    Reject
+                  </button>
+                  <button
+                    className="bg-blue-500 text-white px-4 py-2 rounded-lg"
+                    onClick={() => handleAction("approve")}
+                  >
+                    Approve
+                  </button>
+                </div>
+              </div>
             </div>
-          </div>
-        </div>
-      )}
-      {modalActionVisible && (
-        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-          <div className="bg-white p-6 rounded-lg shadow-lg">
-            <div className="flex justify-end">
-              <button
-                className="bg-gray-300 px-1 py-1 rounded-lg"
-                onClick={closeModal} // Fix: Ensures modal closes on clicking close icon
-              >
-                <Icon icon="material-symbols:close" />
-              </button>
+          )}
+          {modalActionVisible && (
+            <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+              <div className="bg-white p-6 rounded-lg shadow-lg">
+                <div className="flex justify-end">
+                  <button
+                    className="bg-gray-300 px-1 py-1 rounded-lg"
+                    onClick={closeModal} // Fix: Ensures modal closes on clicking close icon
+                  >
+                    <Icon icon="material-symbols:close" />
+                  </button>
+                </div>
+                <p className="mb-4">Choose an action for this user:</p>
+                <div className="flex gap-4 justify-end">
+                  <button
+                    className="bg-red-500 text-white px-4 py-2 rounded-lg"
+                    onClick={() => handleAction("reject")}
+                  >
+                    Reject
+                  </button>
+                  <button
+                    className="bg-yellow-500 text-white px-4 py-2 rounded-lg"
+                    onClick={() => handleAction("on-hold")}
+                  >
+                    On-Hold
+                  </button>
+                </div>
+              </div>
             </div>
-            <p className="mb-4">Choose an action for this user:</p>
-            <div className="flex gap-4 justify-end">
-              <button
-                className="bg-red-500 text-white px-4 py-2 rounded-lg"
-                onClick={() => handleAction("reject")}
-              >
-                Reject
-              </button>
-              <button
-                className="bg-yellow-500 text-white px-4 py-2 rounded-lg"
-                onClick={() => handleAction("on-hold")}
-              >
-                On-Hold
-              </button>
-            </div>
-          </div>
+          )}
         </div>
       )}
     </div>
