@@ -96,9 +96,30 @@ const Board = () => {
     navigate('/addtasks');
   };
 
-
-
-
+const handleTaskStatusUpdate = (taskId, newStatus) => {
+    // Find the task in the current list and update its status
+    setTaskData(prevState => {
+      const updatedInTestTasks = prevState.inTestTasks.map(task => 
+        task.id === taskId ? { ...task, status: newStatus } : task
+      );
+      const updatedInProgressTasks = prevState.inProgressTasks.map(task => 
+        task.id === taskId ? { ...task, status: newStatus } : task
+      );
+      const updatedCompletedTasks = prevState.completedTasks.map(task => 
+        task.id === taskId ? { ...task, status: newStatus } : task
+      );
+  
+      return {
+        ...prevState,
+        inTestTasks: updatedInTestTasks,
+        inProgressTasks: updatedInProgressTasks,
+        completedTasks: updatedCompletedTasks,
+      };
+    });
+  };
+const handleColumnClick = (tasks, columnTitle) => {
+    navigate(`/task-details`, { state: { tasks, columnTitle } });
+  };
 
 
   return (
@@ -151,6 +172,7 @@ const Board = () => {
                           ? "teal"
                           : "gray",
               }}
+                onClick={() => handleColumnClick(column.tasks, column.title)}
             >
               {/* Title navigates to the specified path */}
               <Link
@@ -259,10 +281,7 @@ const Board = () => {
       </div>
 
 
-      {/* Task Details Modal */}
-      {selectedTask && (
-        <TaskDetails task={selectedTask.task} onClose={() => setSelectedTask(null)} />
-      )}
+     
     </div>
   );
 };

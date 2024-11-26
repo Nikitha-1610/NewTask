@@ -1,208 +1,201 @@
 import { Icon } from "@iconify/react";
+import { useLocation } from "react-router-dom"; 
+import axiosInstance from "../utilities/axios/axiosInstance";
 
-const TaskDetails = ({ task }) => {
+const TaskDetails = () => {
+  const { state } = useLocation();
+  const { tasks, columnTitle } = state || {}; // Extract tasks and columnTitle passed via navigate
+
+  if (!tasks || tasks.length === 0) {
+    return <div>No tasks available!</div>;
+  }
+
+  const handleStatusChange = (newStatus, task) => {
+    // Update the status of the task on the backend
+    axiosInstance.post("/task/updateStatus", {
+      taskId: task.id, // Assuming task has an 'id' property
+      newStatus: newStatus,
+    })
+    .then(response => {
+      // Update the local task status after successful response
+      const updatedTasks = tasks.map(t => 
+        t.id === task.id ? { ...t, taskStatus: newStatus } : t
+      );
+      // Optionally navigate back to the dashboard with updated tasks
+      navigate('/designteam', { state: { tasks: updatedTasks } }); 
+    })
+    .catch(error => {
+      console.error("Error updating task status:", error);
+    });
+  };
+
+
   return (
     <div className="w-full mx-auto p-6 bg-white rounded-lg shadow-md border border-gray-200">
-      {/* Task Title */}
-      <h3 className="mt-4 text-lg md:text-xl font-semibold text-gray-800">
-        {task.title}
-      </h3>
-
-      {/* Task Info */}
-      <div className="mt-4 text-sm md:text-base font-normal text-gray-600 space-y-4">
-        <div className="flex flex-wrap items-center gap-4">
-          <div className="flex items-center">
-            <Icon icon="ic:outline-watch-later" height={18} width={18} />
-            <span className="ml-2">Status:</span>
-          </div>
-          <div className="flex items-center">
-            <Icon icon="ri:progress-8-fill" height={18} width={18} />
-            <span className="ml-1 font-medium">{task.status}</span>
+    {/* Task Title */}
+    {tasks.map((task, index) => (
+    <div
+      key={task.taskId || index}
+      className="p-6 mb-6 bg-white rounded-lg shadow-lg border border-gray-200"
+    >
+    <h3 className="text-lg md:text-xl font-semibold text-gray-800">
+      {task.taskName}
+    </h3>
+  
+    {/* Task Info */}
+    <div className="text-sm md:text-base text-gray-600 space-y-4">
+      <div className="flex flex-wrap items-center gap-4 mt-2">
+        <div className="flex items-center">
+          <Icon icon="ic:outline-watch-later" height={18} width={18} />
+          <span className="ml-2 font-medium text-gray-700">Status:</span>
+          <span className="ml-2 text-gray-900">{task.Status}</span>
+        </div>
+      </div>
+  
+      <div className="flex flex-wrap items-center gap-4 mt-2">
+        <div className="flex items-center">
+          <Icon icon="ic:outline-calendar-today" className="text-gray-500" />
+          <span className="ml-2 font-medium text-gray-700">Due Date:</span>
+          <span className="ml-2 text-gray-900">{task.deadline}</span>
+        </div>
+      </div>
+  
+      {/* Assigned To */}
+      <div className="flex flex-wrap items-center gap-4 mt-4">
+        <div className="flex items-center">
+          <Icon icon="lucide:users" height={22} width={22} />
+          <span className="ml-2 font-medium text-gray-700">Assigned to:</span>
+        </div>
+        <div className="flex flex-wrap gap-2">
+          {task.assignedTo.map((person, index) => (
+            <div key={index} className="flex items-center gap-2">
+              <img
+                src={person.image}
+                alt={person.name}
+                className="w-8 h-8 rounded-full border border-gray-300"
+              />
+              <span className="text-gray-700 font-medium">{person}</span>
+            </div>
+          ))}
+        </div>
+      </div>
+  
+      {/* Assigned By */}
+      <div className="flex items-center gap-2 mt-4">
+        <Icon icon="mdi:user-outline" height={22} width={22} />
+        <span className="ml-2 font-medium text-gray-700">Assigned by:</span>
+        <div className="flex items-center gap-2 ml-3">
+          <img
+            src={task.assignedBy.image}
+            alt={task.assignedBy}
+            className="w-8 h-8 rounded-full border border-gray-300"
+          />
+          <span className="text-gray-700 font-medium">
+            {task.assignedBy}
+          </span>
+        </div>
+      </div>
+    </div>
+  
+    {/* Description Section */}
+    <div className="mt-6">
+      <div className="flex items-center gap-2">
+        <Icon icon="tabler:file-description" height={22} width={22} />
+        <h2 className="text-base font-semibold text-gray-800">Description</h2>
+      </div>
+      <p className="mt-4 text-gray-700 text-sm">{task.taskDescription}</p>
+    </div>
+  
+    {/* Attachments Section */}
+    <div className="mt-6">
+        <div className="flex justify-between items-center">
+          <div className="flex items-center gap-2">
+            <Icon icon="cuida:attachment-clip-outline" height={22} width={22} />
+            <h4 className="text-lg font-semibold">Attachments</h4>
           </div>
         </div>
-
-        <div className="flex flex-wrap items-center gap-4">
-          <div className="flex items-center">
-            <Icon icon="ic:outline-calendar-today" className="text-gray-500" />
-            <span className="ml-2">Due Date:</span>
-          </div>
-          <span className="font-medium">{task.dueDate}</span>
+        <div className="mt-4">
+          {task.referenceFileUrl?.length ? (
+            <ul className="list-disc pl-6">
+              {task.referenceFileUrl.map((file, index) => (
+                <li key={index}>
+                  <a
+                    href={file}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="text-blue-500 underline"
+                  >
+                    {`File ${index + 1}`}
+                  </a>
+                </li>
+              ))}
+            </ul>
+          ) : (
+            <p className="text-gray-500">No attachments available.</p>
+          )}
         </div>
-
-        {/* Assigned To */}
-        <div className="flex flex-wrap items-center gap-4">
-          <div className="flex items-center">
-            <Icon icon="lucide:users" height={22} width={22} />
-            <span className="ml-2">Assigned to:</span>
-          </div>
-          <div className="flex flex-wrap gap-2">
-            {task.assignedTo.map((person, index) => (
-              <div key={index} className="flex items-center gap-2">
-                <img
-                  src={person.image}
-                  alt={person.name}
-                  className="w-6 h-6 rounded-full"
-                />
-                <span className="text-gray-700 font-medium">{person.name}</span>
-              </div>
+      </div>
+  
+    {/* Comments Section */}
+    <div className="mt-6">
+        <div className="flex items-center gap-2">
+          <Icon icon="ic:outline-chat" height={22} width={22} />
+          <h4 className="text-lg font-semibold">Comments</h4>
+        </div>
+        <div className="mt-4">
+          {task.comment?.length ? (
+            <ul className="space-y-3">
+              {task.comment.map((cmt, index) => (
+                <li
+                  key={index}
+                  className="p-3 bg-blue-50 border rounded-lg text-sm text-gray-800"
+                >
+                  <strong className="font-semibold">{cmt.userName}:</strong> {cmt.message}
+                </li>
+              ))}
+            </ul>
+          ) : (
+            <p className="text-gray-500">No comments available.</p>
+          )}
+        </div>
+      </div>
+  
+      {/* Change Status Section */}
+      <div
+            className={`mt-4 flex flex-wrap gap-2 items-center ${
+              task.taskStatus === "In Test"
+                ? "bg-red-300"
+                : "bg-orange-100"
+            } p-4 rounded-md`}
+          >
+            <span className="text-sm font-semibold">Change Status</span>
+            {["Low", "Normal", "Urgent"].map((status, index) => (
+              <button
+                key={index}
+                onClick={() => handleStatusChange(status, task)}
+                className={`px-2 py-1 flex items-center gap-1 text-xs font-medium rounded-md ${
+                  status === "Low"
+                    ? "bg-green-100 text-green-600"
+                    : status === "Normal"
+                    ? "bg-yellow-100 text-yellow-600"
+                    : "bg-red-100 text-red-600"
+                }`}
+              >
+                <div
+                  className={`h-2 w-2 rounded-full ${
+                    status === "Low"
+                      ? "bg-green-400"
+                      : status === "Normal"
+                      ? "bg-yellow-400"
+                      : "bg-red-400"
+                  }`}
+                ></div>
+                {status}
+              </button>
             ))}
           </div>
         </div>
-
-        {/* Assigned By */}
-        <div className="flex flex-wrap items-center">
-          <Icon icon="mdi:user-outline" height={22} width={22} />
-          <span className="ml-2">Assigned by:</span>
-          <div className="flex items-center gap-2 ml-3">
-            <img
-              src={task.assignedBy.image}
-              alt={task.assignedBy.name}
-              className="w-6 h-6 rounded-full"
-            />
-            <span className="text-gray-700 font-medium">
-              {task.assignedBy.name}
-            </span>
-          </div>
-        </div>
-      </div>
-
-      {/* Description Section */}
-      <div className="mt-8">
-        <div className="flex items-center gap-2">
-          <Icon icon="tabler:file-description" height={22} width={22} />
-          <h2 className="text-base font-semibold">Description</h2>
-        </div>
-        <textarea
-          placeholder="Description"
-          className="w-full p-2 mt-4 text-sm text-gray-700 bg-gray-100 border border-gray-300 rounded-md resize-none focus:outline-none"
-        />
-      </div>
-
-      {/* Attachments Section */}
-      <div className="mt-4">
-        <div className="flex justify-between">
-          <div className=" flex gap-2">
-            <Icon icon="cuida:attachment-clip-outline" height={22} width={22} />
-            <h4 className="text-base font-semibold text-gray-400">
-              Attachments ({task.attachments.length})
-            </h4>
-          </div>
-          <div className=" flex gap-2 text-blue-400 cursor-pointer">
-            <h2>Download</h2>
-            <div>
-              <Icon
-                icon="material-symbols-light:download"
-                height={22}
-                width={22}
-              />
-            </div>
-          </div>
-        </div>
-        <div className="flex flex-wrap gap-4 mt-2">
-          {task.attachments.map((file, index) => (
-            <div
-              key={index}
-              className="flex items-center gap-3 p-2 border rounded-md border-gray-300 bg-gray-50 w-full md:w-80"
-            >
-              <Icon
-                icon="mdi:file-pdf"
-                className="text-red-500"
-                height={40}
-                width={40}
-              />
-              <div className="flex-grow">
-                <div className="text-base font-medium">{file.fileName}</div>
-                <div className="text-sm text-gray-500">{file.date}</div>
-                <div className="text-sm flex gap-2">
-                  <span className="font-medium">Size:</span> {file.size}
-                  <a href="#" className="ml-2 text-blue-600 underline">
-                    Download
-                  </a>
-                  <Icon
-                    icon="material-symbols-light:download"
-                    height={20}
-                    width={20}
-                    className=" text-blue-600"
-                  />
-                </div>
-              </div>
-              {file.status === "completed" ? (
-                <Icon
-                  icon="fluent-mdl2:completed-solid"
-                  height={22}
-                  width={22}
-                />
-              ) : (
-                <Icon
-                  icon="material-symbols-light:arrow-upload-progress"
-                  height={22}
-                  width={22}
-                />
-              )}
-            </div>
-          ))}
-          <button className="flex items-center justify-center h-20 w-16 border rounded-md border-gray-300 text-gray-600 hover:bg-gray-100">
-            <Icon icon="mdi:plus" height={30} width={30} />
-          </button>
-        </div>
-      </div>
-
-      {/* Comments Section */}
-      <div className="mt-4">
-        <div className="flex items-center gap-2">
-          <Icon icon="basil:comment-outline" height={22} width={22} />
-          <h4 className="text-base font-semibold">
-            Comments ({task.comments.length})
-          </h4>
-        </div>
-        <div className="space-y-2 mt-2">
-          {task.comments.map((comment, index) => (
-            <div
-              key={index}
-              className="flex items-center gap-2 p-2 text-sm text-gray-700 bg-blue-100 border border-gray-300 rounded-md"
-            >
-              <img
-                src={comment.userImage}
-                alt={comment.user}
-                className="w-6 h-6 rounded-full"
-              />
-              <div>{comment.text}</div>
-            </div>
-          ))}
-        </div>
-      </div>
-
-      {/* Status Change Section */}
-      <div
-        className={`mt-4 flex flex-wrap gap-2 items-center ${
-          task.status === "In Test" ? "bg-red-300" : "bg-orange-100"
-        } p-4 rounded-md`}
-      >
-        <span className="text-sm font-semibold">Change Status</span>
-        {["Low", "Normal", "Urgent"].map((status, index) => (
-          <button
-            key={index}
-            className={`px-2 py-1 flex items-center gap-1 text-xs font-medium rounded-md ${
-              status === "Low"
-                ? "bg-green-100 text-green-600"
-                : status === "Normal"
-                ? "bg-yellow-100 text-yellow-600"
-                : "bg-red-100 text-red-600"
-            }`}
-          >
-            <div
-              className={`h-2 w-2 rounded-full ${
-                status === "Low"
-                  ? "bg-green-400"
-                  : status === "Normal"
-                  ? "bg-yellow-400"
-                  : "bg-red-400"
-              }`}
-            ></div>
-            {status}
-          </button>
-        ))}
-      </div>
+      ))}
     </div>
   );
 };
