@@ -33,11 +33,11 @@ const App = () => {
           {/* <Route path="/settings" element={<Settings />} /> */}
           <Route path="*" element={<Dashboard />} />
           <Route path="/usersemail" element={<Usersemail />} />
-          <Route path="/task" element={<InProgressTask />} />
+          <Route path="/inprogress" element={<InProgressTask />} />
           <Route path="/usersemail" element={<Usersemail />} />
           <Route path="/addtasks" element={<AddTasks />} />
           <Route path="/addproject" element={<Addproject />} />
-          <Route path="/designteam" element={<DesignTeam />} />
+          <Route path="/task" element={<DesignTeam />} />
           <Route path="/chats" element={<Chats />} />
           <Route path="/assign" element={<AssignTask />} />
           <Route path="/employee" element={<EmployeeForm />} />
