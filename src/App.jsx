@@ -10,13 +10,15 @@ import MainPage from "./pages/MainPage";
 // import Settings from "./pages/Settings";
 import Usersemail from "./pages/Usersemail";
 import InProgressTask from "./pages/InProgressTask";
-import AddTasks from "./pages/AddTasks";
+// import AddTasks from "./pages/addTasks";
 import DesignTeam from "./pages/DesignTeam";
 import Chats from "./pages/Chats";
 import InTest from "./pages/InTest";
 import AssignTask from "./pages/Assigntask";
 import EmployeeForm from "./pages/EmployeeForm";
 import TaskDetails from "./components/TaskDetails";
+import AddTasks from "./pages/addTasks";
+import AddProject from "./pages/Addproject";
 
 
 const App = () => {
@@ -37,8 +39,8 @@ const App = () => {
           <Route path="/usersemail" element={<Usersemail />} />
           <Route path="/inprogress" element={<InProgressTask />} />
           <Route path="/usersemail" element={<Usersemail />} />
-          <Route path="/addtasks" element={<AddTasks />} />
-          <Route path="/addproject" element={<Addproject />} />
+          <Route path="/addtasks" element={<AddTasks/>} />
+          <Route path="/addproject" element={<AddProject/>} />
           <Route path="/task" element={<DesignTeam />} />
           <Route path="/chats" element={<Chats />} />
           <Route path="/assign" element={<AssignTask />} />

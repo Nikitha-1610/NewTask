@@ -182,12 +182,12 @@ const Board = () => {
                   column.color === "green"
                     ? "green"
                     : column.color === "yellow"
-                    ? "yellow"
-                    : column.color === "red"
-                    ? "red"
-                    : column.color === "teal"
-                    ? "teal"
-                    : "gray",
+                      ? "yellow"
+                      : column.color === "red"
+                        ? "red"
+                        : column.color === "teal"
+                          ? "teal"
+                          : "gray",
               }}
             >
               {/* Title navigates to the specified path */}
@@ -234,13 +234,18 @@ const Board = () => {
                           <span>Done</span>
                         </div>
                       ) : (
+
                         <div className="flex items-center text-gray-500 text-sm">
-                          <FontAwesomeIcon
-                            icon={faCalendarAlt}
-                            className="mr-1"
-                          />
-                          <span>{task.deadline}</span>
+                          <FontAwesomeIcon icon={faCalendarAlt} className="mr-1" />
+                          <span>
+                            {new Date(task.deadline).toLocaleDateString('en-US', {
+                              day: 'numeric',
+                              month: 'short',
+                              year: 'numeric',
+                            })}
+                          </span>
                         </div>
+
                       )}
                     </div>
 
