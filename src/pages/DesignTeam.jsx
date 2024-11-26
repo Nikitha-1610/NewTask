@@ -14,17 +14,6 @@ import axiosInstance from "../utilities/axios/axiosInstance";
 import { Link, useNavigate } from "react-router-dom";
 import TaskDetails from "../components/TaskDetails";
 
-// DateDisplay component
-const DateDisplay = ({ isoDate }) => {
-  if (!isoDate) return "No Date";
-  const formatDate = (isoDate) => {
-    const date = new Date(isoDate);
-    const options = { month: "long", day: "numeric" };
-    return new Intl.DateTimeFormat("en-US", options).format(date);
-  };
-  return <span>{formatDate(isoDate)}</span>;
-};
-
 const Board = () => {
   const [taskData, setTaskData] = useState({
     inTestTasks: [],
@@ -75,33 +64,29 @@ const Board = () => {
     {
       title: "TODAY ASSIGNED",
       color: "green",
-      tasks: taskData.todayAssignedTasks.filter((task) =>
-        filterLabel ? task.taskName === filterLabel : true
-      ),
-      path: "/assign",
+      tasks: taskData.todayAssignedTasks.filter(task => filterLabel ? task.taskName === filterLabel : true),
+
+      path: "/assign"
     },
     {
       title: "IN PROGRESS",
       color: "yellow",
-      tasks: taskData.inProgressTasks.filter((task) =>
-        filterLabel ? task.taskName === filterLabel : true
-      ),
-      path: "/inprogress",
+      tasks: taskData.inProgressTasks.filter(task => filterLabel ? task.taskName === filterLabel : true),
+
+      path: "/inprogress"
     },
     {
       title: "IN TEST",
       color: "red",
-      tasks: taskData.inTestTasks.filter((task) =>
-        filterLabel ? task.taskName === filterLabel : true
-      ),
-      path: "/intest",
+      tasks: taskData.inTestTasks.filter(task => filterLabel ? task.taskName === filterLabel : true),
+
+      path: '/intest'
     },
     {
       title: "COMPLETED",
       color: "teal",
-      tasks: taskData.completedTasks.filter((task) =>
-        filterLabel ? task.taskName === filterLabel : true
-      ),
+      tasks: taskData.completedTasks.filter(task => filterLabel ? task.taskName === filterLabel : true),
+      // path: "completed",
     },
   ];
 
@@ -129,13 +114,37 @@ const Board = () => {
     navigate("/addtasks");
   };
 
+const handleTaskStatusUpdate = (taskId, newStatus) => {
+    // Find the task in the current list and update its status
+    setTaskData(prevState => {
+      const updatedInTestTasks = prevState.inTestTasks.map(task => 
+        task.id === taskId ? { ...task, status: newStatus } : task
+      );
+      const updatedInProgressTasks = prevState.inProgressTasks.map(task => 
+        task.id === taskId ? { ...task, status: newStatus } : task
+      );
+      const updatedCompletedTasks = prevState.completedTasks.map(task => 
+        task.id === taskId ? { ...task, status: newStatus } : task
+      );
+  
+      return {
+        ...prevState,
+        inTestTasks: updatedInTestTasks,
+        inProgressTasks: updatedInProgressTasks,
+        completedTasks: updatedCompletedTasks,
+      };
+    });
+  };
+const handleColumnClick = (tasks, columnTitle) => {
+    navigate(`/task-details`, { state: { tasks, columnTitle } });
+  };
+
+
   return (
-    <div className="p-2  min-h-screen">
+    <div className="p-2 bg-gray-100 min-h-screen ">
       {/* Header Section */}
       <div className="flex flex-col sm:flex-row justify-between items-center mb-6 space-y-4 sm:space-y-0 md:space-y-0 ml-5 mt-2">
-        <h1 className="text-2xl font-bold text-gray-700 bg-teal-100 rounded-lg w-60 h-9 text-center">
-          DESIGN TEAM
-        </h1>
+        <h1 className="text-2xl font-bold text-gray-700 bg-teal-100 rounded-lg w-60 h-9 text-center ">DESIGN TEAM</h1>
         <div className="flex space-x-4 flex-wrap items-center sm:ml-auto sm:space-x-4 md:space-x-6">
           <button
             onClick={handleAddTask}
@@ -182,16 +191,37 @@ const Board = () => {
             key={colIndex}
             className="flex-2 w-full sm:w-full md:w-full lg:basis-1/3 lg:max-w-lg"
           >
-            <div className="flex items-center justify-between border-b-2 pb-2">
+            {/* Column Header */}
+            <div
+              className="flex items-center justify-between border-b-2 pb-2"
+              style={{
+                borderColor:
+                  column.color === "green"
+                    ? "green"
+                    : column.color === "yellow"
+                      ? "yellow"
+                      : column.color === "red"
+                        ? "red"
+                        : column.color === "teal"
+                          ? "teal"
+                          : "gray",
+              }}
+                onClick={() => handleColumnClick(column.tasks, column.title)}
+            >
+              {/* Title navigates to the specified path */}
               <Link
                 to={column.path}
                 className={`font-semibold p-2 ${column.color}-600 flex-grow`}
               >
                 {column.title}
               </Link>
+
+              {/* Task Count */}
               <span className="flex items-center justify-center w-6 h-6 bg-gray-200 text-xs rounded-full ml-auto">
                 {column.tasks.length}
               </span>
+
+              {/* Arrow visible only in Tabview and Mobileview */}
               <div className="lg:hidden">
                 <FontAwesomeIcon
                   icon={
@@ -199,13 +229,14 @@ const Board = () => {
                   }
                   className="ml-5 cursor-pointer"
                   onClick={(e) => {
-                    e.preventDefault();
+                    e.preventDefault(); // Prevent navigation when clicking the arrow
                     toggleColumn(colIndex);
                   }}
                 />
               </div>
             </div>
 
+            {/* Column Content */}
             {(!collapsedColumns[colIndex] || window.innerWidth >= 1024) && (
               <div className="mt-4">
                 {column.tasks.map((task, taskIndex) => (
@@ -213,22 +244,22 @@ const Board = () => {
                     key={taskIndex}
                     className="bg-white shadow rounded-lg p-4 mb-4 relative border border-gray-400 w-full"
                   >
+                    {/* Task Header */}
                     <div className="absolute top-2 right-2">
                       {task.taskStatus === "Completed" ? (
-                        <div className="flex items-center text-green-500 text-xs font-bold">
+                        <div className="flex items-center text-teal-600 text-xs font-bold">
                           <span className="mr-1">✔✔</span>
                           <span>Done</span>
                         </div>
                       ) : (
                         <div className="flex items-center text-gray-500 text-sm">
-                          <FontAwesomeIcon
-                            icon={faCalendarAlt}
-                            className="mr-1"
-                          />
-                          <DateDisplay isoDate={task.deadline} />
+                          <FontAwesomeIcon icon={faCalendarAlt} className="mr-1" />
+                          <span>{task.deadline}</span>
                         </div>
                       )}
                     </div>
+
+                    {/* Task Name */}
                     {task.taskName && (
                       <span
                         className={`text-xs font-semibold mb-2 mt-8 inline-block px-2 py-1 rounded ${generateRandomColor()}`}
@@ -236,11 +267,15 @@ const Board = () => {
                         {task.taskName}
                       </span>
                     )}
+
+                    {/* Task Details */}
                     <div className="flex justify-between">
                       <div>
                         <div className="text-sm text-black-100">
                           {task.taskDescription || "No description available."}
                         </div>
+
+                        {/* Comments and References */}
                         <div className="flex items-center text-sm text-gray-600 mt-2 space-x-4">
                           <div className="flex items-center">
                             <FontAwesomeIcon
@@ -267,14 +302,12 @@ const Board = () => {
         ))}
       </div>
 
-      {selectedTask && (
-        <TaskDetails
-          task={selectedTask.task}
-          onClose={() => setSelectedTask(null)}
-        />
-      )}
+
+     
     </div>
   );
 };
 
 export default Board;
+
+export default Board; 
