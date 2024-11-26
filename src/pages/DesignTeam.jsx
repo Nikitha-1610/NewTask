@@ -6,6 +6,8 @@ import {
   faPlus,
   faChevronDown,
   faChevronUp,
+  faComment,
+  faLink,
 } from "@fortawesome/free-solid-svg-icons";
 import axiosInstance from "../utilities/axios/axiosInstance";
 import { useNavigate } from "react-router-dom";
@@ -176,7 +178,18 @@ const Board = () => {
             key={colIndex}
             className="flex-2 w-full sm:w-full md:w-full lg:basis-1/3 lg:max-w-lg"
           >
-            <div className="flex items-center justify-between border-b-2 pb-2">
+            <div className="flex items-center justify-between border-b-2 pb-2"  style={{
+                borderColor:
+                  column.color === "green"
+                    ? "green"
+                    : column.color === "yellow"
+                      ? "yellow"
+                      : column.color === "red"
+                        ? "red"
+                        : column.color === "teal"
+                          ? "teal"
+                          : "gray",
+              }}>
               <button
                 onClick={() =>
                   handleColumnClick(
@@ -245,9 +258,26 @@ const Board = () => {
                         {task.taskName}
                       </span>
                     )}
-                    <div className="text-sm text-gray-800">
-                      {task.taskDescription || "No description available."}
-                    </div>
+                    {/* Task Details */}
+                    <div className="flex justify-between">
+                      <div>
+                        <div className="text-sm text-black-100">
+                          {task.taskDescription || "No description available."}
+                        </div>
+
+                        {/* Comments and References */}
+                        <div className="flex items-center text-sm text-gray-600 mt-2 space-x-4">
+                          <div className="flex items-center">
+                            <FontAwesomeIcon icon={faComment} className="mr-1" />
+                            {task.comment?.length || 0}
+                          </div>
+                          <div className="flex items-center">
+                            <FontAwesomeIcon icon={faLink} className="mr-1 text-black-500" />
+                            {task.referenceFileUrl?.length || 0}
+                          </div>
+                        </div>
+                        </div>
+                      </div>
                   </div>
                 ))}
               </div>
