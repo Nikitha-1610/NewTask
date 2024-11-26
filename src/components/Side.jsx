@@ -101,7 +101,7 @@ const Side = ({ isOpen, toggleSidebar, isCollapsed }) => {
               isActive("/designteam") ? "bg-teal-100 text-teal-600" : ""
             }
           >
-            <Link to="/designteam" onClick={handleLinkClick}>
+            <Link to="/task" onClick={handleLinkClick}>
               Task
             </Link>
           </MenuItem>
@@ -118,7 +118,7 @@ const Side = ({ isOpen, toggleSidebar, isCollapsed }) => {
           {/* <MenuItem
             icon={<Icon icon="pajamas:list-task" height={22} width={22} />}
           >
-            <Link to="/task">Inprogress Task</Link>
+            <Link to="/inprogress">Inprogress Task</Link>
           </MenuItem>
 
           <MenuItem
