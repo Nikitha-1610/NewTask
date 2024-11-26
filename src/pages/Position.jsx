@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import React,{ useState, useEffect } from "react";
 import { IoClose } from "react-icons/io5";
 import { toast, ToastContainer  } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
@@ -306,15 +306,15 @@ useEffect(() => {
 
     
       {/* Filter Section */}
-      <div className="flex flex-col sm:flex-row sm:justify-start items-center gap-4 mb-6">
+      <div className="flex flex-col sm:flex-row sm:justify-start items-center gap-4 mb-6 sm:w-auto w-32">
       <select
         className="p-2 border text-base rounded bg-gray-200 sm:w-auto w-[140px]"
         value={selectedPosition}
         onChange={(e) => setSelectedPosition(e.target.value)}
       >
-        <option value="all">All Positions</option>
+        <option  className="w-[100px]" value="all">All Positions</option>
         {positions.map((position, index) => (
-          <option key={index} value={position}>
+          <option   key={index} value={position}>
             {position}
           </option>
         ))}
@@ -397,93 +397,100 @@ useEffect(() => {
 ) 
 
  : (
-        <div
-        className="relative w-full border border-gray-300 rounded-lg overflow-hidden"
-        style={{ height: "300px" }}
+  <div
+  className="relative w-full border border-gray-300 rounded-lg overflow-hidden"
+  style={{ height: "350px" }}
+>
+  {/* Scrollable Table Data */}
+  <div className="h-full overflow-y-auto">
+    <table className="w-full border-collapse border border-white-300">
+      <thead
+        className="bg-gray-100"
+        style={{
+          position: "sticky",
+          top: 0, // Keeps it at the top while scrolling
+          zIndex: 10, // Ensures the header stays above table data
+        }}
       >
-        <div className="overflow-y-auto h-full">
-          <table className="w-full border-collapse border border-white-300">
-            <thead className="bg-gray-100">
-              <tr>
-                <th className="p-2 border">
-                  <input type="checkbox" />
-                </th>
-                <th className="p-2 border">Username</th>
-                <th className="p-2 border">Email</th>
-                <th className="p-2 border">Phone</th>
-                <th className="p-2 border">Position</th>
-                <th className="p-2 border">Joining Date</th>
-                <th className="p-2 border">Activity</th>
-              </tr>
-            </thead>
-            <tbody>
-              {currentUsers.length > 0 ? (currentUsers.map((user, index) => (
-              <tr
+        <tr>
+          <th className="p-2 border">
+            <input type="checkbox" />
+          </th>
+          <th className="p-2 border">Username</th>
+          <th className="p-2 border">Email</th>
+          <th className="p-2 border">Phone</th>
+          <th className="p-2 border">Position</th>
+          <th className="p-2 border">Joining Date</th>
+          <th className="p-2 border">Activity</th>
+        </tr>
+      </thead>
+      <tbody>
+        {currentUsers.length > 0 ? (
+          currentUsers.map((user, index) => (
+            <tr
               key={index}
               className={`hover:bg-gray-200 cursor-pointer ${
                 selectedEmployee?.name === user.name ? "bg-green-100" : ""
               }`}
               onClick={() => handleRowClick(user)}
             >
-                  <td className="p-2 text-center">
+              <td className="p-2 text-center">
+                <input
+                  type="checkbox"
+                  checked={selectedCheckbox === index}
+                  onChange={() => handleCheckboxChange(user, index)}
+                />
+              </td>
+              <td className="p-2 text-center">{user.name}</td>
+              <td className="p-2 text-center">{user.email}</td>
+              <td className="p-2 text-center">{user.mobile}</td>
+              <td className="p-2 text-center">{user.position}</td>
+              <td className="p-2 text-center">{user.appliedDate}</td>
+              <td className="p-2 text-center">
+                <button
+                  className="px-2 py-1 bg-blue-500 text-white rounded"
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    setShow(true);
+                  }}
+                >
+                  Tag
+                </button>
+              </td>
+            </tr>
+          ))
+        ) : (
+          <tr>
+            <td colSpan="7" className="text-center p-4 text-gray-500">
+              No users found for the selected filters.
+            </td>
+          </tr>
+        )}
+      </tbody>
+    </table>
+  </div>
+  {/* Pagination */}
+  <div className="absolute bottom-0 w-full bg-white border-t border-gray-300 py-2 flex justify-between items-center px-4">
+    <button
+      onClick={goToPreviousPage}
+      disabled={currentPage === 1}
+      className="px-4 py-2 border rounded disabled:opacity-50"
+    >
+      Previous
+    </button>
+    <span>
+      Page {currentPage} of {totalPages}
+    </span>
+    <button
+      onClick={goToNextPage}
+      disabled={currentPage === totalPages}
+      className="px-4 py-2 border rounded disabled:opacity-50"
+    >
+      Next
+    </button>
+  </div>
+</div>
 
-                  <input
-          type="checkbox"
-          checked={selectedCheckbox === index}
-          onChange={() => handleCheckboxChange(user, index)}
-        />
-
-                  </td>
-                  <td className="p-2 text-center">{user.name}</td>
-                  <td className="p-2 text-center">{user.email}</td>
-                  <td className="p-2 text-center">{user.mobile}</td>
-                  <td className="p-2 text-center">{user.position}</td>
-                  <td className="p-2 text-center">{user.appliedDate}</td>
-                  <td className="p-2 text-center">
-                  <button
-                   className="px-2 py-1 bg-blue-500 text-white rounded"
-                   onClick={(e) => {
-                       e.stopPropagation();
-                       setShow(true);
-                   }}
-               >
-                   Tag
-               </button>
-
-
-                  </td>
-                </tr>
-              ))
-            ) : (
-                <tr>
-                  <td colSpan="7" className="text-center p-4 text-gray-500">
-                    No users found for the selected filters.
-                  </td>
-                </tr>
-              )}
-            </tbody>
-          </table>
-        </div>
-        <div className="absolute bottom-0 w-full bg-white border-t border-gray-300 py-2 flex justify-between items-center px-4">
-          <button
-            onClick={goToPreviousPage}
-            disabled={currentPage === 1}
-            className="px-4 py-2 border rounded disabled:opacity-50"
-          >
-            Previous
-          </button>
-          <span>
-            Page {currentPage} of {totalPages}
-          </span>
-          <button
-            onClick={goToNextPage}
-            disabled={currentPage === totalPages}
-            className="px-4 py-2 border rounded disabled:opacity-50"
-          >
-            Next
-          </button>
-        </div>
-      </div>
       )}
     {show && (
   <>
@@ -493,38 +500,50 @@ useEffect(() => {
       onClick={() => setShow(false)} // Close the modal if the overlay is clicked
     ></div>
 
-    {/* Modal box */}
-    <div className="fixed top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 bg-white p-6 shadow-lg rounded z-50 w-[90%] max-w-lg sm:max-w-md md:max-w-md lg:max-w-md h-80 text-center border-2 border-gray-500">
-      <h3 className="mb-4 text-2xl">Assign Team Lead</h3>
-      <select
-        className="p-2 border rounded sm:w-[90%]  w-[50%] mb-10 sm:text-xl text-base"
-        value={selectedTeamLead}
-        onChange={(e) => setSelectedTeamLead(e.target.value)}
-      >
-        <option  value="" className="truncate w-24 text-base sm:text-lg">Select Team Lead</option>
-        {teamLeads.map((lead, index) => (
-          <option
+<div className="fixed top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 bg-white p-6 shadow-lg rounded z-50 w-[90%] max-w-lg sm:max-w-md md:max-w-md lg:max-w-md h-80 text-center border-2 border-gray-500">
+  <h3 className="mb-4 text-2xl">Assign Team Lead</h3>
+  
+  {/* Responsive alignment for the select box */}
+  <div className="mb-10 sm:text-center text-left">
+    <select
+      className="p-2 border rounded w-[45%] sm:w-[80%] sm:text-xl text-lg"
+      value={selectedTeamLead}
+      onChange={(e) => setSelectedTeamLead(e.target.value)}
+    >
+      <option value="" className="truncate w-16 text-lg sm:text-lg">
+        Select..
+      </option>
+      {teamLeads.map((lead, index) => (
+        <option
           key={index}
           value={lead}
-          className="truncate w-24 text-sm sm:text-lg" // Ensures text truncates if too long
+          className="truncate w-24 text-lg sm:text-lg"
         >
           {lead}
         </option>
-        ))}
-      </select>
-      <button
-        className="w-[60%] py-2 bg-green-500 text-white rounded"
-        onClick={handleSubmit}
-      >
-        Submit
-      </button>
-      <button
-        className="w-[60%] py-2 mt-2 bg-red-500 text-white rounded"
-        onClick={() => setShow(false)}
-      >
-        Close
-      </button>
-    </div>
+      ))}
+    </select>
+  </div>
+  
+  {/* Submit button stays in the center */}
+  <div>
+    <button
+      className="w-[60%] py-2 bg-green-500 text-white rounded"
+      onClick={handleSubmit}
+    >
+      Submit
+    </button>
+  </div>
+  
+  <button
+    className="w-[60%] py-2 mt-2 bg-red-500 text-white rounded"
+    onClick={() => setShow(false)}
+  >
+    Close
+  </button>
+</div>
+
+
   </>
 )}
 

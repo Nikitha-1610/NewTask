@@ -31,8 +31,8 @@ const People = () => {
     getAllusers();
   }, []);
 
-  const departments = ["All", "Tester", "HR", "Marketing"];
-  const userType = ["All", "On-Hold", "Init"];
+  const departments = ["All Position", "Tester", "HR Manager", "Marketing", "Project Lead"];
+  const userType = ["All Department", "On-Hold", "Init"];
 
   const filteredUsers = allUsers.filter((user) => {
     // Filter by selected department
@@ -154,31 +154,34 @@ const People = () => {
         </div>
       </div>
 
-      {/* Filter Section */}
-      <div className="flex flex-wrap gap-4 items-center mb-4">
+      {/* Filter Section */}   
+      <div className="flex flex-col sm:flex-row justify-center items-center gap-4 mb-6">
         <select
-          className="border border-gray-300 bg-gray-200 rounded-lg p-2 text-gray-700"
-          onChange={(e) => setSelectedDepartment(e.target.value)}
+          className="p-2 border rounded bg-gray-200"
           value={selectedDepartment}
+          onChange={(e) => setSelectedUserType(e.target.value)}
         >
+          {/* <option value="all">All Positions</option> */}
           {departments.map((dept) => (
             <option key={dept} value={dept}>
               {dept}
             </option>
           ))}
         </select>
+
         <select
-          className="border border-gray-300 bg-gray-200 rounded-lg p-2 text-gray-700"
+          className="p-2 border rounded bg-gray-200"
+          value={selectedDepartment}
           onChange={(e) => setSelectedUserType(e.target.value)}
-          value={selectedUserType}
         >
+          {/* <option value="selectedUserType">All Departments</option> */}
           {userType.map((type) => (
             <option key={type} value={type}>
               {type}
             </option>
           ))}
         </select>
-      </div>
+        </div>
 
       {/* Table with Fixed Height */}
       <div
