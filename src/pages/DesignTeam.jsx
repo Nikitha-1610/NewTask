@@ -90,7 +90,7 @@ const Board = () => {
     },
     {
       title: "IN TEST",
-      color: "red",
+      color: "blue",
       tasks: taskData.inTestTasks.filter((task) =>
         filterLabel ? task.taskName === filterLabel : true
       ),
@@ -102,6 +102,7 @@ const Board = () => {
       tasks: taskData.completedTasks.filter((task) =>
         filterLabel ? task.taskName === filterLabel : true
       ),
+
     },
   ];
 
