@@ -189,7 +189,7 @@ const Board = () => {
                     {/* Task Header */}
                     <div className="absolute top-2 right-2">
                       {task.taskStatus === "Completed" ? (
-                        <div className="flex items-center text-green-500 text-xs font-bold">
+                        <div className="flex items-center text-teal-600 text-xs font-bold">
                           <span className="mr-1">✔✔</span>
                           <span>Done</span>
                         </div>
