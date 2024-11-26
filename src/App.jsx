@@ -18,8 +18,9 @@ import InTest from "./pages/InTest";
 import AssignTask from "./pages/Assigntask";
 import EmployeeForm from "./pages/EmployeeForm";
 import TaskDetails from "./components/TaskDetails";
-import AddTasks from "./pages/addTasks";
+// import AddTasks from "./pages/addTasks";
 import AddProject from "./pages/Addproject";
+import TaskCardDetails from "./components/TaskCardDetails";
 
 const App = () => {
   return (
@@ -46,6 +47,7 @@ const App = () => {
           <Route path="/assign" element={<AssignTask />} />
           <Route path="/employee" element={<EmployeeForm />} />
           <Route path="/task-details" element={<TaskDetails />} />
+          <Route path="/task/:taskId" element={<TaskCardDetails/>} />
         </Routes>
       </Layout>
     </Router>

@@ -105,6 +105,9 @@ const Board = () => {
     },
   ];
 
+  
+
+
   const generateRandomColor = () => {
     const colors = [
       "bg-green-200",
@@ -185,7 +188,7 @@ const Board = () => {
             <div className="flex items-center justify-between border-b-2 pb-2">
               <Link
                 to={column.path}
-                className={`font-semibold p-2 ${column.color}-600 flex-grow`}
+                className={`font-semibold p-2 ${column.color}-400 flex-grow`}
               >
                 {column.title}
               </Link>
@@ -208,10 +211,13 @@ const Board = () => {
 
             {(!collapsedColumns[colIndex] || window.innerWidth >= 1024) && (
               <div className="mt-4">
+
+            
                 {column.tasks.map((task, taskIndex) => (
-                  <div
+                  <Link
+                    to={`/task/${task.taskId}`} // Navigate to the task details page with taskId
                     key={taskIndex}
-                    className="bg-white shadow rounded-lg p-4 mb-4 relative border border-gray-400 w-full"
+                    className="block bg-white shadow rounded-lg p-4 mb-4 relative border border-gray-400 w-full"
                   >
                     <div className="absolute top-2 right-2">
                       {task.taskStatus === "Completed" ? (
@@ -220,20 +226,15 @@ const Board = () => {
                           <span>Done</span>
                         </div>
                       ) : (
-
                         <div className="flex items-center text-gray-500 text-sm">
-                          <FontAwesomeIcon
-                            icon={faCalendarAlt}
-                            className="mr-1"
-                          />
+                          <FontAwesomeIcon icon={faCalendarAlt} className="mr-1" />
                           <DateDisplay isoDate={task.deadline} />
                         </div>
-
                       )}
                     </div>
                     {task.taskName && (
                       <span
-                        className={`text-xs font-semibold mb-2 mt-8 inline-block px-2 py-1 rounded ${generateRandomColor()}`}
+                        className={`text-xs font-semibold mb-2 mt-5 inline-block px-2 py-1 rounded ${generateRandomColor()}`}
                       >
                         {task.taskName}
                       </span>
@@ -245,24 +246,21 @@ const Board = () => {
                         </div>
                         <div className="flex items-center text-sm text-gray-600 mt-2 space-x-4">
                           <div className="flex items-center">
-                            <FontAwesomeIcon
-                              icon={faComment}
-                              className="mr-1"
-                            />
+                            <FontAwesomeIcon icon={faComment} className="mr-1" />
                             {task.comment?.length || 0}
                           </div>
                           <div className="flex items-center">
-                            <FontAwesomeIcon
-                              icon={faLink}
-                              className="mr-1 text-black-500"
-                            />
+                            <FontAwesomeIcon icon={faLink} className="mr-1 text-black-500" />
                             {task.referenceFileUrl?.length || 0}
                           </div>
                         </div>
                       </div>
                     </div>
-                  </div>
+                  </Link>
                 ))}
+
+
+
               </div>
             )}
           </div>
@@ -279,4 +277,4 @@ const Board = () => {
   );
 };
 
-export default Board;
+export default Board; 
