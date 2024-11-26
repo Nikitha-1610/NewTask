@@ -36,13 +36,8 @@ const People = () => {
     getAllusers();
   }, []);
 
-<<<<<<< HEAD
-  const departments = ["All Position", "Tester", "HR Manager", "Marketing", "Project Lead"];
-  const userType = ["All Department", "On-Hold", "Init"];
-=======
   const departments = ["All", "Tester", "HR", "Marketing"];
   const userType = ["All", "On-Hold", "Init"];
->>>>>>> fbf1fb956a300b6a33745c0ee20cdf5e469ae143
 
   const filteredUsers = allUsers.filter((user) => {
     // Filter by selected department
@@ -154,114 +149,6 @@ const People = () => {
         <div className="flex justify-center items-center h-screen">
           <ReactLoading type="spin" color="#000" height={50} width={50} />
         </div>
-<<<<<<< HEAD
-        <div className="w-[1px] h-16 bg-gray-300"></div>
-        <div className="flex flex-col items-center text-center">
-          <span className="text-3xl font-medium">5</span>
-          <span className="text-sm text-gray-400 underline">Departments</span>
-        </div>
-      </div>
-
-      {/* Filter Section */}   
-      <div className="flex flex-col sm:flex-row justify-center items-center gap-4 mb-6">
-        <select
-          className="p-2 border rounded bg-gray-200"
-          value={selectedDepartment}
-          onChange={(e) => setSelectedUserType(e.target.value)}
-        >
-          {/* <option value="all">All Positions</option> */}
-          {departments.map((dept) => (
-            <option key={dept} value={dept}>
-              {dept}
-            </option>
-          ))}
-        </select>
-
-        <select
-          className="p-2 border rounded bg-gray-200"
-          value={selectedDepartment}
-          onChange={(e) => setSelectedUserType(e.target.value)}
-        >
-          {/* <option value="selectedUserType">All Departments</option> */}
-          {userType.map((type) => (
-            <option key={type} value={type}>
-              {type}
-            </option>
-          ))}
-        </select>
-        </div>
-
-      {/* Table with Fixed Height */}
-      <div
-        className="relative w-full border border-gray-300 rounded-lg"
-        style={{ height: "400px" }}
-      >
-        <div className="h-full overflow-y-auto">
-          <div className="overflow-x-auto">
-            <table className="min-w-full border-collapse">
-              <thead className="bg-gray-100 sticky top-0">
-                <tr>
-                  <th className="px-4 py-2 text-left"></th>
-                  <th className="px-4 py-2 text-left">Username</th>
-                  <th className="px-4 py-2 text-left hidden md:table-cell">
-                    Mail ID
-                  </th>
-                  <th className="px-4 py-2 text-left hidden md:table-cell">
-                    Phone Number
-                  </th>
-                  <th className="px-4 py-2 text-left">Position</th>
-                  <th className="px-4 py-2 text-left hidden md:table-cell">
-                    Joining Date
-                  </th>
-                  <th className="px-4 py-2 text-left">Activity</th>
-                </tr>
-              </thead>
-              <tbody>
-                {currentUsers.map((user, index) => (
-                  <tr key={index} className="border-b hover:bg-gray-50">
-                    <td className="px-4 py-2">
-                      <input type="checkbox" />
-                    </td>
-                    <td className="px-4 py-2">{user.name}</td>
-                    <td className="px-4 py-2 hidden md:table-cell">
-                      {user.email}
-                    </td>
-                    <td className="px-4 py-2 hidden md:table-cell">
-                      {user.mobile}
-                    </td>
-                    <td className="px-4 py-2">{user.position}</td>
-                    <td className="px-4 py-2 hidden md:table-cell">
-                      {user.appliedDate}
-                    </td>
-                    <td className="px-4 py-2 flex gap-2">
-                      {user.status === "Init" ? (
-                        <button
-                          className="bg-blue-500 text-white px-4 py-2 rounded-lg hover:opacity-90"
-                          onClick={() => openConfirmModal(index)}
-                        >
-                          Approve
-                        </button>
-                      ) : (
-                        <button
-                          className="bg-yellow-500 text-white px-4 py-2 rounded-lg hover:opacity-90"
-                          onClick={() => openActionModal(index)}
-                        >
-                          {user.status}
-                        </button>
-                      )}
-                      <Icon
-                        icon="pepicons-pencil:dots-y"
-                        height={22}
-                        width={22}
-                        className="cursor-pointer"
-                        onClick={() => openHoldActionModal(index)}
-                      />
-                    </td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-=======
       ) : (
         <div>
           <Toaster />
@@ -281,7 +168,6 @@ const People = () => {
                 Departments
               </span>
             </div>
->>>>>>> fbf1fb956a300b6a33745c0ee20cdf5e469ae143
           </div>
 
           {/* Filter Section */}
