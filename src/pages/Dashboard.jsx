@@ -38,14 +38,6 @@ const Dashboard = () => {
     </div>
   </div>
 
-<<<<<<< HEAD
-  <div className="absolute top-1/2 right-0 transform -translate-y-1/2 z-10 lg:hidden cursor-pointer">
-    {/* Scroll Right button */}
-    <div onClick={scrollRight}>
-      <MdArrowForward className="text-teal-500 text-4xl font-extrabold" />
-    </div>
-  </div>
-=======
           {/* Scroll Right button */}
           <div
             className="cursor-pointer"
@@ -54,7 +46,6 @@ const Dashboard = () => {
             <MdArrowForward className="text-teal-500 text-3xl font-bold" />
           </div>
         </div>
->>>>>>> fbf1fb956a300b6a33745c0ee20cdf5e469ae143
 
   {/* Card container with horizontal scrolling enabled */}
   <div
@@ -96,22 +87,6 @@ const Dashboard = () => {
           key={index}
           className="min-w-[220px] bg-white p-3 rounded-lg border-4 border-gray-100 transform transition-transform duration-300 hover:scale-105"
         >
-<<<<<<< HEAD
-          <div className="flex justify-between items-center space-x-0">
-            <div
-              className={`flex justify-center items-center w-12 h-12 rounded-full ${card.bgColor}`}
-            >
-              <MdBarChart size={34} className={card.color} />
-            </div>
-            <div>
-              <h3 className="text-lg font-medium text-gray-400">
-                {card.title}
-              </h3>
-              <h1 className="text-gray-800 text-2xl font-bold">
-                {card.count}
-              </h1>
-            </div>
-=======
           <div className="flex space-x-2 ">
             {[
               {
@@ -166,7 +141,6 @@ const Dashboard = () => {
                 </div>
               </div>
             ))}
->>>>>>> fbf1fb956a300b6a33745c0ee20cdf5e469ae143
           </div>
         </div>
       ))}
@@ -186,7 +160,8 @@ const Dashboard = () => {
           <TwoWaveChart />
         </div>
       </div>
-    </div>
+      
+    
   );
 };
 
