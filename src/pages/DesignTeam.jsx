@@ -74,7 +74,7 @@ const Board = () => {
       title: "COMPLETED",
       color: "teal",
       tasks: taskData.completedTasks.filter(task => filterLabel ? task.taskName === filterLabel : true),
-      path: "completed",
+      // path: "completed",
     },
   ];
 
