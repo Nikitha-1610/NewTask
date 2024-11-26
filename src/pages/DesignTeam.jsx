@@ -64,28 +64,36 @@ const Board = () => {
     {
       title: "TODAY ASSIGNED",
       color: "green",
-      tasks: taskData.todayAssignedTasks.filter(task => filterLabel ? task.taskName === filterLabel : true),
+      tasks: taskData.todayAssignedTasks.filter((task) =>
+        filterLabel ? task.taskName === filterLabel : true
+      ),
 
-      path: "/assign"
+      path: "/assign",
     },
     {
       title: "IN PROGRESS",
       color: "yellow",
-      tasks: taskData.inProgressTasks.filter(task => filterLabel ? task.taskName === filterLabel : true),
+      tasks: taskData.inProgressTasks.filter((task) =>
+        filterLabel ? task.taskName === filterLabel : true
+      ),
 
-      path: "/inprogress"
+      path: "/inprogress",
     },
     {
       title: "IN TEST",
       color: "red",
-      tasks: taskData.inTestTasks.filter(task => filterLabel ? task.taskName === filterLabel : true),
+      tasks: taskData.inTestTasks.filter((task) =>
+        filterLabel ? task.taskName === filterLabel : true
+      ),
 
-      path: '/intest'
+      path: "/intest",
     },
     {
       title: "COMPLETED",
       color: "teal",
-      tasks: taskData.completedTasks.filter(task => filterLabel ? task.taskName === filterLabel : true),
+      tasks: taskData.completedTasks.filter((task) =>
+        filterLabel ? task.taskName === filterLabel : true
+      ),
       // path: "completed",
     },
   ];
@@ -114,37 +122,13 @@ const Board = () => {
     navigate("/addtasks");
   };
 
-const handleTaskStatusUpdate = (taskId, newStatus) => {
-    // Find the task in the current list and update its status
-    setTaskData(prevState => {
-      const updatedInTestTasks = prevState.inTestTasks.map(task => 
-        task.id === taskId ? { ...task, status: newStatus } : task
-      );
-      const updatedInProgressTasks = prevState.inProgressTasks.map(task => 
-        task.id === taskId ? { ...task, status: newStatus } : task
-      );
-      const updatedCompletedTasks = prevState.completedTasks.map(task => 
-        task.id === taskId ? { ...task, status: newStatus } : task
-      );
-  
-      return {
-        ...prevState,
-        inTestTasks: updatedInTestTasks,
-        inProgressTasks: updatedInProgressTasks,
-        completedTasks: updatedCompletedTasks,
-      };
-    });
-  };
-const handleColumnClick = (tasks, columnTitle) => {
-    navigate(`/task-details`, { state: { tasks, columnTitle } });
-  };
-
-
   return (
     <div className="p-2 bg-gray-100 min-h-screen ">
       {/* Header Section */}
       <div className="flex flex-col sm:flex-row justify-between items-center mb-6 space-y-4 sm:space-y-0 md:space-y-0 ml-5 mt-2">
-        <h1 className="text-2xl font-bold text-gray-700 bg-teal-100 rounded-lg w-60 h-9 text-center ">DESIGN TEAM</h1>
+        <h1 className="text-2xl font-bold text-gray-700 bg-teal-100 rounded-lg w-60 h-9 text-center ">
+          DESIGN TEAM
+        </h1>
         <div className="flex space-x-4 flex-wrap items-center sm:ml-auto sm:space-x-4 md:space-x-6">
           <button
             onClick={handleAddTask}
@@ -199,14 +183,13 @@ const handleColumnClick = (tasks, columnTitle) => {
                   column.color === "green"
                     ? "green"
                     : column.color === "yellow"
-                      ? "yellow"
-                      : column.color === "red"
-                        ? "red"
-                        : column.color === "teal"
-                          ? "teal"
-                          : "gray",
+                    ? "yellow"
+                    : column.color === "red"
+                    ? "red"
+                    : column.color === "teal"
+                    ? "teal"
+                    : "gray",
               }}
-                onClick={() => handleColumnClick(column.tasks, column.title)}
             >
               {/* Title navigates to the specified path */}
               <Link
@@ -245,44 +228,27 @@ const handleColumnClick = (tasks, columnTitle) => {
                     className="bg-white shadow rounded-lg p-4 mb-4 relative border border-gray-400 w-full"
                   >
                     {/* Task Header */}
-                    {/* <div className="absolute top-2 right-2">
+                    <div className="absolute top-2 right-2">
                       {task.taskStatus === "Completed" ? (
-                        <div className="flex items-center text-teal-600 text-xs font-bold">
+                        <div className="flex items-center text-green-500 text-xs font-bold">
                           <span className="mr-1">✔✔</span>
                           <span>Done</span>
                         </div>
                       ) : (
                         <div className="flex items-center text-gray-500 text-sm">
-                          <FontAwesomeIcon icon={faCalendarAlt} className="mr-1" />
+                          <FontAwesomeIcon
+                            icon={faCalendarAlt}
+                            className="mr-1"
+                          />
                           <span>{task.deadline}</span>
                         </div>
                       )}
-                    </div> */}
-
-<div className="absolute top-2 right-2">
-  {task.taskStatus === "Completed" ? (
-    <div className="flex items-center text-teal-600 text-xs font-bold">
-      <span className="mr-1">✔✔</span>
-      <span>Done</span>
-    </div>
-  ) : (
-    <div className="flex items-center text-gray-500 text-sm ">
-      <FontAwesomeIcon icon={faCalendarAlt} className="mr-1" />
-      <span>
-        {new Date(task.deadline).toLocaleDateString('en-US', {
-          month: 'short',
-          day: 'numeric',
-        })}
-      </span>
-    </div>
-  )}
-</div>
-
+                    </div>
 
                     {/* Task Name */}
                     {task.taskName && (
                       <span
-                        className={`text-xs font-semibold mb-4 mt-3 inline-block px-2 py-1 rounded ${generateRandomColor()}`}
+                        className={`text-xs font-semibold mb-2 mt-8 inline-block px-2 py-1 rounded ${generateRandomColor()}`}
                       >
                         {task.taskName}
                       </span>
@@ -322,12 +288,15 @@ const handleColumnClick = (tasks, columnTitle) => {
         ))}
       </div>
 
-
-     
+      {/* Task Details Modal */}
+      {selectedTask && (
+        <TaskDetails
+          task={selectedTask.task}
+          onClose={() => setSelectedTask(null)}
+        />
+      )}
     </div>
   );
 };
 
 export default Board;
-
-export default Board; 
