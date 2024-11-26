@@ -1,8 +1,10 @@
 import { Icon } from "@iconify/react";
-
+import { useState} from "react";
 const TaskDetails = ({ task }) => {
   console.log(task);
-
+  console.log(task.priority);
+  const [priority, setPriority] = useState(task.priority || "Normal");
+ 
   return (
     <div className="w-full mx-auto p-6 bg-white rounded-lg shadow-md border border-gray-200">
       {/* Task Title */}
@@ -45,6 +47,12 @@ const TaskDetails = ({ task }) => {
                   alt={person.name}
                   className="w-6 h-6 rounded-full"
                 /> */}
+               <Icon
+        icon="ph:user-circle-fill"
+        className="text-blue-500  p-0 rounded-full"
+        width={32}
+        height={32}
+      />
                 <span className="text-gray-700 font-medium">{person}</span>
               </div>
             ))}
@@ -61,6 +69,12 @@ const TaskDetails = ({ task }) => {
               alt={task.assignedBy.name}
               className="w-6 h-6 rounded-full"
             /> */}
+               <Icon
+        icon="mdi:account-circle-outline"
+        className="text-blue-500  p-0 rounded-full"
+        width={32}
+        height={32}
+      />
             <span className="text-gray-700 font-medium">{task.assignedBy}</span>
           </div>
         </div>
@@ -178,35 +192,44 @@ const TaskDetails = ({ task }) => {
 
       {/* Status Change Section */}
       <div
-        className={`mt-4 flex flex-wrap gap-2 items-center ${
-          task.status === "In Test" ? "bg-red-300" : "bg-orange-100"
-        } p-4 rounded-md`}
-      >
-        <span className="text-sm font-semibold">Change Status</span>
-        {["Low", "Normal", "Urgent"].map((status, index) => (
-          <button
-            key={index}
-            className={`px-2 py-1 flex items-center gap-1 text-xs font-medium rounded-md ${
-              status === "Low"
-                ? "bg-green-100 text-green-600"
-                : status === "Normal"
-                ? "bg-yellow-100 text-yellow-600"
-                : "bg-red-100 text-red-600"
-            }`}
-          >
-            <div
-              className={`h-2 w-2 rounded-full ${
-                status === "Low"
-                  ? "bg-green-400"
-                  : status === "Normal"
-                  ? "bg-yellow-400"
-                  : "bg-red-400"
+          className={`mt-4 flex flex-wrap gap-2 items-center ${
+            priority === "Urgent"
+              ? "bg-red-100"
+              : priority === "Normal"
+              ? "bg-yellow-100"
+              : "bg-green-100"
+          } p-4 rounded-md`}
+        >
+          <span className="text-sm font-semibold">Change Priority:</span>
+          {["Low", "Normal", "Urgent"].map((currentPriority) => (
+            <button
+              key={currentPriority}
+              onClick={() => setPriority(currentPriority)} // Update priority on click
+              className={`px-3 py-1 flex items-center gap-1 text-xs font-medium rounded-md transition duration-200 ${
+                currentPriority === priority
+                  ? "ring-2 ring-offset-2 ring-blue-500"
+                  : ""
+              } ${
+                currentPriority === "Low"
+                  ? "bg-green-100 text-green-600"
+                  : currentPriority === "Normal"
+                  ? "bg-yellow-100 text-yellow-600"
+                  : "bg-red-100 text-red-600"
               }`}
-            ></div>
-            {status}
-          </button>
-        ))}
-      </div>
+            >
+              <div
+                className={`h-2 w-2 rounded-full ${
+                  currentPriority === "Low"
+                    ? "bg-green-400"
+                    : currentPriority === "Normal"
+                    ? "bg-yellow-400"
+                    : "bg-red-400"
+                }`}
+              ></div>
+              {currentPriority}
+            </button>
+          ))}
+        </div>
     </div>
   );
 };
