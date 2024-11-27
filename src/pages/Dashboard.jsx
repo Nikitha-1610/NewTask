@@ -1,34 +1,99 @@
 import { MdBarChart, MdArrowForward, MdArrowBack } from "react-icons/md";
-import { useRef } from "react";
+import { useState, useEffect, useRef } from "react";
 import WeeklyProduction from "../components/DashboardComp/WeeklyProduction";
 import Production from "../components/DashboardComp/Production";
 import TwoWaveChart from "../components/DashboardComp/TwoWaveChart";
+import axiosInstance from "../utilities/axios/axiosInstance";
+
+const getRandomColor = () => {
+  const colors = [
+    "bg-red-500", "bg-blue-500", "bg-green-500", "bg-yellow-500", 
+    "bg-purple-500", "bg-pink-500", "bg-teal-500", "bg-indigo-500"
+  ];
+  return colors[Math.floor(Math.random() * colors.length)];
+};
+
+const getFaintColor = (color) => {
+  switch (color) {
+    case "red":
+      return "bg-red-100";
+    case "blue":
+      return "bg-blue-100";
+    case "green":
+      return "bg-green-100";
+    case "yellow":
+      return "bg-yellow-100";
+    case "purple":
+      return "bg-purple-100";
+    case "pink":
+      return "bg-pink-100";
+    case "teal":
+      return "bg-teal-100";
+    case "indigo":
+      return "bg-indigo-100";
+    default:
+      return "bg-gray-100";
+  }
+};
 
 const Dashboard = () => {
   const cardContainerRef = useRef(null);
+  const [dashboardData, setDashboardData] = useState(null); 
+  const [loading, setLoading] = useState(true); 
+  const [error, setError] = useState(null); 
 
   // Function to scroll the cards horizontally
   const scrollRight = () => {
     if (cardContainerRef.current) {
       cardContainerRef.current.scrollBy({
-        left: 220, // Adjust this value to control the scroll distance
-        behavior: "smooth", // Smooth scroll
+        left: 220, 
+        behavior: "smooth", 
       });
     }
   };
+
   const scrollLeft = () => {
     if (cardContainerRef.current) {
       cardContainerRef.current.scrollBy({
-        left: -220, // Negative value to scroll left
-        behavior: "smooth", // Smooth scroll
+        left: -220, 
+        behavior: "smooth", 
       });
     }
   };
+
+  // Fetch API data
+  const fetchData = async () => {
+    try {
+      const response = await axiosInstance.get("/task/adminDashboard");
+      if (response.status === 200) {
+        setDashboardData(response.data.message); // Update state with API data
+      } else {
+        console.error("Failed to fetch data:", response.statusText);
+      }
+    } catch (err) {
+      setError("Failed to load data");
+      console.error(err);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    fetchData();
+  }, []);
+
+  // Render loading or error states
+  if (loading) return <div>Loading...</div>;
+  if (error) return <div>{error}</div>;
+
+  const departmentCounts = dashboardData?.departmentCounts;
+
   return (
-    <div className="flex flex-col items-center pt-0">
-      <div className="grid grid-cols-1 gap-4 w-9/10 max-w-screen-xl">
-        {/* First Container with 4 inner containers */}
-        {/* First Container with 5 inner containers */}
+    <div className="flex flex-col items-center pt-0 gap-4 w-full">
+      <div className="grid grid-cols-1 gap-4 w-full max-w-screen-xl sm:p-2">
+        
+        {/* Card Container */}
+
         <div className="flex justify-between top-16 left-4 right-4 z-10 lg:hidden">
           {/* Scroll Left button */}
           <div
@@ -46,77 +111,56 @@ const Dashboard = () => {
             <MdArrowForward className="text-teal-500 text-3xl font-bold" />
           </div>
         </div>
-
-        {/* Card container with overflow-x-auto to enable horizontal scrolling */}
         <div
-          className="p-1 rounded-lg overflow-x-auto scrollbar-hide sm:mt-0 "
+          className="overflow-x-auto scrollbar-hide w-full"
           ref={cardContainerRef} // Attach the ref to the card container
         >
           <div className="flex space-x-2">
-            {[
-              {
-                title: "Design Team",
-                color: "text-pink-500",
-                count: 35,
-                bgColor: "bg-pink-100",
-              },
-              {
-                title: "Development",
-                color: "text-teal-600",
-                count: 35,
-                bgColor: "bg-teal-100",
-              },
-              {
-                title: "AI/ ML",
-                color: "text-orange-500",
-                count: 35,
-                bgColor: "bg-orange-100",
-              },
-              {
-                title: "Marketing",
-                color: "text-green-600",
-                count: 35,
-                bgColor: "bg-green-100",
-              },
-              {
-                title: "Advertising",
-                color: "text-orange-700",
-                count: 35,
-                bgColor: "bg-orange-200",
-              },
-            ].map((card, index) => (
-              <div
-                key={index}
-                className="min-w-[220px] bg-white p-3 rounded-lg border-2 border-gray-100 transform transition-transform duration-300 hover:scale-105"
-              >
-                <div className="flex justify-between items-center space-x-0">
-                  <div
-                    className={`flex justify-center items-center w-12 h-12 rounded-full ${card.bgColor}`}
-                  >
-                    <MdBarChart size={34} className={card.color} />
-                  </div>
-                  <div>
-                    <h3 className="text-lg font-medium text-gray-400">
-                      {card.title}
-                    </h3>
-                    <h1 className="text-gray-800 text-2xl font-bold">
-                      {card.count}
-                    </h1>
+            {/* Loop over the departments dynamically */}
+            {departmentCounts && Object.keys(departmentCounts).map((department, index) => {
+              const randomColor = getRandomColor(); // Get random color
+              const faintColor = getFaintColor(randomColor); // Get faint background color
+              return (
+                <div
+                  key={index}
+                  className="min-w-[220px] bg-white p-3 rounded-lg border-2 border-gray-100 transform transition-transform duration-300 hover:scale-105"
+                >
+                  <div className="flex justify-between items-center space-x-0">
+                    {/* Bar Chart Icon with random color */}
+                    <div
+                      className={`flex justify-center items-center w-12 h-12 rounded-full ${faintColor}`}
+                    >
+                      <MdBarChart size={34} className={`text-${randomColor}-600`} />
+                    </div>
+                    <div>
+                      <h3 className="text-lg font-medium text-gray-400">{department}</h3>
+                      <h1 className="text-gray-800 text-2xl font-bold">
+                        {departmentCounts[department]}
+                      </h1>
+                    </div>
                   </div>
                 </div>
-              </div>
-            ))}
+              );
+            })}
           </div>
         </div>
 
-        {/* Remaining containers as placeholders */}
-        <div className=" p-5 md:p-3 rounded-xl border-2 border-gray-100 w-full">
-          <WeeklyProduction />
+        {/* Weekly Production Container */}
+        <div className="w-full p-5 md:p-3 rounded-xl border-2 border-gray-100">
+          <WeeklyProduction
+            weeklyData={dashboardData?.weekly}
+            monthlyData={dashboardData?.monthly}
+            yearlyData={dashboardData?.yearly}
+          />
         </div>
-        <div className="rounded-xl  w-full ">
-          <Production />
+
+        {/* Production Container */}
+        <div className="w-full rounded-xl">
+          <Production projectDetails={dashboardData?.projectDetails} />
         </div>
-        <div className="sm:p-4 p-3 rounded-xl border-2 border-gray-100 sm:w-full w-96">
+
+        {/* WaveGraph Container */}
+        <div className="w-full sm:p-4 p-3 rounded-xl border-2 border-gray-100">
           <TwoWaveChart />
         </div>
       </div>
