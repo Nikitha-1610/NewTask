@@ -6,14 +6,15 @@ import { PutObjectCommand } from "@aws-sdk/client-s3";
 // import toast, { Toaster } from "react-hot-toast";
 const AddProject = () => {
   const [formData, setFormData] = useState({
-    taskName: "",
+    projectName: "",
     startDate: "",
     dueDate: "",
-    teams: [],
-    assignedTo: [],
-    reviewers: "", // Single reviewer as a string
+    projectLead: [],
+    frontendLead: [],
+    backendLead: [],
+    designLead: [], // Single reviewer as a string
     priority: "Low",
-    taskDescription: "",
+    projectDescription: "",
     referenceFileUrl: [], // Reference as an array
   });
 
@@ -119,15 +120,15 @@ const AddProject = () => {
 
         // Reset form (if needed)
         setFormData({
-          taskName: "",
+          projectName: "",
           startDate: "",
           dueDate: "",
-          teams: [],
-          assignedTo: [],
-
-          reviewers: "", // Single reviewer as a string
+          projectLead: [],
+          frontendLead: [],
+          backendLead: [],
+          designLead: [], // Single reviewer as a string
           priority: "Low",
-          taskDescription: "",
+          projectDescription: "",
           referenceFileUrl: [],
         });
         setDisplayReferences([]);
@@ -160,8 +161,8 @@ const AddProject = () => {
             <input
               type="text"
               className="w-full p-2 border border-gray-300 rounded mt-2"
-              name="taskName"
-              value={formData.taskName}
+              name="projectName"
+              value={formData.projectName}
               onChange={handleInputChange}
               placeholder="Enter project name"
             />
@@ -172,8 +173,8 @@ const AddProject = () => {
               <input
                 type="date"
                 className="w-full p-2 border border-gray-300 rounded mt-2"
-                name="dueDate"
-                value={formData.dueDate}
+                name="startDate"
+                value={formData.startDate}
                 onChange={handleInputChange}
               />
             </div>
@@ -193,7 +194,7 @@ const AddProject = () => {
         {/* assignedTo Section */}
         <div className="mb-4">
           <label className="block text-sm font-semibold text-gray-800 mb-2">
-            Team&apos;s
+            Project Lead
           </label>
           <div className="flex items-center justify-between border-b border-gray-300 pb-2">
             <div className="flex items-center gap-2">
@@ -203,20 +204,17 @@ const AddProject = () => {
                 height={22}
                 width={22}
               />
-              {formData.assignedTo.map((member, index) => (
-                <span
-                  key={index}
-                  className="bg-blue-200 text-blue-700 px-2 py-1 rounded-full text-xs"
-                >
-                  {member}
+              {formData.projectLead && (
+                <span className="bg-green-200 text-green-700 px-2 py-1 rounded-full text-xs">
+                  {formData.projectLead}
                 </span>
-              ))}
+              )}
             </div>
             <button
               type="button"
               className="flex items-center justify-center w-8 h-8 rounded-full border border-dashed border-gray-400"
               onClick={() => {
-                setSelectedUserType("assignedTo");
+                setSelectedUserType("projectLead");
                 setShowUserList(true);
               }}
             >
@@ -231,7 +229,7 @@ const AddProject = () => {
         </div>
         <div className="mb-4">
           <label className="block text-sm font-semibold text-gray-800 mb-2">
-            Members
+            Frontend Lead
           </label>
           <div className="flex items-center justify-between border-b border-gray-300 pb-2">
             <div className="flex items-center gap-2">
@@ -241,9 +239,9 @@ const AddProject = () => {
                 height={22}
                 width={22}
               />
-              {formData.reviewers && (
+              {formData.frontendLead && (
                 <span className="bg-green-200 text-green-700 px-2 py-1 rounded-full text-xs">
-                  {formData.reviewers}
+                  {formData.frontendLead}
                 </span>
               )}
             </div>
@@ -251,7 +249,7 @@ const AddProject = () => {
               type="button"
               className="flex items-center justify-center w-8 h-8 rounded-full border border-dashed border-gray-400"
               onClick={() => {
-                setSelectedUserType("assignedTo");
+                setSelectedUserType("frontendLead");
                 setShowUserList(true);
               }}
             >
@@ -266,7 +264,7 @@ const AddProject = () => {
         </div>
         <div className="mb-4">
           <label className="block text-sm font-semibold text-gray-800 mb-2">
-            Assigned
+            Backend Lead
           </label>
           <div className="flex items-center justify-between border-b border-gray-300 pb-2">
             <div className="flex items-center gap-2">
@@ -276,9 +274,9 @@ const AddProject = () => {
                 height={22}
                 width={22}
               />
-              {formData.reviewers && (
+              {formData.backendLead && (
                 <span className="bg-green-200 text-green-700 px-2 py-1 rounded-full text-xs">
-                  {formData.reviewers}
+                  {formData.backendLead}
                 </span>
               )}
             </div>
@@ -286,7 +284,7 @@ const AddProject = () => {
               type="button"
               className="flex items-center justify-center w-8 h-8 rounded-full border border-dashed border-gray-400"
               onClick={() => {
-                setSelectedUserType("assignedTo");
+                setSelectedUserType("backendLead");
                 setShowUserList(true);
               }}
             >
@@ -303,7 +301,7 @@ const AddProject = () => {
         {/* Reviewer Section */}
         <div className="mb-4">
           <label className="block text-sm font-semibold text-gray-800 mb-2">
-            Reviewer
+            Design Lead
           </label>
           <div className="flex items-center justify-between border-b border-gray-300 pb-2">
             <div className="flex items-center gap-2">
@@ -313,9 +311,9 @@ const AddProject = () => {
                 height={22}
                 width={22}
               />
-              {formData.reviewers && (
+              {formData.designLead && (
                 <span className="bg-green-200 text-green-700 px-2 py-1 rounded-full text-xs">
-                  {formData.reviewers}
+                  {formData.designLead}
                 </span>
               )}
             </div>
@@ -323,7 +321,7 @@ const AddProject = () => {
               type="button"
               className="flex items-center justify-center w-8 h-8 rounded-full border border-dashed border-gray-400"
               onClick={() => {
-                setSelectedUserType("reviewers");
+                setSelectedUserType("designLead");
                 setShowUserList(true);
               }}
             >
@@ -392,9 +390,9 @@ const AddProject = () => {
           <textarea
             className="w-full h-40 p-2 border border-gray-300 rounded mt-4"
             name="taskDescription"
-            value={formData.taskDescription}
+            value={formData.projectDescription}
             onChange={handleInputChange}
-            placeholder="Enter a taskDescription of the task"
+            placeholder="Enter a projectDescription of the task"
           />
         </div>
 
