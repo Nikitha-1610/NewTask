@@ -112,7 +112,7 @@ const TwoWaveChart = () => {
 
         {/* Blue SVG */}
         <svg
-          className="w-full max-w-xs sm:max-w-2xl"
+          className="w-full  sm:max-w-2xl"
           xmlns="http://www.w3.org/2000/svg"
           viewBox="0 0 727 115"
           fill="none"
