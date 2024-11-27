@@ -1,10 +1,10 @@
 import { FaCheckCircle, FaExclamationCircle } from "react-icons/fa";
 
-const Production = () => {
+const Production = ({ projectDetails }) => {
   return (
-    <div className="flex flex-col md:flex-row justify-between gap-3 items-stretch">
+    <div className="flex flex-col md:flex-row justify-between gap-4 items-stretch p-0 sm:h-auto h-auto mt-0">
       {/* Left Section */}
-      <div className="flex flex-col gap-4 border-2  border-gray-200 p-4 rounded-xl sm:basis-[40%] w-full ">
+      <div className="flex flex-col gap-4 border-2 border-gray-100 p-4 rounded-xl sm:basis-[40%] w-full h-[300px] sm:h-[350px] md:h-[400px] lg:h-[350px]">
         <h2 className="text-lg sm:text-2xl font-bold text-gray-800 mb-4">
           Production (Overall)
         </h2>
@@ -133,13 +133,13 @@ const Production = () => {
       {/* right section */}
 
       {/* <div className="border-2 border-black-2 p-3 lg:p-4 rounded-xl flex flex-col sm:w-full md:w-full lg:w-[62.5%] xl:w-[62.5%] h-[400px]"> */}
-      <div className="border-2 p-3 lg:p-4 rounded-xl flex flex-col w-full lg:w-3/5  m-0">
+      <div className=" border-2 border-gray-100 p-3 lg:p-4 rounded-xl flex flex-col w-full lg:w-3/5 h-[300px] sm:h-[350px] md:h-[400px] lg:h-[350px] m-0">
         <h3 className="text-xl font-bold text-blue-800 leading-tight mb-3">
           Complex Table
         </h3>
         <div className="overflow-auto h-full">
           <table className="w-full border-collapse text-base">
-            <thead>
+          <thead className="sticky top-0 bg-white z-10 border-b-2 border-gray-200">
               <tr className="border-b-2 border-gray-200">
                 <th className="font-medium text-gray-400 px-2 py-3 text-left">
                   NAME
@@ -155,61 +155,59 @@ const Production = () => {
                 </th>
               </tr>
             </thead>
-            <tbody>
-              {data.map((row, index) => (
-                <tr key={index} className="border-b border-gray-100">
-                  {/* Name */}
-                  <td className="px-2 py-3 text-[#2B3674]  text-sm md:text-base font-bold">
-                    {row.name}
-                  </td>
-                  {/* Status */}
-                  <td className="px-2 py-3 text-[#2B3674] text-sm md:text-base font-bold flex ">
-                    {row.status === "Assigned" ? (
-                      <FaCheckCircle
-                        className="text-[#05CD99] mr-2"
-                        size={20}
-                      />
-                    ) : (
-                      <FaExclamationCircle
-                        className="text-[#FFCE20] mr-2"
-                        size={20}
-                      />
-                    )}
-                    {row.status}
-                  </td>
-                  {/* Date */}
-                  <td className="px-2 py-3 text-[#2B3674] text-xs sm:text-sm md:text-base font-bold text-center whitespace-nowrap overflow-hidden text-ellipsis">
-                    {row.date}
-                  </td>
-                  {/* Progress */}
-                  <td className="px-2 py-3 text-center">
-                    <svg
-                      xmlns="http://www.w3.org/2000/svg"
-                      className="w-full max-w-[97px] h-3"
-                      viewBox="0 0 99 9"
-                      fill="none"
-                    >
-                      <rect
-                        x="0.966797"
-                        y="0.958984"
-                        width="97.6744"
-                        height="7.23514"
-                        rx="3.61757"
-                        fill="#E4F8F6"
-                      />
-                      <rect
-                        x="0.966797"
-                        y="0.958984"
-                        width={`${(row.progress / 100) * 97.6744}`}
-                        height="7.23514"
-                        rx="3.61757"
-                        fill="#01C2B5"
-                      />
-                    </svg>
-                  </td>
-                </tr>
-              ))}
-            </tbody>
+            <tbody className="overflow-y-auto">
+        {projectDetails?.map((row, index) => (
+          <tr key={index} className="border-b border-gray-100">
+            <td className="px-2 py-3 text-[#2B3674] text-sm md:text-base font-bold">
+              {row.projectName}
+            </td>
+            <td className="px-2 py-3 text-[#2B3674] text-sm md:text-base font-bold flex">
+              {row.projectStatus === "Assigned" ? (
+                <FaCheckCircle
+                  className="text-[#05CD99] mr-2"
+                  size={20}
+                />
+              ) : (
+                <FaExclamationCircle
+                  className="text-[#FFCE20] mr-2"
+                  size={20}
+                />
+              )}
+              {row.projectStatus}
+            </td>
+            <td className="px-2 py-3 text-[#2B3674] text-xs sm:text-sm md:text-base font-bold text-center">
+              {row.projectEndDate}
+            </td>
+            <td className="px-2 py-3 text-center">
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                className="w-full max-w-[97px] h-3"
+                viewBox="0 0 99 9"
+                fill="none"
+              >
+                <rect
+                  x="0.966797"
+                  y="0.958984"
+                  width="97.6744"
+                  height="7.23514"
+                  rx="3.61757"
+                  fill="#E4F8F6"
+                />
+                <rect
+                  x="0.966797"
+                  y="0.958984"
+                  width={`${
+                    row.progress ? (row.progress / 100) * 97.6744 : 50 * 97.6744 / 100 // default to 50% if no progress
+                  }`}
+                  height="7.23514"
+                  rx="3.61757"
+                  fill="#01C2B5"
+                />
+              </svg>
+            </td>
+          </tr>
+        ))}
+      </tbody>
           </table>
         </div>
       </div>
@@ -218,26 +216,26 @@ const Production = () => {
 };
 
 // Data for Table Rows
-const data = [
-  {
-    name: "Design Website",
-    status: "Assigned",
-    date: "18-Apr-12",
-    progress: 60,
-  },
-  {
-    name: "Website Development",
-    status: "Assigned",
-    date: "18-Apr-12",
-    progress: 20,
-  },
-  {
-    name: "Website Testing",
-    status: "Pending",
-    date: "20-May-21",
-    progress: 40,
-  },
-  { name: "Debugging", status: "Assigned", date: "22-May-21", progress: 70 },
-];
+// const data = [
+//   {
+//     name: "Design Website",
+//     status: "Assigned",
+//     date: "18-Apr-12",
+//     progress: 60,
+//   },
+//   {
+//     name: "Website Development",
+//     status: "Assigned",
+//     date: "18-Apr-12",
+//     progress: 20,
+//   },
+//   {
+//     name: "Website Testing",
+//     status: "Pending",
+//     date: "20-May-21",
+//     progress: 40,
+//   },
+//   { name: "Debugging", status: "Assigned", date: "22-May-21", progress: 70 },
+// ];
 
 export default Production;
