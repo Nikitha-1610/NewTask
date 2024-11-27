@@ -7,9 +7,11 @@ import { PutObjectCommand } from "@aws-sdk/client-s3";
 const AddProject = () => {
   const [formData, setFormData] = useState({
     taskName: "",
+    startDate: "",
     dueDate: "",
+    teams: [],
     assignedTo: [],
-    assignedBy: "john",
+   
     reviewers: "", // Single reviewer as a string
     priority: "Low",
     taskDescription: "",
@@ -110,7 +112,7 @@ const AddProject = () => {
       console.log("Submitting Form Data:", formData);
 
       // Make the API POST request
-      const response = await axiosInstance.post("task/addTask", formData);
+      const response = await axiosInstance.post("project/addProject", formData);
 
       // Handle success
       if (response.status === 200 || response.status === 201) {
@@ -119,13 +121,15 @@ const AddProject = () => {
         // Reset form (if needed)
         setFormData({
           taskName: "",
-          dueDate: "",
-          assignedTo: [],
-          assignedBy: "john",
-          reviewers: "",
-          priority: "Low",
-          taskDescription: "",
-          referenceFileUrl: [],
+    startDate: "",
+    dueDate: "",
+    teams: [],
+    assignedTo: [],
+  
+    reviewers: "", // Single reviewer as a string
+    priority: "Low",
+    taskDescription: "",
+    referenceFileUrl: [],
         });
         setDisplayReferences([]);
       } else {
@@ -226,7 +230,7 @@ const AddProject = () => {
             </button>
           </div>
         </div>
-        <div className="mb-4">
+         <div className="mb-4">
           <label className="block text-sm font-semibold text-gray-800 mb-2">
             Members
           </label>
@@ -238,14 +242,11 @@ const AddProject = () => {
                 height={22}
                 width={22}
               />
-              {formData.assignedTo.map((member, index) => (
-                <span
-                  key={index}
-                  className="bg-blue-200 text-blue-700 px-2 py-1 rounded-full text-xs"
-                >
-                  {member}
+              {formData.reviewers && (
+                <span className="bg-green-200 text-green-700 px-2 py-1 rounded-full text-xs">
+                  {formData.reviewers}
                 </span>
-              ))}
+              )}
             </div>
             <button
               type="button"
@@ -266,7 +267,7 @@ const AddProject = () => {
         </div>
         <div className="mb-4">
           <label className="block text-sm font-semibold text-gray-800 mb-2">
-            assigned By
+            Assigned
           </label>
           <div className="flex items-center justify-between border-b border-gray-300 pb-2">
             <div className="flex items-center gap-2">
@@ -276,14 +277,11 @@ const AddProject = () => {
                 height={22}
                 width={22}
               />
-              {formData.assignedTo.map((member, index) => (
-                <span
-                  key={index}
-                  className="bg-blue-200 text-blue-700 px-2 py-1 rounded-full text-xs"
-                >
-                  {member}
+              {formData.reviewers && (
+                <span className="bg-green-200 text-green-700 px-2 py-1 rounded-full text-xs">
+                  {formData.reviewers}
                 </span>
-              ))}
+              )}
             </div>
             <button
               type="button"
