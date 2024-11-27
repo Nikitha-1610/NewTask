@@ -6,15 +6,15 @@ import { PutObjectCommand } from "@aws-sdk/client-s3";
 // import toast, { Toaster } from "react-hot-toast";
 const AddProject = () => {
   const [formData, setFormData] = useState({
-    taskName: "",
+    projectName : "",
     startDate: "",
     dueDate: "",
-    teams: [],
-    assignedTo: [],
-   
-    reviewers: "", // Single reviewer as a string
+    projectLead: [],
+    frontendLead: [],
+    backendLead: [],
+    designLead: [], // Single reviewer as a string
     priority: "Low",
-    taskDescription: "",
+    projectDescription: "",
     referenceFileUrl: [], // Reference as an array
   });
 
@@ -120,16 +120,16 @@ const AddProject = () => {
 
         // Reset form (if needed)
         setFormData({
-          taskName: "",
-    startDate: "",
-    dueDate: "",
-    teams: [],
-    assignedTo: [],
-  
-    reviewers: "", // Single reviewer as a string
-    priority: "Low",
-    taskDescription: "",
-    referenceFileUrl: [],
+          projectName : "",
+          startDate: "",
+          dueDate: "",
+          projectLead: [],
+          frontendLead: [],
+          backendLead: [],
+          designLead: [], // Single reviewer as a string
+          priority: "Low",
+          projectDescription: "",
+          referenceFileUrl: [],
         });
         setDisplayReferences([]);
       } else {
@@ -161,23 +161,23 @@ const AddProject = () => {
             <input
               type="text"
               className="w-full p-2 border border-gray-300 rounded mt-2"
-              name="taskName"
-              value={formData.taskName}
+              name="projectName"
+              value={formData.projectName}
               onChange={handleInputChange}
               placeholder="Enter project name"
             />
           </div>
           <div className=" flex w-full md:w-8/12 gap-4">
-            <div className="w-full md:flex-1">
-              <label className="block text-sm font-semibold">Start Date</label>
-              <input
-                type="date"
-                className="w-full p-2 border border-gray-300 rounded mt-2"
-                name="dueDate"
-                value={formData.dueDate}
-                onChange={handleInputChange}
-              />
-            </div>
+          <div className="w-full md:flex-1">
+            <label className="block text-sm font-semibold">Start Date</label>
+            <input
+              type="date"
+              className="w-full p-2 border border-gray-300 rounded mt-2"
+              name="startDate"
+              value={formData.startDate}
+              onChange={handleInputChange}
+            />
+          </div>
             <div className="w-full md:flex-1">
               <label className="block text-sm font-semibold">Due Date</label>
               <input
@@ -194,7 +194,7 @@ const AddProject = () => {
         {/* assignedTo Section */}
         <div className="mb-4">
           <label className="block text-sm font-semibold text-gray-800 mb-2">
-            Team&apos;s
+            Project Lead
           </label>
           <div className="flex items-center justify-between border-b border-gray-300 pb-2">
             <div className="flex items-center gap-2">
@@ -204,47 +204,9 @@ const AddProject = () => {
                 height={22}
                 width={22}
               />
-              {formData.assignedTo.map((member, index) => (
-                <span
-                  key={index}
-                  className="bg-blue-200 text-blue-700 px-2 py-1 rounded-full text-xs"
-                >
-                  {member}
-                </span>
-              ))}
-            </div>
-            <button
-              type="button"
-              className="flex items-center justify-center w-8 h-8 rounded-full border border-dashed border-gray-400"
-              onClick={() => {
-                setSelectedUserType("assignedTo");
-                setShowUserList(true);
-              }}
-            >
-              <Icon
-                icon="ic:outline-add"
-                className="text-gray-600"
-                height={20}
-                width={20}
-              />
-            </button>
-          </div>
-        </div>
-         <div className="mb-4">
-          <label className="block text-sm font-semibold text-gray-800 mb-2">
-            Members
-          </label>
-          <div className="flex items-center justify-between border-b border-gray-300 pb-2">
-            <div className="flex items-center gap-2">
-              <Icon
-                icon="ic:sharp-person-add"
-                className="text-gray-600"
-                height={22}
-                width={22}
-              />
-              {formData.reviewers && (
+              {formData.projectLead && (
                 <span className="bg-green-200 text-green-700 px-2 py-1 rounded-full text-xs">
-                  {formData.reviewers}
+                  {formData.projectLead}
                 </span>
               )}
             </div>
@@ -252,7 +214,7 @@ const AddProject = () => {
               type="button"
               className="flex items-center justify-center w-8 h-8 rounded-full border border-dashed border-gray-400"
               onClick={() => {
-                setSelectedUserType("assignedTo");
+                setSelectedUserType("projectLead");
                 setShowUserList(true);
               }}
             >
@@ -267,7 +229,7 @@ const AddProject = () => {
         </div>
         <div className="mb-4">
           <label className="block text-sm font-semibold text-gray-800 mb-2">
-            Assigned
+            Frontend Lead
           </label>
           <div className="flex items-center justify-between border-b border-gray-300 pb-2">
             <div className="flex items-center gap-2">
@@ -277,9 +239,9 @@ const AddProject = () => {
                 height={22}
                 width={22}
               />
-              {formData.reviewers && (
+              {formData.frontendLead && (
                 <span className="bg-green-200 text-green-700 px-2 py-1 rounded-full text-xs">
-                  {formData.reviewers}
+                  {formData.frontendLead}
                 </span>
               )}
             </div>
@@ -287,7 +249,42 @@ const AddProject = () => {
               type="button"
               className="flex items-center justify-center w-8 h-8 rounded-full border border-dashed border-gray-400"
               onClick={() => {
-                setSelectedUserType("assignedTo");
+                setSelectedUserType("frontendLead");
+                setShowUserList(true);
+              }}
+            >
+              <Icon
+                icon="ic:outline-add"
+                className="text-gray-600"
+                height={20}
+                width={20}
+              />
+            </button>
+          </div>
+        </div>
+        <div className="mb-4">
+          <label className="block text-sm font-semibold text-gray-800 mb-2">
+            Backend Lead
+          </label>
+          <div className="flex items-center justify-between border-b border-gray-300 pb-2">
+            <div className="flex items-center gap-2">
+              <Icon
+                icon="ic:sharp-person-add"
+                className="text-gray-600"
+                height={22}
+                width={22}
+              />
+              {formData.backendLead && (
+                <span className="bg-green-200 text-green-700 px-2 py-1 rounded-full text-xs">
+                  {formData.backendLead}
+                </span>
+              )}
+            </div>
+            <button
+              type="button"
+              className="flex items-center justify-center w-8 h-8 rounded-full border border-dashed border-gray-400"
+              onClick={() => {
+                setSelectedUserType("backendLead");
                 setShowUserList(true);
               }}
             >
@@ -304,7 +301,7 @@ const AddProject = () => {
         {/* Reviewer Section */}
         <div className="mb-4">
           <label className="block text-sm font-semibold text-gray-800 mb-2">
-            Reviewer
+            Design Lead
           </label>
           <div className="flex items-center justify-between border-b border-gray-300 pb-2">
             <div className="flex items-center gap-2">
@@ -314,9 +311,9 @@ const AddProject = () => {
                 height={22}
                 width={22}
               />
-              {formData.reviewers && (
+              {formData.designLead && (
                 <span className="bg-green-200 text-green-700 px-2 py-1 rounded-full text-xs">
-                  {formData.reviewers}
+                  {formData.designLead}
                 </span>
               )}
             </div>
@@ -324,7 +321,7 @@ const AddProject = () => {
               type="button"
               className="flex items-center justify-center w-8 h-8 rounded-full border border-dashed border-gray-400"
               onClick={() => {
-                setSelectedUserType("reviewers");
+                setSelectedUserType("designLead");
                 setShowUserList(true);
               }}
             >
@@ -393,9 +390,9 @@ const AddProject = () => {
           <textarea
             className="w-full h-40 p-2 border border-gray-300 rounded mt-4"
             name="taskDescription"
-            value={formData.taskDescription}
+            value={formData.projectDescription}
             onChange={handleInputChange}
-            placeholder="Enter a taskDescription of the task"
+            placeholder="Enter a projectDescription of the task"
           />
         </div>
 
