@@ -220,6 +220,16 @@ const AddTasks = () => {
             </button>
           </div>
         </div>
+        <div className="mb-4">
+          <label className="block text-sm font-semibold text-gray-500 mb-6">
+            Select Category
+            <select className="mt-1 block w-full px-3 py-2 bg-white border text-gray-800 border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-teal-500 focus:border-teal-500 sm:text-sm">
+              <option value="development">Development</option>
+              <option value="research">Research</option>
+              <option value="ui">UI</option>
+            </select>
+          </label>
+        </div>
 
         {/* Reviewer Section */}
         <div className="mb-4">

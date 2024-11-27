@@ -11,7 +11,6 @@ const AddProject = () => {
     dueDate: "",
     teams: [],
     assignedTo: [],
-   
     reviewers: "", // Single reviewer as a string
     priority: "Low",
     taskDescription: "",
@@ -121,15 +120,15 @@ const AddProject = () => {
         // Reset form (if needed)
         setFormData({
           taskName: "",
-    startDate: "",
-    dueDate: "",
-    teams: [],
-    assignedTo: [],
-  
-    reviewers: "", // Single reviewer as a string
-    priority: "Low",
-    taskDescription: "",
-    referenceFileUrl: [],
+          startDate: "",
+          dueDate: "",
+          teams: [],
+          assignedTo: [],
+
+          reviewers: "", // Single reviewer as a string
+          priority: "Low",
+          taskDescription: "",
+          referenceFileUrl: [],
         });
         setDisplayReferences([]);
       } else {
@@ -230,7 +229,7 @@ const AddProject = () => {
             </button>
           </div>
         </div>
-         <div className="mb-4">
+        <div className="mb-4">
           <label className="block text-sm font-semibold text-gray-800 mb-2">
             Members
           </label>
