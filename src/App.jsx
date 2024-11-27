@@ -51,11 +51,12 @@ const App = () => {
             <Route path="/employee" element={<EmployeeForm />} />
             <Route path="/task-details" element={<TaskDetails />} />
             <Route path="/task/:taskId" element={<TaskCardDetails />} />
+            <Route
+              path="*"
+              element={isAuthenticated ? <Dashboard /> : <Auth />}
+            />
           </Route>
         </Route>
-
-        {/* Default Route (Fallback) */}
-        <Route path="*" element={isAuthenticated ? <Dashboard /> : <Auth />} />
       </Routes>
     </Router>
   );
