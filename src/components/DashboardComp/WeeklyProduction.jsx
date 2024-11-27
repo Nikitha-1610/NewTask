@@ -20,86 +20,52 @@ ChartJS.register(
   Legend
 );
 
-const WeeklyProduction = () => {
+const WeeklyProduction = ({ weeklyData, monthlyData, yearlyData }) => {
   // Set initial selector state
   const [period, setPeriod] = useState("Weekly");
 
-  // Data for the Bar chart
-  const weeklyData = {
-    labels: [
-      "Des",
-      "Dev",
-      "AI ML",
-      "Mar",
-      "Adm",
-      "HR",
-      "Soo",
-      "Sun",
-      "Sun",
-      "Sun",
-      "Sun",
-    ],
-    datasets: [
-      {
-        label: "Weekly Production",
-        data: [6, 1, 2, 1, 6, 2, 5, 1, 4, 5, 3], // Weekly data
-        backgroundColor: [
-          "#01C2B5",
-          "#C7F1EF",
-          "#01C2B5",
-          "#C7F1EF",
-          "#01C2B5",
-          "#C7F1EF",
-          "#01C2B5",
-          "#C7F1EF",
-          "#01C2B5",
-          "#01C2B5",
-          "#01C2B5",
-        ],
-        borderColor: "rgba(0, 0, 0, 0.1)",
-        borderWidth: 1,
-        borderRadius: 5,
-      },
-    ],
+  // Function to handle dynamic colors based on comparison of adjacent bars
+  const getBarColors = (data) => {
+    return data.map((value, index) => {
+      if (index === 0) return "#01C2B5"; // No previous bar to compare with
+      const prevValue = data[index - 1];
+      return value > prevValue ? "#01C2B5" : "#C7F1EF"; // Darker if value is higher than the previous one
+    });
   };
 
-  const monthlyData = {
-    labels: ["Week 1", "Week 2", "Week 3", "Week 4"],
-    datasets: [
-      {
-        label: "Monthly Production",
-        data: [22, 15, 30, 25], // Monthly data
-        backgroundColor: ["#01C2B5", "#C7F1EF", "#01C2B5", "#C7F1EF"],
-        borderColor: "rgba(0, 0, 0, 0.1)",
-        borderWidth: 1,
-        borderRadius: 5,
-      },
-    ],
-  };
-
-  const yearlyData = {
-    labels: ["Q1", "Q2", "Q3", "Q4"],
-    datasets: [
-      {
-        label: "Yearly Production",
-        data: [100, 120, 140, 110], // Yearly data
-        backgroundColor: ["#01C2B5", "#C7F1EF", "#01C2B5", "#C7F1EF"],
-        borderColor: "rgba(0, 0, 0, 0.1)",
-        borderWidth: 1,
-        borderRadius: 5,
-      },
-    ],
-  };
-
-  // Determine the data based on the selected period
+  // Function to get the appropriate data based on the selected period
   const getChartData = () => {
+    let data = [];
+    let labels = [];
+    let title = "";
+
     if (period === "Weekly") {
-      return weeklyData;
+      labels = Object.keys(weeklyData.taskHoursByDepartment);
+      data = Object.values(weeklyData.taskHoursByDepartment);
+      title = "Weekly Production";
     } else if (period === "Monthly") {
-      return monthlyData;
+      labels = Object.keys(monthlyData.taskHoursByDepartment);
+      data = Object.values(monthlyData.taskHoursByDepartment);
+      title = "Monthly Production";
     } else {
-      return yearlyData;
+      labels = Object.keys(yearlyData.taskHoursByDepartment);
+      data = Object.values(yearlyData.taskHoursByDepartment);
+      title = "Yearly Production";
     }
+
+    return {
+      labels: labels,
+      datasets: [
+        {
+          label: title,
+          data: data,
+          backgroundColor: getBarColors(data),
+          borderColor: "rgba(0, 0, 0, 0.1)",
+          borderWidth: 1,
+          borderRadius: 5,
+        },
+      ],
+    };
   };
 
   // Options for the bar chart
@@ -146,10 +112,10 @@ const WeeklyProduction = () => {
   };
 
   return (
-    <div className="w-11/12">
-      <div className="flex justify-between items-center  ">
-        <h2 className="md:text-2xl text-lg  font-medium text-gray-800 self-auto sm:relative ">
-          Weekly Production
+    <div className="w-11/12 mx-auto my-0 p-2">
+      <div className="flex justify-between items-center">
+        <h2 className="md:text-2xl text-lg font-medium text-gray-800 self-auto sm:relative left-0 top-0 mb-0">
+          {period} Production
         </h2>
 
         <div className="relative flex items-center gap-1 sm:-right-12 -top-2">
@@ -164,7 +130,7 @@ const WeeklyProduction = () => {
             <option value="Yearly">Yearly</option>
           </select>
           {/* SVG Icon */}
-          <div className="absolute right-2 top-1/2 -translate-y-1/2 pointer-events-none ">
+          <div className="absolute right-2 top-1/2 -translate-y-1/2 pointer-events-none">
             <svg
               xmlns="http://www.w3.org/2000/svg"
               width="13"
@@ -180,7 +146,7 @@ const WeeklyProduction = () => {
           </div>
         </div>
       </div>
-      <div className="relative h-52 flex justify-center ">
+      <div className="relative h-52 flex justify-center">
         <Bar data={getChartData()} options={options} />
       </div>
     </div>
