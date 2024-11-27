@@ -12,7 +12,7 @@ import {
 import axiosInstance from "../utilities/axios/axiosInstance";
 import { useNavigate } from "react-router-dom";
 import { Link } from "react-router-dom";
-import TaskDetails from "../components/TaskDetails";
+import ReactLoading from "react-loading";
 
 // DateDisplay component
 const DateDisplay = ({ isoDate }) => {
@@ -48,24 +48,35 @@ const Board = () => {
   const [filterLabel, setFilterLabel] = useState("");
   const [showFilterDropdown, setShowFilterDropdown] = useState(false);
   const [collapsedColumns, setCollapsedColumns] = useState({});
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
   const navigate = useNavigate();
 
   // Fetch tasks from the API
   useEffect(() => {
+    setLoading(true);
     axiosInstance
       .get("task/getTaskDashboard/TeamLead1")
       .then((response) => {
-        setTaskData(
-          response.data.message || {
+        if (response.data && response.data.message) {
+          setTaskData(response.data.message);
+        } else {
+          // If response is unexpected, reset to default structure
+          setTaskData({
             inTestTasks: [],
             inProgressTasks: [],
             completedTasks: [],
             todayAssignedTasks: [],
-          }
-        );
+          });
+        }
+        setError(null); // Clear any previous errors
       })
       .catch((error) => {
         console.error("Error fetching task data:", error);
+        setError("Failed to fetch task data. Please try again later.");
+      })
+      .finally(() => {
+        setLoading(false); // Ensure loading stops after completion
       });
   }, []);
 
@@ -198,103 +209,114 @@ const Board = () => {
       </div>
 
       {/* Board Columns */}
-      <div className="flex flex-col md:flex-col lg:flex-row space-y-4 lg:space-y-0 lg:space-x-4">
-        {filteredColumns.map((column, colIndex) => (
-          <div
-            key={colIndex}
-            className="flex-2 w-full sm:w-full md:w-full lg:basis-1/3 lg:max-w-lg"
-          >
-            <div className="flex items-center justify-between border-b-2 pb-2">
-              <button
-                onClick={() =>
-                  handleColumnClick(
-                    column.status,
-                    column.assignedBy,
-                    column.path
-                  )
-                }
-                className={`font-semibold p-2 ${column.color}-600 flex-grow`}
-              >
-                {column.title}
-              </button>
-              <span className="flex items-center justify-center w-6 h-6 bg-gray-200 text-xs rounded-full ml-auto">
-                {column.tasks.length}
-              </span>
-              <div className="lg:hidden">
-                <FontAwesomeIcon
-                  icon={
-                    collapsedColumns[colIndex] ? faChevronDown : faChevronUp
+      {loading ? (
+        <div className="flex justify-center items-center h-80">
+          <ReactLoading type="spin" color="#21a6a1" height={50} width={50} />
+        </div>
+      ) : error ? (
+        <div className="flex items-center justify-center h-40">
+          <span className="text-red-500">{error}</span>
+        </div>
+      ) : (
+        <div className="flex flex-col md:flex-col lg:flex-row space-y-4 lg:space-y-0 lg:space-x-4">
+          {filteredColumns.map((column, colIndex) => (
+            <div
+              key={colIndex}
+              className="flex-2 w-full sm:w-full md:w-full lg:basis-1/3 lg:max-w-lg"
+            >
+              <div className="flex items-center justify-between border-b-2 pb-2">
+                <button
+                  onClick={() =>
+                    handleColumnClick(
+                      column.status,
+                      column.assignedBy,
+                      column.path
+                    )
                   }
-                  className="ml-5 cursor-pointer"
-                  onClick={(e) => {
-                    e.preventDefault();
-                    toggleColumn(colIndex);
-                  }}
-                />
+                  className={`font-semibold p-2 ${column.color}-600 flex-grow`}
+                >
+                  {column.title}
+                </button>
+                <span className="flex items-center justify-center w-6 h-6 bg-gray-200 text-xs rounded-full ml-auto">
+                  {column.tasks.length}
+                </span>
+                <div className="lg:hidden">
+                  <FontAwesomeIcon
+                    icon={
+                      collapsedColumns[colIndex] ? faChevronDown : faChevronUp
+                    }
+                    className="ml-5 cursor-pointer"
+                    onClick={(e) => {
+                      e.preventDefault();
+                      toggleColumn(colIndex);
+                    }}
+                  />
+                </div>
               </div>
-            </div>
 
-            {(!collapsedColumns[colIndex] || window.innerWidth >= 1024) && (
-              <div className="mt-4">
-                {column.tasks.map((task, taskIndex) => (
-                  <Link
-                    to={`/task/${task.taskId}`} // Navigate to the task details page with taskId
-                    key={taskIndex}
-                    className="block bg-white shadow rounded-lg p-4 mb-4 relative border border-gray-400 w-full"
-                  >
-                    <div className="absolute top-2 right-2">
-                      {task.taskStatus === "Completed" ? (
-                        <div className="flex items-center text-green-500 text-xs font-bold">
-                          <span className="mr-1">✔✔</span>
-                          <span>Done</span>
-                        </div>
-                      ) : (
-                        <div className="flex items-center text-gray-500 text-sm">
-                          <FontAwesomeIcon
-                            icon={faCalendarAlt}
-                            className="mr-1"
-                          />
-                          <DateDisplay isoDate={task.deadline} />
-                        </div>
-                      )}
-                    </div>
-                    {task.taskName && (
-                      <span
-                        className={`text-xs font-semibold mb-2 mt-4 inline-block px-2 py-1 rounded ${generateRandomColor()}`}
-                      >
-                        {task.taskName}
-                      </span>
-                    )}
-                    <div className="flex justify-between">
-                      <div>
-                        <div className="text-sm text-black-100">
-                          {task.taskDescription || "No description available."}
-                        </div>
-                        <div className="flex items-center text-sm text-gray-600 mt-2 space-x-4">
-                          <div className="flex items-center">
+              {(!collapsedColumns[colIndex] || window.innerWidth >= 1024) && (
+                <div className="mt-4">
+                  {column.tasks.map((task, taskIndex) => (
+                    <Link
+                      to={`/task/${task.taskId}`} // Navigate to the task details page with taskId
+                      key={taskIndex}
+                      className="block bg-white shadow rounded-lg p-4 mb-4 relative border border-gray-400 w-full"
+                    >
+                      <div className="absolute top-2 right-2">
+                        {task.taskStatus === "Completed" ? (
+                          <div className="flex items-center text-green-500 text-xs font-bold">
+                            <span className="mr-1">✔✔</span>
+                            <span>Done</span>
+                          </div>
+                        ) : (
+                          <div className="flex items-center text-gray-500 text-sm">
                             <FontAwesomeIcon
-                              icon={faComment}
+                              icon={faCalendarAlt}
                               className="mr-1"
                             />
-                            {task.comment?.length || 0}
+                            <DateDisplay isoDate={task.deadline} />
                           </div>
-                          <div className="flex items-center">
-                            <FontAwesomeIcon
-                              icon={faLink}
-                              className="mr-1 text-black-500"
-                            />
-                            {task.referenceFileUrl?.length || 0}
+                        )}
+                      </div>
+                      {task.taskName && (
+                        <span
+                          className={`text-xs font-semibold mb-2 mt-4 inline-block px-2 py-1 rounded ${generateRandomColor()}`}
+                        >
+                          {task.taskName}
+                        </span>
+                      )}
+                      <div className="flex justify-between">
+                        <div>
+                          <div className="text-sm text-black-100">
+                            {task.taskDescription ||
+                              "No description available."}
+                          </div>
+                          <div className="flex items-center text-sm text-gray-600 mt-2 space-x-4">
+                            <div className="flex items-center">
+                              <FontAwesomeIcon
+                                icon={faComment}
+                                className="mr-1"
+                              />
+                              {task.comment?.length || 0}
+                            </div>
+                            <div className="flex items-center">
+                              <FontAwesomeIcon
+                                icon={faLink}
+                                className="mr-1 text-black-500"
+                              />
+                              {task.referenceFileUrl?.length || 0}
+                            </div>
                           </div>
                         </div>
                       </div>
-                    </div>
-                  </Link>
-                ))}
-              </div>
-            )}
-          </div>
-        ))}
-      </div>
+                    </Link>
+                  ))}
+                </div>
+              )}
+            </div>
+          ))}
+        </div>
+      )}
     </div>
   );
 };

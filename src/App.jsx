@@ -7,49 +7,51 @@ import Teams from "./pages/Teams";
 import Position from "./pages/Position";
 import MainPage from "./pages/MainPage";
 
-// import Settings from "./pages/Settings";
+// Importing other pages
 import Usersemail from "./pages/Usersemail";
 import InProgressTask from "./pages/InProgressTask";
-import AddTasks from "./pages/addTasks";
-import Addproject from "./pages/Addproject";
+import AddTasks from "./pages/AddTasks";
+import AddProject from "./pages/AddProject";
 import DesignTeam from "./pages/DesignTeam";
 import Chats from "./pages/Chats";
 import InTest from "./pages/InTest";
-import AssignTask from "./pages/Assigntask";
+import AssignTask from "./pages/AssignTask";
 import EmployeeForm from "./pages/EmployeeForm";
 import TaskDetails from "./components/TaskDetails";
-// import AddTasks from "./pages/addTasks";
-import AddProject from "./pages/Addproject";
 import TaskCardDetails from "./components/TaskCardDetails";
+import Auth from "./pages/Auth";
 
 const App = () => {
   return (
     <Router>
-      <Layout>
-        <Routes>
+      <Routes>
+        {/* Auth route outside the layout */}
+        <Route path="/auth" element={<Auth />} />
+
+        {/* Layout applied to all other routes */}
+        <Route element={<Layout />}>
           <Route path="/dashboard" element={<Dashboard />} />
           <Route path="/profile" element={<Profile />} />
           <Route path="/teams" element={<Teams />} />
           <Route path="/people" element={<People />} />
-          {/* <Route path="/assign" element={<Assign/>} /> */}
           <Route path="/intest" element={<InTest />} />
           <Route path="/position" element={<Position />} />
           <Route path="/mainpage" element={<MainPage />} />
-          {/* <Route path="/settings" element={<Settings />} /> */}
-          <Route path="*" element={<Dashboard />} />
           <Route path="/usersemail" element={<Usersemail />} />
           <Route path="/inprogress" element={<InProgressTask />} />
-          <Route path="/usersemail" element={<Usersemail />} />
-          <Route path="/addtasks" element={<AddTasks/>} />
-          <Route path="/addproject" element={<AddProject/>} />
+          <Route path="/addtasks" element={<AddTasks />} />
+          <Route path="/addproject" element={<AddProject />} />
           <Route path="/task" element={<DesignTeam />} />
           <Route path="/chats" element={<Chats />} />
           <Route path="/assign" element={<AssignTask />} />
           <Route path="/employee" element={<EmployeeForm />} />
           <Route path="/task-details" element={<TaskDetails />} />
-          <Route path="/task/:taskId" element={<TaskCardDetails/>} />
-        </Routes>
-      </Layout>
+          <Route path="/task/:taskId" element={<TaskCardDetails />} />
+        </Route>
+
+        {/* Default Route (Fallback) */}
+        <Route path="*" element={<Dashboard />} />
+      </Routes>
     </Router>
   );
 };
