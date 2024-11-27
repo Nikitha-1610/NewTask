@@ -8,11 +8,10 @@ import {
   faChevronUp,
   faComment,
   faLink,
-
 } from "@fortawesome/free-solid-svg-icons";
 import axiosInstance from "../utilities/axios/axiosInstance";
 import { useNavigate } from "react-router-dom";
-import { Link, } from "react-router-dom";
+import { Link } from "react-router-dom";
 import TaskDetails from "../components/TaskDetails";
 
 // DateDisplay component
@@ -26,11 +25,6 @@ const DateDisplay = ({ isoDate }) => {
   return <span>{formatDate(isoDate)}</span>;
 };
 
-
-
-
-
-
 const generateRandomColor = () => {
   const colors = [
     "bg-green-200",
@@ -43,11 +37,6 @@ const generateRandomColor = () => {
   ];
   return colors[Math.floor(Math.random() * colors.length)];
 };
-
-
-
-
-
 
 const Board = () => {
   const [taskData, setTaskData] = useState({
@@ -247,7 +236,6 @@ const Board = () => {
 
             {(!collapsedColumns[colIndex] || window.innerWidth >= 1024) && (
               <div className="mt-4">
-
                 {column.tasks.map((task, taskIndex) => (
                   <Link
                     to={`/task/${task.taskId}`} // Navigate to the task details page with taskId
@@ -262,9 +250,11 @@ const Board = () => {
                         </div>
                       ) : (
                         <div className="flex items-center text-gray-500 text-sm">
-                          <FontAwesomeIcon icon={faCalendarAlt} className="mr-1" />
+                          <FontAwesomeIcon
+                            icon={faCalendarAlt}
+                            className="mr-1"
+                          />
                           <DateDisplay isoDate={task.deadline} />
-
                         </div>
                       )}
                     </div>
@@ -282,11 +272,17 @@ const Board = () => {
                         </div>
                         <div className="flex items-center text-sm text-gray-600 mt-2 space-x-4">
                           <div className="flex items-center">
-                            <FontAwesomeIcon icon={faComment} className="mr-1" />
+                            <FontAwesomeIcon
+                              icon={faComment}
+                              className="mr-1"
+                            />
                             {task.comment?.length || 0}
                           </div>
                           <div className="flex items-center">
-                            <FontAwesomeIcon icon={faLink} className="mr-1 text-black-500" />
+                            <FontAwesomeIcon
+                              icon={faLink}
+                              className="mr-1 text-black-500"
+                            />
                             {task.referenceFileUrl?.length || 0}
                           </div>
                         </div>
@@ -294,8 +290,6 @@ const Board = () => {
                     </div>
                   </Link>
                 ))}
-
-
               </div>
             )}
           </div>

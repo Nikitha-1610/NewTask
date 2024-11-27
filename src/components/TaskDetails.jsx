@@ -28,7 +28,13 @@ const TaskDetails = ({ task }) => {
             <Icon icon="ic:outline-calendar-today" className="text-gray-500" />
             <span className="ml-2">Due Date:</span>
           </div>
-          <span className="font-medium">{task.dueDate}</span>
+          <span className="font-medium">
+            {new Date(task.dueDate).toLocaleDateString("en-US", {
+              day: "numeric",
+              month: "short",
+              year: "numeric",
+            })}
+          </span>
         </div>
 
         {/* Assigned To */}
