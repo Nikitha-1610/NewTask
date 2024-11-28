@@ -2,7 +2,6 @@ import { useEffect, useState } from "react";
 // import { Icon } from "@iconify/react";
 import axiosInstance from "../utilities/axios/axiosInstance";
 
-
 const EmployeeForm = () => {
   const [formData, setFormData] = useState({
     name: "",
@@ -10,7 +9,7 @@ const EmployeeForm = () => {
     employeeID: "",
     DOB: "",
     email: "",
-    mobile: "",   
+    mobile: "",
     address: "",
     // currentCTC: "",
     // expectedCTC: "",
@@ -22,9 +21,8 @@ const EmployeeForm = () => {
     teamLead: "",
   });
 
-  
   const [users, setUsers] = useState([]);
- 
+
   const getAllEmp = async () => {
     try {
       const response = await axiosInstance.get("employee/getMembers/24110018");
@@ -34,6 +32,25 @@ const EmployeeForm = () => {
     } catch (error) {
       console.error("Error syncing with server:", error);
       // toast.error("Failed to fetch users.");
+    }
+  };
+  const generateEmployeeId = async () => {
+    try {
+      const response = await axiosInstance.get("employee/generateId");
+
+      if (response?.data?.message) {
+        const generatedId = response.data.message; // Assuming the response contains the generated ID
+        console.log("Generated Employee ID:", generatedId);
+
+        // Update the employeeID in the form data
+        setFormData((prev) => ({
+          ...prev,
+          employeeID: generatedId,
+        }));
+      }
+    } catch (error) {
+      console.error("Error generating Employee ID:", error);
+      // toast.error("Failed to generate Employee ID. Please try again later.");
     }
   };
 
@@ -49,11 +66,8 @@ const EmployeeForm = () => {
     }));
   };
 
- 
-
   const handleSubmit = async (e) => {
     e.preventDefault();
-
 
     try {
       console.log("Submitting Form Data:", formData);
@@ -72,7 +86,7 @@ const EmployeeForm = () => {
           employeeID: "",
           DOB: "",
           email: "",
-          mobile: "",   
+          mobile: "",
           address: "",
           // currentCTC: "",
           // expectedCTC: "",
@@ -83,7 +97,6 @@ const EmployeeForm = () => {
           reference: "",
           teamLead: "",
         });
-       
       } else {
         console.error("Unexpected response:", response);
         // toast.error("Something went wrong. Please try again.");
@@ -139,15 +152,14 @@ const EmployeeForm = () => {
               <input
                 type="text"
                 name="employeeID"
-                value={formData.employeeID}
+                value={formData.employeeID} // Controlled input tied to formData
                 onChange={handleInputChange}
                 className="border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-teal-500 flex-grow"
               />
               <button
                 className="ml-3 bg-teal-500 text-white px-4 py-2 rounded-md hover:bg-teal-600"
-                onClick={() =>
-                  alert("Generate Employee ID functionality not implemented.")
-                }
+                type="button" // Prevent form submission
+                onClick={generateEmployeeId}
               >
                 Generate
               </button>
@@ -233,7 +245,7 @@ const EmployeeForm = () => {
             />
           </div>
 
-          <div className="flex flex-col">
+          {/* <div className="flex flex-col">
             <label className="text-gray-700 font-medium mb-1">
               Current CTC<span className="text-red-500">*</span>
             </label>
@@ -283,9 +295,8 @@ const EmployeeForm = () => {
               onChange={handleInputChange}
               className="border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-teal-500"
             />
-          </div>
+          </div> */}
 
-          
           <div className="flex flex-col">
             <label className="text-gray-700 font-medium mb-1">
               Applied Role<span className="text-red-500">*</span>
@@ -323,16 +334,7 @@ const EmployeeForm = () => {
               onChange={handleInputChange}
               className="border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-teal-500"
             />
-          </div>       
-          
-
-
-          
-
-          
-
-
-
+          </div>
 
           {/* Remaining fields */}
           {/* {[
