@@ -4,28 +4,28 @@ import axiosInstance from "../utilities/axios/axiosInstance";
 
 const EmployeeForm = () => {
   const [formData, setFormData] = useState({
-    name: "",
-    appliedDate: "",
     employeeID: "",
-    DOB: "",
-    email: "",
-    mobile: "",
-    address: "",
-    // currentCTC: "",
-    // expectedCTC: "",
-    // joiningDate: "",
-    // previousCompany: "",
-    role: "",
-    position: "",
-    reference: "",
-    teamLead: "",
+  name: "",
+  mobile: "",
+  password: "",
+  email: "",
+  address: "",
+  DOB: "",
+  reference: "",
+  role: "",
+  gender: "",
+  position: "",
+  department: "",
+  teamLead: "",
+appliedDate: "",
+
   });
 
-  const [users, setUsers] = useState([]);
+  const [setUsers] = useState([]);
 
   const getAllEmp = async () => {
     try {
-      const response = await axiosInstance.get("employee/getMembers/24110018");
+      const response = await axiosInstance.get("employee/getMembers/24110004");
       console.log(response.data.message);
 
       setUsers(response?.data?.message);
@@ -81,21 +81,20 @@ const EmployeeForm = () => {
 
         // Reset form (if needed)
         setFormData({
-          name: "",
-          appliedDate: "",
           employeeID: "",
-          DOB: "",
-          email: "",
+          name: "",
           mobile: "",
+          password: "",
+          email: "",
           address: "",
-          // currentCTC: "",
-          // expectedCTC: "",
-          // joiningDate: "",
-          // previousCompany: "",
-          role: "",
-          position: "",
+          DOB: "",
           reference: "",
+          role: "",
+          gender: "",
+          position: "",
+          department: "",
           teamLead: "",
+        appliedDate: "",
         });
       } else {
         console.error("Unexpected response:", response);
@@ -199,7 +198,7 @@ const EmployeeForm = () => {
             </label>
             <input
               type="text"
-              name="useremail"
+              name="email"
               value={formData.email}
               onChange={handleInputChange}
               className="border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-teal-500"
@@ -221,12 +220,12 @@ const EmployeeForm = () => {
 
           <div className="flex flex-col">
             <label className="text-gray-700 font-medium mb-1">
-              Alternate Phone Number<span className="text-red-500">*</span>
+              Password<span className="text-red-500">*</span>
             </label>
             <input
-              type="number"
-              name="phone"
-              value={formData.phone}
+              type="text"
+              name="password"
+              value={formData.password}
               onChange={handleInputChange}
               className="border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-teal-500"
             />
@@ -245,14 +244,14 @@ const EmployeeForm = () => {
             />
           </div>
 
-          {/* <div className="flex flex-col">
+          <div className="flex flex-col">
             <label className="text-gray-700 font-medium mb-1">
-              Current CTC<span className="text-red-500">*</span>
+            Gender<span className="text-red-500">*</span>
             </label>
             <input
               type="text"
-              name="Current"
-              value={formData.current}
+              name="gender"
+              value={formData.gender}
               onChange={handleInputChange}
               className="border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-teal-500"
             />
@@ -260,42 +259,16 @@ const EmployeeForm = () => {
           
           <div className="flex flex-col">
             <label className="text-gray-700 font-medium mb-1">
-              Expected CTC<span className="text-red-500">*</span>
+            Department<span className="text-red-500">*</span>
             </label>
             <input
               type="text"
-              name="Expected"
-              value={formData.expected}
+              name="department"
+              value={formData.department}
               onChange={handleInputChange}
               className="border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-teal-500"
             />
-          </div>
-
-          <div className="flex flex-col">
-            <label className="text-gray-700 font-medium mb-1">
-              Joining Date<span className="text-red-500">*</span>
-            </label>
-            <input
-              type="date"
-              name="joining"
-              value={formData.joining}
-              onChange={handleInputChange}
-              className="border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-teal-500"
-            />
-          </div>
-          
-          <div className="flex flex-col">
-            <label className="text-gray-700 font-medium mb-1">
-              Previous Company<span className="text-red-500">*</span>
-            </label>
-            <input
-              type="text"
-              name="previous"
-              value={formData.previous}
-              onChange={handleInputChange}
-              className="border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-teal-500"
-            />
-          </div> */}
+          </div>  
 
           <div className="flex flex-col">
             <label className="text-gray-700 font-medium mb-1">
@@ -335,36 +308,6 @@ const EmployeeForm = () => {
               className="border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-teal-500"
             />
           </div>
-
-          {/* Remaining fields */}
-          {/* {[
-            ["dob", "DOB", "date"],
-            ["mailID", "Mail ID", "email"],
-            ["phoneNumber", "Phone Number", "tel"],
-            ["altPhoneNumber", "Alternative Phone Number", "tel"],
-            ["address", "Address", "text"],
-            ["currentCTC", "Current CTC", "number"],
-            ["expectedCTC", "Expected CTC", "number"],
-            ["joiningDate", "Joining Date", "date"],
-            ["previousCompany", "Previous Company", "text"],
-            ["appliedRole", "Applied Role", "text"],
-            ["positionName", "Position Name", "text"],
-            ["referenceEmployeeID", "If reference, Employee ID", "text"],
-          ].map(([name, label, type]) => (
-            <div key={name} className="flex flex-col">
-              <label className="text-gray-700 font-medium mb-1">
-                {label}
-                <span className="text-red-500">*</span>
-              </label>
-              <input
-                type={type}
-                name={name}
-                value={formData[name]}
-                onChange={handleInputChange}
-                className="border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-teal-500"
-              />
-            </div>
-          ))} */}
         </div>
 
         {/* Save Button */}
