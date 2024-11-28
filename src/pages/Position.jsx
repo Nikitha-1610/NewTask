@@ -306,15 +306,15 @@ useEffect(() => {
 
     
       {/* Filter Section */}
-      <div className="flex flex-col sm:flex-row sm:justify-start items-center gap-4 mb-6">
+      <div className="flex flex-col sm:flex-row sm:justify-start items-center gap-4 mb-6 sm:w-auto w-32">
       <select
         className="p-2 border text-base rounded bg-gray-200 sm:w-auto w-[140px]"
         value={selectedPosition}
         onChange={(e) => setSelectedPosition(e.target.value)}
       >
-        <option value="all">All Positions</option>
+        <option  className="w-[100px]" value="all">All Positions</option>
         {positions.map((position, index) => (
-          <option key={index} value={position}>
+          <option   key={index} value={position}>
             {position}
           </option>
         ))}
@@ -500,38 +500,50 @@ useEffect(() => {
       onClick={() => setShow(false)} // Close the modal if the overlay is clicked
     ></div>
 
-    {/* Modal box */}
-    <div className="fixed top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 bg-white p-6 shadow-lg rounded z-50 w-[90%] max-w-lg sm:max-w-md md:max-w-md lg:max-w-md h-80 text-center border-2 border-gray-500">
-      <h3 className="mb-4 text-2xl">Assign Team Lead</h3>
-      <select
-        className="p-2 border rounded sm:w-[90%]  w-[50%] mb-10 sm:text-xl text-base"
-        value={selectedTeamLead}
-        onChange={(e) => setSelectedTeamLead(e.target.value)}
-      >
-        <option  value="" className="truncate w-24 text-base sm:text-lg">Select Team Lead</option>
-        {teamLeads.map((lead, index) => (
-          <option
+<div className="fixed top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 bg-white p-6 shadow-lg rounded z-50 w-[90%] max-w-lg sm:max-w-md md:max-w-md lg:max-w-md h-80 text-center border-2 border-gray-500">
+  <h3 className="mb-4 text-2xl">Assign Team Lead</h3>
+  
+  {/* Responsive alignment for the select box */}
+  <div className="mb-10 sm:text-center text-left">
+    <select
+      className="p-2 border rounded w-[45%] sm:w-[80%] sm:text-xl text-lg"
+      value={selectedTeamLead}
+      onChange={(e) => setSelectedTeamLead(e.target.value)}
+    >
+      <option value="" className="truncate w-16 text-lg sm:text-lg">
+        Select..
+      </option>
+      {teamLeads.map((lead, index) => (
+        <option
           key={index}
           value={lead}
-          className="truncate w-24 text-sm sm:text-lg" // Ensures text truncates if too long
+          className="truncate w-24 text-lg sm:text-lg"
         >
           {lead}
         </option>
-        ))}
-      </select>
-      <button
-        className="w-[60%] py-2 bg-green-500 text-white rounded"
-        onClick={handleSubmit}
-      >
-        Submit
-      </button>
-      <button
-        className="w-[60%] py-2 mt-2 bg-red-500 text-white rounded"
-        onClick={() => setShow(false)}
-      >
-        Close
-      </button>
-    </div>
+      ))}
+    </select>
+  </div>
+  
+  {/* Submit button stays in the center */}
+  <div>
+    <button
+      className="w-[60%] py-2 bg-green-500 text-white rounded"
+      onClick={handleSubmit}
+    >
+      Submit
+    </button>
+  </div>
+  
+  <button
+    className="w-[60%] py-2 mt-2 bg-red-500 text-white rounded"
+    onClick={() => setShow(false)}
+  >
+    Close
+  </button>
+</div>
+
+
   </>
 )}
 

@@ -1,6 +1,8 @@
 import { Icon } from "@iconify/react";
-
+import { useState } from "react";
 const TaskDetails = ({ task }) => {
+  const [priority, setPriority] = useState(task.priority || "Normal");
+
   return (
     <div className="w-full mx-auto p-6 bg-white rounded-lg shadow-md border border-gray-200">
       {/* Task Title */}
@@ -26,7 +28,13 @@ const TaskDetails = ({ task }) => {
             <Icon icon="ic:outline-calendar-today" className="text-gray-500" />
             <span className="ml-2">Due Date:</span>
           </div>
-          <span className="font-medium">{task.dueDate}</span>
+          <span className="font-medium">
+            {new Date(task.dueDate).toLocaleDateString("en-US", {
+              day: "numeric",
+              month: "short",
+              year: "numeric",
+            })}
+          </span>
         </div>
 
         {/* Assigned To */}
@@ -38,12 +46,18 @@ const TaskDetails = ({ task }) => {
           <div className="flex flex-wrap gap-2">
             {task.assignedTo.map((person, index) => (
               <div key={index} className="flex items-center gap-2">
-                <img
+                {/* <img
                   src={person.image}
                   alt={person.name}
                   className="w-6 h-6 rounded-full"
+                /> */}
+                <Icon
+                  icon="ph:user-circle-fill"
+                  className="text-blue-500  p-0 rounded-full"
+                  width={32}
+                  height={32}
                 />
-                <span className="text-gray-700 font-medium">{person.name}</span>
+                <span className="text-gray-700 font-medium">{person}</span>
               </div>
             ))}
           </div>
@@ -54,14 +68,18 @@ const TaskDetails = ({ task }) => {
           <Icon icon="mdi:user-outline" height={22} width={22} />
           <span className="ml-2">Assigned by:</span>
           <div className="flex items-center gap-2 ml-3">
-            <img
+            {/* <img
               src={task.assignedBy.image}
               alt={task.assignedBy.name}
               className="w-6 h-6 rounded-full"
+            /> */}
+            <Icon
+              icon="mdi:account-circle-outline"
+              className="text-blue-500  p-0 rounded-full"
+              width={32}
+              height={32}
             />
-            <span className="text-gray-700 font-medium">
-              {task.assignedBy.name}
-            </span>
+            <span className="text-gray-700 font-medium">{task.assignedBy}</span>
           </div>
         </div>
       </div>
@@ -73,6 +91,7 @@ const TaskDetails = ({ task }) => {
           <h2 className="text-base font-semibold">Description</h2>
         </div>
         <textarea
+          value={task.taskDescription || "No description available."}
           placeholder="Description"
           className="w-full p-2 mt-4 text-sm text-gray-700 bg-gray-100 border border-gray-300 rounded-md resize-none focus:outline-none"
         />
@@ -161,12 +180,15 @@ const TaskDetails = ({ task }) => {
               key={index}
               className="flex items-center gap-2 p-2 text-sm text-gray-700 bg-blue-100 border border-gray-300 rounded-md"
             >
-              <img
+              {/* <img
                 src={comment.userImage}
-                alt={comment.user}
+                alt={comment.userName}
                 className="w-6 h-6 rounded-full"
-              />
-              <div>{comment.text}</div>
+              /> */}
+              <div className=" font-bold text-teal-300 text-base">
+                {comment.userName}:
+              </div>
+              <div>{comment.message}</div>
             </div>
           ))}
         </div>
@@ -175,31 +197,40 @@ const TaskDetails = ({ task }) => {
       {/* Status Change Section */}
       <div
         className={`mt-4 flex flex-wrap gap-2 items-center ${
-          task.status === "In Test" ? "bg-red-300" : "bg-orange-100"
+          priority === "Urgent"
+            ? "bg-red-100"
+            : priority === "Normal"
+            ? "bg-yellow-100"
+            : "bg-green-100"
         } p-4 rounded-md`}
       >
-        <span className="text-sm font-semibold">Change Status</span>
-        {["Low", "Normal", "Urgent"].map((status, index) => (
+        <span className="text-sm font-semibold">Change Priority:</span>
+        {["Low", "Normal", "Urgent"].map((currentPriority) => (
           <button
-            key={index}
-            className={`px-2 py-1 flex items-center gap-1 text-xs font-medium rounded-md ${
-              status === "Low"
+            key={currentPriority}
+            onClick={() => setPriority(currentPriority)} // Update priority on click
+            className={`px-3 py-1 flex items-center gap-1 text-xs font-medium rounded-md transition duration-200 ${
+              currentPriority === priority
+                ? "ring-2 ring-offset-2 ring-blue-500"
+                : ""
+            } ${
+              currentPriority === "Low"
                 ? "bg-green-100 text-green-600"
-                : status === "Normal"
+                : currentPriority === "Normal"
                 ? "bg-yellow-100 text-yellow-600"
                 : "bg-red-100 text-red-600"
             }`}
           >
             <div
               className={`h-2 w-2 rounded-full ${
-                status === "Low"
+                currentPriority === "Low"
                   ? "bg-green-400"
-                  : status === "Normal"
+                  : currentPriority === "Normal"
                   ? "bg-yellow-400"
                   : "bg-red-400"
               }`}
             ></div>
-            {status}
+            {currentPriority}
           </button>
         ))}
       </div>

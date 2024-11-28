@@ -1,9 +1,9 @@
 import { useState, useEffect, useRef } from "react";
-import { useLocation } from "react-router-dom";
+import { useLocation, Outlet } from "react-router-dom";
 import Sidebar from "./Side";
 import Navbar from "./Navbar";
 
-const Layout = ({ children }) => {
+const Layout = () => {
   const [isOpen, setIsOpen] = useState(false);
   const [isCollapsed, setIsCollapsed] = useState(false);
   const [isMobile, setIsMobile] = useState(false);
@@ -31,13 +31,6 @@ const Layout = ({ children }) => {
       }
     }
   };
-
-  // Scroll to the top of the main content container whenever the route changes
-  useEffect(() => {
-    if (mainContentRef.current) {
-      mainContentRef.current.scrollTop = 0;
-    }
-  }, [location]);
 
   useEffect(() => {
     handleResize(); // Initial calculation
@@ -78,12 +71,13 @@ const Layout = ({ children }) => {
         {/* Navbar */}
         <Navbar toggleSidebar={toggleSidebar} />
 
-        {/* Content - Scrollable */}
+        {/* Content */}
         <main
           ref={mainContentRef} // Attach the ref here
           className="flex-1 overflow-y-auto p-4"
         >
-          {children}
+          {/* Render child routes */}
+          <Outlet />
         </main>
       </div>
     </div>
