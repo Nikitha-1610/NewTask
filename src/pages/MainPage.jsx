@@ -12,22 +12,18 @@ import Assignments from "../components/UserDashBoard/Assignments";
 import TaskSchedule from "../components/UserDashBoard/TaskSchedule";
 import DeadLineProjects from "../components/UserDashBoard/DeadLineProjects";
 import TaskManager from "../components/UserDashBoard/TaskManager";
+import ReactLoading from "react-loading";
 
 const MainPage = () => {
-  const [stats, setStats] = useState({
-    todayCompletedHours: "0:00:00",
-    lastWeekCompletedHours: "0:00:00",
-    weeklyActivity: "0%",
-    project: "0",
-    hoursByLabel: {},
-  });
+
+  const [stats, setStats] = useState(null); 
   const [upcomingDeadlineTasks, setUpcomingDeadlineTasks] = useState([]);
   const [daywiseCompletedHours, setDaywiseCompletedHours] = useState({});
   const [mostWorked, setMostWorked] = useState([]);
   const [tasks, setTasks] = useState([]);
   const [projects, setProjects] = useState([]);
   const [loading, setLoading] = useState(true);
-  const [employeeTasks, setEmployeeTasks] = useState([]); // New state for employee tasks
+  const [employeeTasks, setEmployeeTasks] = useState([]);
 
   useEffect(() => {
     const fetchDashboardData = async () => {
@@ -38,21 +34,33 @@ const MainPage = () => {
           { responseType: "json" }
         );
 
+        console.log("API Response:", dashboardResponse.data);
+
         if (dashboardResponse.data && dashboardResponse.data.message) {
           const data = dashboardResponse.data.message;
+          console.log("Dashboard Data:", data); 
 
           setStats({
-            todayCompletedHours: data.todayCompletedHours || "0:00:00",
-            lastWeekCompletedHours: data.lastWeekCompletedHours || "0:00:00",
+            todayCompletedHours: data.todayCompletedHours || 0,
+            lastWeekCompletedHours: data.lastWeekCompletedHours || 0,
             weeklyActivity: `${data.weeklyActivity || 0}%`,
-            project: data.project || "0",
+            project: data.project || 0,
             hoursByLabel: data.hoursBylabel || {},
           });
+
           setDaywiseCompletedHours(data.daywiseCompletedHours || {});
         }
+        else {
+          console.log("Error: message is null in the response.");
+        }
+
       } catch (error) {
         console.error("Error fetching dashboard data:", error);
       }
+      finally {
+        setLoading(false);
+      }
+
     };
 
 
@@ -77,13 +85,15 @@ const MainPage = () => {
           taskDescription: task.taskDescription,
         }));
 
-        // Update state with the extracted tasks
+       
         setEmployeeTasks(tasks);
       } catch (error) {
         console.error("Error fetching employee tasks:", error);
-        setEmployeeTasks([]);  // Ensure the state is always an array
+        setEmployeeTasks([]);  
       }
     };
+
+
 
 
     const fetchAllData = async () => {
@@ -100,9 +110,24 @@ const MainPage = () => {
     setTasks([...employeeTasks, newTask]);
   };
 
+
   if (loading) {
-    return <div>Loading...</div>;
+    return (
+      <div className="flex justify-center items-center min-h-screen">
+        <ReactLoading type="spin" color="#a3f7f0" height={50} width={50} />
+      </div>
+    );
   }
+
+  const formatHours = (value) => {
+    return value === 0 ? "0:00:00" : value;
+  };
+
+  const formatProjectValue = (value) => {
+    return value === 0 ? "0" : value;
+  };
+
+
 
   return (
     <div className="min-h-screen p-6">
@@ -113,6 +138,7 @@ const MainPage = () => {
       </header>
 
       {/* Main Content Section */}
+
       <div className="flex flex-col lg:flex-row gap-6">
         {/* Left Section */}
         <div className="flex-1">
@@ -120,7 +146,7 @@ const MainPage = () => {
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
             <StatsCard
               title="Today Hours"
-              value={stats.todayCompletedHours}
+              value={formatHours(stats.todayCompletedHours)}
               icon={<Icon icon="ic:outline-watch-later" />}
             />
             <StatsCard
@@ -130,15 +156,17 @@ const MainPage = () => {
             />
             <StatsCard
               title="Worked This Week"
-              value={stats.lastWeekCompletedHours}
+              value={formatHours(stats.lastWeekCompletedHours)}
               icon={<Icon icon="mdi:work-outline" />}
             />
             <StatsCard
               title="Projects Worked"
-              value={stats.project}
+              value={formatProjectValue(stats.project)}
               icon={<Icon icon="material-symbols:folder-outline" />}
             />
           </div>
+
+
 
           {/* Task List and Timer */}
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-8">
@@ -146,7 +174,7 @@ const MainPage = () => {
               <TaskList employeeTasks={employeeTasks} onAddTask={handleAddTask} />
             </div>
             <div className="lg:col-span-1">
-              <TaskManager  />
+              <TaskManager />
             </div>
           </div>
 

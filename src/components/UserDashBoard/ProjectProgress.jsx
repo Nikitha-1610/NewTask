@@ -34,7 +34,21 @@ const ProjectProgress = ({ projects }) => {
           </div>
         ))
       ) : (
-        <p>No projects progress available</p>
+        <div>
+          <p className="mb-4 text-gray-600">No projects progress available</p>
+          {/* Default Progress Bar */}
+          <div className="flex">
+            <div className="w-full bg-gray-200 rounded-full h-2">
+              <div
+                className="bg-yellow-400 h-2 rounded-full"
+                style={{ width: "0%" }}
+              ></div>
+            </div>
+            <span className="text-base -my-6 text-yellow-400 font inline-block">
+              0%
+            </span>
+          </div>
+        </div>
       )}
     </div>
   );

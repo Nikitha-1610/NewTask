@@ -1,7 +1,7 @@
 const ProductivityChart = ({ daywiseHours }) => {
   console.log("ProductivityChart received daywiseHours:", daywiseHours);
 
-  // Calculate total hours from daywiseHours
+ 
   const totalHours = Object.values(daywiseHours).reduce((sum, hours) => sum + hours, 0);
 
   return (
@@ -15,13 +15,13 @@ const ProductivityChart = ({ daywiseHours }) => {
       <div className="relative">
         <div className="flex items-end space-x-4 mt-5">
           {Object.keys(daywiseHours).map((day, index) => {
-            const hours = daywiseHours[day] || 0; // Get hours for each day or default to 0
-            const barHeight = hours > 0 ? `h-${hours * 4}` : "h-0"; // Show bars only for non-zero hours
-            const barColor = index % 2 === 0 ? "bg-blue-500" : "bg-purple-500"; // Alternate colors
+            const hours = daywiseHours[day] || 0; 
+            const barHeight = hours > 0 ? `h-${hours * 4}` : "h-0"; 
+            const barColor = index % 2 === 0 ? "bg-blue-500" : "bg-purple-500"; 
 
             return (
               <div key={index} className="flex flex-col items-center">
-                {/* Render bars only if hours are non-zero */}
+             
                 <div className={`w-4 ${barHeight} ${barColor} rounded-md`}></div>
                 <span className="text-xs mt-2">{day}</span>
               </div>

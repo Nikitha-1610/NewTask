@@ -47,7 +47,7 @@ const TaskList = ({ employeeTasks = [], onAddTask }) => {
           {employeeTasks.map((task, index) => (
             <li
               key={task.taskId} 
-              className={`flex items-center justify-between px-3 py-2 rounded-lg ${
+              className={`flex items-center justify-between px-2   py-2 rounded-lg  font-bold ${
                 task.completed
                   ? "bg-green-50" 
                   : "hover:bg-gray-100 transition-colors" 
