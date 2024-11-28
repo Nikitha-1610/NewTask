@@ -160,9 +160,6 @@ const TaskDetails = ({ task }) => {
               )}
             </div>
           ))}
-          <button className="flex items-center justify-center h-20 w-16 border rounded-md border-gray-300 text-gray-600 hover:bg-gray-100">
-            <Icon icon="mdi:plus" height={30} width={30} />
-          </button>
         </div>
       </div>
 

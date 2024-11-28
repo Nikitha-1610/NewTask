@@ -2,8 +2,11 @@ import { useLocation } from "react-router-dom";
 import TaskDetails from "../components/TaskDetails";
 import { Icon } from "@iconify/react";
 
+import { useNavigate } from "react-router-dom";
 const InProgressTask = () => {
   const location = useLocation();
+  const navigate = useNavigate();
+
   console.log("here is location", location);
 
   const tasksFromState = location.state || [];
@@ -19,13 +22,29 @@ const InProgressTask = () => {
     comments: task.comment || [],
     taskDescription: task.taskDescription,
   }));
+  const goBack = () => {
+    navigate("/task");
+  };
 
   return (
     <div className=" space-y-5">
       <div className="flex items-center justify-between pb-4 border-gray-300">
-        <h2 className="text-xl font-bold bg-yellow-200 px-2 p-1 rounded-md text-gray-700">
-          In Progress({sampleTask.length})
-        </h2>
+        <div className=" flex gap-2">
+          <button
+            onClick={goBack}
+            style={{
+              background: "transparent",
+              border: "none",
+              cursor: "pointer",
+              fontSize: "24px",
+            }}
+          >
+            <Icon icon="mdi:arrow-left" height={24} width={24} />
+          </button>
+          <h2 className="text-xl font-bold bg-yellow-200 px-2 p-1 rounded-md text-gray-700">
+            In Progress({sampleTask.length})
+          </h2>
+        </div>
         <div className=" flex gap-3">
           <button className="px-3 py-2 text-sm text-white bg-teal-500 rounded hover:bg-teal-600">
             + Add a task

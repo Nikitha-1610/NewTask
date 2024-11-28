@@ -97,9 +97,7 @@ const Side = ({ isOpen, toggleSidebar, isCollapsed }) => {
 
           <MenuItem
             icon={<Icon icon="bi:list-task" height={22} width={22} />}
-            className={
-              isActive("/designteam") ? "bg-teal-100 text-teal-600" : ""
-            }
+            className={isActive("/task") ? "bg-teal-100 text-teal-600" : ""}
           >
             <Link to="/task" onClick={handleLinkClick}>
               Task
