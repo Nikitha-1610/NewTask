@@ -4,37 +4,43 @@ import WeeklyProduction from "../components/DashboardComp/WeeklyProduction";
 import Production from "../components/DashboardComp/Production";
 import TwoWaveChart from "../components/DashboardComp/TwoWaveChart";
 import axiosInstance from "../utilities/axios/axiosInstance";
-
+import ReactLoading from "react-loading";
 const getRandomColor = () => {
   const colors = [
-    "bg-red-500", "bg-blue-500", "bg-green-500", "bg-yellow-500", 
-    "bg-purple-500", "bg-pink-500", "bg-teal-500", "bg-indigo-500"
+    { base: "red", faint: "bg-red-100", text: "text-red-600" },
+    { base: "blue", faint: "bg-blue-100", text: "text-blue-600" },
+    { base: "green", faint: "bg-green-100", text: "text-green-600" },
+    { base: "yellow", faint: "bg-yellow-100", text: "text-yellow-600" },
+    { base: "purple", faint: "bg-purple-100", text: "text-purple-600" },
+    { base: "pink", faint: "bg-pink-100", text: "text-pink-600" },
+    { base: "teal", faint: "bg-teal-100", text: "text-teal-600" },
+    { base: "indigo", faint: "bg-indigo-100", text: "text-indigo-600" },
   ];
   return colors[Math.floor(Math.random() * colors.length)];
 };
 
-const getFaintColor = (color) => {
-  switch (color) {
-    case "red":
-      return "bg-red-100";
-    case "blue":
-      return "bg-blue-100";
-    case "green":
-      return "bg-green-100";
-    case "yellow":
-      return "bg-yellow-100";
-    case "purple":
-      return "bg-purple-100";
-    case "pink":
-      return "bg-pink-100";
-    case "teal":
-      return "bg-teal-100";
-    case "indigo":
-      return "bg-indigo-100";
-    default:
-      return "bg-gray-100";
-  }
-};
+// const getFaintColor = (color) => {
+//   switch (color) {
+//     case "red":
+//       return "bg-red-100";
+//     case "blue":
+//       return "bg-blue-100";
+//     case "green":
+//       return "bg-green-100";
+//     case "yellow":
+//       return "bg-yellow-100";
+//     case "purple":
+//       return "bg-purple-100";
+//     case "pink":
+//       return "bg-pink-100";
+//     case "teal":
+//       return "bg-teal-100";
+//     case "indigo":
+//       return "bg-indigo-100";
+//     default:
+//       return "bg-gray-100";
+//   }
+// };
 
 const Dashboard = () => {
   const cardContainerRef = useRef(null);
@@ -63,6 +69,7 @@ const Dashboard = () => {
 
   // Fetch API data
   const fetchData = async () => {
+    setLoading(true);
     try {
       const response = await axiosInstance.get("/task/adminDashboard");
       if (response.status === 200) {
@@ -82,35 +89,40 @@ const Dashboard = () => {
     fetchData();
   }, []);
 
-  // Render loading or error states
-  if (loading) return <div>Loading...</div>;
-  if (error) return <div>{error}</div>;
+  if (loading)
+    return (
+      <div className="flex justify-start  min-h-screen">
+        <ReactLoading type="spin" color="#00bfa6" height={45} width={45} />
+      </div>
+    );
 
+  if (error) return <div>{error}</div>;
   const departmentCounts = dashboardData?.departmentCounts;
 
   return (
     <div className="flex flex-col items-center pt-0 gap-4 w-full">
-      <div className="grid grid-cols-1 gap-4 w-full max-w-screen-xl sm:p-2">
+      <div className="grid grid-cols-1 gap-4 w-full max-w-screen-xl p-2">
         
         {/* Card Container */}
 
-        <div className="flex justify-between top-16 left-4 right-4 z-10 lg:hidden">
+        <div className="relative">
           {/* Scroll Left button */}
           <div
-            className="cursor-pointer"
-            onClick={scrollLeft} // Add the onClick event to trigger scrollLeft
+            className="absolute top-1/2 left-0 transform -translate-y-1/2 cursor-pointer z-10"
+            onClick={scrollLeft}
           >
             <MdArrowBack className="text-teal-500 text-3xl font-bold" />
           </div>
 
           {/* Scroll Right button */}
           <div
-            className="cursor-pointer"
-            onClick={scrollRight} // Add the onClick event to trigger scrollRight
+            className="absolute top-1/2 right-0 transform -translate-y-1/2 cursor-pointer z-10"
+            onClick={scrollRight}
           >
             <MdArrowForward className="text-teal-500 text-3xl font-bold" />
           </div>
-        </div>
+
+        
         <div
           className="overflow-x-auto scrollbar-hide w-full"
           ref={cardContainerRef} // Attach the ref to the card container
@@ -118,8 +130,7 @@ const Dashboard = () => {
           <div className="flex space-x-2">
             {/* Loop over the departments dynamically */}
             {departmentCounts && Object.keys(departmentCounts).map((department, index) => {
-              const randomColor = getRandomColor(); // Get random color
-              const faintColor = getFaintColor(randomColor); // Get faint background color
+              const { faint, text } = getRandomColor(); // Get random colors
               return (
                 <div
                   key={index}
@@ -128,9 +139,9 @@ const Dashboard = () => {
                   <div className="flex justify-between items-center space-x-0">
                     {/* Bar Chart Icon with random color */}
                     <div
-                      className={`flex justify-center items-center w-12 h-12 rounded-full ${faintColor}`}
+                      className={`flex justify-center items-center w-12 h-12 rounded-full ${faint}`}
                     >
-                      <MdBarChart size={34} className={`text-${randomColor}-600`} />
+                      <MdBarChart size={34} className={`${text}`}  />
                     </div>
                     <div>
                       <h3 className="text-lg font-medium text-gray-400">{department}</h3>
@@ -144,7 +155,7 @@ const Dashboard = () => {
             })}
           </div>
         </div>
-
+        </div>
         {/* Weekly Production Container */}
         <div className="w-full p-5 md:p-3 rounded-xl border-2 border-gray-100">
           <WeeklyProduction
@@ -160,7 +171,7 @@ const Dashboard = () => {
         </div>
 
         {/* WaveGraph Container */}
-        <div className="w-full sm:p-4 p-3 rounded-xl border-2 border-gray-100">
+        <div className="w-full sm:p-3 p-2 rounded-xl border-2 border-gray-100">
           <TwoWaveChart />
         </div>
       </div>
