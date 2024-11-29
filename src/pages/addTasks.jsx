@@ -17,6 +17,12 @@ const AddTasks = () => {
   });
 
   const [isPopupVisible, setIsPopupVisible] = useState(false); //popup
+  const [errors, setErrors] = useState({
+    taskName: "",
+    dueDate: "",
+    assignedTo: "",
+    taskDescription: "",
+  });
 
   const [showUserList, setShowUserList] = useState(false);
   const [selectedUserType, setSelectedUserType] = useState("");
@@ -108,6 +114,50 @@ const AddTasks = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
 
+     // Initialize an errors object to track invalid fields
+  const newErrors = {
+    taskName: "",
+    dueDate: "",
+    assignedTo: "",
+    reviewers: "",
+    category: "",
+    priority: "",
+    taskDescription: "",
+    referenceFileUrl: "",
+  };
+
+  // Check if required fields are filled and set error messages
+  if (!formData.taskName) {
+    newErrors.taskName = "Task name is required.";
+  }
+  if (!formData.dueDate) {
+    newErrors.dueDate = "Due date is required.";
+  }
+  if (formData.assignedTo.length === 0) {
+    newErrors.assignedTo = "At least one person must be assigned.";
+  }
+  if (!formData.reviewers) {
+    newErrors.reviewers = "A reviewer is required.";
+  }
+  if (!formData.category) {
+    newErrors.category = "Please select a category.";
+  }
+  if (!formData.priority) {
+    newErrors.priority = "Priority is required.";
+  }
+  if (!formData.taskDescription) {
+    newErrors.taskDescription = "Task description is required.";
+  }
+  if (formData.referenceFileUrl.length === 0) {
+    newErrors.referenceFileUrl = "At least one reference file is required.";
+  }
+
+  // If there are any validation errors, update the errors state and stop form submission
+  if (Object.values(newErrors).some((error) => error !== "")) {
+    setErrors(newErrors);
+    return;
+  }
+
     try {
       console.log("Submitting Form Data:", formData);
 
@@ -198,23 +248,25 @@ const AddTasks = () => {
             <label className="block text-sm font-semibold">Project Name</label>
             <input
               type="text"
-              className="w-full p-2 border border-gray-300 rounded mt-2"
+              className={'w-full p-2 border ${errors.taskName ? "border-red-500" : "border-gray-300"}  rounded mt-2'}
               name="taskName"
               value={formData.taskName}
               onChange={handleInputChange}
               placeholder="Enter project name"
             />
+            {errors.taskName && (<p className="text-sm text-red-500 mt-1">{errors.taskName}</p>)}
           </div>
           <div className="w-full md:flex-1">
             <label className="block text-sm font-semibold">Due Date</label>
             <input
               type="date"
-              className="w-full p-2 border border-gray-300 rounded mt-2"
+              className={'w-full p-2 border ${errors.dueDate ? "border-red-500" : "border-gray-300"} rounded mt-2'}
               name="dueDate"
               value={formData.dueDate}
               onChange={handleInputChange}
             />
           </div>
+          {errors.dueDate && (<p className="text-sm text-red-500 mt-1">{errors.dueDate}</p>)}
         </div>
 
         {/* assignedTo Section */}
@@ -222,7 +274,7 @@ const AddTasks = () => {
           <label className="block text-sm font-semibold text-gray-800 mb-2">
             assignedTo
           </label>
-          <div className="flex items-center justify-between border-b border-gray-300 pb-2">
+          <div className={'flex items-center justify-between border-b ${errors.assignedTo ? "border-red-500" : "border-gray-300"} pb-2'}>
             <div className="flex items-center gap-2">
               <Icon
                 icon="ic:sharp-person-add"
@@ -255,16 +307,25 @@ const AddTasks = () => {
               />
             </button>
           </div>
+          {errors.assignedTo && (
+            <p className="text-sm text-red-500 mt-1">{errors.assignedTo}</p>
+           )}
         </div>
         <div className="mb-4">
           <label className="block text-sm font-semibold text-gray-500 mb-6">
             Select Category
-            <select className="mt-1 block w-full px-3 py-2 bg-white border text-gray-800 border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-teal-500 focus:border-teal-500 sm:text-sm">
+            <select className={'mt-1 block w-full px-3 py-2 bg-white border ${errors.category ? "border-red-500" : "border-gray-300"} rounded-md shadow-sm focus:outline-none focus:ring-teal-500 focus:border-teal-500 sm:text-sm'}
+            name="category"
+            value={formData.category || ""}
+            onChange={handleInputChange}
+            >
+              <option value="">Select a category</option>
               <option value="development">Development</option>
               <option value="research">Research</option>
               <option value="ui">UI</option>
             </select>
           </label>
+          {errors.category && (<p className="text-sm text-red-500 mt-1">{errors.category}</p>)}
         </div>
 
         {/* Reviewer Section */}
@@ -272,7 +333,7 @@ const AddTasks = () => {
           <label className="block text-sm font-semibold text-gray-800 mb-2">
             Reviewer
           </label>
-          <div className="flex items-center justify-between border-b border-gray-300 pb-2">
+          <div className={'flex items-center justify-between border-b ${errors.reviewers ? "border-red-500" : "border-gray-300"} pb-2'}>
             <div className="flex items-center gap-2">
               <Icon
                 icon="ic:sharp-person-add"
@@ -302,6 +363,7 @@ const AddTasks = () => {
               />
             </button>
           </div>
+          {errors.reviewers && (<p className="text-sm text-red-500 mt-1">{errors.reviewers}</p>)}
         </div>
 
         {/* Priority and taskDescription */}
@@ -351,18 +413,20 @@ const AddTasks = () => {
               Urgent
             </button>
           </div>
+          {errors.priority && (<p className="text-sm text-red-500 mt-1">{errors.priority}</p>)}
         </div>
 
         {/* Task taskDescription */}
         <div className="mb-4">
           <label className="block text-sm font-semibold">taskDescription</label>
           <textarea
-            className="w-full h-40 p-2 border border-gray-300 rounded mt-4"
+            className={'w-full h-40 p-2 border ${errors.taskDescription ? "border-red-500" : "border-gray-300"} rounded mt-4'}
             name="taskDescription"
             value={formData.taskDescription}
             onChange={handleInputChange}
             placeholder="Enter a taskDescription of the task"
           />
+          {errors.taskDescription && (<p className="text-sm text-red-500 mt-1">{errors.taskDescription}</p>)}
         </div>
 
         {/* File Reference */}
@@ -425,6 +489,7 @@ const AddTasks = () => {
               />
             </button>
           </div>
+          {errors.referenceFileUrl && (<p className="text-sm text-red-500 mt-1">{errors.referenceFileUrl}</p>)}
         </div>
 
         <div className="flex justify-end">
