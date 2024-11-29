@@ -205,7 +205,7 @@ const AddProject = () => {
                 width={22}
               />
               {formData.projectLead && (
-                <span className="bg-green-200 text-green-700 px-2 py-1 rounded-full text-xs">
+                <span className="bg-white-200 text-green-700 px-2 py-1 rounded-full text-xs">
                   {formData.projectLead}
                 </span>
               )}
@@ -240,7 +240,7 @@ const AddProject = () => {
                 width={22}
               />
               {formData.frontendLead && (
-                <span className="bg-green-200 text-green-700 px-2 py-1 rounded-full text-xs">
+                <span className="bg-white-200 text-green-700 px-2 py-1 rounded-full text-xs">
                   {formData.frontendLead}
                 </span>
               )}
@@ -275,7 +275,7 @@ const AddProject = () => {
                 width={22}
               />
               {formData.backendLead && (
-                <span className="bg-green-200 text-green-700 px-2 py-1 rounded-full text-xs">
+                <span className="bg-white-200 text-green-700 px-2 py-1 rounded-full text-xs">
                   {formData.backendLead}
                 </span>
               )}
@@ -312,7 +312,7 @@ const AddProject = () => {
                 width={22}
               />
               {formData.designLead && (
-                <span className="bg-green-200 text-green-700 px-2 py-1 rounded-full text-xs">
+                <span className="bg-white-200 text-green-700 px-2 py-1 rounded-full text-xs">
                   {formData.designLead}
                 </span>
               )}

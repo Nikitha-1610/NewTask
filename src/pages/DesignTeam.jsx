@@ -18,8 +18,8 @@ import ReactLoading from "react-loading";
 const DateDisplay = ({ isoDate }) => {
   if (!isoDate) return "No Date";
   const formatDate = (isoDate) => {
-    const date = new Date(isoDate);
-    const options = { month: "long", day: "numeric" };
+  const date = new Date(isoDate);
+  const options = { month: "long", day: "numeric" };
     return new Intl.DateTimeFormat("en-US", options).format(date);
   };
   return <span>{formatDate(isoDate)}</span>;
