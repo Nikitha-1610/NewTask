@@ -5,20 +5,19 @@ import axiosInstance from "../utilities/axios/axiosInstance";
 const EmployeeForm = () => {
   const [formData, setFormData] = useState({
     employeeID: "",
-  name: "",
-  mobile: "",
-  password: "",
-  email: "",
-  address: "",
-  DOB: "",
-  reference: "",
-  role: "",
-  gender: "",
-  position: "",
-  department: "",
-  teamLead: "",
-appliedDate: "",
-
+    name: "",
+    mobile: 0,
+    password: "",
+    email: "",
+    address: "",
+    DOB: "",
+    reference: "",
+    role: "",
+    gender: "",
+    position: "",
+    department: "",
+    teamLead: "",
+    appliedDate: "",
   });
 
   const [setUsers] = useState([]);
@@ -60,9 +59,9 @@ appliedDate: "",
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;
-    setFormData((prev) => ({
-      ...prev,
-      [name]: value,
+    setFormData((prevData) => ({
+      ...prevData,
+      [name]: name === "mobile" ? parseInt(value) || 0 : value, // Ensure mobile is stored as an integer
     }));
   };
 
@@ -74,6 +73,7 @@ appliedDate: "",
 
       // Make the API POST request
       const response = await axiosInstance.post("employee/add", formData);
+      console.log(response);
 
       // Handle success
       if (response.status === 200 || response.status === 201) {
@@ -83,7 +83,7 @@ appliedDate: "",
         setFormData({
           employeeID: "",
           name: "",
-          mobile: "",
+          mobile: 0,
           password: "",
           email: "",
           address: "",
@@ -94,7 +94,7 @@ appliedDate: "",
           position: "",
           department: "",
           teamLead: "",
-        appliedDate: "",
+          appliedDate: "",
         });
       } else {
         console.error("Unexpected response:", response);
@@ -246,7 +246,7 @@ appliedDate: "",
 
           <div className="flex flex-col">
             <label className="text-gray-700 font-medium mb-1">
-            Gender<span className="text-red-500">*</span>
+              Gender<span className="text-red-500">*</span>
             </label>
             <input
               type="text"
@@ -256,10 +256,10 @@ appliedDate: "",
               className="border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-teal-500"
             />
           </div>
-          
+
           <div className="flex flex-col">
             <label className="text-gray-700 font-medium mb-1">
-            Department<span className="text-red-500">*</span>
+              Department<span className="text-red-500">*</span>
             </label>
             <input
               type="text"
