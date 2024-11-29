@@ -91,8 +91,8 @@ const Dashboard = () => {
 
   if (loading)
     return (
-      <div className="flex justify-start  min-h-screen">
-        <ReactLoading type="spin" color="#00bfa6" height={45} width={45} />
+      <div className="flex justify-center items-center min-h-screen">
+        <ReactLoading type="spin" color="#00bfa6" height={55} width={55} />
       </div>
     );
 
