@@ -1,10 +1,9 @@
 import { FaCheckCircle, FaExclamationCircle } from "react-icons/fa";
-import React, { useState,useRef } from "react";
-
+import { useState, useRef } from "react";
 
 const SemiCircularProgressBar = ({ value1, value2 }) => {
   const isMobile = window.innerWidth <= 768; // Example breakpoint for mobile screens
-  const radius = isMobile ? 70 : 130; 
+  const radius = isMobile ? 70 : 130;
   const strokeWidth = 17; // Thickness of the stroke
   const circumference = 2 * Math.PI * radius; // Full circle circumference
   const semicircle = circumference / 2; // Only the semicircle part
@@ -28,7 +27,10 @@ const SemiCircularProgressBar = ({ value1, value2 }) => {
     const tooltipWidth = 100; // Estimated tooltip width
     const tooltipHeight = 40; // Estimated tooltip height
     const constrainedLeft = Math.max(0, Math.min(mouseX, width - tooltipWidth));
-    const constrainedTop = Math.max(0, Math.min(mouseY, height - tooltipHeight));
+    const constrainedTop = Math.max(
+      0,
+      Math.min(mouseY, height - tooltipHeight)
+    );
 
     setTooltip({
       top: constrainedTop,
@@ -162,7 +164,6 @@ const Production = ({ projectDetails }) => {
           </div>
         </div>
       </div>
-      
 
       {/* right section */}
 
@@ -173,7 +174,7 @@ const Production = ({ projectDetails }) => {
         </h3>
         <div className="overflow-auto h-full">
           <table className="w-full border-collapse text-base">
-          <thead className="sticky top-0 bg-white z-10 border-b-2 border-gray-200">
+            <thead className="sticky top-0 bg-white z-10 border-b-2 border-gray-200">
               <tr className="border-b-2 border-gray-200">
                 <th className="font-medium text-gray-400 px-2 py-3 text-left">
                   NAME
@@ -190,29 +191,29 @@ const Production = ({ projectDetails }) => {
               </tr>
             </thead>
             <tbody className="overflow-y-auto">
-        {projectDetails?.map((row, index) => (
-          <tr key={index} className="border-b border-gray-100">
-            <td className="px-2 py-3 text-[#2B3674] text-sm md:text-base font-bold">
-              {row.projectName}
-            </td>
-            <td className="px-2 py-3 text-[#2B3674] text-sm md:text-base font-bold flex">
-              {row.projectStatus === "Assigned" ? (
-                <FaCheckCircle
-                  className="text-[#05CD99] mr-2"
-                  size={20}
-                />
-              ) : (
-                <FaExclamationCircle
-                  className="text-[#FFCE20] mr-2"
-                  size={20}
-                />
-              )}
-              {row.projectStatus}
-            </td>
-            <td className="px-2 py-3 text-[#2B3674] text-xs sm:text-sm md:text-base font-bold text-center">
-              {row.projectEndDate}
-            </td>
-            {/* <td className="px-2 py-3 text-center">
+              {projectDetails?.map((row, index) => (
+                <tr key={index} className="border-b border-gray-100">
+                  <td className="px-2 py-3 text-[#2B3674] text-sm md:text-base font-bold">
+                    {row.projectName}
+                  </td>
+                  <td className="px-2 py-3 text-[#2B3674] text-sm md:text-base font-bold flex">
+                    {row.projectStatus === "Assigned" ? (
+                      <FaCheckCircle
+                        className="text-[#05CD99] mr-2"
+                        size={20}
+                      />
+                    ) : (
+                      <FaExclamationCircle
+                        className="text-[#FFCE20] mr-2"
+                        size={20}
+                      />
+                    )}
+                    {row.projectStatus}
+                  </td>
+                  <td className="px-2 py-3 text-[#2B3674] text-xs sm:text-sm md:text-base font-bold text-center">
+                    {row.projectEndDate}
+                  </td>
+                  {/* <td className="px-2 py-3 text-center">
               <svg
                 xmlns="http://www.w3.org/2000/svg"
                 className="w-full max-w-[97px] h-3"
@@ -239,9 +240,9 @@ const Production = ({ projectDetails }) => {
                 />
               </svg>
             </td> */}
-          </tr>
-        ))}
-      </tbody>
+                </tr>
+              ))}
+            </tbody>
           </table>
         </div>
       </div>

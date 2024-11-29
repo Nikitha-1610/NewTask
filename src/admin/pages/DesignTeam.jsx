@@ -9,7 +9,7 @@ import {
   faComment,
   faLink,
 } from "@fortawesome/free-solid-svg-icons";
-import axiosInstance from "../utilities/axios/axiosInstance";
+import axiosInstance from "../../common/utils/axios/axiosInstance";
 import { useNavigate } from "react-router-dom";
 import { Link } from "react-router-dom";
 import ReactLoading from "react-loading";
@@ -18,8 +18,8 @@ import ReactLoading from "react-loading";
 const DateDisplay = ({ isoDate }) => {
   if (!isoDate) return "No Date";
   const formatDate = (isoDate) => {
-  const date = new Date(isoDate);
-  const options = { month: "long", day: "numeric" };
+    const date = new Date(isoDate);
+    const options = { month: "long", day: "numeric" };
     return new Intl.DateTimeFormat("en-US", options).format(date);
   };
   return <span>{formatDate(isoDate)}</span>;

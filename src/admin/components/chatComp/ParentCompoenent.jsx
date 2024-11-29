@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import { useState } from "react";
 import VoiceCall from "./VoiceCall";
 
 const ParentComponent = () => {
@@ -17,7 +17,10 @@ const ParentComponent = () => {
   return (
     <div>
       {/* Button to start a call */}
-      <button onClick={handleStartCall} className="bg-blue-500 text-white p-2 rounded">
+      <button
+        onClick={handleStartCall}
+        className="bg-blue-500 text-white p-2 rounded"
+      >
         Start Voice Call
       </button>
 

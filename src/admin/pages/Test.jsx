@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { Icon } from "@iconify/react";
-import axiosInstance from "../utilities/axios/axiosInstance";
+import axiosInstance from "../../common/utils/axios/axiosInstance";
 import AWS from "aws-sdk"; // Import AWS SDK
 
 const AddTasks = () => {

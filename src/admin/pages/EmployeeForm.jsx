@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 // import { Icon } from "@iconify/react";
-import axiosInstance from "../utilities/axios/axiosInstance";
+import axiosInstance from "../../common/utils/axios/axiosInstance";
 
 const EmployeeForm = () => {
   const [formData, setFormData] = useState({
@@ -268,7 +268,7 @@ const EmployeeForm = () => {
               onChange={handleInputChange}
               className="border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-teal-500"
             />
-          </div>  
+          </div>
 
           <div className="flex flex-col">
             <label className="text-gray-700 font-medium mb-1">

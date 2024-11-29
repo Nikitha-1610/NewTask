@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { Icon } from "@iconify/react";
-import axiosInstance from "../utilities/axios/axiosInstance";
+import axiosInstance from "../../common/utils/axios/axiosInstance";
 import toast, { Toaster } from "react-hot-toast";
 import CountUp from "react-countup";
 import ReactLoading from "react-loading";

@@ -1,12 +1,12 @@
 import { useNavigate } from "react-router-dom";
 import { useState } from "react";
 import { useDispatch } from "react-redux";
-import { login } from "../redux/authSlice";
-import bgImage from "../assets/BgImage.jpg";
+import { login } from "../../redux/authSlice";
+import bgImage from "../../assets/BgImage.jpg";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
-import logo from "../assets/logo.png";
-import axiosInstance from "../utilities/axios/axiosInstance";
+import logo from "../../assets/logo.png";
+import axiosInstance from "../../common/utils/axios/axiosInstance";
 
 const Auth = () => {
   const navigate = useNavigate();
@@ -30,14 +30,17 @@ const Auth = () => {
       });
 
       // On successful login
-
       const userData = response.data;
-      console.log(userData);
+      const token = response.data.token; // Assuming `token` is returned in the response
       toast.success("Login successful!");
 
-      // Update Redux state
-      dispatch(login(userData)); // Pass user data to Redux
-      navigate("/dashboard"); // Redirect to dashboard
+      // Update Redux state with user data and token
+      dispatch(login({ userData, token }));
+
+      // Redirect based on role
+      navigate(
+        userData?.role === "Employee" ? "/admin/dashboard" : "/user/home"
+      );
     } catch (error) {
       console.error("Login error:", error);
 

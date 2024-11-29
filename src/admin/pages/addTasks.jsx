@@ -1,20 +1,18 @@
 import { useEffect, useState } from "react";
 import { Icon } from "@iconify/react";
-import axiosInstance from "../utilities/axios/axiosInstance";
-import { s3Client } from "../utilities/aws/awsconfig";
+import axiosInstance from "../../common/utils/axios/axiosInstance";
+import { s3Client } from "../../common/utils/aws/awsconfig";
 import { PutObjectCommand } from "@aws-sdk/client-s3";
 // import toast, { Toaster } from "react-hot-toast";
-const AddProject = () => {
+const AddTasks = () => {
   const [formData, setFormData] = useState({
-    projectName: "",
-    startDate: "",
+    taskName: "",
     dueDate: "",
-    projectLead: [],
-    frontendLead: [],
-    backendLead: [],
-    designLead: [], // Single reviewer as a string
+    assignedTo: [],
+    assignedBy: "john",
+    reviewers: "", // Single reviewer as a string
     priority: "Low",
-    projectDescription: "",
+    taskDescription: "",
     referenceFileUrl: [], // Reference as an array
   });
 
@@ -78,7 +76,7 @@ const AddProject = () => {
         console.log("Region:", region);
         console.log("Bucket:", BUCKET_NAME);
         console.log("FileName:", fileName);
-        return `https://${BUCKET_NAME}.s3.${region}.amazonaws.com/${fileName}`;
+        return "https://${BUCKET_NAME}.s3.${region}.amazonaws.com/${fileName}";
       } catch (err) {
         console.error("Error uploading file to S3: ", err);
         return null;
@@ -112,7 +110,7 @@ const AddProject = () => {
       console.log("Submitting Form Data:", formData);
 
       // Make the API POST request
-      const response = await axiosInstance.post("project/addProject", formData);
+      const response = await axiosInstance.post("task/addTask", formData);
 
       // Handle success
       if (response.status === 200 || response.status === 201) {
@@ -120,15 +118,13 @@ const AddProject = () => {
 
         // Reset form (if needed)
         setFormData({
-          projectName: "",
-          startDate: "",
+          taskName: "",
           dueDate: "",
-          projectLead: [],
-          frontendLead: [],
-          backendLead: [],
-          designLead: [], // Single reviewer as a string
+          assignedTo: [],
+          assignedBy: "john",
+          reviewers: "",
           priority: "Low",
-          projectDescription: "",
+          taskDescription: "",
           referenceFileUrl: [],
         });
         setDisplayReferences([]);
@@ -147,54 +143,48 @@ const AddProject = () => {
       <div className="flex md:justify-end justify-center mb-5">
         <div className="flex flex-wrap justify-end gap-4">
           {/* Add Task Button */}
-          <button className="flex items-center gap-2  bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded-3xl shadow-md transition">
+          <button className="flex items-center gap-2 bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded-md shadow-md transition">
             <Icon icon="ic:round-add" height={22} width={22} />
-            <span>Add project</span>
+            <span>Add Task</span>
+          </button>
+
+          {/* Filter Button */}
+          <button className="flex items-center gap-2 border border-gray-300 hover:border-gray-400 text-gray-600 px-4 py-2 rounded-md shadow-md transition">
+            <Icon icon="lets-icons:filter" height={22} width={22} />
+            <span>Filter</span>
           </button>
         </div>
       </div>
-      <form onSubmit={handleSubmit} className="w-full ">
+      <form onSubmit={handleSubmit} className="w-full md:w-8/12">
         {/* Project Name and Due Date */}
-        <div className="flex flex-wrap space-y-4 md:space-y-0 gap-5 mb-4">
-          <div className="w-full">
+        <div className="flex flex-wrap space-y-4 md:space-y-0 md:space-x-4 mb-4">
+          <div className="w-full md:flex-1">
             <label className="block text-sm font-semibold">Project Name</label>
             <input
               type="text"
               className="w-full p-2 border border-gray-300 rounded mt-2"
-              name="projectName"
-              value={formData.projectName}
+              name="taskName"
+              value={formData.taskName}
               onChange={handleInputChange}
               placeholder="Enter project name"
             />
           </div>
-          <div className=" flex w-full md:w-8/12 gap-4">
-            <div className="w-full md:flex-1">
-              <label className="block text-sm font-semibold">Start Date</label>
-              <input
-                type="date"
-                className="w-full p-2 border border-gray-300 rounded mt-2"
-                name="startDate"
-                value={formData.startDate}
-                onChange={handleInputChange}
-              />
-            </div>
-            <div className="w-full md:flex-1">
-              <label className="block text-sm font-semibold">Due Date</label>
-              <input
-                type="date"
-                className="w-full p-2 border border-gray-300 rounded mt-2"
-                name="dueDate"
-                value={formData.dueDate}
-                onChange={handleInputChange}
-              />
-            </div>
+          <div className="w-full md:flex-1">
+            <label className="block text-sm font-semibold">Due Date</label>
+            <input
+              type="date"
+              className="w-full p-2 border border-gray-300 rounded mt-2"
+              name="dueDate"
+              value={formData.dueDate}
+              onChange={handleInputChange}
+            />
           </div>
         </div>
 
         {/* assignedTo Section */}
         <div className="mb-4">
           <label className="block text-sm font-semibold text-gray-800 mb-2">
-            Project Lead
+            assignedTo
           </label>
           <div className="flex items-center justify-between border-b border-gray-300 pb-2">
             <div className="flex items-center gap-2">
@@ -204,17 +194,20 @@ const AddProject = () => {
                 height={22}
                 width={22}
               />
-              {formData.projectLead && (
-                <span className="bg-white-200 text-green-700 px-2 py-1 rounded-full text-xs">
-                  {formData.projectLead}
+              {formData.assignedTo.map((member, index) => (
+                <span
+                  key={index}
+                  className="bg-blue-200 text-blue-700 px-2 py-1 rounded-full text-xs"
+                >
+                  {member}
                 </span>
-              )}
+              ))}
             </div>
             <button
               type="button"
               className="flex items-center justify-center w-8 h-8 rounded-full border border-dashed border-gray-400"
               onClick={() => {
-                setSelectedUserType("projectLead");
+                setSelectedUserType("assignedTo");
                 setShowUserList(true);
               }}
             >
@@ -228,80 +221,20 @@ const AddProject = () => {
           </div>
         </div>
         <div className="mb-4">
-          <label className="block text-sm font-semibold text-gray-800 mb-2">
-            Frontend Lead
+          <label className="block text-sm font-semibold text-gray-500 mb-6">
+            Select Category
+            <select className="mt-1 block w-full px-3 py-2 bg-white border text-gray-800 border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-teal-500 focus:border-teal-500 sm:text-sm">
+              <option value="development">Development</option>
+              <option value="research">Research</option>
+              <option value="ui">UI</option>
+            </select>
           </label>
-          <div className="flex items-center justify-between border-b border-gray-300 pb-2">
-            <div className="flex items-center gap-2">
-              <Icon
-                icon="ic:sharp-person-add"
-                className="text-gray-600"
-                height={22}
-                width={22}
-              />
-              {formData.frontendLead && (
-                <span className="bg-white-200 text-green-700 px-2 py-1 rounded-full text-xs">
-                  {formData.frontendLead}
-                </span>
-              )}
-            </div>
-            <button
-              type="button"
-              className="flex items-center justify-center w-8 h-8 rounded-full border border-dashed border-gray-400"
-              onClick={() => {
-                setSelectedUserType("frontendLead");
-                setShowUserList(true);
-              }}
-            >
-              <Icon
-                icon="ic:outline-add"
-                className="text-gray-600"
-                height={20}
-                width={20}
-              />
-            </button>
-          </div>
-        </div>
-        <div className="mb-4">
-          <label className="block text-sm font-semibold text-gray-800 mb-2">
-            Backend Lead
-          </label>
-          <div className="flex items-center justify-between border-b border-gray-300 pb-2">
-            <div className="flex items-center gap-2">
-              <Icon
-                icon="ic:sharp-person-add"
-                className="text-gray-600"
-                height={22}
-                width={22}
-              />
-              {formData.backendLead && (
-                <span className="bg-white-200 text-green-700 px-2 py-1 rounded-full text-xs">
-                  {formData.backendLead}
-                </span>
-              )}
-            </div>
-            <button
-              type="button"
-              className="flex items-center justify-center w-8 h-8 rounded-full border border-dashed border-gray-400"
-              onClick={() => {
-                setSelectedUserType("backendLead");
-                setShowUserList(true);
-              }}
-            >
-              <Icon
-                icon="ic:outline-add"
-                className="text-gray-600"
-                height={20}
-                width={20}
-              />
-            </button>
-          </div>
         </div>
 
         {/* Reviewer Section */}
         <div className="mb-4">
           <label className="block text-sm font-semibold text-gray-800 mb-2">
-            Design Lead
+            Reviewer
           </label>
           <div className="flex items-center justify-between border-b border-gray-300 pb-2">
             <div className="flex items-center gap-2">
@@ -311,9 +244,9 @@ const AddProject = () => {
                 height={22}
                 width={22}
               />
-              {formData.designLead && (
-                <span className="bg-white-200 text-green-700 px-2 py-1 rounded-full text-xs">
-                  {formData.designLead}
+              {formData.reviewers && (
+                <span className="bg-green-200 text-green-700 px-2 py-1 rounded-full text-xs">
+                  {formData.reviewers}
                 </span>
               )}
             </div>
@@ -321,7 +254,7 @@ const AddProject = () => {
               type="button"
               className="flex items-center justify-center w-8 h-8 rounded-full border border-dashed border-gray-400"
               onClick={() => {
-                setSelectedUserType("designLead");
+                setSelectedUserType("reviewers");
                 setShowUserList(true);
               }}
             >
@@ -390,9 +323,9 @@ const AddProject = () => {
           <textarea
             className="w-full h-40 p-2 border border-gray-300 rounded mt-4"
             name="taskDescription"
-            value={formData.projectDescription}
+            value={formData.taskDescription}
             onChange={handleInputChange}
-            placeholder="Enter a projectDescription of the task"
+            placeholder="Enter a taskDescription of the task"
           />
         </div>
 
@@ -497,4 +430,4 @@ const AddProject = () => {
   );
 };
 
-export default AddProject;
+export default AddTasks;

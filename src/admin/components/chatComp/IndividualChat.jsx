@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import { useState } from "react";
 import {
   FaPhone,
   FaVideo,
@@ -152,13 +152,17 @@ const IndividualChat = ({ contact, handleBackToContacts }) => {
                             <span className="font-semibold text-base text-black">
                               {contact?.name}
                             </span>
-                            <span className="text-gray-500 text-sm">10:30 AM</span>
+                            <span className="text-gray-500 text-sm">
+                              10:30 AM
+                            </span>
                           </div>
                           <p className="text-base text-black">
                             {index === 0
                               ? contact.lastMessage
                               : contactMessages[
-                                  Math.floor(Math.random() * contactMessages.length)
+                                  Math.floor(
+                                    Math.random() * contactMessages.length
+                                  )
                                 ]}
                           </p>
                         </div>
@@ -169,8 +173,12 @@ const IndividualChat = ({ contact, handleBackToContacts }) => {
                     <div className="flex justify-end mt-2 mb-2">
                       <div className="bg-teal-100 shadow-md p-2 rounded-lg w-auto max-w-md">
                         <div className="flex justify-between mb-1">
-                          <span className="font-semibold text-base text-black">You</span>
-                          <span className="text-gray-500 text-sm">10:45 AM</span>
+                          <span className="font-semibold text-base text-black">
+                            You
+                          </span>
+                          <span className="text-gray-500 text-sm">
+                            10:45 AM
+                          </span>
                         </div>
                         <p className="text-base text-black">{userMessage}</p>
                       </div>
@@ -218,4 +226,3 @@ const IndividualChat = ({ contact, handleBackToContacts }) => {
 };
 
 export default IndividualChat;
-

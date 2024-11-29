@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { FaCalendarAlt, FaUserPlus, FaCog, FaFileAlt } from "react-icons/fa";
+import { FaCalendarAlt, FaUserPlus, FaFileAlt } from "react-icons/fa";
 import { FaFilePdf, FaFileWord, FaFileExcel } from "react-icons/fa";
 import axiosInstance from "../../utilities/axios/axiosInstance";
 

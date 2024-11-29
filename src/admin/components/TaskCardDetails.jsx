@@ -1,20 +1,19 @@
-import { useParams , useNavigate } from "react-router-dom";
+import { useParams, useNavigate } from "react-router-dom";
 import { useState, useEffect } from "react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faLink, faUser, faComments } from "@fortawesome/free-solid-svg-icons";
-import axiosInstance from "../utilities/axios/axiosInstance";
+import axiosInstance from "../common/utils/axios/axiosInstance";
 import { Icon } from "@iconify/react";
 
 const TaskCardDetails = () => {
-  const { taskId } = useParams(); 
-  const navigate = useNavigate(); 
+  const { taskId } = useParams();
+  const navigate = useNavigate();
   const [taskDetails, setTaskDetails] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [priority, setPriority] = useState("Normal");
   const [fileSize, setFileSize] = useState(null);
   const [downloading, setDownloading] = useState(false);
-
 
   useEffect(() => {
     // Fetch task details
@@ -31,37 +30,33 @@ const TaskCardDetails = () => {
       });
   }, [taskId]);
 
-
   const goBack = () => {
-    navigate("/task"); 
+    navigate("/task");
   };
 
+  const downloadFile = async (url) => {
+    try {
+      setDownloading(true);
+      const response = await axiosInstance.head(url);
+      const contentLength = response.headers["content-length"];
+      const sizeInKB = (contentLength / 1024).toFixed(2);
+      setFileSize(sizeInKB);
 
-    
-    const downloadFile = async (url) => {
-      try {
-        setDownloading(true);
-        const response = await axiosInstance.head(url); 
-        const contentLength = response.headers['content-length'];
-        const sizeInKB = (contentLength / 1024).toFixed(2); 
-        setFileSize(sizeInKB); 
-  
-        // Create a download link and trigger the download
-        const link = document.createElement('a');
-        link.href = url;
-        link.download = url.split('/').pop(); 
-        link.click(); // Trigger the download
-      } catch (error) {
-        console.error('Error downloading file:', error);
-      } finally {
-        setDownloading(false); // Reset downloading state
-      }
-    };
+      // Create a download link and trigger the download
+      const link = document.createElement("a");
+      link.href = url;
+      link.download = url.split("/").pop();
+      link.click(); // Trigger the download
+    } catch (error) {
+      console.error("Error downloading file:", error);
+    } finally {
+      setDownloading(false); // Reset downloading state
+    }
+  };
 
   if (loading) return <div className="text-center mt-10">Loading...</div>;
-  if (error) return <div className="text-center mt-10 text-red-500">{error}</div>;
-
-
+  if (error)
+    return <div className="text-center mt-10 text-red-500">{error}</div>;
 
   const {
     taskName,
@@ -75,11 +70,6 @@ const TaskCardDetails = () => {
     assignedBy,
     referenceFileUrl = [],
   } = taskDetails || {};
-
-
-
-
-
 
   const generateRandomColor = () => {
     const colors = [
@@ -95,26 +85,23 @@ const TaskCardDetails = () => {
   };
 
   return (
-
-
-
-
     <div className="w-full mx-auto p-6 bg-white rounded-lg shadow-md border border-gray-200">
-       {/* Back Arrow Button */}
-       <button 
-        onClick={goBack} 
+      {/* Back Arrow Button */}
+      <button
+        onClick={goBack}
         style={{
-          background: "transparent", 
-          border: "none", 
-          cursor: "pointer", 
+          background: "transparent",
+          border: "none",
+          cursor: "pointer",
           fontSize: "24px",
         }}
       >
         <Icon icon="mdi:arrow-left" height={24} width={24} />
       </button>
 
-      <h3 className={'mt-4 text-lg md:text-xl font-semibold text-gray-800'}>{taskName}</h3>
-
+      <h3 className={"mt-4 text-lg md:text-xl font-semibold text-gray-800"}>
+        {taskName}
+      </h3>
 
       <div className="mt-4 text-sm md:text-base font-normal text-gray-600 space-y-4">
         <div className="flex flex-wrap items-center gap-4">
@@ -127,11 +114,6 @@ const TaskCardDetails = () => {
             <span className="ml-1 font-medium">{taskStatus}</span>
           </div>
         </div>
-
-        
-
-
-
 
         <div className="flex flex-wrap items-center gap-4">
           <div className="flex items-center">
@@ -147,12 +129,6 @@ const TaskCardDetails = () => {
           </span>
         </div>
 
-
-
-
-
-
-
         <div className="flex flex-wrap items-center gap-4 ">
           <div className="flex items-center">
             <Icon icon="lucide:users" height={22} width={22} />
@@ -161,7 +137,6 @@ const TaskCardDetails = () => {
           <div className="flex flex-wrap gap-2">
             {assignedTo.map((emp, index) => (
               <div key={index} className="flex items-center gap-2">
-
                 <Icon
                   icon="ph:user-circle-fill"
                   className="text-blue-500  p-0 rounded-full"
@@ -193,7 +168,6 @@ const TaskCardDetails = () => {
           </div>
         </div>
 
-
         <div className="mt-8">
           <div className="flex items-center gap-2">
             <Icon icon="tabler:file-description" height={22} width={22} />
@@ -206,13 +180,14 @@ const TaskCardDetails = () => {
           />
         </div>
 
-
-
-
         <div className="mt-4">
           <div className="flex justify-between">
             <div className=" flex gap-2">
-              <Icon icon="cuida:attachment-clip-outline" height={22} width={22} />
+              <Icon
+                icon="cuida:attachment-clip-outline"
+                height={22}
+                width={22}
+              />
               <h4 className="text-base font-semibold text-gray-400">
                 Attachments ({referenceFileUrl.length})
               </h4>
@@ -278,7 +253,6 @@ const TaskCardDetails = () => {
           </div>
         </div>
 
-
         <div className="mt-4">
           <div className="flex items-center gap-2">
             <Icon icon="basil:comment-outline" height={22} width={22} />
@@ -292,7 +266,6 @@ const TaskCardDetails = () => {
                 key={index}
                 className="flex items-center gap-2 p-2 text-sm text-gray-700 bg-blue-100 border border-gray-300 rounded-md"
               >
-
                 <div className=" font-bold text-teal-300 text-base">
                   {comment.userName}:
                 </div>
@@ -302,54 +275,49 @@ const TaskCardDetails = () => {
           </div>
         </div>
 
-
-
-
-
         {/* Priority Section */}
         <div
-          className={`mt-4 flex flex-wrap gap-2 items-center ${priority === "Urgent"
-            ? "bg-red-100"
-            : priority === "Normal"
+          className={`mt-4 flex flex-wrap gap-2 items-center ${
+            priority === "Urgent"
+              ? "bg-red-100"
+              : priority === "Normal"
               ? "bg-yellow-100"
               : "bg-green-100"
-            } p-4 rounded-md`}
+          } p-4 rounded-md`}
         >
           <span className="text-sm font-semibold">Change Priority:</span>
           {["Low", "Normal", "Urgent"].map((currentPriority) => (
             <button
               key={currentPriority}
               onClick={() => setPriority(currentPriority)} // Update priority on click
-              className={`px-3 py-1 flex items-center gap-1 text-xs font-medium rounded-md transition duration-200 ${currentPriority === priority ? "ring-2 ring-offset-2 ring-blue-500" : ""
-                } ${currentPriority === "Low"
+              className={`px-3 py-1 flex items-center gap-1 text-xs font-medium rounded-md transition duration-200 ${
+                currentPriority === priority
+                  ? "ring-2 ring-offset-2 ring-blue-500"
+                  : ""
+              } ${
+                currentPriority === "Low"
                   ? "bg-green-100 text-green-600"
                   : currentPriority === "Normal"
-                    ? "bg-yellow-100 text-yellow-600"
-                    : "bg-red-100 text-red-600"
-                }`}
+                  ? "bg-yellow-100 text-yellow-600"
+                  : "bg-red-100 text-red-600"
+              }`}
             >
               <div
-                className={`h-2 w-2 rounded-full ${currentPriority === "Low"
-                  ? "bg-green-400"
-                  : currentPriority === "Normal"
+                className={`h-2 w-2 rounded-full ${
+                  currentPriority === "Low"
+                    ? "bg-green-400"
+                    : currentPriority === "Normal"
                     ? "bg-yellow-400"
                     : "bg-red-400"
-                  }`}
+                }`}
               ></div>
               {currentPriority}
             </button>
           ))}
         </div>
-
-
-
-
-
       </div>
     </div>
-
   );
 };
 
 export default TaskCardDetails;
-

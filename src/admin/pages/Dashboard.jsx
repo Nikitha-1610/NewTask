@@ -3,12 +3,18 @@ import { useState, useEffect, useRef } from "react";
 import WeeklyProduction from "../components/DashboardComp/WeeklyProduction";
 import Production from "../components/DashboardComp/Production";
 import TwoWaveChart from "../components/DashboardComp/TwoWaveChart";
-import axiosInstance from "../utilities/axios/axiosInstance";
+import axiosInstance from "../../common/utils/axios/axiosInstance";
 
 const getRandomColor = () => {
   const colors = [
-    "bg-red-500", "bg-blue-500", "bg-green-500", "bg-yellow-500", 
-    "bg-purple-500", "bg-pink-500", "bg-teal-500", "bg-indigo-500"
+    "bg-red-500",
+    "bg-blue-500",
+    "bg-green-500",
+    "bg-yellow-500",
+    "bg-purple-500",
+    "bg-pink-500",
+    "bg-teal-500",
+    "bg-indigo-500",
   ];
   return colors[Math.floor(Math.random() * colors.length)];
 };
@@ -38,16 +44,16 @@ const getFaintColor = (color) => {
 
 const Dashboard = () => {
   const cardContainerRef = useRef(null);
-  const [dashboardData, setDashboardData] = useState(null); 
-  const [loading, setLoading] = useState(true); 
-  const [error, setError] = useState(null); 
+  const [dashboardData, setDashboardData] = useState(null);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
 
   // Function to scroll the cards horizontally
   const scrollRight = () => {
     if (cardContainerRef.current) {
       cardContainerRef.current.scrollBy({
-        left: 220, 
-        behavior: "smooth", 
+        left: 220,
+        behavior: "smooth",
       });
     }
   };
@@ -55,8 +61,8 @@ const Dashboard = () => {
   const scrollLeft = () => {
     if (cardContainerRef.current) {
       cardContainerRef.current.scrollBy({
-        left: -220, 
-        behavior: "smooth", 
+        left: -220,
+        behavior: "smooth",
       });
     }
   };
@@ -91,7 +97,6 @@ const Dashboard = () => {
   return (
     <div className="flex flex-col items-center pt-0 gap-4 w-full">
       <div className="grid grid-cols-1 gap-4 w-full max-w-screen-xl sm:p-2">
-        
         {/* Card Container */}
 
         <div className="flex justify-between top-16 left-4 right-4 z-10 lg:hidden">
@@ -117,31 +122,37 @@ const Dashboard = () => {
         >
           <div className="flex space-x-2">
             {/* Loop over the departments dynamically */}
-            {departmentCounts && Object.keys(departmentCounts).map((department, index) => {
-              const randomColor = getRandomColor(); // Get random color
-              const faintColor = getFaintColor(randomColor); // Get faint background color
-              return (
-                <div
-                  key={index}
-                  className="min-w-[220px] bg-white p-3 rounded-lg border-2 border-gray-100 transform transition-transform duration-300 hover:scale-105"
-                >
-                  <div className="flex justify-between items-center space-x-0">
-                    {/* Bar Chart Icon with random color */}
-                    <div
-                      className={`flex justify-center items-center w-12 h-12 rounded-full ${faintColor}`}
-                    >
-                      <MdBarChart size={34} className={`text-${randomColor}-600`} />
-                    </div>
-                    <div>
-                      <h3 className="text-lg font-medium text-gray-400">{department}</h3>
-                      <h1 className="text-gray-800 text-2xl font-bold">
-                        {departmentCounts[department]}
-                      </h1>
+            {departmentCounts &&
+              Object.keys(departmentCounts).map((department, index) => {
+                const randomColor = getRandomColor(); // Get random color
+                const faintColor = getFaintColor(randomColor); // Get faint background color
+                return (
+                  <div
+                    key={index}
+                    className="min-w-[220px] bg-white p-3 rounded-lg border-2 border-gray-100 transform transition-transform duration-300 hover:scale-105"
+                  >
+                    <div className="flex justify-between items-center space-x-0">
+                      {/* Bar Chart Icon with random color */}
+                      <div
+                        className={`flex justify-center items-center w-12 h-12 rounded-full ${faintColor}`}
+                      >
+                        <MdBarChart
+                          size={34}
+                          className={`text-${randomColor}-600`}
+                        />
+                      </div>
+                      <div>
+                        <h3 className="text-lg font-medium text-gray-400">
+                          {department}
+                        </h3>
+                        <h1 className="text-gray-800 text-2xl font-bold">
+                          {departmentCounts[department]}
+                        </h1>
+                      </div>
                     </div>
                   </div>
-                </div>
-              );
-            })}
+                );
+              })}
           </div>
         </div>
 

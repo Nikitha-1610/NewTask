@@ -1,9 +1,9 @@
 import { useState, useEffect, useRef } from "react";
 import { useLocation, Outlet } from "react-router-dom";
-import Sidebar from "./Side";
-import Navbar from "./Navbar";
+import Sidebar from "../components/Side";
+import Navbar from "../components/Navbar";
 
-const Layout = () => {
+const Layout = ({ role }) => {
   const [isOpen, setIsOpen] = useState(false);
   const [isCollapsed, setIsCollapsed] = useState(false);
   const [isMobile, setIsMobile] = useState(false);
@@ -57,6 +57,7 @@ const Layout = () => {
         isOpen={isOpen}
         toggleSidebar={toggleSidebar}
         isCollapsed={isCollapsed}
+        role={role}
       />
 
       {/* Main Content */}
@@ -68,15 +69,10 @@ const Layout = () => {
           transition: "margin-left 0.3s ease",
         }}
       >
-        {/* Navbar */}
         <Navbar toggleSidebar={toggleSidebar} />
 
         {/* Content */}
-        <main
-          ref={mainContentRef} // Attach the ref here
-          className="flex-1 overflow-y-auto p-4"
-        >
-          {/* Render child routes */}
+        <main ref={mainContentRef} className="flex-1 overflow-y-auto p-4">
           <Outlet />
         </main>
       </div>

@@ -1,16 +1,12 @@
-
 import { useState } from "react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { FaArrowLeft } from "react-icons/fa";
 import Picker from "emoji-picker-react";
-import Chat from "../components/chatComp/Chat";
-import { FaUserCircle, FaPhone, FaVideo, FaEllipsisV } from "react-icons/fa";
 import {
   faEllipsisVertical,
   faSearch,
 } from "@fortawesome/free-solid-svg-icons";
-import img8 from "../assets/img8.jpeg";
-import img9 from "../assets/img9.jpeg";
+import img8 from "../../assets/img8.jpeg";
+import img9 from "../../assets/img9.jpeg";
 
 import GroupChat from "../components/chatComp/GroupChat";
 import IndividualChat from "../components/chatComp/IndividualChat";
@@ -79,7 +75,7 @@ const contacts = [
   },
 ];
 
-// 
+//
 const pinnedContacts = [
   {
     name: "Revathy",
@@ -112,7 +108,6 @@ const pinnedContacts = [
     time: "1:35 PM",
   },
 ];
-
 
 const removeDuplicates = (array) => {
   return array.filter(
@@ -185,12 +180,9 @@ const ChatApp = () => {
     console.log("Back button clicked");
     setIsLeftVisible(true);
     setSelectedContact(null);
-
-
   };
 
   return (
-
     <div className="flex sm:flex-row flex-col min-h-screen">
       {/* Contacts List Section */}
       {(!selectedContact || window.innerWidth >= 1024) && (
@@ -198,7 +190,6 @@ const ChatApp = () => {
           {/* Header */}
           <div className="top-0 z-10 sticky bg-white mb-2">
             <div className="flex justify-between items-center mr-4 mb-2">
-
               <h3 className="font-semibold text-[28px] text-gray-800 text-lg sm:text-2xl">
                 Chats
               </h3>
@@ -225,9 +216,6 @@ const ChatApp = () => {
             </div>
           </div>
 
-
-
-
           {/* Pinned Contacts */}
           <h3 className="mb-1 font-semibold text-black-500 text-xl">Pinned</h3>
           <div className="space-y-1 overflow-y-auto">
@@ -243,7 +231,6 @@ const ChatApp = () => {
                   className="mr-2 rounded-full w-8 h-8"
                 />
                 <div className="flex-1">
-
                   <p className="font-bold text-[14px] text-lg sm:text-xs leading-tight">
                     {contact.name}
                   </p>
@@ -254,9 +241,6 @@ const ChatApp = () => {
               </div>
             ))}
           </div>
-
-
-
 
           {/* Recent Contacts */}
           <h3 className="mb-1 font-semibold text-[22px] text-black-500 sm:text-xl ">
@@ -275,14 +259,12 @@ const ChatApp = () => {
                   className="mr-2 rounded-full w-8 h-8"
                 />
                 <div className="flex-1">
-
                   <p className="font-bold text-[14px] text-lg sm:text-xs leading-tight">
                     {contact.name}
                   </p>
                   <p className="text-[14px] text-base text-gray-600 sm:text-xs truncate">
                     {contact.lastMessage}
                   </p>
-
                 </div>
               </div>
             ))}
@@ -294,7 +276,6 @@ const ChatApp = () => {
 
       {selectedContact && (
         <div className="top-0 sticky flex flex-col flex-1 bg-gray-100 min-h-screen">
-
           {/* Back Button with Arrow Icon */}
           {/* <button
             onClick={handleBackToContacts}
@@ -303,14 +284,18 @@ const ChatApp = () => {
             <FaArrowLeft className="text-3xl" />
           </button> */}
 
-
-
           {/* Chat Body */}
           <div className="flex-1 mt-0 p-0 overflow-y-auto">
             {selectedContact.name === "Design Group" ? (
-              <GroupChat contact={selectedContact} handleBackToContacts={handleBackToContacts} />
+              <GroupChat
+                contact={selectedContact}
+                handleBackToContacts={handleBackToContacts}
+              />
             ) : (
-              <IndividualChat contact={selectedContact} handleBackToContacts={handleBackToContacts} />
+              <IndividualChat
+                contact={selectedContact}
+                handleBackToContacts={handleBackToContacts}
+              />
             )}
           </div>
 
@@ -318,9 +303,7 @@ const ChatApp = () => {
           <div className="sm:bottom-0 bottom-0 fixed flex justify-between items-center border-[#9B9797] bg-white shadow-lg sm:mx-2 mt-4 sm:px-2 border rounded-full w-[92%] sm:w-[58%] h-12">
             {/* Icons */}
             <div className="relative flex gap-3 px-2 sm:px-0">
-
               {/* Emoji Icon */}
-
 
               <svg
                 xmlns="http://www.w3.org/2000/svg"
@@ -394,7 +377,6 @@ const ChatApp = () => {
               placeholder="Type a message..."
               className="flex-grow px-2 border-none font-[700] text-gray-700 text-lg sm:text-lg md:text-clip outline-none"
             />
-
 
             {/* Send Button */}
             <div class="right-0 flex justify-center items-center bg-[#01C2B5] rounded-full w-10 h-10">
