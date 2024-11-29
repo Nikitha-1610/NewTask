@@ -1,3 +1,5 @@
+import { Icon } from '@iconify/react'; 
+
 const TaskCard = ({ title, time }) => {
   return (
     <div className="flex items-center bg-white shadow-md rounded-md px-4 py-2 mb-4">
@@ -7,10 +9,14 @@ const TaskCard = ({ title, time }) => {
         <p className="text-sm text-gray-600">{time}</p>
       </div>
       <div className="ml-auto">
-        <button className="text-gray-400 hover:text-gray-600">&#x2026;</button>
+        <button className="text-gray-400 hover:text-gray-600">
+          <Icon icon="mdi:dots-vertical" /> 
+        </button>
       </div>
     </div>
-  );
+  );  
 };
 
 export default TaskCard;
+
+
