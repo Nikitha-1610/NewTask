@@ -76,19 +76,15 @@ const Side = ({ isOpen, toggleSidebar, isCollapsed, role }) => {
       >
         <Menu>
           {links.map(({ path, label, icon }) => (
-            <MenuItem
-              key={path}
-              className={isActive(path) ? "bg-teal-100 text-teal-600" : ""}
-              icon={<Icon icon={icon} height={22} width={22} />}
-            >
-              <Link
-                to={path}
-                onClick={toggleSidebar}
-                className="flex items-center gap-5"
-              >
-                {label}
-              </Link>
-            </MenuItem>
+                   <MenuItem
+                   icon={<Icon icon="ic:twotone-update" height={22} width={22} />}
+                   className={isActive("/mytask") ? "bg-teal-100 text-teal-600" : ""}
+                 >
+                   <Link to="/mytask" onClick={handleLinkClick}>
+                     My Task
+                   </Link>
+                 </MenuItem>
+       
           ))}
         </Menu>
       </ProSidebar>
