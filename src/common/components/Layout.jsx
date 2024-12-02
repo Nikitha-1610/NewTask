@@ -1,7 +1,7 @@
 import { useState, useEffect, useRef } from "react";
 import { useLocation, Outlet } from "react-router-dom";
-import Sidebar from "../components/Side";
-import Navbar from "../components/Navbar";
+import Sidebar from "./Side";
+import Navbar from "./Navbar";
 
 const Layout = ({ role }) => {
   const [isOpen, setIsOpen] = useState(false);
@@ -47,17 +47,18 @@ const Layout = ({ role }) => {
     if (isCollapsed) {
       return "0px"; // Collapsed sidebar width
     }
-    return isOpen ? "250px" : "0px"; // Full sidebar width or no margin
+    return "0px";
+    // return isOpen ? "250px" : "0px";
   };
 
   return (
     <div className="flex h-screen">
       {/* Sidebar */}
       <Sidebar
+        role={role}
         isOpen={isOpen}
         toggleSidebar={toggleSidebar}
         isCollapsed={isCollapsed}
-        role={role}
       />
 
       {/* Main Content */}
@@ -69,10 +70,15 @@ const Layout = ({ role }) => {
           transition: "margin-left 0.3s ease",
         }}
       >
+        {/* Navbar */}
         <Navbar toggleSidebar={toggleSidebar} />
 
         {/* Content */}
-        <main ref={mainContentRef} className="flex-1 overflow-y-auto p-4">
+        <main
+          ref={mainContentRef} // Attach the ref here
+          className="flex-1 overflow-y-auto p-4"
+        >
+          {/* Render child routes */}
           <Outlet />
         </main>
       </div>
