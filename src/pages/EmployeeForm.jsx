@@ -52,7 +52,6 @@ const EmployeeForm = () => {
       // toast.error("Failed to generate Employee ID. Please try again later.");
     }
   };
-
   useEffect(() => {
     getAllEmp();
   }, []);
