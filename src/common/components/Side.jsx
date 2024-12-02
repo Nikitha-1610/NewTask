@@ -66,33 +66,33 @@ const Side = ({ isOpen, toggleSidebar, isCollapsed, role }) => {
 
   return (
     <>
-      <div className={isOpen ? "sidebar-open" : "sidebar-closed"}>
-        {/* Sidebar */}
-        <ProSidebar
-          collapsed={isCollapsed}
-          className={`sidebar fixed  top-0 left-0 h-screen z-50 transition-transform duration-300 bg-white shadow-lg ${
-            isOpen ? "translate-x-0" : "-translate-x-full"
-          } md:translate-x-0`}
-          style={{ overflowY: "auto" }}
-        >
-          <Menu>
-            {links.map(({ path, label, icon }) => (
-              <MenuItem
-                key={path}
-                className={isActive(path) ? "bg-teal-100 text-teal-600" : ""}
-                icon={<Icon icon={icon} height={22} width={22} />}
+    <div className={isOpen ? 'sidebar-open' : 'sidebar-closed'}>
+      {/* Sidebar */}
+      <ProSidebar
+        collapsed={isCollapsed}
+        className={`sidebar fixed  top-0 left-0 h-screen z-50 transition-transform duration-300 bg-white shadow-lg ${
+          isOpen ? "translate-x-0" : "-translate-x-full"
+        } md:translate-x-0`}
+        style={{ overflowY: "auto" }}
+      >
+        <Menu>
+          {links.map(({ path, label, icon }) => (
+            <MenuItem
+              key={path}
+              className={isActive(path) ? "bg-teal-100 text-teal-600" : ""}
+              icon={<Icon icon={icon} height={22} width={22} />}
+            >
+              <Link
+                to={path}
+                onClick={toggleSidebar}
+                className="flex items-center gap-5"
               >
-                <Link
-                  to={path}
-                  onClick={toggleSidebar}
-                  className="flex items-center gap-5"
-                >
-                  {label}
-                </Link>
-              </MenuItem>
-            ))}
-          </Menu>
-        </ProSidebar>
+                {label}
+              </Link>
+            </MenuItem>
+          ))}
+        </Menu>
+      </ProSidebar>
 
         {/* Overlay for closing sidebar in mobile view */}
         {isOpen && (
