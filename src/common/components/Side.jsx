@@ -57,6 +57,8 @@ const Side = ({ isOpen, toggleSidebar, isCollapsed, role }) => {
       },
       { path: "/user/tasks", label: "Tasks", icon: "bi:list-task" },
       { path: "/user/profile", label: "Profile", icon: "iconamoon:profile" },
+      { path: "/user/mainpage", label: "MainPage", icon: "duo-icons:dashboard" },
+      
     ],
   };
 
