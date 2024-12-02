@@ -12,7 +12,7 @@ const App = () => {
   console.log("here is role", role);
 
   const defaultRoute = isAuthenticated
-    ? role === "Employee"
+    ? role === "admin"
       ? "/admin/dashboard" // Default route for admin
       : "/user/home" // Default route for user
     : "/login";
@@ -27,7 +27,7 @@ const App = () => {
         <Route
           path="/admin/*" 
           element={
-            <ProtectedRoute roleRequired="Employee">
+            <ProtectedRoute roleRequired="admin">
               <Layout role={role} />
             </ProtectedRoute>
           }
@@ -37,8 +37,16 @@ const App = () => {
             index
             element={<Navigate to="/admin/dashboard" replace />} // Redirect to /admin/dashboard
           />
-          {adminRoutes.map(({ path, component: Component }) => (
-            <Route key={path} path={path} element={<Component />} />
+          {adminRoutes.map((route, index) => (
+            <Route key={index} path={route.path} element={<route.component />}>
+              {route.children?.map((child, childIndex) => (
+                <Route
+                  key={childIndex}
+                  path={child.path}
+                  element={<child.component />}
+                />
+              ))}
+            </Route>
           ))}
         </Route>
 
@@ -46,8 +54,8 @@ const App = () => {
         <Route
           path="/user/*"
           element={
-            <ProtectedRoute roleRequired="user">
-              <Layout role="user" />
+            <ProtectedRoute roleRequired="Employee">
+              <Layout role={role} />
             </ProtectedRoute>
           }
         >

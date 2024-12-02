@@ -1,6 +1,6 @@
 import AddProject from "./pages/Addproject";
 import AddTasks from "./pages/addTasks";
-import AdminDashboard from "./pages/DesignTeam";
+import DesignTeam from "./pages/DesignTeam";
 import Dashboard from "./pages/Dashboard";
 import EmployeeForm from "./pages/EmployeeForm";
 import People from "./pages/People";
@@ -9,7 +9,10 @@ import Teams from "./pages/Teams";
 import userEmail from "./pages/Usersemail";
 import Chats from "./pages/Chats";
 import MainPage from "./pages/MainPage";
-import TaskCardDetails from "../components/TaskCardDetails";  // Import the TaskCardDetails component
+import InProgressTasks from "./pages/InProgresstask";
+import IntestTasks from "./pages/InTest";
+import AssignTasks from "./pages/Assigntask";
+import TaskCardDetails from "./components/TaskCardDetails";
 
 const adminRoutes = [
   {
@@ -23,7 +26,14 @@ const adminRoutes = [
     path: "usersemail",
     component: userEmail,
   },
-  { path: "task", component: AdminDashboard },
+  {
+    path: "task",
+    component: DesignTeam,
+  },
+  { path: "intest", component: IntestTasks },
+  { path: "inprogress", component: InProgressTasks },
+  { path: "assign", component: AssignTasks },
+  { path: "task/:taskId", component: TaskCardDetails },
   { path: "addtasks", component: AddTasks },
   {
     path: "position",

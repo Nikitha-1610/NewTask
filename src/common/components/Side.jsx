@@ -12,7 +12,7 @@ const Side = ({ isOpen, toggleSidebar, isCollapsed, role }) => {
 
   // Links based on role
   const linksByRole = {
-    Employee: [
+    admin: [
       {
         path: "/admin/dashboard",
         label: "Dashboard",
@@ -49,7 +49,7 @@ const Side = ({ isOpen, toggleSidebar, isCollapsed, role }) => {
         icon: "ix:project-new",
       },
     ],
-    user: [
+    Employee: [
       {
         path: "/user/home",
         label: "Home",

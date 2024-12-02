@@ -2,12 +2,11 @@ import { useParams, useNavigate } from "react-router-dom";
 import { useState, useEffect } from "react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faLink, faUser, faComments } from "@fortawesome/free-solid-svg-icons";
-import axiosInstance from "../common/utils/axios/axiosInstance";
+import axiosInstance from "../../common/utils/axios/axiosInstance";
 import { Icon } from "@iconify/react";
 
 const TaskCardDetails = () => {
   const { taskId } = useParams();
-  console.log("Task ID:", taskId);
   const navigate = useNavigate();
   const [taskDetails, setTaskDetails] = useState(null);
   const [loading, setLoading] = useState(true);
@@ -32,7 +31,7 @@ const TaskCardDetails = () => {
   }, [taskId]);
 
   const goBack = () => {
-    navigate("admin/task");
+    navigate("/admin/task");
   };
 
   const downloadFile = async (url) => {
