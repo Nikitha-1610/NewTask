@@ -5,6 +5,8 @@ import NotificationsIcon from "@mui/icons-material/Notifications";
 import MenuIcon from "@mui/icons-material/Menu";
 
 const Navbar = ({ toggleSidebar }) => {
+  console.log("Navbar is rendered");
+
   const [isDropdownOpen, setIsDropdownOpen] = useState(false); // State to control dropdown visibility
   const user = JSON.parse(localStorage.getItem("user")) || {};
   const userName = user.name || "Guest";
@@ -45,7 +47,7 @@ const Navbar = ({ toggleSidebar }) => {
         </Badge>
 
         <div className="hidden md:block">
-          <h2 className="font-semibold text-sm">{userName}</h2>
+          <h2 className="font-semibold text-sm">{userName}</h2> {/* Now using userName property */}
           <h6 className="text-slate-700 text-xs tracking-tight">{userRole}</h6>
         </div>
 

@@ -3,7 +3,8 @@ import { useLocation, Outlet } from "react-router-dom";
 import Sidebar from "./Side";
 import Navbar from "./Navbar";
 
-const Layout = ({ role }) => {
+const Layout =({ role }) => {
+  console.log("Role in Layout:", role);
   const [isOpen, setIsOpen] = useState(false);
   const [isCollapsed, setIsCollapsed] = useState(false);
   const [isMobile, setIsMobile] = useState(false);
@@ -83,7 +84,11 @@ const Layout = ({ role }) => {
         </main>
       </div>
     </div>
+
+    
+
   );
 };
+
 
 export default Layout;
