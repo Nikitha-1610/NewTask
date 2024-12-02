@@ -9,6 +9,7 @@ import Teams from "./pages/Teams";
 import userEmail from "./pages/Usersemail";
 import Chats from "./pages/Chats";
 import MainPage from "./pages/MainPage";
+import TaskCardDetails from "../components/TaskCardDetails";  // Import the TaskCardDetails component
 
 const adminRoutes = [
   {
@@ -39,6 +40,11 @@ const adminRoutes = [
   {
     path: "addproject",
     component: AddProject,
+  },
+  {
+    path: "task/:taskId",  // New route for task details
+    component: TaskCardDetails,
+   
   },
 ];
 

@@ -7,6 +7,7 @@ import { Icon } from "@iconify/react";
 
 const TaskCardDetails = () => {
   const { taskId } = useParams();
+  console.log("Task ID:", taskId);
   const navigate = useNavigate();
   const [taskDetails, setTaskDetails] = useState(null);
   const [loading, setLoading] = useState(true);
@@ -31,7 +32,7 @@ const TaskCardDetails = () => {
   }, [taskId]);
 
   const goBack = () => {
-    navigate("/task");
+    navigate("admin/task");
   };
 
   const downloadFile = async (url) => {

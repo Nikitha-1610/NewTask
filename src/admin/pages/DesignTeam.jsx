@@ -115,7 +115,7 @@ const Board = () => {
       tasks: taskData.todayAssignedTasks.filter((task) =>
         filterLabel ? task.taskName === filterLabel : true
       ),
-      path: "/assign",
+      path: "/admin/task/assign",
       status: "Today-Assigned",
       assignedBy: "TeamLead1",
     },
@@ -125,7 +125,7 @@ const Board = () => {
       tasks: taskData.inProgressTasks.filter((task) =>
         filterLabel ? task.taskName === filterLabel : true
       ),
-      path: "/inprogress",
+      path: "/admin/task/inprogress",
       status: "In-Progress",
       assignedBy: "TeamLead1",
     },
@@ -135,7 +135,7 @@ const Board = () => {
       tasks: taskData.inTestTasks.filter((task) =>
         filterLabel ? task.taskName === filterLabel : true
       ),
-      path: "/intest",
+      path: "/admin/task/intest",
       status: "In-Test",
       assignedBy: "TeamLead1",
     },
@@ -258,7 +258,7 @@ const Board = () => {
                 <div className="mt-4">
                   {column.tasks.map((task, taskIndex) => (
                     <Link
-                      to={`/task/${task.taskId}`} // Navigate to the task details page with taskId
+                      to={`/admin/task/${task.taskId}`} // Navigate to the task details page with taskId
                       key={taskIndex}
                       className="block bg-white shadow rounded-lg p-4 mb-4 relative border border-gray-400 w-full"
                     >
