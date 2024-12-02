@@ -28,7 +28,9 @@ const App = () => {
           path="/admin/*"
           element={
             <ProtectedRoute roleRequired="Employee">
-              <Layout role="Employee" />
+              {/* <Layout role="Employee" /> */}
+              <Layout role={role} />
+              
             </ProtectedRoute>
           }
         >
@@ -59,3 +61,4 @@ const App = () => {
 };
 
 export default App;
+

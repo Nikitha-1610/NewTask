@@ -3,7 +3,8 @@ import { useLocation, Outlet } from "react-router-dom";
 import Sidebar from "../components/Side";
 import Navbar from "../components/Navbar";
 
-const Layout = ({ role }) => {
+const Layout =({ role }) => {
+  console.log("Role in Layout:", role);
   const [isOpen, setIsOpen] = useState(false);
   const [isCollapsed, setIsCollapsed] = useState(false);
   const [isMobile, setIsMobile] = useState(false);
@@ -47,7 +48,7 @@ const Layout = ({ role }) => {
     if (isCollapsed) {
       return "0px"; // Collapsed sidebar width
     }
-    return isOpen ? "250px" : "0px"; // Full sidebar width or no margin
+    return isOpen ? "0px" : "0px"; // Full sidebar width or no margin
   };
 
   return (
@@ -77,7 +78,11 @@ const Layout = ({ role }) => {
         </main>
       </div>
     </div>
+
+    
+
   );
 };
+
 
 export default Layout;

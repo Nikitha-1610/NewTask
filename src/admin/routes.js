@@ -1,6 +1,6 @@
 import AddProject from "./pages/Addproject";
 import AddTasks from "./pages/addTasks";
-import AdminDashboard from "./pages/Dashboard";
+import AdminDashboard from "./pages/DesignTeam";
 import Dashboard from "./pages/Dashboard";
 import EmployeeForm from "./pages/EmployeeForm";
 import People from "./pages/People";

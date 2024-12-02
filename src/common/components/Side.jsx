@@ -3,10 +3,12 @@ import { Icon } from "@iconify-icon/react";
 import { Link, useLocation } from "react-router-dom";
 
 const Side = ({ isOpen, toggleSidebar, isCollapsed, role }) => {
+  console.log("Sidebar Open:", isOpen, "Sidebar Collapsed:", isCollapsed);
   const location = useLocation();
 
   // Highlight active links
   const isActive = (path) => location.pathname === path;
+  
 
   // Links based on role
   const linksByRole = {
@@ -61,11 +63,13 @@ const Side = ({ isOpen, toggleSidebar, isCollapsed, role }) => {
   const links = linksByRole[role];
 
   return (
+
     <>
+    <div className={isOpen ? 'sidebar-open' : 'sidebar-closed'}>
       {/* Sidebar */}
       <ProSidebar
         collapsed={isCollapsed}
-        className={`sidebar fixed top-0 left-0 h-screen z-50 transition-transform duration-300 bg-white shadow-lg ${
+        className={`sidebar fixed  top-0 left-0 h-screen z-50 transition-transform duration-300 bg-white shadow-lg ${
           isOpen ? "translate-x-0" : "-translate-x-full"
         } md:translate-x-0`}
         style={{ overflowY: "auto" }}
@@ -96,8 +100,11 @@ const Side = ({ isOpen, toggleSidebar, isCollapsed, role }) => {
           className="z-40 fixed inset-0 md:hidden bg-black opacity-50"
         ></div>
       )}
+       {/* <p>Sidebar is visible</p>  Static check */}
+       </div>
     </>
   );
 };
 
 export default Side;
+

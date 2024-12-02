@@ -14,28 +14,28 @@ const getRandomColor = () => {
   return colors[Math.floor(Math.random() * colors.length)];
 };
 
-// const getFaintColor = (color) => {
-//   switch (color) {
-//     case "red":
-//       return "bg-red-100";
-//     case "blue":
-//       return "bg-blue-100";
-//     case "green":
-//       return "bg-green-100";
-//     case "yellow":
-//       return "bg-yellow-100";
-//     case "purple":
-//       return "bg-purple-100";
-//     case "pink":
-//       return "bg-pink-100";
-//     case "teal":
-//       return "bg-teal-100";
-//     case "indigo":
-//       return "bg-indigo-100";
-//     default:
-//       return "bg-gray-100";
-//   }
-// };
+const getFaintColor = (color) => {
+  switch (color) {
+    case "red":
+      return "bg-red-100";
+    case "blue":
+      return "bg-blue-100";
+    case "green":
+      return "bg-green-100";
+    case "yellow":
+      return "bg-yellow-100";
+    case "purple":
+      return "bg-purple-100";
+    case "pink":
+      return "bg-pink-100";
+    case "teal":
+      return "bg-teal-100";
+    case "indigo":
+      return "bg-indigo-100";
+    default:
+      return "bg-gray-100";
+  }
+};
 
 const Dashboard = () => {
   const cardContainerRef = useRef(null);
