@@ -147,13 +147,13 @@ const AddProject = () => {
       newErrors.projectLead = "At least one person must be assigned.";
     }
     if (!formData.frontendLead) {
-      newErrors.frontendLead = "At least two person must be assigned..";
+      newErrors.frontendLead = "At least one person must be assigned..";
     }
     if (!formData.backendLead) {
-      newErrors.backendLead = "At least q person must be assigned.";
+      newErrors.backendLead = "At least one person must be assigned.";
     }
     if (!formData.designLead) {
-      newErrors.designLead = "At least gf person must be assigned.";
+      newErrors.designLead = "At least one person must be assigned.";
     }
     if (!formData.priority) {
       newErrors.priority = "Select One";

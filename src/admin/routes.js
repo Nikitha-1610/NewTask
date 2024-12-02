@@ -51,6 +51,11 @@ const adminRoutes = [
     path: "addproject",
     component: AddProject,
   },
+  {
+    path: "task/:taskId",  // New route for task details
+    component: TaskCardDetails,
+   
+  },
 ];
 
 export default adminRoutes;
