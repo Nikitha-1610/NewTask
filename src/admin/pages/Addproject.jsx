@@ -19,6 +19,18 @@ const AddProject = () => {
   });
 
   const [showUserList, setShowUserList] = useState(false);
+  const [errors, setErrors] = useState({
+    projectName: "",
+    startDate: "",
+    dueDate: "",
+    projectLead: "",
+    frontendLead: "",
+    backendLead: "",
+    designLead: "", // Single reviewer as a string
+   
+    projectDescription: "",
+    referenceFileUrl: [], 
+  });
   const [selectedUserType, setSelectedUserType] = useState("");
   const [users, setUsers] = useState([]);
   const [displayReferences, setDisplayReferences] = useState([]);
@@ -108,6 +120,57 @@ const AddProject = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
 
+    const newErrors = {
+      projectName: "",
+      startDate: "",
+      dueDate: "",
+      projectLead: "",
+      frontendLead: "",
+      backendLead: "",
+      designLead: "", // Single reviewer as a string
+      priority: "",
+      projectDescription: "",
+      referenceFileUrl: "",
+    };
+  
+    // Check if required fields are filled and set error messages
+    if (!formData.projectName) {
+      newErrors.projectName = "Project name is required.";
+    }
+    if (!formData.startDate) {
+      newErrors.startDate = "Start date is required.";
+    }
+    if (!formData.dueDate) {
+      newErrors.dueDate = "Due date is required.";
+    }
+    if (!formData.projectLead) {
+      newErrors.projectLead = "At least one person must be assigned.";
+    }
+    if (!formData.frontendLead) {
+      newErrors.frontendLead = "At least two person must be assigned..";
+    }
+    if (!formData.backendLead) {
+      newErrors.backendLead = "At least q person must be assigned.";
+    }
+    if (!formData.designLead) {
+      newErrors.designLead = "At least gf person must be assigned.";
+    }
+    if (!formData.priority) {
+      newErrors.priority = "Select One";
+    }
+    if (!formData.projectDescription) {
+      newErrors.projectDescription = "Project name is required.";
+    }
+    if (formData.referenceFileUrl.length === 0) {
+      newErrors.referenceFileUrl = "At least one reference file is required.";
+    }
+  
+    // If there are any validation errors, update the errors state and stop form submission
+    if (Object.values(newErrors).some((error) => error !== "")) {
+      setErrors(newErrors);
+      return;
+    }
+
     try {
       console.log("Submitting Form Data:", formData);
 
@@ -166,6 +229,7 @@ const AddProject = () => {
               onChange={handleInputChange}
               placeholder="Enter project name"
             />
+            {errors.projectName && (<p className="text-sm text-red-500 mt-1">{errors.projectName}</p>)}
           </div>
           <div className=" flex w-full md:w-8/12 gap-4">
             <div className="w-full md:flex-1">
@@ -177,6 +241,7 @@ const AddProject = () => {
                 value={formData.startDate}
                 onChange={handleInputChange}
               />
+              {errors.startDate && (<p className="text-sm text-red-500 mt-1">{errors.startDate}</p>)}
             </div>
             <div className="w-full md:flex-1">
               <label className="block text-sm font-semibold">Due Date</label>
@@ -187,6 +252,7 @@ const AddProject = () => {
                 value={formData.dueDate}
                 onChange={handleInputChange}
               />
+              {errors.dueDate && (<p className="text-sm text-red-500 mt-1">{errors.dueDate}</p>)}
             </div>
           </div>
         </div>
@@ -226,6 +292,9 @@ const AddProject = () => {
               />
             </button>
           </div>
+          {errors.projectLead && (
+            <p className="text-sm text-red-500 mt-1">{errors.projectLead}</p>
+           )}
         </div>
         <div className="mb-4">
           <label className="block text-sm font-semibold text-gray-800 mb-2">
@@ -261,6 +330,7 @@ const AddProject = () => {
               />
             </button>
           </div>
+          {errors.frontendLead && (<p className="text-sm text-red-500 mt-1">{errors.frontendLead}</p>)}
         </div>
         <div className="mb-4">
           <label className="block text-sm font-semibold text-gray-800 mb-2">
@@ -296,6 +366,7 @@ const AddProject = () => {
               />
             </button>
           </div>
+          {errors.backendLead && (<p className="text-sm text-red-500 mt-1">{errors.backendLead}</p>)}
         </div>
 
         {/* Reviewer Section */}
@@ -333,6 +404,7 @@ const AddProject = () => {
               />
             </button>
           </div>
+          {errors.designLead && (<p className="text-sm text-red-500 mt-1">{errors.designLead}</p>)}
         </div>
 
         {/* Priority and taskDescription */}
@@ -382,6 +454,7 @@ const AddProject = () => {
               Urgent
             </button>
           </div>
+          {errors.priority && (<p className="text-sm text-red-500 mt-1">{errors.priority}</p>)}
         </div>
 
         {/* Task taskDescription */}
@@ -394,6 +467,7 @@ const AddProject = () => {
             onChange={handleInputChange}
             placeholder="Enter a projectDescription of the task"
           />
+          {errors.projectDescription && (<p className="text-sm text-red-500 mt-1">{errors.projectDescription}</p>)}
         </div>
 
         {/* File Reference */}
@@ -456,6 +530,7 @@ const AddProject = () => {
               />
             </button>
           </div>
+          {errors.referenceFileUrl && (<p className="text-sm text-red-500 mt-1">{errors.referenceFileUrl}</p>)}
         </div>
 
         <div className="flex justify-end">
