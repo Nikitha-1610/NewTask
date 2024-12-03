@@ -5,6 +5,7 @@ import {
   FaEllipsisV,
   FaUserCircle,
   FaFilePdf,
+   FaFileWord, FaFileExcel, FaDownload, FaTrashAlt
 } from "react-icons/fa";
 import VideoCall from "./VideoCall";
 import VoiceCall from "./VoiceCall";
@@ -16,17 +17,38 @@ import { Icon } from '@iconify/react'; // For Iconify
 const IndividualChat = ({ contact, handleBackToContacts }) => {
   const [selectedOption, setSelectedOption] = useState("Chat");
   const [activeFeature, setActiveFeature] = useState(null);
-
+  const [selectedFiles, setSelectedFiles] = useState([]);
+  const [showActions, setShowActions] = useState(false);
   const menuOptions = ["Chat", "Files", "Media"];
 
   const [message, setMessage] = useState('');
   const [showEmojiPicker, setShowEmojiPicker] = useState(false);
 
-  // Function to handle emoji click
-  const handleEmojiClick = (event, emojiObject) => {
-    setMessage(message + emojiObject.emoji);
+  const handleEmojiClick = (emojiObject) => {
+    if (emojiObject && emojiObject.emoji) {
+      setMessage((prev) => prev + emojiObject.emoji); // Append emoji to the message
+    }
   };
 
+  const [selectedMedia, setSelectedMedia] = useState([]);
+
+  const handleMediaSelection = (message) => {
+    if (selectedMedia.includes(message)) {
+      setSelectedMedia(selectedMedia.filter(item => item !== message));
+    } else {
+      setSelectedMedia([...selectedMedia, message]);
+    }
+  };
+  const handleMediaSelections = (message) => {
+    if (selectedMedia.includes(message)) {
+      setSelectedMedia(selectedMedia.filter(item => item !== message)); // Unselect media
+    } else {
+      setSelectedMedia([...selectedMedia, message]); // Select media
+    }
+  };
+  
+
+ 
   // Function to handle attachment click (file explorer)
   const handleAttachmentClick = () => {
     document.getElementById('fileInput').click();
@@ -37,34 +59,92 @@ const IndividualChat = ({ contact, handleBackToContacts }) => {
     alert('Microphone recording functionality will be implemented here.');
   };
 
-  const [userMessages] = useState([
-    "How are you?",
-    "Can we discuss the profile screen issue?",
-    "Sure, I’ll look into it!",
-    "Thank you for your quick response.",
-    "When can we connect for the meeting?",
-  ]);
-
+  const userMessages = [
+    { text: "Hey! What's up?", file: null, timestamp: 1 },
+    { text: "Check out this image I took!", file: { type: "image", url: "/Images/image1.jpeg" }, timestamp: 3 },
+    { text: "Here's the document you requested.", file: { type: "document", url: "/documents/1.pdf" }, timestamp: 5 },
+    { text: "When is the deadline?", file: null, timestamp: 7 },
+    { text: "Listen to this track!", file: { type: "audio", url: "/audio/audio1.mp3" }, timestamp: 9 },
+    { text: "See you at 5 PM.", file: null, timestamp: 11 },
+    { text: "Did you finish the project?", file: null, timestamp: 13 },
+    { text: "Check out this new file I uploaded.", file: { type: "image", url: "/Images/image2.jpeg" }, timestamp: 15 },
+    { text: "I have a new version of the document.", file: { type: "document", url: "/documents/2.pdf" }, timestamp: 17 },
+    { text: "Here's a song I just found.", file: { type: "audio", url: "/audio/audio2.mp3" }, timestamp: 19 },
+  ];
+  
   const contactMessages = [
-    "I'm good, thanks!",
-    "Sure, let’s discuss.",
-    "That sounds great!",
-    "You’re welcome!",
-    "Let’s connect at 3 PM.",
+    { text: "Not much, you?", file: null, timestamp: 2 },
+    { text: "Cool picture!", file: null, timestamp: 4 },
+    { text: "Thanks for the document.", file: null, timestamp: 6 },
+    { text: "The deadline is next Friday.", file: null, timestamp: 8 },
+    { text: "Nice track! Here's a video you might like.", file: { type: "video", url: "/videos/video1.mp4" }, timestamp: 10 },
+    { text: "Sure thing, see you then!", file: null, timestamp: 12 },
+    { text: "I finished the project!", file: null, timestamp: 14 },
+    { text: "Here is the updated file.", file: { type: "image", url: "/Images/image3.jpeg" }, timestamp: 16 },
+    { text: "I just added new details to the document.", file: { type: "document", url: "/documents/3.pdf" }, timestamp: 18 },
+    { text: "This song is great! You should hear it.", file: { type: "audio", url: "/audio/audio3.mp3" }, timestamp: 20 },
   ];
+  
+  
+  const toggleSelectFile = (file) => {
+    setSelectedFiles((prevSelected) => {
+      if (prevSelected.includes(file)) {
+        return prevSelected.filter((f) => f !== file);
+      } else {
+        return [...prevSelected, file];
+      }
+    });
+  };
 
-  const dummyFiles = [
-    { name: "Resume.pdf", type: "pdf", size: "2 MB" },
-    { name: "Project_Doc.pdf", type: "pdf", size: "1.5 MB" },
-    { name: "MeetingNotes.docx", type: "doc", size: "1 MB" },
-  ];
+  // Extract file name from URL
+  const extractFileName = (url) => {
+    const parts = url.split("/");
+    return parts[parts.length - 1];
+  };
 
-  const dummyMedia = [
-    { type: "image", src: "https://via.placeholder.com/150", alt: "Image 1" },
-    { type: "image", src: "https://via.placeholder.com/150", alt: "Image 2" },
-    { type: "image", src: "https://via.placeholder.com/150", alt: "Image 3" },
-  ];
+  // Show/Hide actions (Share/Delete) buttons based on selection
+  const handleSelectionChange = () => {
+    setShowActions(selectedFiles.length > 0);
+  };
 
+  // Handle delete action
+  const handleDeletes = () => {
+    console.log("Deleting selected files:", selectedFiles);
+    // Add delete functionality here
+  };
+
+  // Handle share action
+  const handleShare = () => {
+    console.log("Sharing selected files:", selectedFiles);
+    // Add share functionality here
+  };
+  
+  // Function to get the correct file icon based on the file type
+  const getFileIcon = (fileType) => {
+    // Return the appropriate icon based on the file type
+    switch (fileType) {
+      case 'pdf':
+        return <FaFilePdf className="text-red-500 text-3xl" />;
+      case 'doc':
+      case 'docx':
+        return <FaFileWord className="text-blue-500 text-3xl" />;
+      case 'xls':
+      case 'xlsx':
+        return <FaFileExcel className="text-green-500 text-3xl" />;
+      default:
+        return <FaFilePdf className="text-red-500 text-3xl" />; // Default icon if type is unknown
+    }
+  };
+  
+  const formatFileSize = (sizeInBytes) => {
+    if (sizeInBytes < 1024) return `${sizeInBytes} bytes`;
+    const sizeInKB = sizeInBytes / 1024;
+    if (sizeInKB < 1024) return `${sizeInKB.toFixed(2)} KB`;
+    const sizeInMB = sizeInKB / 1024;
+    return `${sizeInMB.toFixed(2)} MB`;
+  };
+
+ 
   const handleIconClick = (feature) => {
     setActiveFeature(feature); // Set the feature (VideoCall or VoiceCall)
   };
@@ -72,7 +152,19 @@ const IndividualChat = ({ contact, handleBackToContacts }) => {
   const closeFeature = () => {
     setActiveFeature(null); // Close the overlay
   };
-
+  const handleDownload = (fileUrl) => {
+    // Logic for downloading the file
+    const link = document.createElement('a');
+    link.href = fileUrl;
+    link.download = extractFileName(fileUrl); // This assumes extractFileName function gives the name
+    link.click();
+  };
+  
+  const handleDelete = (fileUrl) => {
+    // Logic for deleting the file
+    alert(`File ${extractFileName(fileUrl)} will be deleted.`);
+  };
+  
   return (
     <>
       <div className="flex flex-col  bg-gray-100 overflow-y-hidden">
@@ -131,7 +223,7 @@ const IndividualChat = ({ contact, handleBackToContacts }) => {
           {/* Overlay for Active Feature */}
           {activeFeature && (
             <div className="z-50 fixed inset-0 flex justify-center items-center bg-black bg-opacity-50">
-              <div className="relative top-9 bg-white shadow-lg p-6 rounded-lg w-full max-w-[800px] h-[90%]">
+              <div className="relative top-9 bg-white shadow-lg p-6 rounded-lg w-full max-w-[800px] h-[80%]">
                 <button
                   className="top-3 right-3 absolute font-bold text-red-600"
                   onClick={closeFeature} // Call to close the overlay
@@ -153,6 +245,7 @@ const IndividualChat = ({ contact, handleBackToContacts }) => {
           {/* Chat Body - Scrollable */}
 {/* Chat Body - Scrollable */}
 <div className="flex-1 overflow-y-auto p-4 scrollbar-hide ">
+
   {selectedOption === "Chat" && (
     <div>
       {/* Conditional Rendering for 'design group' */}
@@ -296,64 +389,391 @@ const IndividualChat = ({ contact, handleBackToContacts }) => {
         </div>
       ) : (
         // Render default chat
-        userMessages.map((userMessage, index) => (
-          <div key={index} className="flex-1 overflow-y-auto">
-            {/* Contact's Message */}
-            <div className="flex items-start gap-3">
-              {contact?.image ? (
-                <img
-                  src={contact.image}
-                  alt="Profile"
-                  className="rounded-full w-8 sm:w-8 h-8 sm:h-8 object-cover"
-                />
-              ) : (
-                <FaUserCircle className="w-8 h-8 text-gray-700" />
-              )}
-              <div className="flex flex-col mt-2 mb-2">
-                <div className="bg-white shadow-md p-2 rounded-lg w-auto max-w-md">
-                  <div className="flex justify-between mb-1">
-                    <span className="font-semibold text-base text-black">
-                      {contact?.name}
-                    </span>
-                    <span className="text-gray-500 text-sm">
-                      10:30 AM
-                    </span>
+        userMessages.map((userMessage, index) => {
+          // Randomly pick a contact message except the first one
+          const randomContactMessage =
+            index === 0
+              ? contact.lastMessage // Ensure the first contact message is sequential
+              : contactMessages[Math.floor(Math.random() * (contactMessages.length - 1)) + 1]; // Pick randomly from the rest
+              const dummyTimestamp = "10:00 AM";
+          // Skip rendering for the first user message (handled sequentially)
+          if (index === 0) {
+            return (
+              <div key={index} className="flex-1 overflow-y-auto">
+                {/* Contact's First Message */}
+                <div className="flex items-start gap-3">
+                  {contact?.image ? (
+                    <img
+                      src={contact.image}
+                      alt="Profile"
+                      className="rounded-full w-8 sm:w-8 h-8 sm:h-8 object-cover"
+                    />
+                  ) : (
+                    <FaUserCircle className="w-8 h-8 text-gray-700" />
+                  )}
+                  <div className="flex flex-col mt-2 mb-2">
+                    <div className="bg-white shadow-md p-2 rounded-lg w-auto max-w-md">
+                      <div className="flex justify-between mb-1">
+                        <span className="font-semibold text-base text-black">
+                          {contact?.name}
+                        </span>
+                        <span className="text-gray-500 text-sm">{dummyTimestamp}</span>
+                      </div>
+                      <p className="text-base text-black">{contact.lastMessage}</p>
+                    </div>
                   </div>
-                  <p className="text-base text-black">
-                    {index === 0
-                      ? contact.lastMessage
-                      : contactMessages[
-                          Math.floor(
-                            Math.random() * contactMessages.length
-                          )
-                        ]}
-                  </p>
                 </div>
-              </div>
-            </div>
         
-            {/* User's Message */}
-            <div className="flex justify-end mt-2 mb-2">
-              <div className="bg-teal-100 shadow-md p-2 rounded-lg w-auto max-w-md">
-                <div className="flex justify-between mb-1">
-                  <span className="font-semibold text-base text-black">
-                    You
-                  </span>
-                  <span className="text-gray-500 text-sm">
-                    10:45 AM
-                  </span>
+                {/* User's First Message */}
+                <div className="flex justify-end mt-2 mb-2">
+                  <div className="bg-teal-100 shadow-md p-2 rounded-lg w-auto max-w-md">
+                    <div className="flex justify-between mb-1">
+                      <span className="font-semibold text-base text-black">You</span>
+                      <span className="text-gray-500 text-sm">
+                        {new Date(userMessage.timestamp).toLocaleTimeString()}
+                      </span>
+                    </div>
+                    <p className="text-base text-black">{userMessage.text}</p>
+                  </div>
                 </div>
-                <p className="text-base text-black">{userMessage}</p>
+              </div>
+            );
+          }
+          // Render for subsequent messages
+          return (
+            <div key={index}>
+              <div className="flex items-start gap-3">
+                <div className="relative">
+                  {contact?.image ? (
+                    <img
+                      src={contact.image}
+                      alt="Profile"
+                      className="rounded-full w-8 sm:w-8 h-8 sm:h-8 object-cover"
+                    />
+                  ) : (
+                    <FaUserCircle className="w-8 h-8 text-gray-700" />
+                  )}
+                </div>
+                <div className="flex flex-col mt-2 mb-2">
+                  <div className="bg-white shadow-md p-2 rounded-lg w-auto max-w-md">
+                    <div className="flex justify-between mb-1">
+                      <span className="font-semibold text-base text-black">{contact?.name}</span>
+                      <span className="text-gray-500 text-sm">{dummyTimestamp}</span>
+                    </div>
+          
+                    {/* Render file first if available */}
+                    {randomContactMessage.file && randomContactMessage.file.type === 'image' && (
+                      <img
+                        src={randomContactMessage.file.url}
+                        alt="file"
+                        className="w-full h-auto mt-2 rounded-lg"
+                      />
+                    )}
+                   {userMessage.file && userMessage.file.type === 'document' && (
+          <div className="flex items-center gap-2 mt-2">
+            {/* File icon */}
+            {getFileIcon(userMessage.file.ext)}
+
+            {/* File details */}
+            <div>
+              <div className="text-black font-semibold">
+                {extractFileName(userMessage.file.url)} {/* Extract file name */}
+              </div>
+              <div className="text-gray-500 text-sm">
+                {userMessage.file.size
+                  ? formatFileSize(userMessage.file.size)
+                  : '100 KB'} {/* If size is available, use it; otherwise, use a dummy size */}
               </div>
             </div>
+
+            {/* Download icon */}
+            <a
+              href={userMessage.file.url}
+              download
+              className="text-blue-500 ml-2 text-lg"
+            >
+              <FaDownload />
+            </a>
           </div>
-        ))
+        )}
+
+                    {randomContactMessage.file && randomContactMessage.file.type === 'audio' && (
+                      <audio controls className="mt-2">
+                        <source src={randomContactMessage.file.url} type="audio/mp3" />
+                        Your browser does not support the audio element.
+                      </audio>
+                    )}
+                    {randomContactMessage.file && randomContactMessage.file.type === 'video' && (
+                      <video controls className="mt-2 w-full">
+                        <source src={randomContactMessage.file.url} type="video/mp4" />
+                        Your browser does not support the video element.
+                      </video>
+                    )}
+          
+                    {/* Render text message after the file */}
+                    <p className="text-base text-black pt-2">{randomContactMessage.text}</p>
+                  </div>
+                </div>
+              </div>
+          
+              {/* User's message */}
+              <div className="flex justify-end mt-2 mb-2">
+                <div className="bg-teal-100 shadow-md p-2 rounded-lg w-auto max-w-md">
+                  <div className="flex justify-between mb-1">
+                    <span className="font-semibold text-base text-black">You</span>
+                    <span className="text-gray-500 text-sm">{new Date(userMessage.timestamp).toLocaleTimeString()}</span>
+                  </div>
+          
+                  {/* Render file first if available for user's message */}
+                  {userMessage.file && userMessage.file.type === 'image' && (
+                    <img
+                      src={userMessage.file.url}
+                      alt="file"
+                      className="w-full h-auto mt-2 rounded-lg"
+                    />
+                  )}
+               {userMessage.file && userMessage.file.type === 'document' && (
+          <div className="flex items-center gap-2 mt-2">
+            {/* File icon */}
+            {getFileIcon(userMessage.file.ext)}
+
+            {/* File details */}
+            <div>
+              <div className="text-black font-semibold">
+                {extractFileName(userMessage.file.url)} {/* Extract file name */}
+              </div>
+              <div className="text-gray-500 text-sm">
+                {userMessage.file.size
+                  ? formatFileSize(userMessage.file.size)
+                  : '100 KB'} {/* If size is available, use it; otherwise, use a dummy size */}
+              </div>
+            </div>
+
+            {/* Download icon */}
+            <a
+              href={userMessage.file.url}
+              download
+              className="text-blue-500 ml-2"
+            >
+              <FaDownload />
+            </a>
+          </div>
+        )}
+
+                  {userMessage.file && userMessage.file.type === 'audio' && (
+                    <audio controls className="mt-2">
+                      <source src={userMessage.file.url} type="audio/mp3" />
+                      Your browser does not support the audio element.
+                    </audio>
+                  )}
+                  {userMessage.file && userMessage.file.type === 'video' && (
+                    <video controls className="mt-2 w-full">
+                      <source src={userMessage.file.url} type="video/mp4" />
+                      Your browser does not support the video element.
+                    </video>
+                  )}
+          
+                  {/* Render user text message after the file */}
+                  <p className="text-base text-black pt-2">{userMessage.text}</p>
+                </div>
+              </div>
+            </div>
+          );
+          
+        })
       )}
     </div>
   )}
+
+{selectedOption === "Files" && (
+  <div>
+    {/* Document Table */}
+    <h3 className="font-semibold text-lg mb-2 text-center">Documents</h3>
+    <table className="w-full table-auto mb-4 border-collapse">
+      <thead>
+        <tr className="border-b">
+          <th className="px-4 py-2 text-center">Type</th>
+          <th className="px-4 py-2 text-center">File Name</th>
+          <th className="px-4 py-2 text-center">Date</th>
+          <th className="px-4 py-2 text-center">Location</th>
+          <th className="px-4 py-2 text-center">Actions</th>
+        </tr>
+      </thead>
+      <tbody>
+        {userMessages
+          .filter((msg) => msg.file && msg.file.type === "document")
+          .map((message, index) => (
+            <tr key={index} className="border-b">
+              <td className="px-4 py-2 text-center">
+                <FaFilePdf className="text-red-500 text-xl" />
+              </td>
+              <td className="px-4 py-2 text-center">{extractFileName(message.file.url)}</td>
+              <td className="px-4 py-2 text-center">12/03/2024</td> {/* Dummy date */}
+              <td className="px-4 py-2 text-center">Local Drive</td>
+              <td className="px-4 py-2 text-center flex justify-center gap-4">
+                <button 
+                  onClick={() => handleDownload(message.file.url)} 
+                  className="text-blue-500">
+                  <FaDownload />
+                </button>
+                <button 
+                  onClick={() => handleDelete(message.file.url)} 
+                  className="text-red-500">
+                  <FaTrashAlt />
+                </button>
+              </td>
+            </tr>
+          ))}
+      </tbody>
+    </table>
+
+    {/* Audio Table */}
+    <h3 className="font-semibold text-lg mb-2 text-center">Audio</h3>
+    <table className="w-full table-auto border-collapse">
+      <thead>
+        <tr className="border-b">
+          <th className="px-4 py-2 text-center">Type</th>
+          <th className="px-4 py-2 text-center">File Name</th>
+          <th className="px-4 py-2 text-center">Date</th>
+          <th className="px-4 py-2 text-center">Location</th>
+          <th className="px-4 py-2 text-center">Actions</th>
+        </tr>
+      </thead>
+      <tbody>
+        {userMessages
+          .filter((msg) => msg.file && msg.file.type === "audio")
+          .map((message, index) => (
+            <tr key={index} className="border-b">
+              <td className="px-4 py-2 text-center">
+                <Icon icon="mdi:audio" className="text-gray-500 text-xl" />
+              </td>
+              <td className="px-4 py-2 text-center">{extractFileName(message.file.url)}</td>
+              <td className="px-4 py-2 text-center">12/03/2024</td> {/* Dummy date */}
+              <td className="px-4 py-2 text-center">Local Drive</td>
+              <td className="px-4 py-2 text-center flex justify-center gap-4">
+                <button 
+                  onClick={() => handleDownload(message.file.url)} 
+                  className="text-blue-500">
+                  <FaDownload />
+                </button>
+                <button 
+                  onClick={() => handleDelete(message.file.url)} 
+                  className="text-red-500">
+                  <FaTrashAlt />
+                </button>
+              </td>
+            </tr>
+          ))}
+      </tbody>
+    </table>
+  </div>
+)}
+  {selectedOption === "Media" && (
+        <div>
+          <h3 className="font-semibold text-lg mb-2 text-center">Media</h3>
+          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
+            {/* Rendering images */}
+            {[...userMessages, ...contactMessages]
+              .filter((msg) => msg.file && msg.file.type === "image")
+              .map((message, index) => (
+                <div
+                  key={index}
+                  className="flex flex-col items-center"
+                  onClick={() => {
+                    toggleSelectFile(message.file.url);
+                    handleSelectionChange();
+                  }}
+                  style={{
+                    border: selectedFiles.includes(message.file.url) ? "2px solid #007BFF" : "none",
+                    cursor: "pointer",
+                  }}
+                >
+                  <img
+                    src={message.file.url}
+                    alt={`Image ${index}`}
+                    className="w-full h-40 object-cover"
+                  />
+                  <p className="text-center mt-2">{extractFileName(message.file.url)}</p>
+                </div>
+              ))}
+
+            {/* Rendering videos */}
+            {[...userMessages, ...contactMessages]
+              .filter((msg) => msg.file && msg.file.type === "video")
+              .map((message, index) => (
+                <div
+                  key={index}
+                  className="flex flex-col items-center"
+                  onClick={() => {
+                    toggleSelectFile(message.file.url);
+                    handleSelectionChange();
+                  }}
+                  style={{
+                    border: selectedFiles.includes(message.file.url) ? "2px solid #007BFF" : "none",
+                    cursor: "pointer",
+                  }}
+                >
+                  <video
+                    src={message.file.url}
+                    controls
+                    className="w-full h-40 object-cover"
+                  />
+                  <p className="text-center mt-2">{extractFileName(message.file.url)}</p>
+                </div>
+              ))}
+          </div>
+
+          {/* Pop-up Share/Delete Buttons */}
+          {showActions && (
+            <div
+              className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-50"
+              onClick={() => setShowActions(false)} // Close popup when clicking outside
+            >
+              <div
+                className="bg-white p-6 rounded-lg shadow-lg flex flex-col items-center"
+                onClick={(e) => e.stopPropagation()} // Prevent closing popup on button click
+              >
+                <button
+                  onClick={handleShare}
+                  className="mx-2 bg-blue-500 text-white px-4 py-2 rounded mb-4"
+                >
+                  Share
+                </button>
+                <button
+                  onClick={handleDelete}
+                  className="mx-2 bg-red-500 text-white px-4 py-2 rounded"
+                >
+                  Delete
+                </button>
+              </div>
+            </div>
+          )}
+        </div>
+      )}
+
+
+
+
+
+
+
 </div>
+
+{showEmojiPicker && (
+  <div
+    className="absolute inset-0 z-40 flex justify-center items-center top-12"
+    onClick={() => setShowEmojiPicker(false)} // Close on clicking outside
+  >
+    <div onClick={(e) => e.stopPropagation()} style={{ transform: 'scale(0.9)', transformOrigin: 'bottom' }}>
+      <Picker onEmojiClick={handleEmojiClick} />
+    </div>
+  </div>
+)}
+
 {selectedOption === "Chat" && (
-  <div className="mb-[96px] sticky z-10 flex justify-between items-center border-[#9B9797] bg-white shadow-lg mt-2 border rounded-full w-[99%] sm:w-[99%] h-11 overflow-hidden ml-1 p-3 relative">
+  <div
+  className={`mb-[96px] sticky flex justify-between items-center border-[#9B9797] bg-white shadow-lg mt-2 border rounded-full w-[99%] sm:w-[99%] h-11 overflow-hidden ml-1 p-3 ${showEmojiPicker ? 'z-50' : ''}`}
+>
     {/* Icons */}
     <div className="relative flex gap-3 px-2 sm:px-0">
       {/* Emoji Icon */}
@@ -361,33 +781,18 @@ const IndividualChat = ({ contact, handleBackToContacts }) => {
         icon="twemoji:grinning-face"
         width="24"
         height="24"
-        onClick={() => setShowEmojiPicker((prev) => !prev)}
+        onClick={() => setShowEmojiPicker((prev) => !prev)} // Toggle emoji picker
         className="cursor-pointer"
       />
-
-      {/* Emoji Picker */}
-      {showEmojiPicker && (
-        <div className="absolute bottom-full left-0 z-20 bg-white shadow-lg border border-gray-300 rounded-lg p-2">
-          <div className="flex justify-end mb-2">
-            {/* Close Icon */}
-            <Icon
-              icon="mdi:close-circle"
-              width="20"
-              height="20"
-              onClick={() => setShowEmojiPicker(false)}
-              className="cursor-pointer text-gray-500 hover:text-gray-800"
-            />
-          </div>
-          <Picker onEmojiClick={handleEmojiClick} />
-        </div>
-      )}
-
       {/* Attachment Icon */}
       <Icon
         icon="bx:bx-paperclip"
         width="25"
         height="25"
-        onClick={handleAttachmentClick}
+        onClick={() => {
+          setShowEmojiPicker(false); // Close emoji picker
+          handleAttachmentClick(); // Open file explorer
+        }}
         className="cursor-pointer"
       />
       <input
@@ -397,7 +802,6 @@ const IndividualChat = ({ contact, handleBackToContacts }) => {
         onChange={(e) => console.log(e.target.files[0])} // Handle file selection
       />
     </div>
-
     {/* Text Input */}
     <input
       type="text"
@@ -405,20 +809,24 @@ const IndividualChat = ({ contact, handleBackToContacts }) => {
       onChange={(e) => setMessage(e.target.value)}
       placeholder="Type a message..."
       className="flex-grow px-2 border-none font-[700] text-gray-700 text-lg sm:text-lg md:text-clip outline-none"
+      onFocus={() => setShowEmojiPicker(false)} // Close emoji picker on focus
     />
-
     {/* Mic/Send Button */}
-    <div className="right-0 flex justify-center items-center bg-[#01C2B5] rounded-full w-10 h-10">
+    <div className="right-0 flex justify-center items-center  rounded-full w-10 h-10">
       <Icon
-        icon={message.length > 0 ? 'twemoji:send' : 'twemoji:microphone'}
-        width="14"
-        height="16"
+        icon={message.length > 0 ? 'fluent:send-24-filled' : 'carbon:microphone-filled'}
+        width="25"
+        height="25"
         onClick={message.length > 0 ? () => alert('Message sent!') : handleMicClick}
         className="cursor-pointer"
+        style={{ color: '#01C2B5' }}
       />
     </div>
   </div>
 )}
+
+
+
 
 
         </div>

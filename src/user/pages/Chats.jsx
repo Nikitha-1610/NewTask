@@ -200,7 +200,7 @@ const ChatApp = () => {
     <div className="flex sm:flex-row flex-col h-full overflow-hidden">
       {/* Contacts List Section */}
       {(!selectedContact || window.innerWidth >= 1024) && (
-        <div className="top-0 z-20 sticky border-gray-300 bg-white border-r w-full lg:w-1/4 sm:h-screen h-full overflow-y-auto scrollbar-hide">
+        <div className="top-0  border-gray-300 bg-white border-r w-full lg:w-1/4 sm:h-screen h-full overflow-y-auto scrollbar-hide">
           {/* Header */}
           <div className="top-0 z-10 sticky bg-white mb-2">
             <div className="flex justify-between items-center mr-4 mb-2">
