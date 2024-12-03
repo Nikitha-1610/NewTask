@@ -59,6 +59,7 @@ const Side = ({ isOpen, toggleSidebar, isCollapsed, role }) => {
       { path: "/user/mainpage", label: "MainPage", icon: "duo-icons:dashboard" },
       
       { path: "/user/calender", label: "Calender", icon: "iconamoon:calender" },
+      { path: "/user/chats", label: "Chats", icon: "bi:chat-dots" },
     ],
   };
 

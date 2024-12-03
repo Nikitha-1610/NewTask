@@ -79,7 +79,7 @@ const IndividualChat = ({ contact, handleBackToContacts }) => {
         {/* Chat Container */}
         <div className="flex flex-col flex-1  overflow-y-hidden">
           {/* Navbar inside chat body */}
-          <div className="sticky top-0 sm:mt-2 mt-2 sm:w-full w-full z-10 bg-white shadow-md p-2 sm:mx-0 sm:px-5 flex justify-between items-center h-14">
+          <div className="sticky top-0  sm:w-full w-full z-10 bg-white shadow-md p-2 sm:mx-0 sm:px-5 flex justify-between items-center h-14">
             <div className="flex items-center gap-1 sm:gap-3">
               <button
                 onClick={handleBackToContacts}
@@ -353,62 +353,73 @@ const IndividualChat = ({ contact, handleBackToContacts }) => {
   )}
 </div>
 {selectedOption === "Chat" && (
-<div className="  mb-[96px] sticky z-10 flex justify-between items-center border-[#9B9797] bg-white shadow-lg  mt-2 border rounded-full w-[100%] sm:w-[99%] h-11 overflow-hidden ml-1  p-3">
-      {/* Icons */}
-      <div className="relative flex gap-3 px-2 sm:px-0">
-        {/* Emoji Icon */}
-        <Icon
-          icon="twemoji:grinning-face"
-          width="24"
-          height="24"
-          onClick={() => setShowEmojiPicker((prev) => !prev)}
-          className="cursor-pointer"
-        />
-        
-        {/* Emoji Picker */}
-        {showEmojiPicker && (
-          <div className="top-10 left-0 absolute z-10">
-            <Picker onEmojiClick={handleEmojiClick} />
-          </div>
-        )}
-
-        {/* Attachment Icon */}
-        <Icon
-          icon="bx:bx-paperclip"
-          width="25"
-          height="25"
-          onClick={handleAttachmentClick}
-          className="cursor-pointer"
-        />
-        <input
-          type="file"
-          id="fileInput"
-          className="hidden"
-          onChange={(e) => console.log(e.target.files[0])} // Handle file selection
-        />
-      </div>
-
-      {/* Text Input */}
-      <input
-        type="text"
-        value={message}
-        onChange={(e) => setMessage(e.target.value)}
-        placeholder="Type a message..."
-        className="flex-grow px-2 border-none font-[700] text-gray-700 text-lg sm:text-lg md:text-clip outline-none"
+  <div className="mb-[96px] sticky z-10 flex justify-between items-center border-[#9B9797] bg-white shadow-lg mt-2 border rounded-full w-[99%] sm:w-[99%] h-11 overflow-hidden ml-1 p-3 relative">
+    {/* Icons */}
+    <div className="relative flex gap-3 px-2 sm:px-0">
+      {/* Emoji Icon */}
+      <Icon
+        icon="twemoji:grinning-face"
+        width="24"
+        height="24"
+        onClick={() => setShowEmojiPicker((prev) => !prev)}
+        className="cursor-pointer"
       />
 
-      {/* Mic/Send Button */}
-      <div className="right-0 flex justify-center items-center bg-[#01C2B5] rounded-full w-10 h-10">
-        <Icon
-          icon={message.length > 0 ? 'twemoji:send' : 'twemoji:microphone'}
-          width="14"
-          height="16"
-          onClick={message.length > 0 ? () => alert('Message sent!') : handleMicClick}
-          className="cursor-pointer"
-        />
-      </div>
+      {/* Emoji Picker */}
+      {showEmojiPicker && (
+        <div className="absolute bottom-full left-0 z-20 bg-white shadow-lg border border-gray-300 rounded-lg p-2">
+          <div className="flex justify-end mb-2">
+            {/* Close Icon */}
+            <Icon
+              icon="mdi:close-circle"
+              width="20"
+              height="20"
+              onClick={() => setShowEmojiPicker(false)}
+              className="cursor-pointer text-gray-500 hover:text-gray-800"
+            />
+          </div>
+          <Picker onEmojiClick={handleEmojiClick} />
+        </div>
+      )}
+
+      {/* Attachment Icon */}
+      <Icon
+        icon="bx:bx-paperclip"
+        width="25"
+        height="25"
+        onClick={handleAttachmentClick}
+        className="cursor-pointer"
+      />
+      <input
+        type="file"
+        id="fileInput"
+        className="hidden"
+        onChange={(e) => console.log(e.target.files[0])} // Handle file selection
+      />
     </div>
+
+    {/* Text Input */}
+    <input
+      type="text"
+      value={message}
+      onChange={(e) => setMessage(e.target.value)}
+      placeholder="Type a message..."
+      className="flex-grow px-2 border-none font-[700] text-gray-700 text-lg sm:text-lg md:text-clip outline-none"
+    />
+
+    {/* Mic/Send Button */}
+    <div className="right-0 flex justify-center items-center bg-[#01C2B5] rounded-full w-10 h-10">
+      <Icon
+        icon={message.length > 0 ? 'twemoji:send' : 'twemoji:microphone'}
+        width="14"
+        height="16"
+        onClick={message.length > 0 ? () => alert('Message sent!') : handleMicClick}
+        className="cursor-pointer"
+      />
+    </div>
+  </div>
 )}
+
 
         </div>
 
