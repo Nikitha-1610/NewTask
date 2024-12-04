@@ -38,7 +38,7 @@ const Auth = () => {
       dispatch(login({ userData, token }));
 
       // Redirect based on role
-      navigate(userData?.role === "admin" ? "/admin/dashboard" : "/user/home");
+      navigate(userData?.role === "TeamLead" ? "/admin/dashboard" : "/user/home");
     } catch (error) {
       console.error("Login error:", error);
 

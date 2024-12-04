@@ -793,7 +793,7 @@ const [showDeletePopup, setShowDeletePopup] = useState(false);
 {selectedOption === "Media" && (
   <div>
   <h3 className="font-semibold text-lg mb-2 text-center">Media</h3>
-  <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4">
+  <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-3">
     {/* Rendering images */}
     {[...userMessages, ...contactMessages]
       .filter((msg) => msg.file && msg.file.type === "image")
