@@ -20,9 +20,13 @@ const IndividualChat = ({ contact, handleBackToContacts }) => {
   const [selectedFiles, setSelectedFiles] = useState([]);
   const [showActions, setShowActions] = useState(false);
   const menuOptions = ["Chat", "Files", "Media"];
+  const [showDownloadToast, setShowDownloadToast] = useState(false);
+const [showDeletePopup, setShowDeletePopup] = useState(false);
 
   const [message, setMessage] = useState('');
   const [showEmojiPicker, setShowEmojiPicker] = useState(false);
+
+  
 
   const handleEmojiClick = (emojiObject) => {
     if (emojiObject && emojiObject.emoji) {
@@ -30,6 +34,57 @@ const IndividualChat = ({ contact, handleBackToContacts }) => {
     }
   };
 
+  
+  const [fileToDelete, setFileToDelete] = useState(null);
+
+  // Toggle file selection
+  // Toggle file selection
+  const toggleSelectFile = (fileUrl) => {
+    if (selectedFiles.includes(fileUrl)) {
+      // If already selected, remove from the selected list
+      setSelectedFiles(selectedFiles.filter((url) => url !== fileUrl));
+    } else {
+      // If not selected, add to the selected list and show delete popup
+      setSelectedFiles([...selectedFiles, fileUrl]);
+      setShowDeletePopup(true);
+    }
+  };
+  
+
+  // Handle file download
+  const handleDownloadFile = (fileUrl) => {
+    const link = document.createElement("a");
+    link.href = fileUrl;
+    link.download = extractFileName(fileUrl);
+    link.click();
+
+    // Show success toast
+    setShowDownloadToast(true);
+    setTimeout(() => setShowDownloadToast(false), 3000);
+  };
+
+ 
+
+  // Handle delete confirmation
+  const handleDeleteConfirmation = (fileUrl) => {
+    setFileToDelete(fileUrl);
+    setShowDeletePopup(true);
+  };
+
+  // Handle actual file deletion
+  const handleDelete = () => {
+    setSelectedFiles((prev) => prev.filter((url) => url !== fileToDelete));
+    setShowDeletePopup(false);
+    setFileToDelete(null);
+  };
+
+
+
+  
+  
+  const handleDeletePopup = () => {
+    setShowDeletePopup(true); // Show delete confirmation popup
+  };
   const [selectedMedia, setSelectedMedia] = useState([]);
 
   const handleMediaSelection = (message) => {
@@ -86,15 +141,15 @@ const IndividualChat = ({ contact, handleBackToContacts }) => {
   ];
   
   
-  const toggleSelectFile = (file) => {
-    setSelectedFiles((prevSelected) => {
-      if (prevSelected.includes(file)) {
-        return prevSelected.filter((f) => f !== file);
-      } else {
-        return [...prevSelected, file];
-      }
-    });
-  };
+  // const toggleSelectFile = (file) => {
+  //   setSelectedFiles((prevSelected) => {
+  //     if (prevSelected.includes(file)) {
+  //       return prevSelected.filter((f) => f !== file);
+  //     } else {
+  //       return [...prevSelected, file];
+  //     }
+  //   });
+  // };
 
   // Extract file name from URL
   const extractFileName = (url) => {
@@ -108,10 +163,7 @@ const IndividualChat = ({ contact, handleBackToContacts }) => {
   };
 
   // Handle delete action
-  const handleDeletes = () => {
-    console.log("Deleting selected files:", selectedFiles);
-    // Add delete functionality here
-  };
+  
 
   // Handle share action
   const handleShare = () => {
@@ -160,43 +212,43 @@ const IndividualChat = ({ contact, handleBackToContacts }) => {
     link.click();
   };
   
-  const handleDelete = (fileUrl) => {
+  const handleDeletes = (fileUrl) => {
     // Logic for deleting the file
     alert(`File ${extractFileName(fileUrl)} will be deleted.`);
   };
   
   return (
     <>
-      <div className="flex flex-col  bg-gray-100 overflow-y-hidden">
+      <div className="flex flex-col  bg-gray-100  h-full">
         {/* Chat Container */}
         <div className="flex flex-col flex-1  overflow-y-hidden">
           {/* Navbar inside chat body */}
-          <div className="sticky top-0  sm:w-full w-full z-10 bg-white shadow-md p-2 sm:mx-0 sm:px-5 flex justify-between items-center h-14">
+          <div className="sticky top-0 w-[99%]  sm:w-full z-10 bg-white shadow-md sm:p-2 sm:mx-0 sm:px-5 flex justify-between items-center h-14">
             <div className="flex items-center gap-1 sm:gap-3">
               <button
                 onClick={handleBackToContacts}
-                className="sm:top-1/2 sm:left-4 sm:absolute flex items-center lg:hidden text-blue-500 sm:-translate-y-1/2"
+                className="sm:top-1/2 sm:left-3 sm:absolute flex items-center lg:hidden text-blue-500 sm:-translate-y-1/2"
               >
-                <FaArrowLeft className="text-3xl" />
+                <FaArrowLeft className="text-2xl" />
               </button>
               {contact?.image ? (
                 <img
                   src={contact.image}
                   alt="Profile"
-                  className="rounded-full w-8 sm:w-9 h-8 sm:h-9 object-cover"
+                  className="rounded-full w-7 sm:w-9 h-7 sm:h-9 object-cover"
                 />
               ) : (
-                <FaUserCircle className="w-9 h-9 text-pink-700" />
+                <FaUserCircle className="sm:w-9 sm:h-9 w-7 h-7 text-pink-700" />
               )}
-              <span className="font-semibold text-black text-sm sm:text-base">
+              <span className="font-semibold text-black text-base sm:text-base">
                 {contact?.name}
               </span>
-              <div className="flex items-center gap-4 ml-4">
+              <div className="flex items-center sm:gap-4 gap-2 ml-4 ">
                 {menuOptions.map((option, index) => (
                   <span
                     key={index}
                     onClick={() => setSelectedOption(option)}
-                    className={`cursor-pointer sm:text-lg text-lg font-medium ${
+                    className={`cursor-pointer sm:text-lg text-base font-medium ${
                       selectedOption === option
                         ? "border-b-2 border-teal-500"
                         : "text-gray-500"
@@ -207,16 +259,16 @@ const IndividualChat = ({ contact, handleBackToContacts }) => {
                 ))}
               </div>
             </div>
-            <div className="flex items-center gap-2 sm:gap-4">
+            <div className="flex items-center gap-2 sm:gap-4 sm:left-0">
               <FaPhone
-                className="w-5 h-5 text-gray-700 cursor-pointer"
+                className="sm:w-5 sm:h-5 w-4 h-4 text-gray-700 cursor-pointer"
                 onClick={() => handleIconClick("VoiceCall")}
               />
               <FaVideo
-                className="w-5 h-5 text-gray-700 cursor-pointer"
+                className="sm:w-5 sm:h-5 w-4 h-4 text-gray-700 cursor-pointer"
                 onClick={() => handleIconClick("VideoCall")}
               />
-              <FaEllipsisV className="w-5 h-5 text-gray-700 cursor-pointer" />
+              <FaEllipsisV className="sm:w-5 sm:h-5 w-4 h-4 text-gray-700 cursor-pointer" />
             </div>
           </div>
 
@@ -244,10 +296,10 @@ const IndividualChat = ({ contact, handleBackToContacts }) => {
 
           {/* Chat Body - Scrollable */}
 {/* Chat Body - Scrollable */}
-<div className="flex-1 overflow-y-auto p-4 scrollbar-hide ">
+<div className="flex-1 overflow-y-auto sm:p-4 p-2 scrollbar-hide ">
 
   {selectedOption === "Chat" && (
-    <div>
+    <div className=" overflow-y-auto">
       {/* Conditional Rendering for 'design group' */}
       {contact.name === "Design Group" ? (
         <div className="mt-0">
@@ -401,20 +453,20 @@ const IndividualChat = ({ contact, handleBackToContacts }) => {
             return (
               <div key={index} className="flex-1 overflow-y-auto">
                 {/* Contact's First Message */}
-                <div className="flex items-start gap-3">
+                <div className="flex items-start sm:gap-3 gap-2">
                   {contact?.image ? (
                     <img
                       src={contact.image}
                       alt="Profile"
-                      className="rounded-full w-8 sm:w-8 h-8 sm:h-8 object-cover"
+                      className="rounded-full w-7 sm:w-8 h-7 sm:h-8 object-cover"
                     />
                   ) : (
-                    <FaUserCircle className="w-8 h-8 text-gray-700" />
+                    <FaUserCircle className="w-7 sm:w-8 h-7 sm:h-8 text-gray-700" />
                   )}
                   <div className="flex flex-col mt-2 mb-2">
-                    <div className="bg-white shadow-md p-2 rounded-lg w-auto max-w-md">
+                    <div className="bg-white shadow-md p-2 rounded-lg max-w-sm sm:max-w-md">
                       <div className="flex justify-between mb-1">
-                        <span className="font-semibold text-base text-black">
+                        <span className="font-semibold text-[15px] text-black">
                           {contact?.name}
                         </span>
                         <span className="text-gray-500 text-sm">{dummyTimestamp}</span>
@@ -426,9 +478,9 @@ const IndividualChat = ({ contact, handleBackToContacts }) => {
         
                 {/* User's First Message */}
                 <div className="flex justify-end mt-2 mb-2">
-                  <div className="bg-teal-100 shadow-md p-2 rounded-lg w-auto max-w-md">
+                  <div className="bg-teal-100 shadow-md p-2 rounded-lg max-w-sm sm:max-w-md">
                     <div className="flex justify-between mb-1">
-                      <span className="font-semibold text-base text-black">You</span>
+                      <span className="font-semibold text-[15px] text-black">You</span>
                       <span className="text-gray-500 text-sm">
                         {new Date(userMessage.timestamp).toLocaleTimeString()}
                       </span>
@@ -442,22 +494,22 @@ const IndividualChat = ({ contact, handleBackToContacts }) => {
           // Render for subsequent messages
           return (
             <div key={index}>
-              <div className="flex items-start gap-3">
+              <div className="flex items-start gap-2">
                 <div className="relative">
                   {contact?.image ? (
                     <img
                       src={contact.image}
                       alt="Profile"
-                      className="rounded-full w-8 sm:w-8 h-8 sm:h-8 object-cover"
+                      className="rounded-full w-7 sm:w-8 h-7 sm:h-8 object-cover"
                     />
                   ) : (
-                    <FaUserCircle className="w-8 h-8 text-gray-700" />
+                    <FaUserCircle className="sm:w-8 sm:h-8 w-7 h-7 text-gray-700" />
                   )}
                 </div>
                 <div className="flex flex-col mt-2 mb-2">
-                  <div className="bg-white shadow-md p-2 rounded-lg w-auto max-w-md">
+                  <div className="bg-white shadow-md p-2 rounded-lg max-w-xs sm:max-w-md">
                     <div className="flex justify-between mb-1">
-                      <span className="font-semibold text-base text-black">{contact?.name}</span>
+                      <span className="font-semibold text-[15px] text-black">{contact?.name}</span>
                       <span className="text-gray-500 text-sm">{dummyTimestamp}</span>
                     </div>
           
@@ -466,59 +518,55 @@ const IndividualChat = ({ contact, handleBackToContacts }) => {
                       <img
                         src={randomContactMessage.file.url}
                         alt="file"
-                        className="w-full h-auto mt-2 rounded-lg"
+                        className="max-w-full h-auto mt-2 rounded-lg sm:max-w-sm"
                       />
                     )}
-                   {userMessage.file && userMessage.file.type === 'document' && (
-          <div className="flex items-center gap-2 mt-2">
-            {/* File icon */}
-            {getFileIcon(userMessage.file.ext)}
-
-            {/* File details */}
-            <div>
-              <div className="text-black font-semibold">
-                {extractFileName(userMessage.file.url)} {/* Extract file name */}
-              </div>
-              <div className="text-gray-500 text-sm">
-                {userMessage.file.size
-                  ? formatFileSize(userMessage.file.size)
-                  : '100 KB'} {/* If size is available, use it; otherwise, use a dummy size */}
-              </div>
-            </div>
-
-            {/* Download icon */}
-            <a
-              href={userMessage.file.url}
-              download
-              className="text-blue-500 ml-2 text-lg"
-            >
-              <FaDownload />
-            </a>
-          </div>
-        )}
-
+                    {userMessage.file && userMessage.file.type === 'document' && (
+                      <div className="flex items-center gap-2 mt-2">
+                        {/* File icon */}
+                        {getFileIcon(userMessage.file.ext)}
+          
+                        {/* File details */}
+                        <div className="text-black font-semibold text-ellipsis overflow-hidden max-w-[200px] sm:max-w-none">
+                          {extractFileName(userMessage.file.url)} {/* Extract file name */}
+                        </div>
+                        <div className="text-gray-500 text-sm">
+                          {userMessage.file.size
+                            ? formatFileSize(userMessage.file.size)
+                            : '100 KB'} {/* If size is available, use it; otherwise, use a dummy size */}
+                        </div>
+                        <a
+                          href={userMessage.file.url}
+                          download
+                          className="text-blue-500 ml-2 text-lg"
+                        >
+                          <FaDownload />
+                        </a>
+                      </div>
+                    )}
+          
                     {randomContactMessage.file && randomContactMessage.file.type === 'audio' && (
-                      <audio controls className="mt-2">
+                      <audio controls className="mt-2 w-[180px] sm:w-[350px]">
                         <source src={randomContactMessage.file.url} type="audio/mp3" />
                         Your browser does not support the audio element.
                       </audio>
                     )}
                     {randomContactMessage.file && randomContactMessage.file.type === 'video' && (
-                      <video controls className="mt-2 w-full">
+                      <video controls className="mt-2 w-[180px] sm:w-[350px]">
                         <source src={randomContactMessage.file.url} type="video/mp4" />
                         Your browser does not support the video element.
                       </video>
                     )}
           
                     {/* Render text message after the file */}
-                    <p className="text-base text-black pt-2">{randomContactMessage.text}</p>
+                    <p className="text-base text-black pt-2 break-words">{randomContactMessage.text}</p>
                   </div>
                 </div>
               </div>
           
               {/* User's message */}
               <div className="flex justify-end mt-2 mb-2">
-                <div className="bg-teal-100 shadow-md p-2 rounded-lg w-auto max-w-md">
+                <div className="bg-teal-100 shadow-md p-2 rounded-lg max-w-xs sm:max-w-md">
                   <div className="flex justify-between mb-1">
                     <span className="font-semibold text-base text-black">You</span>
                     <span className="text-gray-500 text-sm">{new Date(userMessage.timestamp).toLocaleTimeString()}</span>
@@ -529,227 +577,370 @@ const IndividualChat = ({ contact, handleBackToContacts }) => {
                     <img
                       src={userMessage.file.url}
                       alt="file"
-                      className="w-full h-auto mt-2 rounded-lg"
+                      className="w-full h-auto mt-2 rounded-lg sm:max-w-sm"
                     />
                   )}
-               {userMessage.file && userMessage.file.type === 'document' && (
-          <div className="flex items-center gap-2 mt-2">
-            {/* File icon */}
-            {getFileIcon(userMessage.file.ext)}
-
-            {/* File details */}
-            <div>
-              <div className="text-black font-semibold">
-                {extractFileName(userMessage.file.url)} {/* Extract file name */}
-              </div>
-              <div className="text-gray-500 text-sm">
-                {userMessage.file.size
-                  ? formatFileSize(userMessage.file.size)
-                  : '100 KB'} {/* If size is available, use it; otherwise, use a dummy size */}
-              </div>
-            </div>
-
-            {/* Download icon */}
-            <a
-              href={userMessage.file.url}
-              download
-              className="text-blue-500 ml-2"
-            >
-              <FaDownload />
-            </a>
-          </div>
-        )}
-
-                  {userMessage.file && userMessage.file.type === 'audio' && (
-                    <audio controls className="mt-2">
-                      <source src={userMessage.file.url} type="audio/mp3" />
-                      Your browser does not support the audio element.
-                    </audio>
-                  )}
-                  {userMessage.file && userMessage.file.type === 'video' && (
-                    <video controls className="mt-2 w-full">
-                      <source src={userMessage.file.url} type="video/mp4" />
-                      Your browser does not support the video element.
-                    </video>
+                  {userMessage.file && userMessage.file.type === 'document' && (
+                    <div className="flex items-center gap-2 mt-2">
+                      {/* File icon */}
+                      {getFileIcon(userMessage.file.ext)}
+          
+                      {/* File details */}
+                      <div className="text-black font-semibold text-ellipsis overflow-hidden max-w-[200px] sm:max-w-none">
+                        {extractFileName(userMessage.file.url)} {/* Extract file name */}
+                      </div>
+                      <div className="text-gray-500 text-sm">
+                        {userMessage.file.size
+                          ? formatFileSize(userMessage.file.size)
+                          : '100 KB'} {/* If size is available, use it; otherwise, use a dummy size */}
+                      </div>
+          
+                      {/* Download icon */}
+                      <a
+                        href={userMessage.file.url}
+                        download
+                        className="text-blue-500 ml-2"
+                      >
+                        <FaDownload />
+                      </a>
+                    </div>
                   )}
           
+          {userMessage.file && userMessage.file.type === 'audio' && (
+  <audio controls className="mt-2 w-[180px] sm:w-[350px]">
+    <source src={userMessage.file.url} type="audio/mp3" />
+    Your browser does not support the audio element.
+  </audio>
+)}
+
+{userMessage.file && userMessage.file.type === 'video' && (
+  <video controls className="mt-1 w-[180px] sm:w-[350px] ">
+    <source src={userMessage.file.url} type="video/mp4" />
+    Your browser does not support the video element.
+  </video>
+)}
+
+          
                   {/* Render user text message after the file */}
-                  <p className="text-base text-black pt-2">{userMessage.text}</p>
+                  <p className="text-base text-black pt-2 break-words">{userMessage.text}</p>
                 </div>
               </div>
             </div>
           );
           
+          
         })
       )}
+     
     </div>
   )}
 
 {selectedOption === "Files" && (
   <div>
-    {/* Document Table */}
+    {/* Document List */}
     <h3 className="font-semibold text-lg mb-2 text-center">Documents</h3>
-    <table className="w-full table-auto mb-4 border-collapse">
-      <thead>
-        <tr className="border-b">
-          <th className="px-4 py-2 text-center">Type</th>
-          <th className="px-4 py-2 text-center">File Name</th>
-          <th className="px-4 py-2 text-center">Date</th>
-          <th className="px-4 py-2 text-center">Location</th>
-          <th className="px-4 py-2 text-center">Actions</th>
-        </tr>
-      </thead>
-      <tbody>
-        {userMessages
-          .filter((msg) => msg.file && msg.file.type === "document")
-          .map((message, index) => (
-            <tr key={index} className="border-b">
-              <td className="px-4 py-2 text-center">
-                <FaFilePdf className="text-red-500 text-xl" />
-              </td>
-              <td className="px-4 py-2 text-center">{extractFileName(message.file.url)}</td>
-              <td className="px-4 py-2 text-center">12/03/2024</td> {/* Dummy date */}
-              <td className="px-4 py-2 text-center">Local Drive</td>
-              <td className="px-4 py-2 text-center flex justify-center gap-4">
-                <button 
-                  onClick={() => handleDownload(message.file.url)} 
-                  className="text-blue-500">
-                  <FaDownload />
-                </button>
-                <button 
-                  onClick={() => handleDelete(message.file.url)} 
-                  className="text-red-500">
-                  <FaTrashAlt />
-                </button>
-              </td>
-            </tr>
-          ))}
-      </tbody>
-    </table>
+    <div className="md:hidden">
+      {userMessages
+        .filter((msg) => msg.file && msg.file.type === "document")
+        .map((message, index) => (
+          <div key={index} className="flex items-center justify-between mb-2 sm:mb-4">
+            <FaFilePdf className="text-red-500 text-xl" />
+            <span className="text-sm sm:text-base">{extractFileName(message.file.url)}</span>
+            <div className="flex gap-1 sm:gap-2">
+              <button
+                onClick={() => handleDownload(message.file.url)}
+                className="text-blue-500"
+              >
+                <FaDownload />
+              </button>
+              <button
+                onClick={() => handleDeletes(message.file.url)}
+                className="text-red-500"
+              >
+                <FaTrashAlt />
+              </button>
+            </div>
+          </div>
+        ))}
+    </div>
 
-    {/* Audio Table */}
+    {/* Audio List */}
     <h3 className="font-semibold text-lg mb-2 text-center">Audio</h3>
-    <table className="w-full table-auto border-collapse">
-      <thead>
-        <tr className="border-b">
-          <th className="px-4 py-2 text-center">Type</th>
-          <th className="px-4 py-2 text-center">File Name</th>
-          <th className="px-4 py-2 text-center">Date</th>
-          <th className="px-4 py-2 text-center">Location</th>
-          <th className="px-4 py-2 text-center">Actions</th>
-        </tr>
-      </thead>
-      <tbody>
-        {userMessages
-          .filter((msg) => msg.file && msg.file.type === "audio")
-          .map((message, index) => (
-            <tr key={index} className="border-b">
-              <td className="px-4 py-2 text-center">
-                <Icon icon="mdi:audio" className="text-gray-500 text-xl" />
-              </td>
-              <td className="px-4 py-2 text-center">{extractFileName(message.file.url)}</td>
-              <td className="px-4 py-2 text-center">12/03/2024</td> {/* Dummy date */}
-              <td className="px-4 py-2 text-center">Local Drive</td>
-              <td className="px-4 py-2 text-center flex justify-center gap-4">
-                <button 
-                  onClick={() => handleDownload(message.file.url)} 
-                  className="text-blue-500">
-                  <FaDownload />
-                </button>
-                <button 
-                  onClick={() => handleDelete(message.file.url)} 
-                  className="text-red-500">
-                  <FaTrashAlt />
-                </button>
-              </td>
+    <div className="md:hidden">
+      {userMessages
+        .filter((msg) => msg.file && msg.file.type === "audio")
+        .map((message, index) => (
+          <div key={index} className="flex items-center justify-between mb-2 sm:mb-4">
+            <Icon icon="mdi:audio" className="text-gray-500 text-xl" />
+            <span className="text-sm sm:text-base">{extractFileName(message.file.url)}</span>
+            <div className="flex gap-1 sm:gap-2">
+              <button
+                onClick={() => handleDownload(message.file.url)}
+                className="text-blue-500"
+              >
+                <FaDownload />
+              </button>
+              <button
+                onClick={() => handleDelete(message.file.url)}
+                className="text-red-500"
+              >
+                <FaTrashAlt />
+              </button>
+            </div>
+          </div>
+        ))}
+    </div>
+
+    {/* Document Table (for larger screens) */}
+    <div className="hidden md:block">
+      <h3 className="font-semibold text-lg mb-2 text-center">Documents</h3>
+      <div className="overflow-x-auto">
+        <table className="w-full table-auto mb-4 border-collapse text-sm md:text-base">
+          <thead>
+            <tr className="border-b">
+              <th className="px-2 md:px-4 py-2 text-center">Type</th>
+              <th className="px-2 md:px-4 py-2 text-center">File Name</th>
+              <th className="px-2 md:px-4 py-2 text-center">Date</th>
+              <th className="px-2 md:px-4 py-2 text-center">Location</th>
+              <th className="px-2 md:px-4 py-2 text-center">Actions</th>
             </tr>
-          ))}
-      </tbody>
-    </table>
+          </thead>
+          <tbody>
+            {userMessages
+              .filter((msg) => msg.file && msg.file.type === "document")
+              .map((message, index) => (
+                <tr key={index} className="border-b">
+                  <td className="px-2 md:px-4 py-2 text-center">
+                    <FaFilePdf className="text-red-500 text-xl" />
+                  </td>
+                  <td className="px-2 md:px-4 py-2 text-center">
+                    {extractFileName(message.file.url)}
+                  </td>
+                  <td className="px-2 md:px-4 py-2 text-center">12/03/2024</td>
+                  <td className="px-2 md:px-4 py-2 text-center">Local Drive</td>
+                  <td className="px-2 md:px-4 py-2 text-center flex justify-center gap-2 md:gap-4">
+                    <button
+                      onClick={() => handleDownload(message.file.url)}
+                      className="text-blue-500"
+                    >
+                      <FaDownload />
+                    </button>
+                    <button
+                      onClick={() => handleDeletes(message.file.url)}
+                      className="text-red-500"
+                    >
+                      <FaTrashAlt />
+                    </button>
+                  </td>
+                </tr>
+              ))}
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    {/* Audio Table (for larger screens) */}
+    <div className="hidden md:block">
+      <h3 className="font-semibold text-lg mb-2 text-center">Audio</h3>
+      <div className="overflow-x-auto">
+        <table className="w-full table-auto border-collapse text-sm md:text-base">
+          <thead>
+            <tr className="border-b">
+              <th className="px-2 md:px-4 py-2 text-center">Type</th>
+              <th className="px-2 md:px-4 py-2 text-center">File Name</th>
+              <th className="px-2 md:px-4 py-2 text-center">Date</th>
+              <th className="px-2 md:px-4 py-2 text-center">Location</th>
+              <th className="px-2 md:px-4 py-2 text-center">Actions</th>
+            </tr>
+          </thead>
+          <tbody>
+            {userMessages
+              .filter((msg) => msg.file && msg.file.type === "audio")
+              .map((message, index) => (
+                <tr key={index} className="border-b">
+                  <td className="px-2 md:px-4 py-2 text-center">
+                    <Icon icon="mdi:audio" className="text-gray-500 text-xl" />
+                  </td>
+                  <td className="px-2 md:px-4 py-2 text-center">
+                    {extractFileName(message.file.url)}
+                  </td>
+                  <td className="px-2 md:px-4 py-2 text-center">12/03/2024</td>
+                  <td className="px-2 md:px-4 py-2 text-center">Local Drive</td>
+                  <td className="px-2 md:px-4 py-2 text-center flex justify-center gap-2 md:gap-4">
+                    <button
+                      onClick={() => handleDownload(message.file.url)}
+                      className="text-blue-500"
+                    >
+                      <FaDownload />
+                    </button>
+                    <button
+                      onClick={() => handleDelete(message.file.url)}
+                      className="text-red-500"
+                    >
+                      <FaTrashAlt />
+                    </button>
+                  </td>
+                </tr>
+              ))}
+          </tbody>
+        </table>
+      </div>
+    </div>
   </div>
 )}
-  {selectedOption === "Media" && (
-        <div>
-          <h3 className="font-semibold text-lg mb-2 text-center">Media</h3>
-          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
-            {/* Rendering images */}
-            {[...userMessages, ...contactMessages]
-              .filter((msg) => msg.file && msg.file.type === "image")
-              .map((message, index) => (
-                <div
-                  key={index}
-                  className="flex flex-col items-center"
-                  onClick={() => {
-                    toggleSelectFile(message.file.url);
-                    handleSelectionChange();
-                  }}
-                  style={{
-                    border: selectedFiles.includes(message.file.url) ? "2px solid #007BFF" : "none",
-                    cursor: "pointer",
-                  }}
-                >
-                  <img
-                    src={message.file.url}
-                    alt={`Image ${index}`}
-                    className="w-full h-40 object-cover"
-                  />
-                  <p className="text-center mt-2">{extractFileName(message.file.url)}</p>
-                </div>
-              ))}
 
-            {/* Rendering videos */}
-            {[...userMessages, ...contactMessages]
-              .filter((msg) => msg.file && msg.file.type === "video")
-              .map((message, index) => (
-                <div
-                  key={index}
-                  className="flex flex-col items-center"
-                  onClick={() => {
-                    toggleSelectFile(message.file.url);
-                    handleSelectionChange();
-                  }}
-                  style={{
-                    border: selectedFiles.includes(message.file.url) ? "2px solid #007BFF" : "none",
-                    cursor: "pointer",
-                  }}
-                >
-                  <video
-                    src={message.file.url}
-                    controls
-                    className="w-full h-40 object-cover"
-                  />
-                  <p className="text-center mt-2">{extractFileName(message.file.url)}</p>
-                </div>
-              ))}
+
+{selectedOption === "Media" && (
+  <div>
+  <h3 className="font-semibold text-lg mb-2 text-center">Media</h3>
+  <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4">
+    {/* Rendering images */}
+    {[...userMessages, ...contactMessages]
+      .filter((msg) => msg.file && msg.file.type === "image")
+      .map((message, index) => (
+        <div
+          key={index}
+          className="relative flex flex-col items-center p-2 border rounded-lg"
+          style={{
+            border: "1px solid #ddd",
+            cursor: "pointer",
+          }}
+        >
+          {/* Checkbox for selection */}
+          <div
+            className={`absolute top-2 left-2 w-6 h-6 rounded-full border-2 flex items-center justify-center ${
+              selectedFiles.includes(message.file.url)
+                ? "bg-green-500 border-green-500"
+                : "bg-white border-gray-300"
+            }`}
+            onClick={() => toggleSelectFile(message.file.url)}
+          >
+            {selectedFiles.includes(message.file.url) && (
+              <span className="text-white font-bold">✔</span>
+            )}
           </div>
 
-          {/* Pop-up Share/Delete Buttons */}
-          {showActions && (
-            <div
-              className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-50"
-              onClick={() => setShowActions(false)} // Close popup when clicking outside
-            >
-              <div
-                className="bg-white p-6 rounded-lg shadow-lg flex flex-col items-center"
-                onClick={(e) => e.stopPropagation()} // Prevent closing popup on button click
-              >
-                <button
-                  onClick={handleShare}
-                  className="mx-2 bg-blue-500 text-white px-4 py-2 rounded mb-4"
-                >
-                  Share
-                </button>
-                <button
-                  onClick={handleDelete}
-                  className="mx-2 bg-red-500 text-white px-4 py-2 rounded"
-                >
-                  Delete
-                </button>
-              </div>
-            </div>
-          )}
+          <img
+            src={message.file.url}
+            alt={`Image ${index}`}
+            className="w-full h-32 sm:h-40 object-cover rounded"
+          />
+         
+
+          {/* Download icon */}
+          <div
+            className="absolute bottom-4 right-4 bg-white text-green-500 p-1 rounded-sm cursor-pointer border-2 border-green-500"
+            onClick={() => handleDownloadFile(message.file.url)}
+          ><Icon 
+          icon="tabler:download"
+          width="20"
+          height="20"
+          className="cursor-pointer"
+        />
+        
+        
+        
+
+          </div>
         </div>
-      )}
+      ))}
+
+    {/* Rendering videos */}
+    {[...userMessages, ...contactMessages]
+      .filter((msg) => msg.file && msg.file.type === "video")
+      .map((message, index) => (
+        <div
+          key={index}
+          className="relative flex flex-col items-center p-2 border rounded-lg"
+          style={{
+            border: "1px solid #ddd",
+            cursor: "pointer",
+          }}
+        >
+          {/* Checkbox for selection */}
+          <div
+            className={`absolute top-2 left-2 w-6 h-6 rounded-full border-2 flex items-center justify-center ${
+              selectedFiles.includes(message.file.url)
+                ? "bg-green-500 border-green-500"
+                : "bg-white border-gray-300"
+            }`}
+            onClick={() => toggleSelectFile(message.file.url)}
+          >
+            {selectedFiles.includes(message.file.url) && (
+              <span className="text-white font-bold">✔</span>
+            )}
+          </div>
+
+          <video
+            src={message.file.url}
+            controls
+            className="w-full h-32 sm:h-40 object-cover rounded"
+          />
+       
+
+          {/* Download icon */}
+          <div
+            className="absolute bottom-4 right-4 bg-white text-green-500 p-1 rounded-sm cursor-pointer border-2 border-green-500"
+            onClick={() => handleDownloadFile(message.file.url)}
+          ><Icon 
+          icon="tabler:download"
+          width="20"
+          height="20"
+          className="cursor-pointer"
+        />
+        
+        
+        
+
+          </div>
+        </div>
+      ))}
+  </div>
+
+  {/* Success Toast */}
+  {showDownloadToast && (
+    <div className="absolute top-20 right-10 bg-white text-black px-4 py-2 rounded shadow-lg flex flex-col items-center gap-2 z-30 border border-gray-300">
+      <div className="text-green-500 font-bold text-xl">✔</div>
+      <span>Your media saved successfully!</span>
+    </div>
+  )}
+
+  {/* Delete Confirmation Popup */}
+  {showDeletePopup && (
+    <div
+      className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50"
+      onClick={() => setShowDeletePopup(false)} // Close on clicking outside
+    >
+      <div
+        className="bg-white p-6 rounded shadow-lg text-center"
+        onClick={(e) => e.stopPropagation()} // Prevent closing on clicking inside
+      >
+        <p className="mb-4 text-lg font-semibold">
+          Are you sure you want to delete?
+        </p>
+        <div className="flex justify-center gap-4">
+          <button
+            onClick={handleDelete}
+            className="bg-red-500 text-white px-4 py-2 rounded"
+          >
+            Delete
+          </button>
+          <button
+            onClick={() => setShowDeletePopup(false)}
+            className="bg-gray-300 text-black px-4 py-2 rounded"
+          >
+            Cancel
+          </button>
+        </div>
+      </div>
+    </div>
+  )}
+</div>
+)}
+
+
+
+
 
 
 
@@ -772,58 +963,65 @@ const IndividualChat = ({ contact, handleBackToContacts }) => {
 
 {selectedOption === "Chat" && (
   <div
-  className={`mb-[96px] sticky flex justify-between items-center border-[#9B9797] bg-white shadow-lg mt-2 border rounded-full w-[99%] sm:w-[99%] h-11 overflow-hidden ml-1 p-3 ${showEmojiPicker ? 'z-50' : ''}`}
->
+    className={`mb-[98px] sticky flex justify-between items-center border-[#9B9797] bg-white shadow-lg mt-2 border rounded-full w-full sm:w-[99.99%] h-11 overflow-hidden sm:px-3 sm:py-0  ${
+      showEmojiPicker ? 'z-50' : ''
+    } sm:flex flex-wrap`}
+  >
     {/* Icons */}
-    <div className="relative flex gap-3 px-2 sm:px-0">
-      {/* Emoji Icon */}
-      <Icon
-        icon="twemoji:grinning-face"
-        width="24"
-        height="24"
-        onClick={() => setShowEmojiPicker((prev) => !prev)} // Toggle emoji picker
-        className="cursor-pointer"
-      />
-      {/* Attachment Icon */}
-      <Icon
-        icon="bx:bx-paperclip"
-        width="25"
-        height="25"
-        onClick={() => {
-          setShowEmojiPicker(false); // Close emoji picker
-          handleAttachmentClick(); // Open file explorer
-        }}
-        className="cursor-pointer"
-      />
-      <input
-        type="file"
-        id="fileInput"
-        className="hidden"
-        onChange={(e) => console.log(e.target.files[0])} // Handle file selection
-      />
-    </div>
+    <div className="relative flex sm:gap-3 gap-2 pl-1 sm:px-0">
+  {/* Emoji Icon */}
+  <Icon
+    icon="twemoji:grinning-face"
+    width="20" // Default width for mobile
+    height="20" // Default height for mobile
+    onClick={() => setShowEmojiPicker((prev) => !prev)} // Toggle emoji picker
+    className="cursor-pointer sm:w-7 sm:h-7" // Larger size for desktop (sm screen and above)
+  />
+  {/* Attachment Icon */}
+  <Icon
+    icon="bx:bx-paperclip"
+    width="20" // Default width for mobile
+    height="20" // Default height for mobile
+    onClick={() => {
+      setShowEmojiPicker(false); // Close emoji picker
+      handleAttachmentClick(); // Open file explorer
+    }}
+    className="cursor-pointer sm:w-6 sm:h-6" // Larger size for desktop (sm screen and above)
+  />
+  <input
+    type="file"
+    id="fileInput"
+    className="hidden"
+    onChange={(e) => console.log(e.target.files[0])} // Handle file selection
+  />
+</div>
+
     {/* Text Input */}
     <input
-      type="text"
-      value={message}
-      onChange={(e) => setMessage(e.target.value)}
-      placeholder="Type a message..."
-      className="flex-grow px-2 border-none font-[700] text-gray-700 text-lg sm:text-lg md:text-clip outline-none"
-      onFocus={() => setShowEmojiPicker(false)} // Close emoji picker on focus
-    />
-    {/* Mic/Send Button */}
-    <div className="right-0 flex justify-center items-center  rounded-full w-10 h-10">
-      <Icon
-        icon={message.length > 0 ? 'fluent:send-24-filled' : 'carbon:microphone-filled'}
-        width="25"
-        height="25"
-        onClick={message.length > 0 ? () => alert('Message sent!') : handleMicClick}
-        className="cursor-pointer"
-        style={{ color: '#01C2B5' }}
-      />
-    </div>
+  type="text"
+  value={message}
+  onChange={(e) => setMessage(e.target.value)}
+  placeholder="Type a message..."
+  className="flex-grow px-2 border-none font-[700] text-gray-700 text-sm sm:text-base md:text-clip outline-none sm:h-10 h-8" // Smaller text box on mobile
+  onFocus={() => setShowEmojiPicker(false)} // Close emoji picker on focus
+/>
+{/* Mic/Send Button */}
+<div className="flex justify-center items-center sm:w-13 sm:h-13 w-8 h-8 right-7 sm:ml-3 mt-2 sm:mt-0">
+  <Icon
+    icon={message.length > 0 ? 'fluent:send-24-filled' : 'carbon:microphone-filled'}
+    width="20" // Smaller icon for mobile
+    height="20" // Smaller icon for mobile
+    onClick={message.length > 0 ? () => alert('Message sent!') : handleMicClick}
+    className="cursor-pointer font-bold"
+    style={{ color: '#01C2B5' }}
+  />
+</div>
+
   </div>
 )}
+
+
+
 
 
 

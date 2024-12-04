@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import Picker from "emoji-picker-react";
+
 import {
   faEllipsisVertical,
   faSearch,
@@ -128,37 +128,7 @@ const ChatApp = () => {
   const [showEmojiPicker, setShowEmojiPicker] = useState(false);
   const [message, setMessage] = useState("");
   const [isLeftVisible, setIsLeftVisible] = useState(false);
-  const handleEmojiClick = (event, emojiObject) => {
-    setMessage((prevMessage) => prevMessage + emojiObject.emoji);
-  };
-
-
-
-  // Function to handle emoji click
-
-  // Function to handle attachment click (file explorer)
-
-
-  // Function to handle mic click (voice recorder - placeholder for now)
-  const handleMicClick = () => {
-    alert('Microphone recording functionality will be implemented here.');
-  };
-
-
-  const handleAttachmentClick = () => {
-    document.getElementById("fileInput").click();
-  };
-
-  const handleFileChange = (event) => {
-    const file = event.target.files[0];
-    if (file) {
-      console.log("File selected:", file.name);
-    }
-  };
-
-  const menuOptions = ["Chat", "Files", "Media"];
-
-  // Handle search input change
+  
   const handleSearchChange = (event) => {
     const query = event.target.value;
     setSearchQuery(query);
@@ -200,7 +170,7 @@ const ChatApp = () => {
     <div className="flex sm:flex-row flex-col h-full overflow-hidden">
       {/* Contacts List Section */}
       {(!selectedContact || window.innerWidth >= 1024) && (
-        <div className="top-0  border-gray-300 bg-white border-r w-full lg:w-1/4 sm:h-screen h-full overflow-y-auto scrollbar-hide">
+        <div className="top-0  border-gray-300 bg-white border-r w-full lg:w-1/4 sm:h-screen  overflow-y-auto scrollbar-hide">
           {/* Header */}
           <div className="top-0 z-10 sticky bg-white mb-2">
             <div className="flex justify-between items-center mr-4 mb-2">
@@ -289,11 +259,11 @@ const ChatApp = () => {
       {/* Chat Content Section */}
 
       {selectedContact && (
-        <div className="top-0 flex flex-col flex-1 bg-gray-100 lg:w-3/4 min-h-screen overflow-y-hidden ">
+        <div className="sm:flex flex-col flex-1 bg-gray-100 lg:w-3/4 w-full min-h-screen overflow-hidden">
          
         
        
-              <IndividualChat
+              <IndividualChat 
                 contact={selectedContact}
                 handleBackToContacts={handleBackToContacts}
               />
