@@ -12,7 +12,7 @@ const App = () => {
   console.log("here is role", role);
 
   const defaultRoute = isAuthenticated
-    ? role === "admin"
+    ? role === "TeamLead"
       ? "/admin/dashboard" // Default route for admin
       : "/user/home" // Default route for user
     : "/login";
@@ -22,12 +22,14 @@ const App = () => {
       <Routes>
         {/* Login Route */}
         <Route path="/login" element={<Login />} />
+      
+
 
         {/* Admin Routes */}
         <Route
           path="/admin/*" 
           element={
-            <ProtectedRoute roleRequired="admin">
+            <ProtectedRoute roleRequired="TeamLead">
               <Layout role={role} />
             </ProtectedRoute>
           }

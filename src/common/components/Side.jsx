@@ -11,7 +11,7 @@ const Side = ({ isOpen, toggleSidebar, isCollapsed, role }) => {
 
   // Links based on role
   const linksByRole = {
-    admin: [
+    TeamLead: [
       {
         path: "/admin/dashboard",
         label: "Dashboard",
