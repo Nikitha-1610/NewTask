@@ -23,7 +23,7 @@ const InProgressTask = () => {
     taskDescription: task.taskDescription,
   }));
   const goBack = () => {
-    navigate("/task");
+    navigate("/admin/task");
   };
 
   return (

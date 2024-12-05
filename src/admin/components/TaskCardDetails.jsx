@@ -2,8 +2,10 @@ import { useParams, useNavigate } from "react-router-dom";
 import { useState, useEffect } from "react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faLink, faUser, faComments } from "@fortawesome/free-solid-svg-icons";
-import axiosInstance from "../common/utils/axios/axiosInstance";
+import axiosInstance from "../../common/utils/axios/axiosInstance";
 import { Icon } from "@iconify/react";
+import ReactLoading from "react-loading";
+
 
 const TaskCardDetails = () => {
   const { taskId } = useParams();
@@ -14,6 +16,7 @@ const TaskCardDetails = () => {
   const [priority, setPriority] = useState("Normal");
   const [fileSize, setFileSize] = useState(null);
   const [downloading, setDownloading] = useState(false);
+ 
 
   useEffect(() => {
     // Fetch task details
@@ -31,7 +34,7 @@ const TaskCardDetails = () => {
   }, [taskId]);
 
   const goBack = () => {
-    navigate("/task");
+    navigate("/admin/task");
   };
 
   const downloadFile = async (url) => {
@@ -54,7 +57,15 @@ const TaskCardDetails = () => {
     }
   };
 
-  if (loading) return <div className="text-center mt-10">Loading...</div>;
+    // Loader for page load
+    if (loading) {
+      return (
+        <div className="flex justify-center items-center h-screen">
+          <ReactLoading type="spin" color="#0d6efd" height={50} width={40} />
+        </div>
+      );
+    }
+
   if (error)
     return <div className="text-center mt-10 text-red-500">{error}</div>;
 
@@ -321,3 +332,4 @@ const TaskCardDetails = () => {
 };
 
 export default TaskCardDetails;
+

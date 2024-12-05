@@ -8,7 +8,7 @@ import axiosInstance from "../../common/utils/axios/axiosInstance";
 import ReactLoading from "react-loading";
 // const getRandomColor = () => {
 //   const colors = [
-//     "bg-red-500", "bg-blue-500", "bg-green-500", "bg-yellow-500", 
+//     "bg-red-500", "bg-blue-500", "bg-green-500", "bg-yellow-500",
 //     "bg-purple-500", "bg-pink-500", "bg-teal-500", "bg-indigo-500"
 //   ];
 //   return colors[Math.floor(Math.random() * colors.length)];
@@ -38,7 +38,7 @@ import ReactLoading from "react-loading";
 // };
 // const getRandomColor = () => {
 //   const colors = [
-//     "red", "blue", "green", "yellow", 
+//     "red", "blue", "green", "yellow",
 //     "purple", "pink", "teal", "indigo"
 //   ];
 //   return colors[Math.floor(Math.random() * colors.length)];
@@ -56,7 +56,6 @@ const colors = [
 ];
 
 const getRandomColor = () => colors[Math.floor(Math.random() * colors.length)];
-
 
 const Dashboard = () => {
   const cardContainerRef = useRef(null);
@@ -118,7 +117,6 @@ const Dashboard = () => {
   return (
     <div className="flex flex-col items-center pt-0 gap-4 w-full">
       <div className="grid grid-cols-1 gap-4 w-full max-w-screen-xl sm:p-2">
-        
         {/* Card Container */}
 
         <div className="relative">
@@ -138,12 +136,11 @@ const Dashboard = () => {
             <MdArrowForward className="text-teal-500 text-3xl font-bold" />
           </div>
 
-        
-        <div
-          className="overflow-x-auto scrollbar-hide w-full"
-          ref={cardContainerRef} // Attach the ref to the card container
-        >
-         <div className="flex space-x-2">
+          <div
+            className="overflow-x-auto scrollbar-hide w-full"
+            ref={cardContainerRef} // Attach the ref to the card container
+          >
+            <div className="flex space-x-2">
               {departmentCounts &&
                 Object.keys(departmentCounts).map((department, index) => {
                   const { vibrant, faint } = getRandomColor(); // Get random color and background
@@ -159,7 +156,9 @@ const Dashboard = () => {
                           <MdBarChart size={34} className={vibrant} />
                         </div>
                         <div>
-                          <h3 className="text-lg font-medium text-gray-400">{department}</h3>
+                          <h3 className="text-lg font-medium text-gray-400">
+                            {department}
+                          </h3>
                           <h1 className="text-gray-800 text-2xl font-bold">
                             {departmentCounts[department]}
                           </h1>
@@ -169,7 +168,7 @@ const Dashboard = () => {
                   );
                 })}
             </div>
-        </div>
+          </div>
         </div>
         {/* Weekly Production Container */}
         <div className="w-full p-5 md:p-3 rounded-xl border-2 border-gray-100">

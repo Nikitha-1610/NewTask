@@ -46,7 +46,7 @@ const TaskManager = () => {
   };
 
   return (
-    <div className="max-w-full mx-auto p-4 h-96 bg-white shadow-lg rounded-lg border border-gray-200">
+    <div className="max-w-md mx-auto p-4 h-96 bg-white shadow-lg rounded-lg border border-gray-200">
       <div className=" flex justify-between">
         <h2>Timer</h2>
         <Icon icon="stash:play-btn-light" height={22} width={22} />
