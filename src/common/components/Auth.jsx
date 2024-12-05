@@ -1,42 +1,68 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { useDispatch } from "react-redux";
-import { login } from "../../redux/authSlice";
-import bgImage from "../../assets/BgImage.jpg";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
-import logo from "../../assets/logo.png";
 import axiosInstance from "../../common/utils/axios/axiosInstance";
+import bgImage from "../../assets/BgImage.jpg";
+import logo from "../../assets/logo.png";
+import { useDispatch } from "react-redux";
+import { login } from "../../redux/authSlice.jsx"; 
 
 const AuthPage = () => {
-  const [isSignUp, setIsSignUp] = useState(false); // Toggle between Sign-Up and Sign-In
-
-  // Sign-Up Form State
+  const [isSignUp, setIsSignUp] = useState(false); 
   const [formData, setFormData] = useState({
     emailId: "",
     password: "",
     confirmPassword: "",
+    employeeId: "", 
   });
-
-  // Sign-In Form State
-  const [employeeId, setEmployeeId] = useState("");
-  const [password, setPassword] = useState("");
 
   const navigate = useNavigate();
   const dispatch = useDispatch();
 
-  const toggleForm = () => setIsSignUp(!isSignUp);
 
-  // Handle input change for Sign-Up
+  // Handle form input changes
   const handleInputChange = (e) => {
     const { name, value } = e.target;
     setFormData({ ...formData, [name]: value });
   };
+  
 
+
+
+const handleNavigateToRegister = () => {
+  const { emailId, password, confirmPassword } = formData;
+
+  
+  if (!emailId || !password || !confirmPassword) {
+    toast.error("Please fill in all fields!");
+    return; 
+  }
+
+ 
+  if (password !== confirmPassword) {
+    toast.error("Passwords do not match!");
+    return;
+  }
+
+  
+  if (password.length < 8) {
+    toast.error("Password must be at least 8 characters long!");
+    return;
+  }
+
+  
+  navigate("/register");
+};
+
+  
+ 
   const handleSignUp = async (e) => {
     e.preventDefault();
+
     const { emailId, password, confirmPassword } = formData;
 
+    
     if (!emailId || !password || !confirmPassword) {
       toast.error("Please fill in all fields!");
       return;
@@ -53,58 +79,67 @@ const AuthPage = () => {
     }
 
     try {
-      // Send Sign-Up request
-      const response = await axiosInstance.post("user/signup", formData);
+      const response = await axiosInstance.post("user/signup", {
+        emailId,
+        password,
+      });
 
       if (response.data.success) {
         toast.success("Account created successfully!");
-        setTimeout(() => toggleForm(), 1500); // Switch to sign-in form after success
+        const { token } = response.data;
+        if (token) {
+          localStorage.setItem("authToken", token);
+        }
+        navigate("/login"); 
       } else {
         toast.error(response.data.message || "Sign-Up failed!");
       }
     } catch (error) {
       console.error("Sign-Up error:", error);
-      const errorMessage = error.response?.data?.message || "An error occurred!";
-      toast.error(errorMessage);
+      toast.error("An error occurred while signing up.");
     }
-  };
-
-  const handleRegistration=() =>{
-    navigate("/register"); // Navigate to the RegistrationPage
   };
   const handleSignIn = async (e) => {
     e.preventDefault();
-
+  
+    const { employeeId, password } = formData;
+  
     if (!employeeId || !password) {
       toast.error("Please fill in all fields!");
       return;
     }
-
+  
     try {
-      // Send Sign-In request
       const response = await axiosInstance.post("user/login", {
         employeeId,
         password,
       });
-
-      // On successful login
-      const userData = response.data;
-      const token = response.data.token; // Assuming token is returned in the response
-      toast.success("Login successful!");
-
-      // Update Redux state with user data and token
-      dispatch(login({ userData, token }));
-
-      // Redirect based on role
-      navigate(userData?.role === "TeamLead" ? "/admin/dashboard" : "/user/home");
+  
+      const { token, role, name } = response.data;
+  
+      if (token) {
+        toast.success("Login successful!");
+        localStorage.setItem("authToken", token);
+        dispatch(login({ userData: response.data, token }));
+  
+       
+        if (role === "TeamLead") {
+          navigate("/admin/dashboard");
+        } else {
+          navigate("/user/home");
+        }
+      } else {
+        toast.error("Authentication failed!");
+      }
     } catch (error) {
       console.error("Login error:", error);
-
-      const errorMessage =
-        error.response?.data?.message || "Invalid employee ID or password!";
+      const errorMessage = error.response?.data?.message || "Invalid credentials!";
       toast.error(errorMessage);
     }
   };
+  
+  
+
 
   return (
     <div className="flex flex-col lg:flex-row h-screen">
@@ -138,7 +173,7 @@ const AuthPage = () => {
       {/* Right Side with Form */}
       <div className="lg:w-7/12 w-full flex items-center justify-center p-6 md:p-10">
         <div className="w-full max-w-md">
-          {/* Logo and Title */}
+         
           <div className="flex items-center justify-center lg:justify-start mb-6">
             <img src={logo} alt="Task Flow Logo" className="w-8 h-8 mr-2" />
             <h2 className="text-xl md:text-2xl font-semibold">Task Flow</h2>
@@ -148,9 +183,7 @@ const AuthPage = () => {
           <div className="flex justify-center space-x-4 mb-4">
             <button
               className={`py-2 px-4 rounded-md ${
-                isSignUp
-                  ? "bg-teal-500 text-white"
-                  : "bg-gray-100 text-gray-500"
+                isSignUp ? "bg-teal-500 text-white" : "bg-gray-100 text-gray-500"
               }`}
               onClick={() => setIsSignUp(true)}
             >
@@ -158,9 +191,7 @@ const AuthPage = () => {
             </button>
             <button
               className={`py-2 px-4 rounded-md ${
-                !isSignUp
-                  ? "bg-teal-500 text-white"
-                  : "bg-gray-100 text-gray-500"
+                !isSignUp ? "bg-teal-500 text-white" : "bg-gray-100 text-gray-500"
               }`}
               onClick={() => setIsSignUp(false)}
             >
@@ -170,20 +201,77 @@ const AuthPage = () => {
 
           {/* Sign-Up Form */}
           {isSignUp ? (
-            <form className="space-y-4" onSubmit={handleSignUp}>
+  <form className="space-y-4" onSubmit={handleSignUp}>
+    <div>
+      <label htmlFor="emailId" className="text-sm font-medium">
+        Email ID
+      </label>
+      <input
+        id="emailId"
+        type="email"
+        name="emailId"
+        placeholder="Enter Email ID"
+        className="w-full p-3 border rounded-md border-teal-400"
+        value={formData.emailId}
+        onChange={handleInputChange}
+        required
+      />
+    </div>
+    <div>
+      <label htmlFor="password" className="text-sm font-medium">
+        Password
+      </label>
+      <input
+        id="password"
+        type="password"
+        name="password"
+        placeholder="Enter Password"
+        className="w-full p-3 border rounded-md border-teal-400"
+        value={formData.password}
+        onChange={handleInputChange}
+        required
+      />
+    </div>
+    <div>
+      <label htmlFor="confirmPassword" className="text-sm font-medium">
+        Confirm Password
+      </label>
+      <input
+        id="confirmPassword"
+        type="password"
+        name="confirmPassword"
+        placeholder="Confirm Password"
+        className="w-full p-3 border rounded-md border-teal-400"
+        value={formData.confirmPassword}
+        onChange={handleInputChange}
+        required
+      />
+    </div>
+
+    {/* Register Button */}
+    <button
+      type="button"
+      onClick={handleNavigateToRegister}
+      className="w-full bg-teal-500 text-white py-3 rounded-md"
+    >
+      Register
+    </button>
+  </form>
+          ) : (
+            // Sign-In Form
+            <form className="space-y-4" onSubmit={handleSignIn}>
               <div>
-                <label htmlFor="emailId" className="text-sm font-medium">
-                  Email ID
+                <label htmlFor="employeeId" className="text-sm font-medium">
+                  Employee ID
                 </label>
                 <input
-                  id="emailId"
-                  type="email"
-                  name="emailId"
-                  placeholder="Enter Email ID"
+                  id="employeeId"
+                  type="text"
+                  name="employeeId"
+                  placeholder="Enter Employee ID"
                   className="w-full p-3 border rounded-md border-teal-400"
-                  value={formData.emailId}
+                  value={formData.employeeId}
                   onChange={handleInputChange}
-                  required
                 />
               </div>
               <div>
@@ -198,63 +286,6 @@ const AuthPage = () => {
                   className="w-full p-3 border rounded-md border-teal-400"
                   value={formData.password}
                   onChange={handleInputChange}
-                  required
-                />
-              </div>
-              <div>
-                <label htmlFor="confirmPassword" className="text-sm font-medium">
-                  Confirm Password
-                </label>
-                <input
-                  id="confirmPassword"
-                  type="password"
-                  name="confirmPassword"
-                  placeholder="Confirm Password"
-                  className="w-full p-3 border rounded-md border-teal-400"
-                  value={formData.confirmPassword}
-                  onChange={handleInputChange}
-                  required
-                />
-              </div>
-              <button
-                type="submit"
-                onClick={handleRegistration}
-                className="w-full bg-teal-500 text-white py-3 rounded-md mt-4"
-              >
-                Register
-              </button>
-            </form>
-          ) : (
-            // Sign-In Form
-            <form className="space-y-4" onSubmit={handleSignIn}>
-              <div>
-                <label htmlFor="employeeId" className="text-sm font-medium">
-                  Employee ID
-                </label>
-                <input
-                  id="employeeId"
-                  type="text"
-                  name="employeeId"
-                  placeholder="Enter Employee ID"
-                  className="w-full p-3 border rounded-md border-teal-400"
-                  value={employeeId}
-                  onChange={(e) => setEmployeeId(e.target.value)}
-                  required
-                />
-              </div>
-              <div>
-                <label htmlFor="password" className="text-sm font-medium">
-                  Password
-                </label>
-                <input
-                  id="password"
-                  type="password"
-                  name="password"
-                  placeholder="Enter Password"
-                  className="w-full p-3 border rounded-md border-teal-400"
-                  value={password}
-                  onChange={(e) => setPassword(e.target.value)}
-                  required
                 />
               </div>
               <button
@@ -265,15 +296,9 @@ const AuthPage = () => {
               </button>
             </form>
           )}
-
-          <p className="text-center text-xs text-gray-500 mt-4">
-            By signing up to create an account I accept <br />
-            Company's <span className="text-teal-500">Terms of use</span> &{" "}
-            <span className="text-teal-500">Privacy Policy</span>.
-          </p>
+          <ToastContainer />
         </div>
       </div>
-      <ToastContainer />
     </div>
   );
 };

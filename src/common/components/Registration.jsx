@@ -1,6 +1,9 @@
 import React, { useState } from "react";
+import { useNavigate } from "react-router-dom";
 
 const RegistrationPage = () => {
+  const navigate = useNavigate(); // Initialize the useNavigate hook
+  
   const [formData, setFormData] = useState({
     fullName: "",
     dob: "",
@@ -21,6 +24,7 @@ const RegistrationPage = () => {
   });
 
   const [errors, setErrors] = useState({});
+  const [successMessage, setSuccessMessage] = useState(""); // Success message state
 
   const validate = () => {
     const newErrors = {};
@@ -36,7 +40,13 @@ const RegistrationPage = () => {
   const handleSubmit = (e) => {
     e.preventDefault();
     if (validate()) {
-      alert("Form submitted successfully!");
+      // Show success message
+      setSuccessMessage("Registration Successful! Redirecting to Sign In...");
+
+      // Redirect to the sign-in page after 3 seconds
+      setTimeout(() => {
+        navigate("/login"); // Replace with your actual sign-in route
+      }, 3000);
     }
   };
 
@@ -66,14 +76,14 @@ const RegistrationPage = () => {
               name="fullName"
               value={formData.fullName}
               onChange={handleChange}
-              className={`border p-2 rounded-md ${
-                errors.fullName ? "border-red-500" : "border-gray-300"
-              }`}
+              className={`border p-2 rounded-md ${errors.fullName ? "border-red-500" : "border-gray-300"}`}
             />
           </div>
 
-          {/* DOB */}
-          <div className="flex flex-col">
+          {/* Other form fields (DOB, mail, phone number, etc.) remain unchanged */}
+
+            {/* DOB */}
+            <div className="flex flex-col">
             <label className="font-medium text-gray-700">
               DOB {errors.dob && <span className="text-red-500">*</span>}
             </label>
@@ -307,6 +317,7 @@ const RegistrationPage = () => {
             />
           </div>
 
+          
           {/* Submit Button */}
           <div className="col-span-2 flex justify-center">
             <button
@@ -317,6 +328,13 @@ const RegistrationPage = () => {
             </button>
           </div>
         </form>
+
+        {/* Display success message if registration is successful */}
+        {successMessage && (
+          <div className="mt-4 text-center text-green-600">
+            <p>{successMessage}</p>
+          </div>
+        )}
       </div>
     </div>
   );
