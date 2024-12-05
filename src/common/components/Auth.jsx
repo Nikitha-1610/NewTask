@@ -1,5 +1,5 @@
-import { useNavigate } from "react-router-dom";
 import { useState } from "react";
+import { useNavigate } from "react-router-dom";
 import { useDispatch } from "react-redux";
 import { login } from "../../redux/authSlice";
 import bgImage from "../../assets/BgImage.jpg";
@@ -8,12 +8,70 @@ import "react-toastify/dist/ReactToastify.css";
 import logo from "../../assets/logo.png";
 import axiosInstance from "../../common/utils/axios/axiosInstance";
 
-const Auth = () => {
-  const navigate = useNavigate();
-  const dispatch = useDispatch(); // Redux dispatch
+const AuthPage = () => {
+  const [isSignUp, setIsSignUp] = useState(false); // Toggle between Sign-Up and Sign-In
+
+  // Sign-Up Form State
+  const [formData, setFormData] = useState({
+    emailId: "",
+    password: "",
+    confirmPassword: "",
+  });
+
+  // Sign-In Form State
   const [employeeId, setEmployeeId] = useState("");
   const [password, setPassword] = useState("");
 
+  const navigate = useNavigate();
+  const dispatch = useDispatch();
+
+  const toggleForm = () => setIsSignUp(!isSignUp);
+
+  // Handle input change for Sign-Up
+  const handleInputChange = (e) => {
+    const { name, value } = e.target;
+    setFormData({ ...formData, [name]: value });
+  };
+
+  const handleSignUp = async (e) => {
+    e.preventDefault();
+    const { emailId, password, confirmPassword } = formData;
+
+    if (!emailId || !password || !confirmPassword) {
+      toast.error("Please fill in all fields!");
+      return;
+    }
+
+    if (password !== confirmPassword) {
+      toast.error("Passwords do not match!");
+      return;
+    }
+
+    if (password.length < 8) {
+      toast.error("Password must be at least 8 characters long!");
+      return;
+    }
+
+    try {
+      // Send Sign-Up request
+      const response = await axiosInstance.post("user/signup", formData);
+
+      if (response.data.success) {
+        toast.success("Account created successfully!");
+        setTimeout(() => toggleForm(), 1500); // Switch to sign-in form after success
+      } else {
+        toast.error(response.data.message || "Sign-Up failed!");
+      }
+    } catch (error) {
+      console.error("Sign-Up error:", error);
+      const errorMessage = error.response?.data?.message || "An error occurred!";
+      toast.error(errorMessage);
+    }
+  };
+
+  const handleRegistration=() =>{
+    navigate("/register"); // Navigate to the RegistrationPage
+  };
   const handleSignIn = async (e) => {
     e.preventDefault();
 
@@ -23,7 +81,7 @@ const Auth = () => {
     }
 
     try {
-      // Send login request
+      // Send Sign-In request
       const response = await axiosInstance.post("user/login", {
         employeeId,
         password,
@@ -31,7 +89,7 @@ const Auth = () => {
 
       // On successful login
       const userData = response.data;
-      const token = response.data.token; // Assuming `token` is returned in the response
+      const token = response.data.token; // Assuming token is returned in the response
       toast.success("Login successful!");
 
       // Update Redux state with user data and token
@@ -88,44 +146,133 @@ const Auth = () => {
             <h2 className="text-xl md:text-2xl font-semibold">Task Flow</h2>
           </div>
 
-          {/* Sign In Form */}
-          <form className="space-y-4" onSubmit={handleSignIn}>
-            <div>
-              <label
-                htmlFor="signin-employee-id"
-                className="text-sm font-medium"
-              >
-                Employee ID
-              </label>
-              <input
-                id="signin-employee-id"
-                type="text"
-                placeholder="Enter Employee ID"
-                className="w-full p-3 border rounded-md border-teal-400"
-                value={employeeId}
-                onChange={(e) => setEmployeeId(e.target.value)}
-              />
-            </div>
-            <div>
-              <label htmlFor="signin-password" className="text-sm font-medium">
-                Password
-              </label>
-              <input
-                id="signin-password"
-                type="password"
-                placeholder="Enter Password"
-                className="w-full p-3 border rounded-md border-teal-400"
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
-              />
-            </div>
+          {/* Toggle Sign-Up/Sign-In */}
+          <div className="flex justify-center space-x-4 mb-4">
             <button
-              type="submit"
-              className="w-full bg-teal-500 text-white py-3 rounded-md mt-4"
+              className={`py-2 px-4 rounded-md ${
+                isSignUp
+                  ? "bg-teal-500 text-white"
+                  : "bg-gray-100 text-gray-500"
+              }`}
+              onClick={() => setIsSignUp(true)}
             >
-              Log In
+              Sign Up
             </button>
-          </form>
+            <button
+              className={`py-2 px-4 rounded-md ${
+                !isSignUp
+                  ? "bg-teal-500 text-white"
+                  : "bg-gray-100 text-gray-500"
+              }`}
+              onClick={() => setIsSignUp(false)}
+            >
+              Sign In
+            </button>
+          </div>
+
+          {/* Sign-Up Form */}
+          {isSignUp ? (
+            <form className="space-y-4" onSubmit={handleSignUp}>
+              <div>
+                <label htmlFor="emailId" className="text-sm font-medium">
+                  Email ID
+                </label>
+                <input
+                  id="emailId"
+                  type="email"
+                  name="emailId"
+                  placeholder="Enter Email ID"
+                  className="w-full p-3 border rounded-md border-teal-400"
+                  value={formData.emailId}
+                  onChange={handleInputChange}
+                  required
+                />
+              </div>
+              <div>
+                <label htmlFor="password" className="text-sm font-medium">
+                  Password
+                </label>
+                <input
+                  id="password"
+                  type="password"
+                  name="password"
+                  placeholder="Enter Password"
+                  className="w-full p-3 border rounded-md border-teal-400"
+                  value={formData.password}
+                  onChange={handleInputChange}
+                  required
+                />
+              </div>
+              <div>
+                <label htmlFor="confirmPassword" className="text-sm font-medium">
+                  Confirm Password
+                </label>
+                <input
+                  id="confirmPassword"
+                  type="password"
+                  name="confirmPassword"
+                  placeholder="Confirm Password"
+                  className="w-full p-3 border rounded-md border-teal-400"
+                  value={formData.confirmPassword}
+                  onChange={handleInputChange}
+                  required
+                />
+              </div>
+              <button
+                type="submit"
+                onClick={handleRegistration}
+                className="w-full bg-teal-500 text-white py-3 rounded-md mt-4"
+              >
+                Register
+              </button>
+            </form>
+          ) : (
+            // Sign-In Form
+            <form className="space-y-4" onSubmit={handleSignIn}>
+              <div>
+                <label htmlFor="employeeId" className="text-sm font-medium">
+                  Employee ID
+                </label>
+                <input
+                  id="employeeId"
+                  type="text"
+                  name="employeeId"
+                  placeholder="Enter Employee ID"
+                  className="w-full p-3 border rounded-md border-teal-400"
+                  value={employeeId}
+                  onChange={(e) => setEmployeeId(e.target.value)}
+                  required
+                />
+              </div>
+              <div>
+                <label htmlFor="password" className="text-sm font-medium">
+                  Password
+                </label>
+                <input
+                  id="password"
+                  type="password"
+                  name="password"
+                  placeholder="Enter Password"
+                  className="w-full p-3 border rounded-md border-teal-400"
+                  value={password}
+                  onChange={(e) => setPassword(e.target.value)}
+                  required
+                />
+              </div>
+              <button
+                type="submit"
+                className="w-full bg-teal-500 text-white py-3 rounded-md mt-4"
+              >
+                Log In
+              </button>
+            </form>
+          )}
+
+          <p className="text-center text-xs text-gray-500 mt-4">
+            By signing up to create an account I accept <br />
+            Company's <span className="text-teal-500">Terms of use</span> &{" "}
+            <span className="text-teal-500">Privacy Policy</span>.
+          </p>
         </div>
       </div>
       <ToastContainer />
@@ -133,4 +280,4 @@ const Auth = () => {
   );
 };
 
-export default Auth;
+export default AuthPage;
