@@ -48,22 +48,18 @@ const RegistrationPage = () => {
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-[#dff6f0]">
-      <div className="w-full max-w-4xl bg-white p-8 rounded-md shadow-md">
-        <h2 className="text-center text-lg font-semibold text-gray-700">
+      <div className="w-full max-w-6xl bg-white p-8 rounded-md shadow-md">
+        <h2 className="text-center text-xl font-semibold text-gray-700 mb-4">
           Registration
         </h2>
         <p className="text-center text-sm text-gray-500 mb-6">
           Fill all the details which is mandatory for the Registration
         </p>
-        <form
-          onSubmit={handleSubmit}
-          className="grid grid-cols-2 gap-6 text-sm"
-        >
+        <form onSubmit={handleSubmit} className="grid grid-cols-2 gap-4 text-sm">
           {/* Full Name */}
           <div className="flex flex-col">
             <label className="font-medium text-gray-700">
-              Full Name
-              {errors.fullName && <span className="text-red-500">*</span>}
+              Full Name {errors.fullName && <span className="text-red-500">*</span>}
             </label>
             <input
               type="text"
@@ -72,23 +68,6 @@ const RegistrationPage = () => {
               onChange={handleChange}
               className={`border p-2 rounded-md ${
                 errors.fullName ? "border-red-500" : "border-gray-300"
-              }`}
-            />
-          </div>
-
-          {/* Applied Date */}
-          <div className="flex flex-col">
-            <label className="font-medium text-gray-700">
-              Applied Date{" "}
-              {errors.appliedDate && <span className="text-red-500">*</span>}
-            </label>
-            <input
-              type="date"
-              name="appliedDate"
-              value={formData.appliedDate}
-              onChange={handleChange}
-              className={`border p-2 rounded-md ${
-                errors.appliedDate ? "border-red-500" : "border-gray-300"
               }`}
             />
           </div>
@@ -105,6 +84,127 @@ const RegistrationPage = () => {
               onChange={handleChange}
               className={`border p-2 rounded-md ${
                 errors.dob ? "border-red-500" : "border-gray-300"
+              }`}
+            />
+          </div>
+
+          {/* Mail ID */}
+          <div className="flex flex-col">
+            <label className="font-medium text-gray-700">
+              Mail ID {errors.mailId && <span className="text-red-500">*</span>}
+            </label>
+            <input
+              type="email"
+              name="mailId"
+              value={formData.mailId}
+              onChange={handleChange}
+              className={`border p-2 rounded-md ${
+                errors.mailId ? "border-red-500" : "border-gray-300"
+              }`}
+            />
+          </div>
+
+          {/* Phone Number */}
+          <div className="flex flex-col">
+            <label className="font-medium text-gray-700">
+              Phone Number {errors.phoneNumber && <span className="text-red-500">*</span>}
+            </label>
+            <div className="flex">
+              <select
+                name="phoneCountryCode"
+                value={formData.phoneCountryCode}
+                onChange={handleChange}
+                className="border rounded-l-md p-2 bg-gray-50"
+              >
+                <option value="+91">+91</option>
+                <option value="+1">+1</option>
+                <option value="+44">+44</option>
+              </select>
+              <input
+                type="text"
+                name="phoneNumber"
+                value={formData.phoneNumber}
+                onChange={handleChange}
+                className={`w-full border rounded-r-md p-2 ${
+                  errors.phoneNumber ? "border-red-500" : "border-gray-300"
+                }`}
+              />
+            </div>
+          </div>
+
+          {/* Alternative Phone Number */}
+          <div className="flex flex-col">
+            <label className="font-medium text-gray-700">
+              Alternative Phone Number{" "}
+              {errors.altPhoneNumber && <span className="text-red-500">*</span>}
+            </label>
+            <div className="flex">
+              <select
+                name="alternativeCountryCode"
+                value={formData.alternativeCountryCode}
+                onChange={handleChange}
+                className="border rounded-l-md p-2 bg-gray-50"
+              >
+                <option value="+91">+91</option>
+                <option value="+1">+1</option>
+                <option value="+44">+44</option>
+              </select>
+              <input
+                type="text"
+                name="altPhoneNumber"
+                value={formData.altPhoneNumber}
+                onChange={handleChange}
+                className={`w-full border rounded-r-md p-2 ${
+                  errors.altPhoneNumber ? "border-red-500" : "border-gray-300"
+                }`}
+              />
+            </div>
+          </div>
+
+          {/* Address */}
+          <div className="flex flex-col">
+            <label className="font-medium text-gray-700">
+              Address {errors.address && <span className="text-red-500">*</span>}
+            </label>
+            <input
+              type="text"
+              name="address"
+              value={formData.address}
+              onChange={handleChange}
+              className={`border p-2 rounded-md ${
+                errors.address ? "border-red-500" : "border-gray-300"
+              }`}
+            />
+          </div>
+
+          {/* Applied Role */}
+          <div className="flex flex-col">
+            <label className="font-medium text-gray-700">
+              Applied Role {errors.appliedRole && <span className="text-red-500">*</span>}
+            </label>
+            <input
+              type="text"
+              name="appliedRole"
+              value={formData.appliedRole}
+              onChange={handleChange}
+              className={`border p-2 rounded-md ${
+                errors.appliedRole ? "border-red-500" : "border-gray-300"
+              }`}
+            />
+          </div>
+
+          {/* Applied Date */}
+          <div className="flex flex-col">
+            <label className="font-medium text-gray-700">
+              Applied Date {errors.appliedDate && <span className="text-red-500">*</span>}
+            </label>
+            <input
+              type="date"
+              name="appliedDate"
+              value={formData.appliedDate}
+              onChange={handleChange}
+              className={`border p-2 rounded-md ${
+                errors.appliedDate ? "border-red-500" : "border-gray-300"
               }`}
             />
           </div>
@@ -126,27 +226,10 @@ const RegistrationPage = () => {
             />
           </div>
 
-          {/* Mail ID */}
-          <div className="flex flex-col">
-            <label className="font-medium text-gray-700">
-              Mail ID {errors.mailId && <span className="text-red-500">*</span>}
-            </label>
-            <input
-              type="email"
-              name="mailId"
-              value={formData.mailId}
-              onChange={handleChange}
-              className={`border p-2 rounded-md ${
-                errors.mailId ? "border-red-500" : "border-gray-300"
-              }`}
-            />
-          </div>
-
           {/* Current CTC */}
           <div className="flex flex-col">
             <label className="font-medium text-gray-700">
-              Current CTC{" "}
-              {errors.currentCtc && <span className="text-red-500">*</span>}
+              Current CTC {errors.currentCtc && <span className="text-red-500">*</span>}
             </label>
             <input
               type="text"
@@ -159,41 +242,10 @@ const RegistrationPage = () => {
             />
           </div>
 
-          {/* Phone Number */}
-          <div className="flex flex-col">
-            <label className="font-medium text-gray-700">
-              Phone Number{" "}
-              {errors.phoneNumber && <span className="text-red-500">*</span>}
-            </label>
-            <div className="flex">
-              <select
-                name="phoneCountryCode"
-                value={formData.phoneCountryCode}
-                onChange={handleChange}
-                className="border rounded-l-md p-2 bg-gray-50"
-              >
-                <option value="+91">+91</option>
-                <option value="+1">+1</option>
-                <option value="+44">+44</option>
-                {/* Add more country codes as needed */}
-              </select>
-              <input
-                type="text"
-                name="phoneNumber"
-                value={formData.phoneNumber}
-                onChange={handleChange}
-                className={`w-full border rounded-r-md p-2 ${
-                  errors.phoneNumber ? "border-red-500" : "border-gray-300"
-                }`}
-              />
-            </div>
-          </div>
-
           {/* Expected CTC */}
           <div className="flex flex-col">
             <label className="font-medium text-gray-700">
-              Expected CTC{" "}
-              {errors.expectedCtc && <span className="text-red-500">*</span>}
+              Expected CTC {errors.expectedCtc && <span className="text-red-500">*</span>}
             </label>
             <input
               type="text"
@@ -206,40 +258,10 @@ const RegistrationPage = () => {
             />
           </div>
 
-          {/* Alternative Phone Number */}
-          <div className="flex flex-col">
-            <label className="font-medium text-gray-700">
-              Alternative Phone Number{" "}
-              {errors.altPhoneNumber && <span className="text-red-500">*</span>}
-            </label>
-            <div className="flex">
-              <select
-                name="alternativeCountryCode"
-                value={formData.alternativeCountryCode}
-                onChange={handleChange}
-                className="border rounded-l-md p-2 bg-gray-50"
-              >
-                <option value="+91">+91</option>
-                <option value="+1">+1</option>
-                <option value="+44">+44</option>
-                {/* Add more country codes as needed */}
-              </select>
-              <input
-                type="text"
-                name="altPhoneNumber"
-                value={formData.altPhoneNumber}
-                onChange={handleChange}
-                className={`w-full border rounded-r-md p-2 ${
-                  errors.altPhoneNumber ? "border-red-500" : "border-gray-300"
-                }`}
-              />
-            </div>
-          </div>
           {/* Joining Date */}
           <div className="flex flex-col">
             <label className="font-medium text-gray-700">
-              Joining Date{" "}
-              {errors.joiningDate && <span className="text-red-500">*</span>}
+              Joining Date {errors.joiningDate && <span className="text-red-500">*</span>}
             </label>
             <input
               type="date"
@@ -248,23 +270,6 @@ const RegistrationPage = () => {
               onChange={handleChange}
               className={`border p-2 rounded-md ${
                 errors.joiningDate ? "border-red-500" : "border-gray-300"
-              }`}
-            />
-          </div>
-
-          {/* Address */}
-          <div className="flex flex-col">
-            <label className="font-medium text-gray-700">
-              Address{" "}
-              {errors.address && <span className="text-red-500">*</span>}
-            </label>
-            <input
-              type="text"
-              name="address"
-              value={formData.address}
-              onChange={handleChange}
-              className={`border p-2 rounded-md ${
-                errors.address ? "border-red-500" : "border-gray-300"
               }`}
             />
           </div>
@@ -286,28 +291,10 @@ const RegistrationPage = () => {
             />
           </div>
 
-          {/* Applied Role */}
-          <div className="flex flex-col">
-            <label className="font-medium text-gray-700">
-              Applied Role{" "}
-              {errors.appliedRole && <span className="text-red-500">*</span>}
-            </label>
-            <input
-              type="text"
-              name="appliedRole"
-              value={formData.appliedRole}
-              onChange={handleChange}
-              className={`border p-2 rounded-md ${
-                errors.appliedRole ? "border-red-500" : "border-gray-300"
-              }`}
-            />
-          </div>
-
           {/* Position Name */}
           <div className="flex flex-col">
             <label className="font-medium text-gray-700">
-              Position Name{" "}
-              {errors.positionName && <span className="text-red-500">*</span>}
+              Position Name {errors.positionName && <span className="text-red-500">*</span>}
             </label>
             <input
               type="text"
@@ -321,10 +308,10 @@ const RegistrationPage = () => {
           </div>
 
           {/* Submit Button */}
-          <div className="col-span-full flex justify-center">
+          <div className="col-span-2 flex justify-center">
             <button
               type="submit"
-              className="bg-teal-500 text-white px-4 py-2 text-sm rounded-md hover:bg-teal-600 transition"
+              className="bg-teal-500 text-white px-6 py-2 rounded-md hover:bg-teal-600 transition"
             >
               Submit
             </button>
