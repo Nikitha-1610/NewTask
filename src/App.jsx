@@ -5,6 +5,7 @@ import Layout from "./common/components/Layout";
 import adminRoutes from "./admin/routes";
 import userRoutes from "./user/routes";
 import ProtectedRoute from "./common/components/ProtectedRoute";
+import RegistrationPage from "./common/components/Registration";
 
 const App = () => {
   const isAuthenticated = useSelector((state) => state.auth.isAuthenticated);
@@ -22,9 +23,7 @@ const App = () => {
       <Routes>
         {/* Login Route */}
         <Route path="/login" element={<Login />} />
-      
-
-
+        <Route path="/register" element={<RegistrationPage />} />
         {/* Admin Routes */}
         <Route
           path="/admin/*" 
