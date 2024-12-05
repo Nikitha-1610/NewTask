@@ -22,11 +22,32 @@ const IndividualChat = ({ contact, handleBackToContacts }) => {
   const menuOptions = ["Chat", "Files", "Media"];
   const [showDownloadToast, setShowDownloadToast] = useState(false);
 const [showDeletePopup, setShowDeletePopup] = useState(false);
-
+const [isRecording, setIsRecording] = useState(false);
   const [message, setMessage] = useState('');
   const [showEmojiPicker, setShowEmojiPicker] = useState(false);
 
-  
+  const handleMicClick = () => {
+    if (!isRecording) {
+      // Start recording
+      startRecording();
+    } else {
+      // Stop recording
+      stopRecording();
+    }
+  };
+
+  const startRecording = () => {
+    setIsRecording(true);
+    console.log("Recording started...");
+    // Add recording logic here (using Web APIs like MediaRecorder, etc.)
+  };
+
+  const stopRecording = () => {
+    setIsRecording(false);
+    console.log("Recording stopped...");
+    // Add stopping logic here and save the recording
+  };
+
 
   const handleEmojiClick = (emojiObject) => {
     if (emojiObject && emojiObject.emoji) {
@@ -110,9 +131,7 @@ const [showDeletePopup, setShowDeletePopup] = useState(false);
   };
 
   // Function to handle mic click (voice recorder - placeholder for now)
-  const handleMicClick = () => {
-    alert('Microphone recording functionality will be implemented here.');
-  };
+  
 
   const userMessages = [
     { text: "Hey! What's up?", file: null, timestamp: 1 },
@@ -223,54 +242,55 @@ const [showDeletePopup, setShowDeletePopup] = useState(false);
         {/* Chat Container */}
         <div className="flex flex-col flex-1  overflow-y-hidden">
           {/* Navbar inside chat body */}
-          <div className="sticky top-0 w-[99%]  sm:w-full z-10 bg-white shadow-md sm:p-2 sm:mx-0 sm:px-5 flex justify-between items-center h-14">
-            <div className="flex items-center gap-1 sm:gap-3">
-              <button
-                onClick={handleBackToContacts}
-                className="sm:top-1/2 sm:left-3 sm:absolute flex items-center lg:hidden text-blue-500 sm:-translate-y-1/2"
-              >
-                <FaArrowLeft className="text-2xl" />
-              </button>
-              {contact?.image ? (
-                <img
-                  src={contact.image}
-                  alt="Profile"
-                  className="rounded-full w-7 sm:w-9 h-7 sm:h-9 object-cover"
-                />
-              ) : (
-                <FaUserCircle className="sm:w-9 sm:h-9 w-7 h-7 text-pink-700" />
-              )}
-              <span className="font-semibold text-black text-base sm:text-base">
-                {contact?.name}
-              </span>
-              <div className="flex items-center sm:gap-4 gap-2 ml-4 ">
-                {menuOptions.map((option, index) => (
-                  <span
-                    key={index}
-                    onClick={() => setSelectedOption(option)}
-                    className={`cursor-pointer sm:text-lg text-base font-medium ${
-                      selectedOption === option
-                        ? "border-b-2 border-teal-500"
-                        : "text-gray-500"
-                    }`}
-                  >
-                    {option}
-                  </span>
-                ))}
-              </div>
-            </div>
-            <div className="flex items-center gap-2 sm:gap-4 sm:left-0">
-              <FaPhone
-                className="sm:w-5 sm:h-5 w-4 h-4 text-gray-700 cursor-pointer"
-                onClick={() => handleIconClick("VoiceCall")}
-              />
-              <FaVideo
-                className="sm:w-5 sm:h-5 w-4 h-4 text-gray-700 cursor-pointer"
-                onClick={() => handleIconClick("VideoCall")}
-              />
-              <FaEllipsisV className="sm:w-5 sm:h-5 w-4 h-4 text-gray-700 cursor-pointer" />
-            </div>
-          </div>
+          <div className="sticky top-0 w-[99%] sm:w-full z-10 bg-white shadow-md sm:p-2 sm:mx-0 sm:px-5 flex justify-between items-center h-14">
+  <div className="flex items-center gap-1 sm:gap-3">
+    <button
+      onClick={handleBackToContacts}
+      className="sm:top-1/2 sm:left-3 sm:absolute flex items-center  text-blue-500 sm:-translate-y-1/2 lg:hidden" // Change lg:hidden to lg:block
+    >
+      <FaArrowLeft className="text-2xl" />
+    </button>
+    {contact?.image ? (
+      <img
+        src={contact.image}
+        alt="Profile"
+        className="rounded-full w-7 sm:w-9 h-7 sm:h-9 object-cover"
+      />
+    ) : (
+      <FaUserCircle className="sm:w-9 sm:h-9 w-7 h-7 text-pink-700" />
+    )}
+    <span className="font-semibold text-black text-base sm:text-base">
+      {contact?.name}
+    </span>
+    <div className="flex items-center sm:gap-4 gap-2 ml-4">
+      {menuOptions.map((option, index) => (
+        <span
+          key={index}
+          onClick={() => setSelectedOption(option)}
+          className={`cursor-pointer sm:text-lg text-base font-medium ${
+            selectedOption === option
+              ? "border-b-2 border-teal-500"
+              : "text-gray-500"
+          }`}
+        >
+          {option}
+        </span>
+      ))}
+    </div>
+  </div>
+  <div className="flex items-center gap-2 sm:gap-4 sm:left-0">
+    <FaPhone
+      className="sm:w-5 sm:h-5 w-4 h-4 text-gray-700 cursor-pointer"
+      onClick={() => handleIconClick("VoiceCall")}
+    />
+    <FaVideo
+      className="sm:w-5 sm:h-5 w-4 h-4 text-gray-700 cursor-pointer"
+      onClick={() => handleIconClick("VideoCall")}
+    />
+    <FaEllipsisV className="sm:w-5 sm:h-5 w-4 h-4 text-gray-700 cursor-pointer" />
+  </div>
+</div>
+
 
           {/* Overlay for Active Feature */}
           {activeFeature && (
@@ -492,141 +512,213 @@ const [showDeletePopup, setShowDeletePopup] = useState(false);
             );
           }
           // Render for subsequent messages
-          return (
-            <div key={index}>
-              <div className="flex items-start gap-2">
-                <div className="relative">
-                  {contact?.image ? (
-                    <img
-                      src={contact.image}
-                      alt="Profile"
-                      className="rounded-full w-7 sm:w-8 h-7 sm:h-8 object-cover"
-                    />
-                  ) : (
-                    <FaUserCircle className="sm:w-8 sm:h-8 w-7 h-7 text-gray-700" />
-                  )}
-                </div>
-                <div className="flex flex-col mt-2 mb-2">
-                  <div className="bg-white shadow-md p-2 rounded-lg max-w-xs sm:max-w-md">
-                    <div className="flex justify-between mb-1">
-                      <span className="font-semibold text-[15px] text-black">{contact?.name}</span>
-                      <span className="text-gray-500 text-sm">{dummyTimestamp}</span>
-                    </div>
-          
-                    {/* Render file first if available */}
-                    {randomContactMessage.file && randomContactMessage.file.type === 'image' && (
-                      <img
-                        src={randomContactMessage.file.url}
-                        alt="file"
-                        className="max-w-full h-auto mt-2 rounded-lg sm:max-w-sm"
-                      />
-                    )}
-                    {userMessage.file && userMessage.file.type === 'document' && (
-                      <div className="flex items-center gap-2 mt-2">
-                        {/* File icon */}
-                        {getFileIcon(userMessage.file.ext)}
-          
-                        {/* File details */}
-                        <div className="text-black font-semibold text-ellipsis overflow-hidden max-w-[200px] sm:max-w-none">
-                          {extractFileName(userMessage.file.url)} {/* Extract file name */}
-                        </div>
-                        <div className="text-gray-500 text-sm">
-                          {userMessage.file.size
-                            ? formatFileSize(userMessage.file.size)
-                            : '100 KB'} {/* If size is available, use it; otherwise, use a dummy size */}
-                        </div>
-                        <a
-                          href={userMessage.file.url}
-                          download
-                          className="text-blue-500 ml-2 text-lg"
-                        >
-                          <FaDownload />
-                        </a>
-                      </div>
-                    )}
-          
-                    {randomContactMessage.file && randomContactMessage.file.type === 'audio' && (
-                      <audio controls className="mt-2 w-[180px] sm:w-[350px]">
-                        <source src={randomContactMessage.file.url} type="audio/mp3" />
-                        Your browser does not support the audio element.
-                      </audio>
-                    )}
-                    {randomContactMessage.file && randomContactMessage.file.type === 'video' && (
-                      <video controls className="mt-2 w-[180px] sm:w-[350px]">
-                        <source src={randomContactMessage.file.url} type="video/mp4" />
-                        Your browser does not support the video element.
-                      </video>
-                    )}
-          
-                    {/* Render text message after the file */}
-                    <p className="text-base text-black pt-2 break-words">{randomContactMessage.text}</p>
-                  </div>
-                </div>
-              </div>
-          
-              {/* User's message */}
-              <div className="flex justify-end mt-2 mb-2">
-                <div className="bg-teal-100 shadow-md p-2 rounded-lg max-w-xs sm:max-w-md">
-                  <div className="flex justify-between mb-1">
-                    <span className="font-semibold text-base text-black">You</span>
-                    <span className="text-gray-500 text-sm">{new Date(userMessage.timestamp).toLocaleTimeString()}</span>
-                  </div>
-          
-                  {/* Render file first if available for user's message */}
-                  {userMessage.file && userMessage.file.type === 'image' && (
-                    <img
-                      src={userMessage.file.url}
-                      alt="file"
-                      className="w-full h-auto mt-2 rounded-lg sm:max-w-sm"
-                    />
-                  )}
-                  {userMessage.file && userMessage.file.type === 'document' && (
-                    <div className="flex items-center gap-2 mt-2">
-                      {/* File icon */}
-                      {getFileIcon(userMessage.file.ext)}
-          
-                      {/* File details */}
-                      <div className="text-black font-semibold text-ellipsis overflow-hidden max-w-[200px] sm:max-w-none">
-                        {extractFileName(userMessage.file.url)} {/* Extract file name */}
-                      </div>
-                      <div className="text-gray-500 text-sm">
-                        {userMessage.file.size
-                          ? formatFileSize(userMessage.file.size)
-                          : '100 KB'} {/* If size is available, use it; otherwise, use a dummy size */}
-                      </div>
-          
-                      {/* Download icon */}
-                      <a
-                        href={userMessage.file.url}
-                        download
-                        className="text-blue-500 ml-2"
-                      >
-                        <FaDownload />
-                      </a>
-                    </div>
-                  )}
-          
-          {userMessage.file && userMessage.file.type === 'audio' && (
-  <audio controls className="mt-2 w-[180px] sm:w-[350px]">
-    <source src={userMessage.file.url} type="audio/mp3" />
-    Your browser does not support the audio element.
-  </audio>
-)}
+         // Render for subsequent messages
+return (
+  <div key={index}>
+    <div className="flex items-start gap-2">
+      <div className="relative">
+        {contact?.image ? (
+          <img
+            src={contact.image}
+            alt="Profile"
+            className="rounded-full w-7 sm:w-8 h-7 sm:h-8 object-cover"
+          />
+        ) : (
+          <FaUserCircle className="sm:w-8 sm:h-8 w-7 h-7 text-gray-700" />
+        )}
+      </div>
+      <div className="flex flex-col mt-2 mb-2">
+        <div className="bg-white shadow-md p-2 rounded-lg max-w-xs sm:max-w-md">
+          <div className="flex justify-between mb-1">
+            <span className="font-semibold text-[15px] text-black">{contact?.name}</span>
+            <span className="text-gray-500 text-sm">{dummyTimestamp}</span>
+          </div>
 
-{userMessage.file && userMessage.file.type === 'video' && (
-  <video controls className="mt-1 w-[180px] sm:w-[350px] ">
-    <source src={userMessage.file.url} type="video/mp4" />
-    Your browser does not support the video element.
-  </video>
-)}
+          {/* Check if file exists before rendering */}
+          {randomContactMessage?.file && randomContactMessage.file.type === 'document' && (
+            <div className="flex items-center gap-2 mt-2">
+              {/* File icon */}
+              {getFileIcon(randomContactMessage.file?.ext)}
 
-          
-                  {/* Render user text message after the file */}
-                  <p className="text-base text-black pt-2 break-words">{userMessage.text}</p>
-                </div>
+              {/* File details */}
+              <div className="text-black font-semibold text-ellipsis overflow-hidden max-w-[200px] sm:max-w-none">
+                {extractFileName(randomContactMessage.file?.url)} {/* Extract file name */}
               </div>
+              <div className="text-gray-500 text-sm">
+                {randomContactMessage.file?.size
+                  ? formatFileSize(randomContactMessage.file?.size)
+                  : '100 KB'} {/* If size is available, use it; otherwise, use a dummy size */}
+              </div>
+              <a
+                href={randomContactMessage.file?.url}
+                download
+                className="text-blue-500 ml-2 text-lg"
+              >
+                <FaDownload />
+              </a>
             </div>
-          );
+          )}
+
+          {/* Check for audio file */}
+          {randomContactMessage?.file && randomContactMessage.file.type === 'audio' && (
+            <div className="relative mt-2 flex items-center gap-2 rounded-lg p-2 w-[180px] sm:w-[350px]">
+              {/* Download Icon */}
+              <a
+                href={randomContactMessage.file?.url}
+                download
+                className="text-black"
+                title="Download Audio"
+              >
+                <Icon icon="mdi:download" className="text-2xl bg-white p-1 rounded-full shadow-md" />
+              </a>
+
+              {/* Audio Player */}
+              <audio controls className="flex-grow">
+                <source src={randomContactMessage.file?.url} type="audio/mp3" />
+                Your browser does not support the audio element.
+              </audio>
+            </div>
+          )}
+
+          {/* Check for image file */}
+          {randomContactMessage?.file && randomContactMessage.file.type === 'image' && (
+            <div className="relative">
+              <img
+                src={randomContactMessage.file?.url}
+                alt="file"
+                className="max-w-full h-auto mt-2 rounded-lg sm:max-w-sm"
+              />
+              <a
+                href={randomContactMessage.file?.url}
+                download
+                className="absolute top-2 right-2 text-black"
+              >
+                <Icon icon="mdi:download" className="text-2xl bg-white p-1 rounded-full shadow-md" />
+              </a>
+            </div>
+          )}
+
+          {/* Check for video file */}
+          {randomContactMessage?.file && randomContactMessage.file.type === 'video' && (
+            <div className="relative">
+              <video controls className="mt-2 w-[180px] sm:w-[350px] rounded-lg">
+                <source src={randomContactMessage.file?.url} type="video/mp4" />
+                Your browser does not support the video element.
+              </video>
+              <a
+                href={randomContactMessage.file?.url}
+                download
+                className="absolute top-2 right-2 text-black"
+              >
+                <Icon icon="mdi:download" className="text-2xl bg-white p-1 rounded-full shadow-md" />
+              </a>
+            </div>
+          )}
+
+          {/* Render text message after the file */}
+          <p className="text-base text-black pt-2 break-words">{randomContactMessage?.text}</p>
+        </div>
+      </div>
+    </div>
+
+    {/* User's message */}
+    <div className="flex justify-end mt-2 mb-2">
+      <div className="bg-teal-100 shadow-md p-2 rounded-lg max-w-xs sm:max-w-md">
+        <div className="flex justify-between mb-1">
+          <span className="font-semibold text-base text-black">You</span>
+          <span className="text-gray-500 text-sm">{new Date(userMessage.timestamp).toLocaleTimeString()}</span>
+        </div>
+
+        {/* Check for image file */}
+        {userMessage?.file && userMessage.file.type === 'image' && (
+          <div className="relative">
+            <img
+              src={userMessage.file?.url}
+              alt="file"
+              className="w-full h-auto mt-2 rounded-lg sm:max-w-sm"
+            />
+            <a
+              href={userMessage.file?.url}
+              download
+              className="absolute top-2 right-2 text-black"
+            >
+              <Icon icon="mdi:download" className="text-2xl bg-white p-1 rounded-full shadow-md" />
+            </a>
+          </div>
+        )}
+
+        {/* Check for video file */}
+        {userMessage?.file && userMessage.file.type === 'video' && (
+          <div className="relative">
+            <video controls className="mt-1 w-[180px] sm:w-[350px] rounded-lg">
+              <source src={userMessage.file?.url} type="video/mp4" />
+              Your browser does not support the video element.
+            </video>
+            <a
+              href={userMessage.file?.url}
+              download
+              className="absolute top-2 right-2 text-black"
+            >
+              <Icon icon="mdi:download" className="text-2xl bg-white p-1 rounded-full shadow-md" />
+            </a>
+          </div>
+        )}
+
+        {/* Check for document file */}
+        {userMessage?.file && userMessage.file.type === 'document' && (
+          <div className="flex items-center gap-2 mt-2">
+            {/* File icon */}
+            {getFileIcon(userMessage.file?.ext)}
+
+            {/* File details */}
+            <div className="text-black font-semibold text-ellipsis overflow-hidden max-w-[200px] sm:max-w-none">
+              {extractFileName(userMessage.file?.url)} {/* Extract file name */}
+            </div>
+            <div className="text-gray-500 text-sm">
+              {userMessage.file?.size
+                ? formatFileSize(userMessage.file?.size)
+                : '100 KB'} {/* If size is available, use it; otherwise, use a dummy size */}
+            </div>
+
+            {/* Download icon */}
+            <a
+              href={userMessage.file?.url}
+              download
+              className="text-blue-500 ml-2"
+            >
+              <FaDownload />
+            </a>
+          </div>
+        )}
+
+        {/* Check for audio file */}
+        {userMessage?.file && userMessage.file.type === 'audio' && (
+          <div className="relative mt-2 flex items-center gap-2 rounded-lg p-2 w-[180px] sm:w-[350px]">
+            {/* Download Icon */}
+            <a
+              href={userMessage.file?.url}
+              download
+              className="text-black"
+              title="Download Audio"
+            >
+              <Icon icon="mdi:download" className="text-2xl bg-white p-1 rounded-full shadow-md" />
+            </a>
+
+            {/* Audio Player */}
+            <audio controls className="flex-grow">
+              <source src={userMessage.file?.url} type="audio/mp3" />
+              Your browser does not support the audio element.
+            </audio>
+          </div>
+        )}
+
+        {/* Render user text message after the file */}
+        <p className="text-base text-black pt-2 break-words">{userMessage?.text}</p>
+      </div>
+    </div>
+  </div>
+);
+
           
           
         })
@@ -962,63 +1054,62 @@ const [showDeletePopup, setShowDeletePopup] = useState(false);
 )}
 
 {selectedOption === "Chat" && (
-  <div
-    className={`mb-[98px] sticky flex justify-between items-center border-[#9B9797] bg-white shadow-lg mt-2 border rounded-full w-full sm:w-[99.99%] h-11 overflow-hidden sm:px-3 sm:py-0  ${
-      showEmojiPicker ? 'z-50' : ''
-    } sm:flex flex-wrap`}
-  >
-    {/* Icons */}
-    <div className="relative flex sm:gap-3 gap-2 pl-1 sm:px-0">
-  {/* Emoji Icon */}
-  <Icon
-    icon="twemoji:grinning-face"
-    width="20" // Default width for mobile
-    height="20" // Default height for mobile
-    onClick={() => setShowEmojiPicker((prev) => !prev)} // Toggle emoji picker
-    className="cursor-pointer sm:w-7 sm:h-7" // Larger size for desktop (sm screen and above)
-  />
-  {/* Attachment Icon */}
-  <Icon
-    icon="bx:bx-paperclip"
-    width="20" // Default width for mobile
-    height="20" // Default height for mobile
-    onClick={() => {
-      setShowEmojiPicker(false); // Close emoji picker
-      handleAttachmentClick(); // Open file explorer
-    }}
-    className="cursor-pointer sm:w-6 sm:h-6" // Larger size for desktop (sm screen and above)
-  />
-  <input
-    type="file"
-    id="fileInput"
-    className="hidden"
-    onChange={(e) => console.log(e.target.files[0])} // Handle file selection
-  />
-</div>
+      <div
+        className={`mb-[98px] sticky flex justify-between items-center border-[#9B9797] bg-white shadow-lg mt-2 border rounded-full w-full sm:w-[99.99%] h-11 overflow-hidden sm:px-3 sm:py-0  ${showEmojiPicker ? 'z-50' : ''} sm:flex flex-wrap`}
+      >
+        {/* Icons */}
+        <div className="relative flex sm:gap-3 gap-2 pl-1 sm:px-0">
+          {/* Emoji Icon */}
+          <Icon
+            icon="twemoji:grinning-face"
+            width="20"
+            height="20"
+            onClick={() => setShowEmojiPicker((prev) => !prev)} // Toggle emoji picker
+            className="cursor-pointer sm:w-7 sm:h-7"
+          />
+          {/* Attachment Icon */}
+          <Icon
+            icon="bx:bx-paperclip"
+            width="20"
+            height="20"
+            onClick={() => {
+              setShowEmojiPicker(false);
+              handleAttachmentClick(); // Open file explorer
+            }}
+            className="cursor-pointer sm:w-6 sm:h-6"
+          />
+          <input
+            type="file"
+            id="fileInput"
+            className="hidden"
+            onChange={(e) => console.log(e.target.files[0])} // Handle file selection
+          />
+        </div>
 
-    {/* Text Input */}
-    <input
-  type="text"
-  value={message}
-  onChange={(e) => setMessage(e.target.value)}
-  placeholder="Type a message..."
-  className="flex-grow px-2 border-none font-[700] text-gray-700 text-sm sm:text-base md:text-clip outline-none sm:h-10 h-8" // Smaller text box on mobile
-  onFocus={() => setShowEmojiPicker(false)} // Close emoji picker on focus
-/>
-{/* Mic/Send Button */}
-<div className="flex justify-center items-center sm:w-13 sm:h-13 w-8 h-8 right-7 sm:ml-3 mt-2 sm:mt-0">
-  <Icon
-    icon={message.length > 0 ? 'fluent:send-24-filled' : 'carbon:microphone-filled'}
-    width="20" // Smaller icon for mobile
-    height="20" // Smaller icon for mobile
-    onClick={message.length > 0 ? () => alert('Message sent!') : handleMicClick}
-    className="cursor-pointer font-bold"
-    style={{ color: '#01C2B5' }}
-  />
-</div>
+        {/* Text Input */}
+        <input
+          type="text"
+          value={message}
+          onChange={(e) => setMessage(e.target.value)}
+          placeholder="Type a message..."
+          className="flex-grow px-2 border-none font-[700] text-gray-700 text-sm sm:text-base md:text-clip outline-none sm:h-10 h-8"
+          onFocus={() => setShowEmojiPicker(false)} // Close emoji picker on focus
+        />
 
-  </div>
-)}
+        {/* Mic/Send Button */}
+        <div className="flex justify-center items-center sm:w-13 sm:h-13 w-8 h-8 right-7 sm:ml-3 mt-2 sm:mt-0">
+          <Icon
+            icon={message.length > 0 ? 'fluent:send-24-filled' : isRecording ? 'carbon:microphone-off-filled' : 'carbon:microphone-filled'}
+            width="20"
+            height="20"
+            onClick={message.length > 0 ? () => alert('Message sent!') : handleMicClick}
+            className="cursor-pointer font-bold"
+            style={{ color: '#01C2B5' }}
+          />
+        </div>
+      </div>
+    )
+  }
 
 
 
