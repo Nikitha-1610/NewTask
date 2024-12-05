@@ -3,123 +3,168 @@ import React, { useState } from "react";
 const RegistrationPage = () => {
   const [formData, setFormData] = useState({
     fullName: "",
-    appliedDate: "",
     dob: "",
-    employeeID: "",
-    mailID: "",
-    currentCTC: "",
+    mailId: "",
     phoneNumber: "",
     phoneCountryCode: "+91",
-    alternativePhone: "",
+    altPhoneNumber: "",
     alternativeCountryCode: "+91",
     address: "",
     appliedRole: "",
-    expectedCTC: "",
+    appliedDate: "",
+    refEmployeeId: "",
+    currentCtc: "",
+    expectedCtc: "",
     joiningDate: "",
-    previousCompany: "",
+    prevCompany: "",
     positionName: "",
   });
 
-  const handleChange = (e) => {
-    const { name, value } = e.target;
-    setFormData((prev) => ({
-      ...prev,
-      [name]: value,
-    }));
+  const [errors, setErrors] = useState({});
+
+  const validate = () => {
+    const newErrors = {};
+    Object.keys(formData).forEach((key) => {
+      if (!formData[key]) {
+        newErrors[key] = "This field is required";
+      }
+    });
+    setErrors(newErrors);
+    return Object.keys(newErrors).length === 0;
   };
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    console.log("Form Data Submitted: ", formData);
-    alert("Registration Successful!");
+    if (validate()) {
+      alert("Form submitted successfully!");
+    }
+  };
+
+  const handleChange = (e) => {
+    const { name, value } = e.target;
+    setFormData({ ...formData, [name]: value });
+    setErrors({ ...errors, [name]: "" });
   };
 
   return (
-    <div className="flex justify-center items-center min-h-screen bg-gray-100">
-      <div className="w-11/12 md:w-3/4 lg:w-2/3 bg-white p-8 rounded-md shadow-lg">
-        <h1 className="text-2xl font-semibold text-center mb-6">
+    <div className="min-h-screen flex items-center justify-center bg-[#dff6f0]">
+      <div className="w-full max-w-4xl bg-white p-8 rounded-md shadow-md">
+        <h2 className="text-center text-lg font-semibold text-gray-700">
           Registration
-        </h1>
-        <p className="text-center mb-8 text-gray-500">
-          Fill all the details which are mandatory for the registration
+        </h2>
+        <p className="text-center text-sm text-gray-500 mb-6">
+          Fill all the details which is mandatory for the Registration
         </p>
         <form
           onSubmit={handleSubmit}
-          className="grid grid-cols-1 md:grid-cols-2 gap-6"
+          className="grid grid-cols-2 gap-6 text-sm"
         >
-          <div>
-            <label className="block font-medium">Full Name *</label>
+          {/* Full Name */}
+          <div className="flex flex-col">
+            <label className="font-medium text-gray-700">
+              Full Name
+              {errors.fullName && <span className="text-red-500">*</span>}
+            </label>
             <input
               type="text"
               name="fullName"
               value={formData.fullName}
               onChange={handleChange}
-              className="w-full border rounded-md p-2 mt-2"
-              placeholder="Enter your full name"
-              required
+              className={`border p-2 rounded-md ${
+                errors.fullName ? "border-red-500" : "border-gray-300"
+              }`}
             />
           </div>
-          <div>
-            <label className="block font-medium">Applied Date *</label>
+
+          {/* Applied Date */}
+          <div className="flex flex-col">
+            <label className="font-medium text-gray-700">
+              Applied Date{" "}
+              {errors.appliedDate && <span className="text-red-500">*</span>}
+            </label>
             <input
               type="date"
               name="appliedDate"
               value={formData.appliedDate}
               onChange={handleChange}
-              className="w-full border rounded-md p-2 mt-2"
-              required
+              className={`border p-2 rounded-md ${
+                errors.appliedDate ? "border-red-500" : "border-gray-300"
+              }`}
             />
           </div>
-          <div>
-            <label className="block font-medium">DOB *</label>
+
+          {/* DOB */}
+          <div className="flex flex-col">
+            <label className="font-medium text-gray-700">
+              DOB {errors.dob && <span className="text-red-500">*</span>}
+            </label>
             <input
               type="date"
               name="dob"
               value={formData.dob}
               onChange={handleChange}
-              className="w-full border rounded-md p-2 mt-2"
-              required
+              className={`border p-2 rounded-md ${
+                errors.dob ? "border-red-500" : "border-gray-300"
+              }`}
             />
           </div>
-          <div>
-            <label className="block font-medium">
-              If Reference, Employee ID
+
+          {/* Reference ID */}
+          <div className="flex flex-col">
+            <label className="font-medium text-gray-700">
+              If reference, Employee ID{" "}
+              {errors.refEmployeeId && <span className="text-red-500">*</span>}
             </label>
             <input
               type="text"
-              name="employeeID"
-              value={formData.employeeID}
+              name="refEmployeeId"
+              value={formData.refEmployeeId}
               onChange={handleChange}
-              className="w-full border rounded-md p-2 mt-2"
-              placeholder="Enter reference employee ID"
+              className={`border p-2 rounded-md ${
+                errors.refEmployeeId ? "border-red-500" : "border-gray-300"
+              }`}
             />
           </div>
-          <div>
-            <label className="block font-medium">Mail ID *</label>
+
+          {/* Mail ID */}
+          <div className="flex flex-col">
+            <label className="font-medium text-gray-700">
+              Mail ID {errors.mailId && <span className="text-red-500">*</span>}
+            </label>
             <input
               type="email"
-              name="mailID"
-              value={formData.mailID}
+              name="mailId"
+              value={formData.mailId}
               onChange={handleChange}
-              className="w-full border rounded-md p-2 mt-2"
-              placeholder="Enter your mail ID"
-              required
+              className={`border p-2 rounded-md ${
+                errors.mailId ? "border-red-500" : "border-gray-300"
+              }`}
             />
           </div>
-          <div>
-            <label className="block font-medium">Current CTC *</label>
+
+          {/* Current CTC */}
+          <div className="flex flex-col">
+            <label className="font-medium text-gray-700">
+              Current CTC{" "}
+              {errors.currentCtc && <span className="text-red-500">*</span>}
+            </label>
             <input
-              type="number"
-              name="currentCTC"
-              value={formData.currentCTC}
+              type="text"
+              name="currentCtc"
+              value={formData.currentCtc}
               onChange={handleChange}
-              className="w-full border rounded-md p-2 mt-2"
-              placeholder="Enter current CTC"
-              required
+              className={`border p-2 rounded-md ${
+                errors.currentCtc ? "border-red-500" : "border-gray-300"
+              }`}
             />
           </div>
-          <div>
-            <label className="block font-medium">Phone Number *</label>
+
+          {/* Phone Number */}
+          <div className="flex flex-col">
+            <label className="font-medium text-gray-700">
+              Phone Number{" "}
+              {errors.phoneNumber && <span className="text-red-500">*</span>}
+            </label>
             <div className="flex">
               <select
                 name="phoneCountryCode"
@@ -130,22 +175,42 @@ const RegistrationPage = () => {
                 <option value="+91">+91</option>
                 <option value="+1">+1</option>
                 <option value="+44">+44</option>
-                
+                {/* Add more country codes as needed */}
               </select>
               <input
-                type="tel"
+                type="text"
                 name="phoneNumber"
                 value={formData.phoneNumber}
                 onChange={handleChange}
-                className="w-full border rounded-r-md p-2"
-                placeholder="Enter your phone number"
-                required
+                className={`w-full border rounded-r-md p-2 ${
+                  errors.phoneNumber ? "border-red-500" : "border-gray-300"
+                }`}
               />
             </div>
           </div>
-          <div>
-            <label className="block font-medium">
-              Alternative Phone Number *
+
+          {/* Expected CTC */}
+          <div className="flex flex-col">
+            <label className="font-medium text-gray-700">
+              Expected CTC{" "}
+              {errors.expectedCtc && <span className="text-red-500">*</span>}
+            </label>
+            <input
+              type="text"
+              name="expectedCtc"
+              value={formData.expectedCtc}
+              onChange={handleChange}
+              className={`border p-2 rounded-md ${
+                errors.expectedCtc ? "border-red-500" : "border-gray-300"
+              }`}
+            />
+          </div>
+
+          {/* Alternative Phone Number */}
+          <div className="flex flex-col">
+            <label className="font-medium text-gray-700">
+              Alternative Phone Number{" "}
+              {errors.altPhoneNumber && <span className="text-red-500">*</span>}
             </label>
             <div className="flex">
               <select
@@ -160,91 +225,106 @@ const RegistrationPage = () => {
                 {/* Add more country codes as needed */}
               </select>
               <input
-                type="tel"
-                name="alternativePhone"
-                value={formData.alternativePhone}
+                type="text"
+                name="altPhoneNumber"
+                value={formData.altPhoneNumber}
                 onChange={handleChange}
-                className="w-full border rounded-r-md p-2"
-                placeholder="Enter an alternative phone number"
-                required
+                className={`w-full border rounded-r-md p-2 ${
+                  errors.altPhoneNumber ? "border-red-500" : "border-gray-300"
+                }`}
               />
             </div>
           </div>
-          <div>
-            <label className="block font-medium">Address *</label>
-            <input
-              type="text"
-              name="address"
-              value={formData.address}
-              onChange={handleChange}
-              className="w-full border rounded-md p-2 mt-2"
-              placeholder="Enter your address"
-              required
-            />
-          </div>
-          <div>
-            <label className="block font-medium">Applied Role *</label>
-            <input
-              type="text"
-              name="appliedRole"
-              value={formData.appliedRole}
-              onChange={handleChange}
-              className="w-full border rounded-md p-2 mt-2"
-              placeholder="Enter applied role"
-              required
-            />
-          </div>
-          <div>
-            <label className="block font-medium">Expected CTC *</label>
-            <input
-              type="number"
-              name="expectedCTC"
-              value={formData.expectedCTC}
-              onChange={handleChange}
-              className="w-full border rounded-md p-2 mt-2"
-              placeholder="Enter expected CTC"
-              required
-            />
-          </div>
-          <div>
-            <label className="block font-medium">Joining Date *</label>
+          {/* Joining Date */}
+          <div className="flex flex-col">
+            <label className="font-medium text-gray-700">
+              Joining Date{" "}
+              {errors.joiningDate && <span className="text-red-500">*</span>}
+            </label>
             <input
               type="date"
               name="joiningDate"
               value={formData.joiningDate}
               onChange={handleChange}
-              className="w-full border rounded-md p-2 mt-2"
-              required
+              className={`border p-2 rounded-md ${
+                errors.joiningDate ? "border-red-500" : "border-gray-300"
+              }`}
             />
           </div>
-          <div>
-            <label className="block font-medium">Previous Company *</label>
+
+          {/* Address */}
+          <div className="flex flex-col">
+            <label className="font-medium text-gray-700">
+              Address{" "}
+              {errors.address && <span className="text-red-500">*</span>}
+            </label>
             <input
               type="text"
-              name="previousCompany"
-              value={formData.previousCompany}
+              name="address"
+              value={formData.address}
               onChange={handleChange}
-              className="w-full border rounded-md p-2 mt-2"
-              placeholder="Enter previous company name"
-              required
+              className={`border p-2 rounded-md ${
+                errors.address ? "border-red-500" : "border-gray-300"
+              }`}
             />
           </div>
-          <div>
-            <label className="block font-medium">Position Name *</label>
+
+          {/* Previous Company */}
+          <div className="flex flex-col">
+            <label className="font-medium text-gray-700">
+              Previous Company{" "}
+              {errors.prevCompany && <span className="text-red-500">*</span>}
+            </label>
+            <input
+              type="text"
+              name="prevCompany"
+              value={formData.prevCompany}
+              onChange={handleChange}
+              className={`border p-2 rounded-md ${
+                errors.prevCompany ? "border-red-500" : "border-gray-300"
+              }`}
+            />
+          </div>
+
+          {/* Applied Role */}
+          <div className="flex flex-col">
+            <label className="font-medium text-gray-700">
+              Applied Role{" "}
+              {errors.appliedRole && <span className="text-red-500">*</span>}
+            </label>
+            <input
+              type="text"
+              name="appliedRole"
+              value={formData.appliedRole}
+              onChange={handleChange}
+              className={`border p-2 rounded-md ${
+                errors.appliedRole ? "border-red-500" : "border-gray-300"
+              }`}
+            />
+          </div>
+
+          {/* Position Name */}
+          <div className="flex flex-col">
+            <label className="font-medium text-gray-700">
+              Position Name{" "}
+              {errors.positionName && <span className="text-red-500">*</span>}
+            </label>
             <input
               type="text"
               name="positionName"
               value={formData.positionName}
               onChange={handleChange}
-              className="w-full border rounded-md p-2 mt-2"
-              placeholder="Enter position name"
-              required
+              className={`border p-2 rounded-md ${
+                errors.positionName ? "border-red-500" : "border-gray-300"
+              }`}
             />
           </div>
+
+          {/* Submit Button */}
           <div className="col-span-full flex justify-center">
             <button
               type="submit"
-              className="bg-teal-500 text-white px-6 py-2 rounded-md hover:bg-teal-600 transition"
+              className="bg-teal-500 text-white px-4 py-2 text-sm rounded-md hover:bg-teal-600 transition"
             >
               Submit
             </button>
