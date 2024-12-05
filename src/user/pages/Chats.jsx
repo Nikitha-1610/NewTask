@@ -159,7 +159,6 @@ const ChatApp = () => {
     setSelectedContact(contact);
   };
 
-  // Handle returning to the contact list
   const handleBackToContacts = () => {
     console.log("Back button clicked");
     setIsLeftVisible(true);

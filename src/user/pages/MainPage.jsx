@@ -50,7 +50,7 @@ const MainPage = () => {
   useEffect(() => {
     const fetchDashboardData = async () => {
       try {
-        // Fetch data for dashboard stats
+     
         const dashboardResponse = await axios.get(
           "https://3qhglx2bhd.execute-api.us-east-1.amazonaws.com/task/getDashboard/Mukilan",
           { responseType: "json" }
