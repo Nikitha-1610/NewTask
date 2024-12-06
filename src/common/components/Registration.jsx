@@ -1,8 +1,10 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 
+import axiosInstance from "../utils/axios/axiosInstance";
+
 const RegistrationPage = () => {
-  const navigate = useNavigate(); // Initialize the useNavigate hook
+  const navigate = useNavigate(); 
   
   const [formData, setFormData] = useState({
     fullName: "",
@@ -21,37 +23,67 @@ const RegistrationPage = () => {
     joiningDate: "",
     prevCompany: "",
     positionName: "",
+    password: "", 
+    confirmPassword: "", 
   });
 
   const [errors, setErrors] = useState({});
-  const [successMessage, setSuccessMessage] = useState(""); // Success message state
-
+  const [successMessage, setSuccessMessage] = useState(""); 
+  const [errorMessage, setErrorMessage] = useState(""); 
   const validate = () => {
     const newErrors = {};
     Object.keys(formData).forEach((key) => {
-      if (!formData[key]) {
+      if (!formData[key] && key !== "password" && key !== "confirmPassword") {
         newErrors[key] = "This field is required";
       }
     });
+
+    
+    if (formData.password !== formData.confirmPassword) {
+      newErrors.password = "Passwords do not match";
+      newErrors.confirmPassword = "Passwords do not match";
+    }
+
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
+  
     if (validate()) {
-      // Show success message
-      setSuccessMessage("Registration Successful! Redirecting to Sign In...");
+      try {
+        const response = await axiosInstance.post("user/signup", {
+          email: formData.mailId,
+          password: formData.password,
+        });
 
-      // Redirect to the sign-in page after 3 seconds
-      setTimeout(() => {
-        navigate("/login"); // Replace with your actual sign-in route
-      }, 3000);
+       
+        console.log("Signup successful:", response.data); 
+        
+        if (response.status === 200) {
+          setSuccessMessage(response.data.message);
+
+         
+          localStorage.setItem("authToken", response.data.token);
+
+          
+          setTimeout(() => {
+            navigate("/login");
+          }, 3000);
+        } else {
+          setErrorMessage("Unexpected response. Please try again.");
+        }
+      } catch (error) {
+        console.error("Signup error:", error);
+
+        
+        setErrorMessage(
+          error.response?.data?.message || "An error occurred. Please try again."
+        );
+      }
     }
   };
-
-  
-
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -61,17 +93,17 @@ const RegistrationPage = () => {
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-[#dff6f0]">
-      <div className="w-full max-w-6xl bg-white p-8 rounded-md shadow-md">
-        <h2 className="text-center text-xl font-semibold text-gray-700 mb-4">
+      <div className="w-full max-w-2xl bg-white p-7 rounded-md shadow-md">
+        <h2 className="text-center text-xl font-semibold text-gray-700 mb-2">
           Registration
         </h2>
-        <p className="text-center text-sm text-gray-500 mb-6">
-          Fill all the details which is mandatory for the Registration
+        <p className="text-center text-sm text-gray-500 mb-2">
+          Fill all the details which are mandatory for Registration
         </p>
-        <form onSubmit={handleSubmit} className="grid grid-cols-2 gap-4 text-sm">
-          {/* Full Name */}
-          <div className="flex flex-col">
-            <label className="font-medium text-gray-700">
+        <form onSubmit={handleSubmit} className="grid grid-cols-2 gap-1 text-sm  ">
+        
+          <div className="flex flex-col  ">
+            <label className="font-medium text-gray-700   ">
               Full Name {errors.fullName && <span className="text-red-500">*</span>}
             </label>
             <input
@@ -79,12 +111,42 @@ const RegistrationPage = () => {
               name="fullName"
               value={formData.fullName}
               onChange={handleChange}
-              className={`border p-2 rounded-md ${errors.fullName ? "border-red-500" : "border-gray-300"}`}
+              className={`border p-2 rounded-md ${errors.fullName ? "border-red-500" : "border-cyan-200"}`}
             />
           </div>
 
-          
+         
 
+          {/* Password */}
+          <div className="flex flex-col">
+            <label className="font-medium text-gray-700">
+              Password {errors.password && <span className="text-red-500">*</span>}
+            </label>
+            <input
+              type="password"
+              name="password"
+              value={formData.password}
+              onChange={handleChange}
+              className={`border p-2 rounded-md ${errors.password ? "border-red-500" : "border-cyan-200"}`}
+            />
+          </div>
+
+          {/* Confirm Password */}
+          <div className="flex flex-col">
+            <label className="font-medium text-gray-700">
+              Confirm Password {errors.confirmPassword && <span className="text-red-500">*</span>}
+            </label>
+            <input
+              type="password"
+              name="confirmPassword"
+              value={formData.confirmPassword}
+              onChange={handleChange}
+              className={`border p-2 rounded-md ${errors.confirmPassword ? "border-red-500" : "border-cyan-200"}`}
+            />
+          </div>
+
+
+          
             {/* DOB */}
             <div className="flex flex-col">
             <label className="font-medium text-gray-700">
@@ -96,7 +158,7 @@ const RegistrationPage = () => {
               value={formData.dob}
               onChange={handleChange}
               className={`border p-2 rounded-md ${
-                errors.dob ? "border-red-500" : "border-gray-300"
+                errors.dob ? "border-red-500" : "border-cyan-200"
               }`}
             />
           </div>
@@ -112,7 +174,7 @@ const RegistrationPage = () => {
               value={formData.mailId}
               onChange={handleChange}
               className={`border p-2 rounded-md ${
-                errors.mailId ? "border-red-500" : "border-gray-300"
+                errors.mailId ? "border-red-500" : "border-cyan-200"
               }`}
             />
           </div>
@@ -127,7 +189,7 @@ const RegistrationPage = () => {
                 name="phoneCountryCode"
                 value={formData.phoneCountryCode}
                 onChange={handleChange}
-                className="border rounded-l-md p-2 bg-gray-50"
+                className="border  rounded-l-md   p-2 bg-gray-50"
               >
                 <option value="+91">+91</option>
                 <option value="+1">+1</option>
@@ -139,7 +201,7 @@ const RegistrationPage = () => {
                 value={formData.phoneNumber}
                 onChange={handleChange}
                 className={`w-full border rounded-r-md p-2 ${
-                  errors.phoneNumber ? "border-red-500" : "border-gray-300"
+                  errors.phoneNumber ? "border-red-500" : "border-cyan-200"
                 }`}
               />
             </div>
@@ -168,7 +230,7 @@ const RegistrationPage = () => {
                 value={formData.altPhoneNumber}
                 onChange={handleChange}
                 className={`w-full border rounded-r-md p-2 ${
-                  errors.altPhoneNumber ? "border-red-500" : "border-gray-300"
+                  errors.altPhoneNumber ? "border-red-500" : "border-cyan-200"
                 }`}
               />
             </div>
@@ -185,7 +247,7 @@ const RegistrationPage = () => {
               value={formData.address}
               onChange={handleChange}
               className={`border p-2 rounded-md ${
-                errors.address ? "border-red-500" : "border-gray-300"
+                errors.address ? "border-red-500" : "border-cyan-200"
               }`}
             />
           </div>
@@ -201,7 +263,7 @@ const RegistrationPage = () => {
               value={formData.appliedRole}
               onChange={handleChange}
               className={`border p-2 rounded-md ${
-                errors.appliedRole ? "border-red-500" : "border-gray-300"
+                errors.appliedRole ? "border-red-500" : "border-cyan-200"
               }`}
             />
           </div>
@@ -217,7 +279,7 @@ const RegistrationPage = () => {
               value={formData.appliedDate}
               onChange={handleChange}
               className={`border p-2 rounded-md ${
-                errors.appliedDate ? "border-red-500" : "border-gray-300"
+                errors.appliedDate ? "border-red-500" : "border-cyan-200"
               }`}
             />
           </div>
@@ -234,7 +296,7 @@ const RegistrationPage = () => {
               value={formData.refEmployeeId}
               onChange={handleChange}
               className={`border p-2 rounded-md ${
-                errors.refEmployeeId ? "border-red-500" : "border-gray-300"
+                errors.refEmployeeId ? "border-red-500" : "border-cyan-200"
               }`}
             />
           </div>
@@ -250,7 +312,7 @@ const RegistrationPage = () => {
               value={formData.currentCtc}
               onChange={handleChange}
               className={`border p-2 rounded-md ${
-                errors.currentCtc ? "border-red-500" : "border-gray-300"
+                errors.currentCtc ? "border-red-500" : "border-cyan-200"
               }`}
             />
           </div>
@@ -266,7 +328,7 @@ const RegistrationPage = () => {
               value={formData.expectedCtc}
               onChange={handleChange}
               className={`border p-2 rounded-md ${
-                errors.expectedCtc ? "border-red-500" : "border-gray-300"
+                errors.expectedCtc ? "border-red-500" : "border-cyan-200"
               }`}
             />
           </div>
@@ -282,7 +344,7 @@ const RegistrationPage = () => {
               value={formData.joiningDate}
               onChange={handleChange}
               className={`border p-2 rounded-md ${
-                errors.joiningDate ? "border-red-500" : "border-gray-300"
+                errors.joiningDate ? "border-red-500" : "border-cyan-200"
               }`}
             />
           </div>
@@ -299,7 +361,7 @@ const RegistrationPage = () => {
               value={formData.prevCompany}
               onChange={handleChange}
               className={`border p-2 rounded-md ${
-                errors.prevCompany ? "border-red-500" : "border-gray-300"
+                errors.prevCompany ? "border-red-500" : "border-cyan-200"
               }`}
             />
           </div>
@@ -315,27 +377,31 @@ const RegistrationPage = () => {
               value={formData.positionName}
               onChange={handleChange}
               className={`border p-2 rounded-md ${
-                errors.positionName ? "border-red-500" : "border-gray-300"
+                errors.positionName ? "border-red-500" : "border-cyan-200"
               }`}
             />
-          </div>
-
+          </div>  
           
-          {/* Submit Button */}
-          <div className="col-span-2 flex justify-center">
+          <div className="col-span-2 flex justify-center mt-2">
             <button
               type="submit"
-              className="bg-teal-500 text-white px-6 py-2 rounded-md hover:bg-teal-600 transition"
+              className="bg-teal-500 text-white px-6 py-2  rounded-md hover:bg-teal-600 transition"
             >
               Submit
             </button>
           </div>
         </form>
 
-        {/* Display success message if registration is successful */}
+        {/* Display success or error message */}
         {successMessage && (
           <div className="mt-4 text-center text-green-600">
             <p>{successMessage}</p>
+          </div>
+        )}
+
+        {errorMessage && (
+          <div className="mt-4 text-center text-red-600">
+            <p>{errorMessage}</p>
           </div>
         )}
       </div>
