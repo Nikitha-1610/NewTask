@@ -83,7 +83,7 @@ const RegistrationPage = () => {
             />
           </div>
 
-          {/* Other form fields (DOB, mail, phone number, etc.) remain unchanged */}
+          
 
             {/* DOB */}
             <div className="flex flex-col">
