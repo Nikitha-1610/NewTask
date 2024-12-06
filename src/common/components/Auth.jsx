@@ -10,7 +10,7 @@ import { login } from "../../redux/authSlice.jsx";
 
 const AuthPage = () => {
   const [formData, setFormData] = useState({ employeeId: "", password: "" });
-  const [isPasswordVisible, setIsPasswordVisible] = useState(false); // State to toggle visibility
+  const [isPasswordVisible, setIsPasswordVisible] = useState(false); 
   const navigate = useNavigate();
   const dispatch = useDispatch();
 
@@ -109,7 +109,7 @@ const AuthPage = () => {
               <div className="relative">
                 <input
                   id="password"
-                  type={isPasswordVisible ? "text" : "password"} // Toggle password visibility
+                  type={isPasswordVisible ? "text" : "password"} 
                   name="password"
                   placeholder="********"
                   className="mt-1 w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-teal-500 focus:border-teal-500"
@@ -118,7 +118,7 @@ const AuthPage = () => {
                 />
                 <span
                   className="absolute inset-y-0 right-3 flex items-center cursor-pointer text-gray-500"
-                  onClick={() => setIsPasswordVisible(!isPasswordVisible)} // Toggle visibility
+                  onClick={() => setIsPasswordVisible(!isPasswordVisible)} 
                 >
                   👁️
                 </span>
