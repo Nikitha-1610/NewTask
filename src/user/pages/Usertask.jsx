@@ -45,8 +45,8 @@ const AssignedTasks = () => {
   }, []);
 
   return (
-    <div className="min-h-auto bg-gray-100 flex justify-center">
-      <div className="bg-white p-6 rounded-lg w-full max-w-5xl">
+    <div className="min-h-auto  bg-gray-100 flex justify-center">
+      <div className="bg-white p-6 rounded-lg w-full max-w-8xl">
         <h1 className="text-2xl font-semibold text-center text-gray-700 mb-4">Assigned Tasks</h1>
 
         {loading ? (
