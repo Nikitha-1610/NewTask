@@ -51,12 +51,13 @@ const Board = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const navigate = useNavigate();
+  const employeeName = localStorage.getItem('name');
 
   // Fetch tasks from the API
   useEffect(() => {
     setLoading(true);
     axiosInstance
-      .get("task/getTaskDashboard/TeamLead1")
+      .get(`task/getTaskDashboard/${employeeName}`)
       .then((response) => {
         if (response.data && response.data.message) {
           setTaskData(response.data.message);
@@ -99,7 +100,7 @@ const Board = () => {
     axiosInstance
       .post("task/getTaskByStatus", { status, assignedBy })
       .then((response) => {
-        console.log("API Response:", response.data);
+        
         // Navigate to the specified path after successful API call
         navigate(`/admin/${path}`, { state: response.data.message || [] });
       })

@@ -21,7 +21,6 @@ const EmployeeForm = () => {
   });
   
 
-  const [setUsers] = useState([]);
   const [errors, setErrors] = useState({
     employeeID: "",
     name: "",
@@ -39,24 +38,13 @@ const EmployeeForm = () => {
     appliedDate: "",
   });
 
-  const getAllEmp = async () => {
-    try {
-      const response = await axiosInstance.get("employee/getMembers/24110004");
-      console.log(response.data.message);
-
-      setUsers(response?.data?.message);
-    } catch (error) {
-      console.error("Error syncing with server:", error);
-      // toast.error("Failed to fetch users.");
-    }
-  };
+  
   const generateEmployeeId = async () => {
     try {
       const response = await axiosInstance.get("employee/generateId");
 
       if (response?.data?.message) {
         const generatedId = response.data.message; // Assuming the response contains the generated ID
-        console.log("Generated Employee ID:", generatedId);
 
         // Update the employeeID in the form data
         setFormData((prev) => ({
@@ -155,7 +143,7 @@ const EmployeeForm = () => {
 
       // Make the API POST request
       const response = await axiosInstance.post("employee/add", formData);
-      console.log(response);
+      
 
       // Handle success
       if (response.status === 200 || response.status === 201) {

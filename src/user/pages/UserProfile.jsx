@@ -14,12 +14,13 @@ const UserProfile = () => {
   const [editedData, setEditedData] = useState({});
   const [profileImage, setProfileImage] = useState(null);
   const [previewImage, setPreviewImage] = useState(null);
+  const employeeId = localStorage.getItem('employeeId');
 
   useEffect(() => {
     const fetchUserData = async () => {
       try {
         const response = await axios.get(
-          "https://3qhglx2bhd.execute-api.us-east-1.amazonaws.com/employee/get/24110001"
+          `https://3qhglx2bhd.execute-api.us-east-1.amazonaws.com/employee/get/${employeeId}`
         );
         if (response.data.status === 200) {
           setUserData(response.data.message);

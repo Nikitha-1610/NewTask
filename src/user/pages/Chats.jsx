@@ -160,7 +160,7 @@ const ChatApp = () => {
   };
 
   const handleBackToContacts = () => {
-    console.log("Back button clicked");
+    
     setIsLeftVisible(true);
     setSelectedContact(null);
   };

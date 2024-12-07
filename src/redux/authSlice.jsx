@@ -26,7 +26,7 @@ const authSlice = createSlice({
       localStorage.setItem("token", token); // Save token
       localStorage.setItem("user", JSON.stringify(userData)); // Save user data
       localStorage.setItem("role", JSON.stringify(userData.role)); // Save role
-      localStorage.setItem("employeeId", JSON.stringify(userData.employeeId)); // Save employeeId
+      localStorage.setItem("employeeId", userData.employeeId); // Save employeeId
     },
     logout(state) {
       state.isAuthenticated = false;

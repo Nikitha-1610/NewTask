@@ -1,48 +1,40 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
-
 import axiosInstance from "../utils/axios/axiosInstance";
+import "font-awesome/css/font-awesome.min.css"; 
 
 const RegistrationPage = () => {
-  const navigate = useNavigate(); 
-  
+  const navigate = useNavigate();
+
   const [formData, setFormData] = useState({
-    fullName: "",
-    dob: "",
-    mailId: "",
-    phoneNumber: "",
-    phoneCountryCode: "+91",
-    altPhoneNumber: "",
-    alternativeCountryCode: "+91",
+    name: "",
+    mobile: "",
+    alterMobile: "",
+    password: "",
+    department: "",
+    email: "",
     address: "",
-    appliedRole: "",
+    gender: "",
+    DOB: "",
+    reference: "",
+    position: "",
     appliedDate: "",
-    refEmployeeId: "",
-    currentCtc: "",
-    expectedCtc: "",
-    joiningDate: "",
-    prevCompany: "",
-    positionName: "",
-    password: "", 
-    confirmPassword: "", 
+    role: "",
+    experience: "",
   });
 
   const [errors, setErrors] = useState({});
-  const [successMessage, setSuccessMessage] = useState(""); 
-  const [errorMessage, setErrorMessage] = useState(""); 
+  const [successMessage, setSuccessMessage] = useState("");
+  const [errorMessage, setErrorMessage] = useState("");
+
   const validate = () => {
     const newErrors = {};
-    Object.keys(formData).forEach((key) => {
-      if (!formData[key] && key !== "password" && key !== "confirmPassword") {
+    const requiredFields = ["name", "mobile", "email", "DOB", "position", "role"];
+    requiredFields.forEach((key) => {
+      if (!formData[key]) {
         newErrors[key] = "This field is required";
       }
     });
-
-    
-    if (formData.password !== formData.confirmPassword) {
-      newErrors.password = "Passwords do not match";
-      newErrors.confirmPassword = "Passwords do not match";
-    }
 
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
@@ -50,24 +42,20 @@ const RegistrationPage = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-  
+
     if (validate()) {
       try {
         const response = await axiosInstance.post("user/signup", {
-          email: formData.mailId,
+          email: formData.email,
           password: formData.password,
         });
 
-       
-        console.log("Signup successful:", response.data); 
-        
+        console.log("API Response:", response.data);
+
         if (response.status === 200) {
           setSuccessMessage(response.data.message);
-
-         
           localStorage.setItem("authToken", response.data.token);
 
-          
           setTimeout(() => {
             navigate("/login");
           }, 3000);
@@ -75,9 +63,6 @@ const RegistrationPage = () => {
           setErrorMessage("Unexpected response. Please try again.");
         }
       } catch (error) {
-        console.error("Signup error:", error);
-
-        
         setErrorMessage(
           error.response?.data?.message || "An error occurred. Please try again."
         );
@@ -93,306 +78,96 @@ const RegistrationPage = () => {
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-[#dff6f0]">
-      <div className="w-full max-w-2xl bg-white p-7 rounded-md shadow-md">
+      <div className="w-full max-w-2xl bg-white p-7 rounded-md shadow-md relative">
+        {/* FontAwesome Arrow Icon */}
+        <button
+          onClick={() => navigate(-1)}
+          className="absolute top-4 left-4 text-2xl text-gray-700 hover:text-teal-500"
+        >
+          <i className="fa fa-arrow-left"></i> {/* Left arrow icon */}
+        </button>
+
         <h2 className="text-center text-xl font-semibold text-gray-700 mb-2">
           Registration
         </h2>
-        <p className="text-center text-sm text-gray-500 mb-2">
+        <p className="text-center text-sm text-gray-500 mb-4">
           Fill all the details which are mandatory for Registration
         </p>
-        <form onSubmit={handleSubmit} className="grid grid-cols-2 gap-1 text-sm  ">
-        
-          <div className="flex flex-col  ">
-            <label className="font-medium text-gray-700   ">
-              Full Name {errors.fullName && <span className="text-red-500">*</span>}
-            </label>
-            <input
-              type="text"
-              name="fullName"
-              value={formData.fullName}
-              onChange={handleChange}
-              className={`border p-2 rounded-md ${errors.fullName ? "border-red-500" : "border-cyan-200"}`}
-            />
-          </div>
+        <form onSubmit={handleSubmit} className="grid grid-cols-2 gap-2 text-sm">
+          {Object.keys(formData).map((field) => {
+            if (field === "department") {
+              return (
+                <div key={field} className="flex flex-col">
+                  <label className="font-medium text-gray-700">
+                    Department {errors.department && <span className="text-red-500">*</span>}
+                  </label>
+                  <select
+                    name="department"
+                    value={formData.department}
+                    onChange={handleChange}
+                    className={`border p-2 rounded-md ${errors.department ? "border-red-500" : "border-cyan-200"}`}
+                  >
+                    <option value="">Select Department</option>
+                    {["Design", "Development", "DevOps", "Marketing", "HR", "AI/ML"].map((option) => (
+                      <option key={option} value={option}>
+                        {option}
+                      </option>
+                    ))}
+                  </select>
+                </div>
+              );
+            }
 
-         
+            if (field === "role") {
+              return (
+                <div key={field} className="flex flex-col">
+                  <label className="font-medium text-gray-700">
+                    Role {errors.role && <span className="text-red-500">*</span>}
+                  </label>
+                  <select
+                    name="role"
+                    value={formData.role}
+                    onChange={handleChange}
+                    className={`border p-2 rounded-md ${errors.role ? "border-red-500" : "border-cyan-200"}`}
+                  >
+                    <option value="">Select Role</option>
+                    {["Employee", "Intern"].map((option) => (
+                      <option key={option} value={option}>
+                        {option}
+                      </option>
+                    ))}
+                  </select>
+                </div>
+              );
+            }
 
-          {/* Password */}
-          <div className="flex flex-col">
-            <label className="font-medium text-gray-700">
-              Password {errors.password && <span className="text-red-500">*</span>}
-            </label>
-            <input
-              type="password"
-              name="password"
-              value={formData.password}
-              onChange={handleChange}
-              className={`border p-2 rounded-md ${errors.password ? "border-red-500" : "border-cyan-200"}`}
-            />
-          </div>
+            return (
+              <div key={field} className="flex flex-col">
+                <label className="font-medium text-gray-700 capitalize">
+                  {field.replace(/([A-Z])/g, " $1")}{" "}
+                  {errors[field] && <span className="text-red-500">*</span>}
+                </label>
+                <input
+                  type={field.includes("Date") || field.includes("DOB") ? "date" : "text"}
+                  name={field}
+                  value={formData[field]}
+                  onChange={handleChange}
+                  className={`border p-2 rounded-md ${errors[field] ? "border-red-500" : "border-cyan-200"}`}
+                />
+              </div>
+            );
+          })}
 
-          {/* Confirm Password */}
-          <div className="flex flex-col">
-            <label className="font-medium text-gray-700">
-              Confirm Password {errors.confirmPassword && <span className="text-red-500">*</span>}
-            </label>
-            <input
-              type="password"
-              name="confirmPassword"
-              value={formData.confirmPassword}
-              onChange={handleChange}
-              className={`border p-2 rounded-md ${errors.confirmPassword ? "border-red-500" : "border-cyan-200"}`}
-            />
-          </div>
-
-
-          
-            {/* DOB */}
-            <div className="flex flex-col">
-            <label className="font-medium text-gray-700">
-              DOB {errors.dob && <span className="text-red-500">*</span>}
-            </label>
-            <input
-              type="date"
-              name="dob"
-              value={formData.dob}
-              onChange={handleChange}
-              className={`border p-2 rounded-md ${
-                errors.dob ? "border-red-500" : "border-cyan-200"
-              }`}
-            />
-          </div>
-
-          {/* Mail ID */}
-          <div className="flex flex-col">
-            <label className="font-medium text-gray-700">
-              Mail ID {errors.mailId && <span className="text-red-500">*</span>}
-            </label>
-            <input
-              type="email"
-              name="mailId"
-              value={formData.mailId}
-              onChange={handleChange}
-              className={`border p-2 rounded-md ${
-                errors.mailId ? "border-red-500" : "border-cyan-200"
-              }`}
-            />
-          </div>
-
-          {/* Phone Number */}
-          <div className="flex flex-col">
-            <label className="font-medium text-gray-700">
-              Phone Number {errors.phoneNumber && <span className="text-red-500">*</span>}
-            </label>
-            <div className="flex">
-              <select
-                name="phoneCountryCode"
-                value={formData.phoneCountryCode}
-                onChange={handleChange}
-                className="border  rounded-l-md   p-2 bg-gray-50"
-              >
-                <option value="+91">+91</option>
-                <option value="+1">+1</option>
-                <option value="+44">+44</option>
-              </select>
-              <input
-                type="text"
-                name="phoneNumber"
-                value={formData.phoneNumber}
-                onChange={handleChange}
-                className={`w-full border rounded-r-md p-2 ${
-                  errors.phoneNumber ? "border-red-500" : "border-cyan-200"
-                }`}
-              />
-            </div>
-          </div>
-
-          {/* Alternative Phone Number */}
-          <div className="flex flex-col">
-            <label className="font-medium text-gray-700">
-              Alternative Phone Number{" "}
-              {errors.altPhoneNumber && <span className="text-red-500">*</span>}
-            </label>
-            <div className="flex">
-              <select
-                name="alternativeCountryCode"
-                value={formData.alternativeCountryCode}
-                onChange={handleChange}
-                className="border rounded-l-md p-2 bg-gray-50"
-              >
-                <option value="+91">+91</option>
-                <option value="+1">+1</option>
-                <option value="+44">+44</option>
-              </select>
-              <input
-                type="text"
-                name="altPhoneNumber"
-                value={formData.altPhoneNumber}
-                onChange={handleChange}
-                className={`w-full border rounded-r-md p-2 ${
-                  errors.altPhoneNumber ? "border-red-500" : "border-cyan-200"
-                }`}
-              />
-            </div>
-          </div>
-
-          {/* Address */}
-          <div className="flex flex-col">
-            <label className="font-medium text-gray-700">
-              Address {errors.address && <span className="text-red-500">*</span>}
-            </label>
-            <input
-              type="text"
-              name="address"
-              value={formData.address}
-              onChange={handleChange}
-              className={`border p-2 rounded-md ${
-                errors.address ? "border-red-500" : "border-cyan-200"
-              }`}
-            />
-          </div>
-
-          {/* Applied Role */}
-          <div className="flex flex-col">
-            <label className="font-medium text-gray-700">
-              Applied Role {errors.appliedRole && <span className="text-red-500">*</span>}
-            </label>
-            <input
-              type="text"
-              name="appliedRole"
-              value={formData.appliedRole}
-              onChange={handleChange}
-              className={`border p-2 rounded-md ${
-                errors.appliedRole ? "border-red-500" : "border-cyan-200"
-              }`}
-            />
-          </div>
-
-          {/* Applied Date */}
-          <div className="flex flex-col">
-            <label className="font-medium text-gray-700">
-              Applied Date {errors.appliedDate && <span className="text-red-500">*</span>}
-            </label>
-            <input
-              type="date"
-              name="appliedDate"
-              value={formData.appliedDate}
-              onChange={handleChange}
-              className={`border p-2 rounded-md ${
-                errors.appliedDate ? "border-red-500" : "border-cyan-200"
-              }`}
-            />
-          </div>
-
-          {/* Reference ID */}
-          <div className="flex flex-col">
-            <label className="font-medium text-gray-700">
-              If reference, Employee ID{" "}
-              {errors.refEmployeeId && <span className="text-red-500">*</span>}
-            </label>
-            <input
-              type="text"
-              name="refEmployeeId"
-              value={formData.refEmployeeId}
-              onChange={handleChange}
-              className={`border p-2 rounded-md ${
-                errors.refEmployeeId ? "border-red-500" : "border-cyan-200"
-              }`}
-            />
-          </div>
-
-          {/* Current CTC */}
-          <div className="flex flex-col">
-            <label className="font-medium text-gray-700">
-              Current CTC {errors.currentCtc && <span className="text-red-500">*</span>}
-            </label>
-            <input
-              type="text"
-              name="currentCtc"
-              value={formData.currentCtc}
-              onChange={handleChange}
-              className={`border p-2 rounded-md ${
-                errors.currentCtc ? "border-red-500" : "border-cyan-200"
-              }`}
-            />
-          </div>
-
-          {/* Expected CTC */}
-          <div className="flex flex-col">
-            <label className="font-medium text-gray-700">
-              Expected CTC {errors.expectedCtc && <span className="text-red-500">*</span>}
-            </label>
-            <input
-              type="text"
-              name="expectedCtc"
-              value={formData.expectedCtc}
-              onChange={handleChange}
-              className={`border p-2 rounded-md ${
-                errors.expectedCtc ? "border-red-500" : "border-cyan-200"
-              }`}
-            />
-          </div>
-
-          {/* Joining Date */}
-          <div className="flex flex-col">
-            <label className="font-medium text-gray-700">
-              Joining Date {errors.joiningDate && <span className="text-red-500">*</span>}
-            </label>
-            <input
-              type="date"
-              name="joiningDate"
-              value={formData.joiningDate}
-              onChange={handleChange}
-              className={`border p-2 rounded-md ${
-                errors.joiningDate ? "border-red-500" : "border-cyan-200"
-              }`}
-            />
-          </div>
-
-          {/* Previous Company */}
-          <div className="flex flex-col">
-            <label className="font-medium text-gray-700">
-              Previous Company{" "}
-              {errors.prevCompany && <span className="text-red-500">*</span>}
-            </label>
-            <input
-              type="text"
-              name="prevCompany"
-              value={formData.prevCompany}
-              onChange={handleChange}
-              className={`border p-2 rounded-md ${
-                errors.prevCompany ? "border-red-500" : "border-cyan-200"
-              }`}
-            />
-          </div>
-
-          {/* Position Name */}
-          <div className="flex flex-col">
-            <label className="font-medium text-gray-700">
-              Position Name {errors.positionName && <span className="text-red-500">*</span>}
-            </label>
-            <input
-              type="text"
-              name="positionName"
-              value={formData.positionName}
-              onChange={handleChange}
-              className={`border p-2 rounded-md ${
-                errors.positionName ? "border-red-500" : "border-cyan-200"
-              }`}
-            />
-          </div>  
-          
           <div className="col-span-2 flex justify-center mt-2">
             <button
               type="submit"
-              className="bg-teal-500 text-white px-6 py-2  rounded-md hover:bg-teal-600 transition"
+              className="bg-teal-500 text-white px-6 py-2 rounded-md hover:bg-teal-600 transition"
             >
               Submit
             </button>
           </div>
         </form>
 
-        {/* Display success or error message */}
         {successMessage && (
           <div className="mt-4 text-center text-green-600">
             <p>{successMessage}</p>

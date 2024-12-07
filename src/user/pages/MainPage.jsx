@@ -30,6 +30,7 @@ const MainPage = () => {
   // const [projects, setProjects] = useState([]);
   const [loading, setLoading] = useState(true);
   const [employeeTasks, setEmployeeTasks] = useState([]);
+  const name = localStorage.getItem("name");
   const [tasks, setTasks] = useState([
     { name: "Create Wireframe", completed: true },
     { name: "Slack Logo Design", subtasks: 3, completed: false },
@@ -37,6 +38,7 @@ const MainPage = () => {
     { name: "Create Wireframe", completed: true },
     { name: "App Icon Design", completed: false },
   ]);
+  
 
   const projects = [
     { name: "Project Four", time: "00:30:00", progress: 25 },
@@ -52,15 +54,14 @@ const MainPage = () => {
       try {
      
         const dashboardResponse = await axios.get(
-          "https://3qhglx2bhd.execute-api.us-east-1.amazonaws.com/task/getDashboard/Mukilan",
+          `https://3qhglx2bhd.execute-api.us-east-1.amazonaws.com/task/getDashboard/${name}`,
           { responseType: "json" }
         );
 
-        console.log("API Response:", dashboardResponse.data);
 
         if (dashboardResponse.data && dashboardResponse.data.message) {
           const data = dashboardResponse.data.message;
-          console.log("Dashboard Data:", data); 
+        
 
           setStats({
             todayCompletedHours: data.todayCompletedHours || 0,
@@ -194,7 +195,7 @@ const MainPage = () => {
           {/* Task List and Timer */}
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-8">
             <div className="lg:col-span-1">
-              <TaskList tasks={tasks} onAddTask={handleAddTask} />
+              <TaskList tasks={tasks} onAddTask={handleAddTask} /> 
             </div>
             <div className="lg:col-span-1">
               <TaskManager />

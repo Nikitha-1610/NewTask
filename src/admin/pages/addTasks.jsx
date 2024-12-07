@@ -29,10 +29,12 @@ const AddTasks = () => {
   const [users, setUsers] = useState([]);
   const [displayReferences, setDisplayReferences] = useState([]);
   const [uploading, setUploading] = useState(false);
+  const employeeId = localStorage.getItem("employeeId");
+  
   const getAllEmp = async () => {
     try {
-      const response = await axiosInstance.get("employee/getMembers/24110004");
-      console.log(response.data.message);
+      const url = `employee/getMembers/${employeeId}`
+      const response = await axiosInstance.get(`employee/getMembers/${employeeId}`);
 
       setUsers(response?.data?.message);
     } catch (error) {
@@ -81,9 +83,6 @@ const AddTasks = () => {
         const command = new PutObjectCommand(params);
         await s3Client.send(command);
         const region = "us-east-1";
-        console.log("Region:", region);
-        console.log("Bucket:", BUCKET_NAME);
-        console.log("FileName:", fileName);
         return "https://${BUCKET_NAME}.s3.${region}.amazonaws.com/${fileName}";
       } catch (err) {
         console.error("Error uploading file to S3: ", err);
@@ -159,14 +158,12 @@ const AddTasks = () => {
   }
 
     try {
-      console.log("Submitting Form Data:", formData);
 
       // Make the API POST request
       const response = await axiosInstance.post("task/addTask", formData);
 
       // Handle success
       if (response.status === 200 || response.status === 201) {
-        console.log("Server Response:", response.data);
 
         // Reset form (if needed)
         setFormData({
