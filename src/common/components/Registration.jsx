@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import axiosInstance from "../utils/axios/axiosInstance";
-import "font-awesome/css/font-awesome.min.css"; 
+// import "font-awesome/css/font-awesome.min.css"; 
 
 const RegistrationPage = () => {
   const navigate = useNavigate();
