@@ -21,7 +21,6 @@ const People = () => {
   const getAllusers = async () => {
     try {
       const response = await axiosInstance.get("user/getUsers");
-      console.log(response.data.message);
 
       setAllUsers(response?.data?.message);
     } catch (error) {
@@ -85,11 +84,10 @@ const People = () => {
   const handleApprove = async () => {
     if (selectedUserIndex !== null) {
       const user = currentUsers[selectedUserIndex];
-      console.log(`User approved:`, user.email);
+      
       try {
         await axiosInstance.put(`employee/apporve/${user.email}`);
         toast.success(`${user.name} has been approved.`);
-        console.log(`User approved:`, user.email);
         getAllusers(); // Refresh the user list after approval
       } catch (error) {
         console.error("Error approving user:", error);
@@ -109,7 +107,6 @@ const People = () => {
           case "approve":
             await axiosInstance.put(`/employee/approve/${user.email}`);
             toast.success(`${user.name} has been approved.`);
-            console.log(`User approved:`, user.email);
             break;
 
           case "on-hold":
@@ -118,13 +115,11 @@ const People = () => {
               status: "On-Hold",
             });
             toast.success(`${user.name} has been placed on hold.`);
-            console.log(`User on-hold:`, user.email);
             break;
 
           case "reject":
             await axiosInstance.delete(`/user/reject/${user.email}`);
             toast.success(`${user.name} has been rejected.`);
-            console.log(`User rejected:`, user.email);
             break;
 
           default:

@@ -7,7 +7,6 @@ const InProgressTask = () => {
   const location = useLocation();
   const navigate = useNavigate();
 
-  console.log("here is location", location);
 
   const tasksFromState = location.state || [];
 

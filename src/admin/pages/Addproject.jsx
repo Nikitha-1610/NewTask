@@ -39,7 +39,7 @@ const AddProject = () => {
   const getAllEmp = async () => {
     try {
       const response = await axiosInstance.get(`employee/getOption/TeamLead`);
-      console.log(response.data.message);
+      
 
       setUsers(response?.data?.message);
     } catch (error) {
@@ -88,9 +88,6 @@ const AddProject = () => {
         const command = new PutObjectCommand(params);
         await s3Client.send(command);
         const region = "us-east-1";
-        console.log("Region:", region);
-        console.log("Bucket:", BUCKET_NAME);
-        console.log("FileName:", fileName);
         return `https://${BUCKET_NAME}.s3.${region}.amazonaws.com/${fileName}`;
       } catch (err) {
         console.error("Error uploading file to S3: ", err);
@@ -173,7 +170,7 @@ const AddProject = () => {
     }
 
     try {
-      console.log("Submitting Form Data:", formData);
+      
 
       // Make the API POST request
       const response = await axiosInstance.post("project/addProject", formData);

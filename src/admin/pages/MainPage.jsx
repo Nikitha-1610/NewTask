@@ -66,11 +66,10 @@ const MainPage = () => {
     const fetchEmployeeTasks = async () => {
       try {
         const employeeTaskResponse = await axios.get(
-          "https://3qhglx2bhd.execute-api.us-east-1.amazonaws.com/task/getEmployeeTask/TeamLead1",
+          `https://3qhglx2bhd.execute-api.us-east-1.amazonaws.com/task/getEmployeeTask/${employeeName}`,
           { responseType: "json" }
         );
 
-        console.log("API Response:", employeeTaskResponse.data);  // Log the API response
 
         // Extract the tasks from the 'message' property
         const tasks = employeeTaskResponse.data.message.map((task) => ({
