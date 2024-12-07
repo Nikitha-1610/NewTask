@@ -21,7 +21,6 @@ const EmployeeForm = () => {
   });
   
 
-  const [setUsers] = useState([]);
   const [errors, setErrors] = useState({
     employeeID: "",
     name: "",
@@ -39,17 +38,7 @@ const EmployeeForm = () => {
     appliedDate: "",
   });
 
-  const getAllEmp = async () => {
-    try {
-      const response = await axiosInstance.get("employee/getMembers/24110004");
-      console.log(response.data.message);
-
-      setUsers(response?.data?.message);
-    } catch (error) {
-      console.error("Error syncing with server:", error);
-      // toast.error("Failed to fetch users.");
-    }
-  };
+  
   const generateEmployeeId = async () => {
     try {
       const response = await axiosInstance.get("employee/generateId");

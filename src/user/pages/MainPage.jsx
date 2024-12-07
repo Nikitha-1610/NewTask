@@ -58,11 +58,10 @@ const MainPage = () => {
           { responseType: "json" }
         );
 
-        console.log("API Response:", dashboardResponse.data);
 
         if (dashboardResponse.data && dashboardResponse.data.message) {
           const data = dashboardResponse.data.message;
-          console.log("Dashboard Data:", data); 
+        
 
           setStats({
             todayCompletedHours: data.todayCompletedHours || 0,

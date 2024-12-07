@@ -24,21 +24,19 @@ const MainPage = () => {
   const [projects, setProjects] = useState([]);
   const [loading, setLoading] = useState(true);
   const [employeeTasks, setEmployeeTasks] = useState([]);
+  const employeeName = localStorage.getItem("name");
 
   useEffect(() => {
     const fetchDashboardData = async () => {
       try {
         // Fetch data for dashboard stats
         const dashboardResponse = await axios.get(
-          "https://3qhglx2bhd.execute-api.us-east-1.amazonaws.com/task/getDashboard/EMP23456",
+          `https://3qhglx2bhd.execute-api.us-east-1.amazonaws.com/task/getDashboard/${employeeName}`,
           { responseType: "json" }
         );
 
-        console.log("API Response:", dashboardResponse.data);
-
         if (dashboardResponse.data && dashboardResponse.data.message) {
           const data = dashboardResponse.data.message;
-          console.log("Dashboard Data:", data); 
 
           setStats({
             todayCompletedHours: data.todayCompletedHours || 0,

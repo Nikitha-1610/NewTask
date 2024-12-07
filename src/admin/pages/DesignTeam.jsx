@@ -51,12 +51,13 @@ const Board = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const navigate = useNavigate();
+  const employeeName = localStorage.getItem('name');
 
   // Fetch tasks from the API
   useEffect(() => {
     setLoading(true);
     axiosInstance
-      .get("task/getTaskDashboard/TeamLead1")
+      .get(`task/getTaskDashboard/${employeeName}`)
       .then((response) => {
         if (response.data && response.data.message) {
           setTaskData(response.data.message);

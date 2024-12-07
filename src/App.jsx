@@ -10,7 +10,6 @@ import RegistrationPage from "./common/components/Registration";
 const App = () => {
   const isAuthenticated = useSelector((state) => state.auth.isAuthenticated);
   const role = useSelector((state) => state.auth.role);
-  console.log("here is role", role);
 
   const defaultRoute = isAuthenticated
     ? role === "TeamLead"
