@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import Taskcard from "./Taskcard";
+import TaskCard from "../../../user/components/UserDashBoard/Taskcard";
 import { format } from "date-fns";
 
 const TaskSchedule = ({ employeeTasks, setTasks }) => {
@@ -49,7 +49,7 @@ const TaskSchedule = ({ employeeTasks, setTasks }) => {
           ) : (
             <div className="ml-12">
               {tasksForToday.map((task) => (
-                <Taskcard
+                <TaskCard
                   key={task.taskId}
                   title={task.taskName}
                   time={formatDate(task.assignedDate)}
