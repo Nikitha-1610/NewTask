@@ -108,16 +108,16 @@ const MyTask = () => {
                   </tr>
                   <tr>
                     <td className="flex">
-                      <GoPeople /> <div>Assigned to</div>
+                    <GoPeople /><div>Assigned to</div>
                     </td>
                     <td>
                       {task.assignedTo.map((assignee, index) => (
                         <div key={index} className="flex items-center">
-                          <img
+                          {/* <img
                             src="Images/person.jpeg"
                             alt="User Profile"
                             className="w-[15px] h-[15px] rounded-full mr-2"
-                          />
+                          /> */} <GoPerson />
                           {assignee}
                         </div>
                       ))}
@@ -125,15 +125,11 @@ const MyTask = () => {
                   </tr>
                   <tr>
                     <td className="flex">
-                      <GoPerson /> <div>Assigned By</div>
+                    <GoPerson /><div>Assigned By</div>
                     </td>
                     <td>
                       <div className="flex items-center">
-                        <img
-                          src="Images/person.jpeg"
-                          alt="User Profile"
-                          className="w-[15px] h-[15px] rounded-full mr-2"
-                        />
+                      <GoPerson />
                         {task.assignedBy}
                       </div>
                     </td>

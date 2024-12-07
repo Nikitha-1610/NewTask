@@ -1,5 +1,4 @@
 import { useEffect, useState } from "react";
-// import { Icon } from "@iconify/react";
 import axiosInstance from "../../common/utils/axios/axiosInstance";
 
 const EmployeeForm = () => {
@@ -19,7 +18,6 @@ const EmployeeForm = () => {
     teamLead: "",
     appliedDate: "",
   });
-  
 
   const [errors, setErrors] = useState({
     employeeID: "",
@@ -38,15 +36,11 @@ const EmployeeForm = () => {
     appliedDate: "",
   });
 
-  
   const generateEmployeeId = async () => {
     try {
       const response = await axiosInstance.get("employee/generateId");
-
       if (response?.data?.message) {
-        const generatedId = response.data.message; // Assuming the response contains the generated ID
-
-        // Update the employeeID in the form data
+        const generatedId = response.data.message;
         setFormData((prev) => ({
           ...prev,
           employeeID: generatedId,
@@ -54,18 +48,14 @@ const EmployeeForm = () => {
       }
     } catch (error) {
       console.error("Error generating Employee ID:", error);
-      // toast.error("Failed to generate Employee ID. Please try again later.");
     }
   };
-  useEffect(() => {
-    getAllEmp();
-  }, []);
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;
     setFormData((prevData) => ({
       ...prevData,
-      [name]: name === "mobile" ? parseInt(value) || 0 : value, // Ensure mobile is stored as an integer
+      [name]: name === "mobile" ? parseInt(value, 10) || 0 : value, // Ensure mobile is stored as an integer
     }));
   };
 
@@ -88,68 +78,28 @@ const EmployeeForm = () => {
       teamLead: "",
       appliedDate: "",
     };
-  
-    // Check if required fields are filled and set error messages
-    if (!formData.employeeID) {
-      newErrors.employeeID = "Employee ID is required.";
-    }
-    if (!formData.name) {
-      newErrors.name = "Name is required.";
-    }
-    if (!formData.mobile.length === 10) {
-      newErrors.mobile = "Phone Number is required.";
-    }
-    if (!formData.password) {
-      newErrors.password = "Password is required.";
-    }
-    if (!formData.email) {
-      newErrors.email = "Email is required.";
-    }
-    if (!formData.address) {
-      newErrors.address = "Address is required.";
-    }
-    if (!formData.DOB) {
-      newErrors.DOB = "DOB is required.";
-    }
-    if (!formData.reference) {
-      newErrors.reference = "At least one reference file is required.";
-    }
-    if (!formData.role) {
-      newErrors.role = "Role is required.";
-    }
-    if (!formData.gender) {
-      newErrors.gender = "Gender is required.";
-    }
-    if (!formData.position) {
-      newErrors.position = "Position is required.";
-    }
-    if (!formData.department) {
-      newErrors.department = "Department is required.";
-    }
-    if (!formData.teamLead) {
-      newErrors.teamLead = "Team Lead is required.";
-    }
-    if (!formData.appliedDate) {
-      newErrors.appliedDate = "Applied Date is required.";
-    }
-  
-    // If there are any validation errors, update the errors state and stop form submission
+
+    // Validation logic
+    Object.keys(newErrors).forEach((field) => {
+      if (!formData[field]) newErrors[field] = `${field} is required.`;
+    });
+
     if (Object.values(newErrors).some((error) => error !== "")) {
       setErrors(newErrors);
       return;
     }
+
     try {
       console.log("Submitting Form Data:", formData);
 
-      // Make the API POST request
-      const response = await axiosInstance.post("employee/add", formData);
-      
+      const response = await axiosInstance.post(
+        "https://3qhglx2bhd.execute-api.us-east-1.amazonaws.com/employee/add",
+        formData
+      );
 
-      // Handle success
       if (response.status === 200 || response.status === 201) {
         console.log("Server Response:", response.data);
 
-        // Reset form (if needed)
         setFormData({
           employeeID: "",
           name: "",
@@ -168,11 +118,9 @@ const EmployeeForm = () => {
         });
       } else {
         console.error("Unexpected response:", response);
-        // toast.error("Something went wrong. Please try again.");
       }
     } catch (error) {
       console.error("Error submitting form data:", error);
-      // toast.error("Failed to submit the form. Please try again later.");
     }
   };
   return (
