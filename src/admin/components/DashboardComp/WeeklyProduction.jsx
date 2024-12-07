@@ -22,7 +22,7 @@ ChartJS.register(
 
 const WeeklyProduction = ({ weeklyData, monthlyData, yearlyData }) => {
   // Set initial selector state
-  const [period, setPeriod] = useState("Weekly");
+  const [period, setPeriod] = useState("Yearly");
 
   // Function to handle dynamic colors based on comparison of adjacent bars
   const getBarColors = (data) => {
