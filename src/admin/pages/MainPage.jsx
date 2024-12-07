@@ -2,7 +2,7 @@ import { useState, useEffect } from "react";
 import axios from "axios";
 import StatsCard from "../components/UserDashBoard/StatsCard";
 import TaskList from "../components/UserDashBoard/TaskList";
-import ProjectList from "../components/UserDashBoard/ProjectList";
+import ProjectList from "../components/UserDashBoard/projectList";
 import MostWorkedCard from "../components/UserDashBoard/MostWorkedCard";
 import ProductivityChart from "../components/UserDashBoard/ProductivityChart";
 import { Icon } from "@iconify/react";
