@@ -35,10 +35,11 @@ const AuthPage = () => {
 
       console.log("Login response:", response.data);
 
-      const { token, role } = response.data;
+      const { token, role, name } = response.data;
       if (token) {
         toast.success("Login successful!");
         localStorage.setItem("authToken", token);
+        localStorage.setItem("name", name);
         dispatch(login({ userData: response.data, token }));
 
         navigate(role === "TeamLead" ? "/admin/dashboard" : "/user/home");

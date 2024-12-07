@@ -30,6 +30,7 @@ const MainPage = () => {
   // const [projects, setProjects] = useState([]);
   const [loading, setLoading] = useState(true);
   const [employeeTasks, setEmployeeTasks] = useState([]);
+  const name = localStorage.getItem("name");
   const [tasks, setTasks] = useState([
     { name: "Create Wireframe", completed: true },
     { name: "Slack Logo Design", subtasks: 3, completed: false },
@@ -37,6 +38,7 @@ const MainPage = () => {
     { name: "Create Wireframe", completed: true },
     { name: "App Icon Design", completed: false },
   ]);
+  
 
   const projects = [
     { name: "Project Four", time: "00:30:00", progress: 25 },
@@ -52,7 +54,7 @@ const MainPage = () => {
       try {
      
         const dashboardResponse = await axios.get(
-          "https://3qhglx2bhd.execute-api.us-east-1.amazonaws.com/task/getDashboard/Mukilan",
+          `https://3qhglx2bhd.execute-api.us-east-1.amazonaws.com/task/getDashboard/${name}`,
           { responseType: "json" }
         );
 

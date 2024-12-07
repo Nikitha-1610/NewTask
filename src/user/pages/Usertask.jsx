@@ -7,11 +7,11 @@ const AssignedTasks = () => {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    if (!localStorage.getItem('employeeName')) {
-      localStorage.setItem('employeeName', 'Mukilan');
+    if (!localStorage.getItem('name')) {
+      localStorage.setItem('name', 'Mukilan');
     }
 
-    const employeeName = localStorage.getItem('employeeName');
+    const employeeName = localStorage.getItem('name');
 
     if (employeeName) {
       
