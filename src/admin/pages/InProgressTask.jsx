@@ -3,7 +3,7 @@ import TaskDetails from "../components/TaskDetails";
 import { Icon } from "@iconify/react";
 
 import { useNavigate } from "react-router-dom";
-const InProgressTask = () => {
+const InProgressTasks = () => {
   const location = useLocation();
   const navigate = useNavigate();
 
@@ -61,4 +61,4 @@ const InProgressTask = () => {
   );
 };
 
-export default InProgressTask;
+export default InProgressTasks;
