@@ -1,6 +1,6 @@
 import { Icon } from '@iconify/react'; 
 
-const TaskCard = ({ title, time }) => {
+const Taskcard = ({ title, time }) => {
   return (
     <div className="flex items-center bg-white shadow-md rounded-md px-4 py-2 mb-4">
       <div className="w-1 bg-teal-500 rounded-full h-full mr-3"></div>
@@ -17,6 +17,6 @@ const TaskCard = ({ title, time }) => {
   );  
 };
 
-export default TaskCard;
+export default Taskcard;
 
 
