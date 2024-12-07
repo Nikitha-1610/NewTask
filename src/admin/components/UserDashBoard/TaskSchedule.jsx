@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
-import TaskCard from "./Taskcard";
-import { format } from "date-fns";  
+import TaskCard from "./TaskCard";
+import { format } from "date-fns";
 
 const TaskSchedule = ({ employeeTasks, setTasks }) => {
   const [date, setDate] = useState(new Date());
