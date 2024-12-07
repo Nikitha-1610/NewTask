@@ -7,7 +7,6 @@ import {
 } from "@fortawesome/free-solid-svg-icons";
 import img8 from "../../assets/img8.jpeg";
 import img9 from "../../assets/img9.jpeg";
-import { Icon } from '@iconify/react'; // For Iconify
 
 // import GroupChat from "../components/chatComp/GroupChat";
 import IndividualChat from "../components/chatComp/IndividualChat";
