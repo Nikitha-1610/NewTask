@@ -195,7 +195,7 @@ const MainPage = () => {
           {/* Task List and Timer */}
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-8">
             <div className="lg:col-span-1">
-              <TaskList tasks={tasks} onAddTask={handleAddTask} />
+              <TaskList tasks={tasks} onAddTask={handleAddTask} /> 
             </div>
             <div className="lg:col-span-1">
               <TaskManager />

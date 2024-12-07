@@ -9,7 +9,7 @@ import Teams from "./pages/Teams";
 import userEmail from "./pages/Usersemail";
 import Chats from "./pages/Chats";
 import MainPage from "./pages/MainPage";
-import InProgressTasks from "./pages/InProgresstask";
+import InProgressTasks from "./pages/InProgressTask";
 import IntestTasks from "./pages/InTest";
 import AssignTasks from "./pages/Assigntask";
 import TaskCardDetails from "./components/TaskCardDetails";

@@ -45,7 +45,6 @@ const EmployeeForm = () => {
 
       if (response?.data?.message) {
         const generatedId = response.data.message; // Assuming the response contains the generated ID
-        console.log("Generated Employee ID:", generatedId);
 
         // Update the employeeID in the form data
         setFormData((prev) => ({
@@ -144,7 +143,7 @@ const EmployeeForm = () => {
 
       // Make the API POST request
       const response = await axiosInstance.post("employee/add", formData);
-      console.log(response);
+      
 
       // Handle success
       if (response.status === 200 || response.status === 201) {

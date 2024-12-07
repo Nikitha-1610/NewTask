@@ -100,7 +100,7 @@ const Board = () => {
     axiosInstance
       .post("task/getTaskByStatus", { status, assignedBy })
       .then((response) => {
-        console.log("API Response:", response.data);
+        
         // Navigate to the specified path after successful API call
         navigate(`/admin/${path}`, { state: response.data.message || [] });
       })

@@ -4,7 +4,6 @@ import { Icon } from "@iconify/react";
 
 const AssignTask = () => {
   const location = useLocation();
-  console.log("here is location", location);
 
   const tasksFromState = location.state || [];
 

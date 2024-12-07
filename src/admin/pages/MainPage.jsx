@@ -2,7 +2,7 @@ import { useState, useEffect } from "react";
 import axios from "axios";
 import StatsCard from "../components/UserDashBoard/StatsCard";
 import TaskList from "../components/UserDashBoard/TaskList";
-import ProjectList from "../components/UserDashBoard/ProjectList";
+import ProjectList from "../components/UserDashBoard/projectList";
 import MostWorkedCard from "../components/UserDashBoard/MostWorkedCard";
 import ProductivityChart from "../components/UserDashBoard/ProductivityChart";
 import { Icon } from "@iconify/react";
@@ -74,11 +74,10 @@ const MainPage = () => {
     const fetchEmployeeTasks = async () => {
       try {
         const employeeTaskResponse = await axios.get(
-          "https://3qhglx2bhd.execute-api.us-east-1.amazonaws.com/task/getEmployeeTask/TeamLead1",
+          `https://3qhglx2bhd.execute-api.us-east-1.amazonaws.com/task/getEmployeeTask/${employeeName}`,
           { responseType: "json" }
         );
 
-        console.log("API Response:", employeeTaskResponse.data);  // Log the API response
 
         // Extract the tasks from the 'message' property
         const tasks = employeeTaskResponse.data.message.map((task) => ({
