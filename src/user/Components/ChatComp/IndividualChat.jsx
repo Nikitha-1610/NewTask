@@ -1126,4 +1126,4 @@ return (
   );
 };
 
-export default IndividualChat;
+export default IndividualChat

@@ -7,9 +7,9 @@ import {
 } from "@fortawesome/free-solid-svg-icons";
 import img8 from "../../assets/img8.jpeg";
 import img9 from "../../assets/img9.jpeg";
+import IndividualChat from '../Components/ChatComp/IndividualChat'
 
 // import GroupChat from "../components/chatComp/GroupChat";
-import IndividualChat from "../components/chatComp/IndividualChat";
 // Updated list of contacts
 
 const contacts = [
