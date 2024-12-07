@@ -20,7 +20,7 @@ const UserProfile = () => {
     const fetchUserData = async () => {
       try {
         const response = await axios.get(
-          `https://3qhglx2bhd.execute-api.us-east-1.amazonaws.com/employee/get/${employeeId}`
+          `https://3qhglx2bhd.execute-api.us-east-1.amazonaws.com/employee/get/24110001`
         );
         if (response.data.status === 200) {
           setUserData(response.data.message);
