@@ -20,7 +20,7 @@ const UserProfile = () => {
     const fetchUserData = async () => {
       try {
         const response = await axios.get(
-          `https://3qhglx2bhd.execute-api.us-east-1.amazonaws.com/employee/get/24110001`
+          `https://3qhglx2bhd.execute-api.us-east-1.amazonaws.com/employee/get/${employeeId}`
         );
         if (response.data.status === 200) {
           setUserData(response.data.message);
@@ -71,7 +71,7 @@ const UserProfile = () => {
       );
 
       const response = await axios.put(
-        "https://3qhglx2bhd.execute-api.us-east-1.amazonaws.com/employee/update/24110001",
+        `https://3qhglx2bhd.execute-api.us-east-1.amazonaws.com/employee/update/${employeeId}`,
         formData
       );
 
@@ -365,4 +365,3 @@ const UserProfile = () => {
 };
 
 export default UserProfile;
-
