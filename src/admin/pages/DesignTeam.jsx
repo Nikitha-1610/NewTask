@@ -207,12 +207,21 @@ const Board = () => {
     "COMPLETED": "completedTasks",
   };
 
+  const titleToStatusMap = {
+    "TODAY ASSIGNED": "Today-Assigned",
+    "IN PROGRESS": "In-Progress",
+    "IN TEST": "In-Test",
+    "COMPLETED": "Completed"
+  };
+
   const moveTask = (draggedTask, targetColumnTitle) => {
     const targetColumn = columnMapping[targetColumnTitle];
     if (!targetColumn) {
       console.error(`Target column "${targetColumnTitle}" does not exist.`);
       return;
     }
+    
+    // Remove the task from its current column and add it to the new one
     const updatedTaskData = { ...taskData };
     Object.keys(updatedTaskData).forEach((columnKey) => {
       updatedTaskData[columnKey] = updatedTaskData[columnKey].filter(
@@ -220,8 +229,28 @@ const Board = () => {
       );
     });
     updatedTaskData[targetColumn].push(draggedTask);
-    setTaskData(updatedTaskData); 
+    setTaskData(updatedTaskData); // Update the state with the new task positions
+  
+    // **Get the corresponding status using the title-to-status mapping**
+    const newTaskStatus = titleToStatusMap[targetColumnTitle];
+    
+    if (!newTaskStatus) {
+      console.error(`No matching status found for column title: "${targetColumnTitle}"`);
+      return;
+    }
+  
+    // **Send the PUT request to update task status in the backend**
+    axiosInstance
+      .put(`task/updateTask/${draggedTask.taskId}`, { taskStatus: newTaskStatus })
+      .then((response) => {
+        console.log("Task status updated successfully:", response.data);
+      })
+      .catch((error) => {
+        console.error("Error updating task status:", error);
+      });
   };
+  
+  
 
   const TaskCard = ({ task, columnId }) => {
     const [{ isDragging }, drag] = useDrag(() => ({
