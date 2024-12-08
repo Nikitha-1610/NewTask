@@ -2,6 +2,8 @@ import React, { useState, useEffect } from "react";
 import { FaCalendarAlt } from "react-icons/fa";
 import { MdBarChart } from "react-icons/md";
 import { Line } from "react-chartjs-2";
+
+import "react-calendar/dist/Calendar.css";
 import {
   Chart as ChartJS,
   LineElement,
@@ -10,7 +12,7 @@ import {
   PointElement,
   Tooltip,
 } from "chart.js";
-
+import Calendar from "react-calendar";
 // Register chart components
 ChartJS.register(LineElement, CategoryScale, LinearScale, PointElement, Tooltip);
 
@@ -31,10 +33,27 @@ const TwoWaveChart = () => {
 
     window.addEventListener("resize", handleResize);
 
+   
+
     // Cleanup the event listener on component unmount
     return () => window.removeEventListener("resize", handleResize);
   }, []);
 
+  const [isCalendarOpen, setIsCalendarOpen] = useState(false);
+  const [showCalendar, setShowCalendar] = useState(false);
+  const [selectedDate, setSelectedDate] = useState(new Date());
+
+
+  const toggleCalendar = () => {
+    setShowCalendar(!showCalendar);
+  };
+
+  const onDateChange = (date) => {
+    setSelectedDate(date);
+    setShowCalendar(false); // Close calendar after date selection
+  };
+
+  
   // Data for the chart
   const data = {
     labels: ["SEP", " ", "OCT", " ", "NOV", " ", "DEC", " ", "JAN", " ", "FEB"],
@@ -103,11 +122,22 @@ const TwoWaveChart = () => {
 
   return (
     <div className="w-full max-w-screen-lg mx-auto relative flex flex-col pb-0">
-      {/* Calendar Icon on the Top Left */}
-      <div className="absolute top-0 left-0 flex items-center text-gray-400 bg-blue-50 p-2 rounded-md">
+     {/* Calendar Icon on the Top Left */}
+     <div
+        className="absolute top-0 left-0 flex items-center text-gray-400 bg-blue-50 p-2 rounded-md cursor-pointer"
+        onClick={toggleCalendar}
+      >
         <FaCalendarAlt className="text-sm" />
         <span className="ml-2 text-sm sm:text-base md:text-lg">This Month</span>
       </div>
+
+      {/* Calendar Popup */}
+      {showCalendar && (
+        <div className="absolute top-12 left-0 z-10 bg-white shadow-lg p-4 rounded-lg">
+          <Calendar onChange={onDateChange} value={selectedDate} />
+        </div>
+      )}
+
 
       {/* Bar Graph Icon on the Top Right */}
       <div className="absolute top-0 right-0 flex items-center justify-center text-teal-500 text-2xl sm:text-3xl rounded-full bg-blue-50 w-12 h-12">
