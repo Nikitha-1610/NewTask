@@ -6,7 +6,7 @@ const EmployeeForm = () => {
   const [formData, setFormData] = useState({
     employeeID: "",
     name: "",
-    mobile: 0,
+    mobile: "",
     password: "",
     email: "",
     address: "",
@@ -23,7 +23,7 @@ const EmployeeForm = () => {
   const [errors, setErrors] = useState({
     employeeID: "",
     name: "",
-    mobile: 0,
+    mobile: "",
     password: "",
     email: "",
     address: "",
@@ -70,7 +70,7 @@ const EmployeeForm = () => {
     const newErrors = {
       employeeID: "",
       name: "",
-      mobile: 0,
+      mobile: "",
       password: "",
       email: "",
       address: "",
