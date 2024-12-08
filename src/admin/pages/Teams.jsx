@@ -1,48 +1,8 @@
 import { Tree, TreeNode } from "react-organizational-chart";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import MessageCard from "../components/MessageCard";
-// Hierarchy Data for Organizational Chart
-const hierarchyData = {
-  id: 1,
-  name: "User",
-  position: "CEO",
-  children: [
-    {
-      id: 2,
-      name: "User",
-      position: "Director",
-      children: [
-        {
-          id: 3,
-          name: "User",
-          position: "Branch Manager",
-          children: [
-            { id: 4, name: "User", position: "Designer" },
-            { id: 5, name: "User", position: "Designer" },
-          ],
-        },
-      ],
-    },
-    {
-      id: 6,
-      name: "User",
-      position: "Zone Manager",
-      children: [
-        { id: 7, name: "User", position: "Designer" },
-        { id: 8, name: "User", position: "Designer" },
-      ],
-    },
-    {
-      id: 9,
-      name: "User",
-      position: "Regional Manager",
-      children: [
-        { id: 10, name: "User", position: "Designer" },
-        { id: 11, name: "User", position: "Designer" },
-      ],
-    },
-  ],
-};
+import axiosInstance from "../../common/utils/axios/axiosInstance";
+
 
 // Custom Node Component
 const OrgChartNode = ({ data, onClick }) => (
@@ -59,8 +19,8 @@ const OrgChartNode = ({ data, onClick }) => (
 const renderTree = (data, onClick) => {
   return (
     <TreeNode label={<OrgChartNode data={data} onClick={onClick} />}>
-      {data.children && data.children.length > 0
-        ? data.children.map((child) => renderTree(child, onClick))
+      {data.teamMembers && data.teamMembers.length > 0
+        ? data.teamMembers.map((child) => renderTree(child, onClick))
         : null}
     </TreeNode>
   );
@@ -70,31 +30,54 @@ const renderTree = (data, onClick) => {
 const Teams = () => {
   const [selectedNode, setSelectedNode] = useState(null);
   const [showMessageCard, setShowMessageCard] = useState(false);
+  const [hierarchyData, setHierarchyData] = useState(null); 
+
+  
+  useEffect(() => {
+   
+    axiosInstance
+      .get("/employee/getHierarchy") 
+      .then((response) => {
+        if (response.data.status === 200) {
+          const formatData = (employee) => ({
+            id: employee.employeeId,
+            name: employee.name,
+            position: employee.role,
+            teamMembers: employee.teamMembers
+              ? employee.teamMembers.map(formatData)
+              : [],
+          });
+
+          const formattedData = formatData(response.data.message[0]); 
+          setHierarchyData(formattedData);
+        }
+      })
+      .catch((error) => {
+        console.error("Error fetching hierarchy data:", error);
+      });
+  }, []);
 
   const handleNodeClick = (data) => {
     setSelectedNode(data);
   };
 
   const handleMessageButtonClick = () => {
-    setShowMessageCard((prev) => !prev); // Toggle message card visibility
+    setShowMessageCard((prev) => !prev); 
   };
 
   const handleCloseMessageCard = () => {
-    setShowMessageCard(false); // Close the message card
+    setShowMessageCard(false); 
   };
 
+  if (!hierarchyData) return <div>Loading...</div>
   return (
     <div className="flex justify-center p-6 relative">
       <div>
-        <h2 className=" text-center font-bold text-xl mb-6">
-          organizational hierarchy
+        <h2 className="text-center font-bold text-xl mb-6">
+          Organizational Hierarchy
         </h2>
-        <Tree
-          label={
-            <OrgChartNode data={hierarchyData} onClick={handleNodeClick} />
-          }
-        >
-          {hierarchyData.children.map((child) =>
+        <Tree label={<OrgChartNode data={hierarchyData} onClick={handleNodeClick} />}>
+          {hierarchyData.teamMembers.map((child) =>
             renderTree(child, handleNodeClick)
           )}
         </Tree>
