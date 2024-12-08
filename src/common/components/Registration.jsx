@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import axiosInstance from "../utils/axios/axiosInstance";
+import { FaEye, FaEyeSlash } from "react-icons/fa";
 
 const RegistrationPage = () => {
   const navigate = useNavigate();
@@ -25,6 +26,17 @@ const RegistrationPage = () => {
   const [errors, setErrors] = useState({});
   const [successMessage, setSuccessMessage] = useState("");
   const [errorMessage, setErrorMessage] = useState("");
+
+  const handleInputChange = (e) => {
+    const { name, value } = e.target;
+    setFormData((prevData) => ({
+      ...prevData,
+      [name]: name === "mobile" ? parseInt(value, 10) || 0 : value, // Ensure mobile is stored as an integer
+    }));
+  };
+
+  const [showPassword, setShowPassword] = useState(false); // <-- Added this state
+  const togglePasswordVisibility = () => setShowPassword((prev) => !prev); // <-- Added this function
 
   const validate = () => {
     const newErrors = {};
@@ -128,6 +140,39 @@ const RegistrationPage = () => {
                     ))}
                   </select>
                 </div>
+              );
+            }
+            if (field === "password"){
+              return (
+                <div key={field} className="flex flex-col">
+                <label className="text-gray-700 font-medium mb-1">
+                  Password<span className="text-red-500">*</span>
+                </label>
+                <div className="relative">
+                  <input
+                    type={showPassword ? "text" : "password"}
+                    name="password"
+                    value={formData.password}
+                    onChange={handleInputChange}
+                    placeholder="Enter your password"
+                    className="border border-gray-300 rounded-md px-3 py-2 pr-10 focus:outline-none focus:ring-2 focus:ring-teal-500 w-full" // Ensure full width and right padding for icon
+                  />
+                  <button
+                    type="button"
+                    onClick={togglePasswordVisibility}
+                    className="absolute right-3 top-1/2 transform -translate-y-1/2" 
+                  >
+                    {showPassword ? (
+                      <FaEyeSlash className="w-5 h-5 text-gray-600" />
+                    ) : (
+                      <FaEye className="w-5 h-5 text-gray-600" />
+                    )}
+                  </button>
+                </div>
+                {errors.password && (
+                  <p className="text-sm text-red-500 mt-1">{errors.password}</p>
+                )}
+              </div>
               );
             }
 
