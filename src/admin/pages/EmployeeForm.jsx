@@ -1,11 +1,12 @@
 import { useEffect, useState } from "react";
 import axiosInstance from "../../common/utils/axios/axiosInstance";
+import { FaEye } from "react-icons/fa";
 
 const EmployeeForm = () => {
   const [formData, setFormData] = useState({
     employeeID: "",
     name: "",
-    mobile: "",
+    mobile: 0,
     password: "",
     email: "",
     address: "",
@@ -22,7 +23,7 @@ const EmployeeForm = () => {
   const [errors, setErrors] = useState({
     employeeID: "",
     name: "",
-    mobile: "",
+    mobile: 0,
     password: "",
     email: "",
     address: "",
@@ -50,6 +51,10 @@ const EmployeeForm = () => {
       console.error("Error generating Employee ID:", error);
     }
   };
+  const [showPassword, setShowPassword] = useState(false);
+  const togglePasswordVisibility = () => {
+    setShowPassword((prevShowPassword) => !prevShowPassword);
+  };
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;
@@ -65,7 +70,7 @@ const EmployeeForm = () => {
     const newErrors = {
       employeeID: "",
       name: "",
-      mobile: "",
+      mobile: 0,
       password: "",
       email: "",
       address: "",
@@ -246,12 +251,62 @@ const EmployeeForm = () => {
               Password<span className="text-red-500">*</span>
             </label>
             <input
-              type="text"
+              type={showPassword ? "text" : "password"}
               name="password"
               value={formData.password}
               onChange={handleInputChange}
-              className="border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-teal-500"
+              placeholder="Enter your password"
+              className="border flex border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-teal-500"
+              
             />
+             {/* Eye Button */}
+             <button
+            type="button"
+            onClick={togglePasswordVisibility}
+            className="flex absolute left-[940px] top-[400px]"
+          >
+            {showPassword ? (
+             <svg
+             xmlns="http://www.w3.org/2000/svg"
+             fill="none"
+             viewBox="0 0 24 24"
+             strokeWidth="1.5"
+             stroke="currentColor"
+             className="w-5 h-5"
+           >  
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  d="M3.98 8.222C3.436 8.928 3 9.864 3 12s.436 3.072.98 3.778A11.947 11.947 0 0012 18c3.9 0 7.248-1.845 9.02-4.222C20.564 15.072 21 14.136 21 12s-.436-3.072-.98-3.778A11.947 11.947 0 0012 6c-3.9 0-7.248 1.845-9.02 4.222z"
+                />
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"
+                />
+              </svg>
+            ) : (
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                fill="none"
+                viewBox="0 0 24 24"
+                strokeWidth="1.5"
+                stroke="currentColor"
+                className="w-5 h-5"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  d="M3.98 8.222C3.436 8.928 3 9.864 3 12s.436 3.072.98 3.778A11.947 11.947 0 0012 18c3.9 0 7.248-1.845 9.02-4.222C20.564 15.072 21 14.136 21 12s-.436-3.072-.98-3.778A11.947 11.947 0 0012 6c-3.9 0-7.248 1.845-9.02 4.222z"
+                />
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  d="M12 15l-4.5-4.5m9 0L12 15"
+                />
+              </svg>
+            )}
+          </button>
             {errors.password && (<p className="text-sm text-red-500 mt-1">{errors.password}</p>)}
           </div>
 
