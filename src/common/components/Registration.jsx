@@ -28,7 +28,7 @@ const RegistrationPage = () => {
 
   const validate = () => {
     const newErrors = {};
-    const requiredFields = ["name", "mobile", "email", "DOB", "position", "role"];
+    const requiredFields = ["name", "mobile", "email", "DOB", "position", "role", "appliedDate"];
     requiredFields.forEach((key) => {
       if (!formData[key]) {
         newErrors[key] = "This field is required";
