@@ -41,6 +41,7 @@ const Side = ({ isOpen, toggleSidebar, role }) => {
       { path: "/admin/chats", label: "Chats", icon: "material-symbols:chat-outline" },
       { path: "/admin/mainpage", label: "Main Page", icon: "duo-icons:dashboard" },
       { path: "/admin/addproject", label: "Add Project", icon: "ix:project-new" },
+      { path: "/admin/projectstatus", label: "Project Status", icon: "pajamas:project" },
     ],
     Employee: [
       { path: "/user/home", label: "Home", icon: "material-symbols:home-outline" },

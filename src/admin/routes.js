@@ -15,6 +15,7 @@ import TodayAssigned from "./pages/TodayAssigned";
 import IntestTasks from "./pages/InTest";
 import AssignTasks from "./pages/Assigntask";
 import TaskCardDetails from "./components/TaskCardDetails";
+import ProjectStatus from "./pages/ProjectStatus";
 
 const adminRoutes = [
   {
@@ -54,6 +55,10 @@ const adminRoutes = [
   {
     path: "addproject",
     component: AddProject,
+  },
+  {
+    path: "projectstatus",
+    component: ProjectStatus,
   },
   {
     path: "task/:taskId",  // New route for task details
