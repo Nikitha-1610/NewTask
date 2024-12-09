@@ -4,6 +4,8 @@ import { toast, ToastContainer  } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 // import axiosInstance from "../utilities/axios/axiosInstance";
 import axiosInstance from "../../common/utils/axios/axiosInstance";
+import { RotatingLines } from 'react-loader-spinner';
+
 import { Icon } from "@iconify/react";
 import { FaUser, FaEnvelope, FaPhoneAlt, FaBriefcase, FaCalendarAlt, FaTag } from 'react-icons/fa';
 
@@ -39,6 +41,8 @@ const Position = () => {
   const firstUserIndex = lastUserIndex - usersPerPage;
   const currentUsers = filteredUsers.slice(firstUserIndex, lastUserIndex);
   const totalPages = Math.ceil(filteredUsers.length / usersPerPage);
+  const [loading, setLoading] = useState(false);
+
 
 
   
@@ -47,6 +51,7 @@ const Position = () => {
   
   useEffect(() => {
     const fetchUsers = async () => {
+      setLoading(true);
       try {
         const response = await axiosInstance.get("employee/getAll");
         const data = response.data;
@@ -82,9 +87,11 @@ const Position = () => {
       } catch (error) {
         console.error("Error fetching users:", error);
       }
+      setLoading(false)
     };
   
     fetchUsers();
+   
   }, []);
   
   
@@ -285,6 +292,18 @@ useEffect(() => {
   
 
   return (
+    loading ? (
+      <div className="flex justify-center items-center h-screen">
+        <RotatingLines
+          strokeColor="blue"
+          strokeWidth="5"
+          animationDuration="0.75"
+          width="20"
+          visible={true}
+        />
+      </div>
+    ) : (
+
     <div className="py-0 sm:px-5 px-0">
     <ToastContainer />
       {/* Stats Section */}
@@ -479,9 +498,17 @@ useEffect(() => {
     >
       Previous
     </button>
-    <span>
-      Page {currentPage} of {totalPages}
-    </span>
+    <div className="flex items-center gap-2">
+    {[...Array(totalPages)].map((_, index) => (
+      <button
+        key={index}
+        className={`px-3 py-1 rounded-md ${currentPage === index + 1 ? 'bg-blue-500 text-white' : 'bg-white text-gray-500'}`}
+        onClick={() => setCurrentPage(index + 1)}
+      >
+        {index + 1}
+      </button>
+    ))}
+  </div>
     <button
       onClick={goToNextPage}
       disabled={currentPage === totalPages}
@@ -549,7 +576,8 @@ useEffect(() => {
 )}
 
     </div>
+  )
   );
-};
+}
 
 export default Position;

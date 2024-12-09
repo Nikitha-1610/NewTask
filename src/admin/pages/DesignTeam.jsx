@@ -106,10 +106,10 @@ const Board = () => {
   const navigate = useNavigate();
   const employeeName = localStorage.getItem('name');
  
-  useEffect(() => {
-    const employeeName = "TeamLead1"; 
-    localStorage.setItem('name', employeeName); 
-  }, []);
+  // useEffect(() => {
+  //   const employeeName = "TeamLead1"; 
+  //   localStorage.setItem('name', employeeName); 
+  // }, []);
 
   useEffect(() => {
     setLoading(true);
@@ -406,5 +406,4 @@ const Board = () => {
 };
 
 export default Board;
-
 

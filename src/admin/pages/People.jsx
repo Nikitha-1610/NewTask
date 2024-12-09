@@ -1,12 +1,13 @@
 import { useEffect, useState } from "react";
 import { Icon } from "@iconify/react";
 import axiosInstance from "../../common/utils/axios/axiosInstance";
+
 import toast, { Toaster } from "react-hot-toast";
 import CountUp from "react-countup";
 import ReactLoading from "react-loading";
 
 const People = () => {
-  const [allUsers, setAllUsers] = useState([]);
+  const [allUsers, setAllUsers] = useState([]); 
   const [currentPage, setCurrentPage] = useState(1);
   const [usersPerPage] = useState(7);
   const [modalVisible, setModalVisible] = useState(false);
@@ -17,10 +18,12 @@ const People = () => {
   const [selectedDepartment, setSelectedDepartment] = useState("All");
   const [selectedUserType, setSelectedUserType] = useState("All");
   const [loading, setLoading] = useState(true);
+  const [selectedPosition, setSelectedPosition] = useState("All");
 
   const getAllusers = async () => {
     try {
       const response = await axiosInstance.get("user/getUsers");
+      console.log(response.data.message);
 
       setAllUsers(response?.data?.message);
     } catch (error) {
@@ -35,20 +38,14 @@ const People = () => {
     getAllusers();
   }, []);
 
-  const departments = ["All Position", "Tester", "HR", "Marketing"];
-  const userType = ["All Department", "On-Hold", "Init"];
+  const departments = ["All", ...new Set(allUsers.map(user => user.department))];
+const userType = ["All", ...new Set(allUsers.map(user => user.status))];
 
-  const filteredUsers = allUsers.filter((user) => {
-    // Filter by selected department
-    const matchesDepartment =
-      selectedDepartment === "All Position" || user.department === selectedDepartment;
-
-    // Filter by selected user type (status)
-    const matchesUserType =
-      selectedUserType === "All Department" || user.status === selectedUserType;
-
-    return matchesDepartment && matchesUserType;
-  });
+const filteredUsers = allUsers.filter((user) => {
+  const matchesPosition = selectedPosition === "All" || user.position === selectedPosition;
+  const matchesUserType = selectedUserType === "All" || user.status === selectedUserType;
+  return matchesPosition && matchesUserType;
+});
 
   const indexOfLastUser = currentPage * usersPerPage;
   const indexOfFirstUser = indexOfLastUser - usersPerPage;
@@ -84,10 +81,11 @@ const People = () => {
   const handleApprove = async () => {
     if (selectedUserIndex !== null) {
       const user = currentUsers[selectedUserIndex];
-      
+      console.log(`User approved:`, user.email);
       try {
         await axiosInstance.put(`employee/apporve/${user.email}`);
         toast.success(`${user.name} has been approved.`);
+        console.log(`User approved:`, user.email);
         getAllusers(); // Refresh the user list after approval
       } catch (error) {
         console.error("Error approving user:", error);
@@ -97,46 +95,53 @@ const People = () => {
     closeModal();
   };
 
+  
+  
+
   const handleAction = async (action) => {
     if (selectedUserIndex !== null) {
       const user = currentUsers[selectedUserIndex];
-
+    
       try {
-        // Handle action based on the type (approve, on-hold, reject)
         switch (action) {
           case "approve":
             await axiosInstance.put(`/employee/approve/${user.email}`);
             toast.success(`${user.name} has been approved.`);
+            console.log(`User approved:`, user.email);
             break;
-
+  
           case "on-hold":
-            // Pass status: "On-Hold" in the request body
             await axiosInstance.put(`/user/updateDetails/${user.email}`, {
               status: "On-Hold",
             });
             toast.success(`${user.name} has been placed on hold.`);
+            console.log(`User on-hold:`, user.email);
             break;
-
+  
           case "reject":
             await axiosInstance.delete(`/user/reject/${user.email}`);
             toast.success(`${user.name} has been rejected.`);
+            console.log(`User rejected:`, user.email);
             break;
-
+  
           default:
             throw new Error("Unknown action");
         }
-
-        // Refresh the user list after action
-        getAllusers();
       } catch (error) {
-        console.error(`Error performing ${action} action:`, error);
+        console.error("An error occurred while handling the action:", error);
         toast.error(`Failed to ${action} the user.`);
       } finally {
-        // Ensure modal is closed in both success and failure cases
-        closeModal();
+        getAllusers(); // Call this outside the switch case to refresh the user list
+        closeModal(); // Ensure the modal closes
       }
     }
   };
+  
+ 
+  const positions = ["All", ...new Set(allUsers.map(user => user.position))];
+  const statusOptions = ["All", ...new Set(allUsers.map(user => user.status))];
+
+ 
 
   return (
     <div className="p-5">
@@ -165,16 +170,18 @@ const People = () => {
             </div>
           </div>
 
-          {/* Filter Section */}
-          <div className="flex flex-wrap gap-4 items-center mb-4">
+         
+         {/* Filter Section */}
+         <div className="flex flex-wrap gap-4 items-center mb-4">
             <select
               className="border border-gray-300 bg-gray-200 rounded-lg p-2 text-gray-700"
-              onChange={(e) => setSelectedDepartment(e.target.value)}
-              value={selectedDepartment}
+              onChange={(e) => setSelectedPosition(e.target.value)}
+              value={selectedPosition}
             >
-              {departments.map((dept) => (
-                <option key={dept} value={dept}>
-                  {dept}
+              <option value="All">Positions</option>
+              {positions.map((position) => (
+                <option key={position} value={position}>
+                  {position}
                 </option>
               ))}
             </select>
@@ -183,13 +190,15 @@ const People = () => {
               onChange={(e) => setSelectedUserType(e.target.value)}
               value={selectedUserType}
             >
-              {userType.map((type) => (
-                <option key={type} value={type}>
-                  {type}
+              <option value="All">Status</option>
+              {statusOptions.map((status) => (
+                <option key={status} value={status}>
+                  {status}
                 </option>
               ))}
             </select>
           </div>
+
 
           {/* Table with Fixed Height */}
           <div
@@ -229,7 +238,7 @@ const People = () => {
                         <td className="px-4 py-2 hidden md:table-cell">
                           {user.mobile}
                         </td>
-                        <td className="px-4 py-2">{user.department}</td>
+                        <td className="px-4 py-2">{user.position}</td>
                         <td className="px-4 py-2 hidden md:table-cell">
                           {user.appliedDate}
                         </td>
@@ -265,19 +274,27 @@ const People = () => {
             </div>
 
             {/* Fixed Pagination */}
-            <div className="absolute bottom-0 w-full bg-white border-t border-gray-300 py-2 flex justify-between items-center px-4">
+            <div className="absolute bottom-0 w-full bg-white border-t border-gray-300 py-2 flex justify-center items-center px-4">
               <button
-                className="text-gray-500 hover:text-black"
+                className="text-gray-500 hover:text-black mr-2"
                 onClick={() => setCurrentPage((prev) => Math.max(prev - 1, 1))}
                 disabled={currentPage === 1}
               >
                 Previous
               </button>
-              <p>
-                Page {currentPage} of {totalPages}
-              </p>
+              <div className="flex items-center gap-2">
+    {[...Array(totalPages)].map((_, index) => (
+      <button
+        key={index}
+        className={`px-3 py-1 rounded-md ${currentPage === index + 1 ? 'bg-blue-500 text-white' : 'bg-white text-gray-500'}`}
+        onClick={() => setCurrentPage(index + 1)}
+      >
+        {index + 1}
+      </button>
+    ))}
+  </div>
               <button
-                className="text-gray-500 hover:text-black"
+                className="text-gray-500 hover:text-black ml-2"
                 onClick={() =>
                   setCurrentPage((prev) => Math.min(prev + 1, totalPages))
                 }

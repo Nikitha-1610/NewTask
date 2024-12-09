@@ -4,43 +4,30 @@ import { FaEye, FaEyeSlash } from "react-icons/fa";
 
 const EmployeeForm = () => {
   const [formData, setFormData] = useState({
-    employeeID: "",
-    name: "",
-    mobile: "",
-    password: "",
-    email: "",
-    address: "",
-    DOB: "",
-    reference: "",
-    role: "",
-    gender: "",
-    position: "",
-    department: "",
-    teamLead: "",
-    appliedDate: "",
+    employeeID: "",  
+    name: "",        
+    mobile: "",      
+    password: "",    
+    email: "",       
+    address: "",     
+    DOB: "",         
+    reference: "",   
+    role: "",        
+    gender: "",      
+    position: "",    
+    department: "",  
+    teamLead: "",    
+    appliedDate: ""  
   });
+  
 
-  const [errors, setErrors] = useState({
-    employeeID: "",
-    name: "",
-    mobile: "",
-    password: "",
-    email: "",
-    address: "",
-    DOB: "",
-    reference: "",
-    role: "",
-    gender: "",
-    position: "",
-    department: "",
-    teamLead: "",
-    appliedDate: "",
-  });
+  const [errors, setErrors] = useState({});
+  const [showPassword, setShowPassword] = useState(false);
 
-  const [showPassword, setShowPassword] = useState(false); // <-- Added this state
-  const togglePasswordVisibility = () => setShowPassword((prev) => !prev); // <-- Added this function
+  
+  const togglePasswordVisibility = () => setShowPassword((prev) => !prev);
 
-
+  
   const generateEmployeeId = async () => {
     try {
       const response = await axiosInstance.get("employee/generateId");
@@ -56,55 +43,65 @@ const EmployeeForm = () => {
     }
   };
 
+  
   const handleInputChange = (e) => {
     const { name, value } = e.target;
-    setFormData((prevData) => ({
-      ...prevData,
-      [name]: name === "mobile" ? parseInt(value, 10) || 0 : value, // Ensure mobile is stored as an integer
-    }));
+    if (name === "mobile") {
+      setFormData((prevData) => ({
+        ...prevData,
+        [name]: value.toString()  
+      }));
+    } else {
+      setFormData((prevData) => ({
+        ...prevData,
+        [name]: value
+      }));
+    }
   };
+  
+  
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-
-    const newErrors = {
-      employeeID: "",
-      name: "",
-      mobile: "",
-      password: "",
-      email: "",
-      address: "",
-      DOB: "",
-      reference: "",
-      role: "",
-      gender: "",
-      position: "",
-      department: "",
-      teamLead: "",
-      appliedDate: "",
-    };
-
-    // Validation logic
-    Object.keys(newErrors).forEach((field) => {
-      if (!formData[field]) newErrors[field] = `${field} is required.`;
+    const newErrors = {};
+  
+    // Validate all fields
+    Object.keys(formData).forEach((field) => {
+      if (!formData[field]) {
+        newErrors[field] = `${field} is required.`;
+      }
     });
-
-    if (Object.values(newErrors).some((error) => error !== "")) {
+  
+    
+    const updatedFormData = { ...formData };
+    updatedFormData.mobile = parseInt(formData.mobile, 10); 
+  
+    
+    const dob = new Date(formData.DOB);
+    updatedFormData.DOB = dob.toISOString().split('T')[0]; 
+  
+   
+    const appliedDate = new Date(formData.appliedDate);
+    updatedFormData.appliedDate = appliedDate.toISOString().split('T')[0]; 
+    
+    
+    if (formData.password && formData.password.length < 8) {
+      newErrors.password = "Password must be at least 8 characters long.";
+    }
+  
+    if (Object.keys(newErrors).length > 0) {
       setErrors(newErrors);
       return;
     }
-
+  
     try {
-      console.log("Submitting Form Data:", formData);
-
       const response = await axiosInstance.post(
-        "https://3qhglx2bhd.execute-api.us-east-1.amazonaws.com/employee/add",
-        formData
+        "/employee/add",
+        updatedFormData 
       );
-
-      if (response.status === 200 || response.status === 201) {
+  
+      if ([200, 201].includes(response.status)) {
         console.log("Server Response:", response.data);
-
         setFormData({
           employeeID: "",
           name: "",
@@ -126,133 +123,61 @@ const EmployeeForm = () => {
       }
     } catch (error) {
       console.error("Error submitting form data:", error);
+      if (error.response) {
+        console.error("Server Response Data:", error.response.data);
+      }
     }
   };
+  
+  
+
   return (
-    <div className="min-h-screen  flex flex-col items-center ">
-      <div className="w-full max-w-6xl bg-white p-6 sm:p-8 ">
+    <div className="min-h-screen flex flex-col items-center">
+      <div className="w-full max-w-6xl bg-white p-6 sm:p-8">
         <h1 className="text-xl sm:text-2xl font-semibold mb-6 text-teal-600">
           Employee Form
         </h1>
 
-        {/* Grid container */}
-        <div className="grid grid-cols-1 sm:grid-cols-3 gap-6">
-          {/* Full Name */}
-          <div className="flex flex-col">
-            <label className="text-gray-700 font-medium mb-1">
-              Full Name<span className="text-red-500">*</span>
-            </label>
-            <input
-              type="text"
-              name="name"
-              value={formData.name}
-              onChange={handleInputChange}
-              className="border border-gray-300 ${errors.name ?} rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-teal-500"/>
-            {errors.name && (<p className="text-sm text-red-500 mt-1">{errors.name}</p>)}
-          </div>
+        <form onSubmit={handleSubmit}>
+          <div className="grid grid-cols-1 sm:grid-cols-3 gap-6">
+            
+            <InputField label="Full Name" name="name" value={formData.name} onChange={handleInputChange} error={errors.name} />
 
-          {/* Applied Date */}
-          <div className="flex flex-col">
-            <label className="text-gray-700 font-medium mb-1">
-              Applied Date<span className="text-red-500">*</span>
-            </label>
-            <input
-              type="date"
-              name="appliedDate"
-              value={formData.appliedDate}
-              onChange={handleInputChange}
-              className="border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-teal-500"
-            />
-            {errors.appliedDate && (<p className="text-sm text-red-500 mt-1">{errors.appliedDate}</p>)}
-          </div>
-          {/* Employee ID */}
-          <div className="flex flex-col sm:col-span-2 lg:col-span-1">
-            <label className="text-gray-700 font-medium mb-1">
-              Employee ID<span className="text-red-500">*</span>
-            </label>
-            <div className="flex items-center">
-              <input
-                type="text"
-                name="employeeID"
-                value={formData.employeeID} // Controlled input tied to formData
-                onChange={handleInputChange}
-                className="border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-teal-500 flex-grow"
-              />
-              {errors.employeeID && (<p className="text-sm text-red-500 mt-1">{errors.employeeID}</p>)}
-              <button
-                className="ml-3 bg-teal-500 text-white px-4 py-2 rounded-md hover:bg-teal-600"
-                type="button" // Prevent form submission
-                onClick={generateEmployeeId}
-              >
-                Generate
-              </button>
+           
+            <InputField label="Applied Date" name="appliedDate" type="date" value={formData.appliedDate} onChange={handleInputChange} error={errors.appliedDate} />
+
+            
+            <div className="flex flex-col sm:col-span-2 lg:col-span-1">
+              <label className="text-gray-700 font-medium mb-1">
+                Employee ID<span className="text-red-500">*</span>
+              </label>
+              <div className="flex items-center">
+                <input
+                  type="text"
+                  name="employeeID"
+                  value={formData.employeeID}
+                  onChange={handleInputChange}
+                  className="border border-gray-300 rounded-md px-3 py-2 flex-grow"
+                  readOnly
+                />
+                <button
+                  type="button"
+                  onClick={generateEmployeeId}
+                  className="ml-3 bg-teal-500 text-white px-4 py-2 rounded-md"
+                >
+                  Generate
+                </button>
+              </div>
+              {errors.employeeID && <ErrorMessage message={errors.employeeID} />}
             </div>
-          </div>
 
-          {/* Team Lead */}
-          <div className="flex flex-col">
-            <label className="text-gray-700 font-medium mb-1">
-              Team Lead<span className="text-red-500">*</span>
-            </label>
-            <input
-              type="text"
-              name="teamLead"
-              value={formData.teamLead}
-              onChange={handleInputChange}
-              className="border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-teal-500"
-            />
-            {errors.teamLead && (<p className="text-sm text-red-500 mt-1">{errors.teamLead}</p>)}
-          </div>
+            
+            <InputField label="Phone Number" name="mobile" type="number" value={formData.mobile} onChange={handleInputChange} error={errors.mobile} />
 
-          <div className="flex flex-col">
-            <label className="text-gray-700 font-medium mb-1">
-              DOB<span className="text-red-500">*</span>
-            </label>
-            <input
-              type="date"
-              name="DOB"
-              value={formData.DOB}
-              onChange={handleInputChange}
-              className="border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-teal-500"
-            />
-            {errors.DOB && (<p className="text-sm text-red-500 mt-1">{errors.DOB}</p>)}
-          </div>
-
-          <div className="flex flex-col">
-            <label className="text-gray-700 font-medium mb-1">
-              Mail Id<span className="text-red-500">*</span>
-            </label>
-            <input
-              type="text"
-              name="email"
-              value={formData.email}
-              onChange={handleInputChange}
-              className="border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-teal-500"
-            />
-            {errors.email && (<p className="text-sm text-red-500 mt-1">{errors.email}</p>)}
-          </div>
-
-         
-
-<div className="flex flex-col">
+            
+            <div className="flex flex-col">
   <label className="text-gray-700 font-medium mb-1">
-    Phone Number<span className="text-red-500">*</span>
-  </label>
-  <input
-    type="number"
-    name="mobile"
-    value={formData.mobile}
-    onChange={handleInputChange}
-    className="border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-teal-500"
-  />
-  {errors.mobile && (<p className="text-sm text-red-500 mt-1">{errors.mobile}</p>)}
-</div>
-
-
-
-          <div className="flex flex-col">
-  <label className="text-gray-700 font-medium mb-1">
-    Password<span className="text-red-500">*</span>
+    Password <span className="text-red-500">*</span>
   </label>
   <div className="relative">
     <input
@@ -260,126 +185,66 @@ const EmployeeForm = () => {
       name="password"
       value={formData.password}
       onChange={handleInputChange}
+      className="border border-gray-300 rounded-md px-3 py-2"
       placeholder="Enter your password"
-      className="border border-gray-300 rounded-md px-3 py-2 pr-10 focus:outline-none focus:ring-2 focus:ring-teal-500 w-full" // Ensure full width and right padding for icon
     />
     <button
       type="button"
       onClick={togglePasswordVisibility}
-      className="absolute right-3 top-1/2 transform -translate-y-1/2" 
+      className="absolute right-3 top-2"
+      aria-label={showPassword ? "Hide password" : "Show password"}
     >
-      {showPassword ? (
-        <FaEyeSlash className="w-5 h-5 text-gray-600" />
-      ) : (
-        <FaEye className="w-5 h-5 text-gray-600" />
-      )}
+      {showPassword ? <FaEyeSlash /> : <FaEye />}
     </button>
   </div>
-  {errors.password && (
-    <p className="text-sm text-red-500 mt-1">{errors.password}</p>
+  {errors.password && <ErrorMessage message={errors.password} />}
+  {formData.password && formData.password.length < 8 && (
+    <p className="text-sm text-red-500 mt-1">
+      Password must be at least 8 characters long.
+    </p>
   )}
 </div>
 
 
-          <div className="flex flex-col">
-            <label className="text-gray-700 font-medium mb-1">
-              Address<span className="text-red-500">*</span>
-            </label>
-            <input
-              type="text"
-              name="address"
-              value={formData.address}
-              onChange={handleInputChange}
-              className="border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-teal-500"
-            />
-            {errors.address && (<p className="text-sm text-red-500 mt-1">{errors.address}</p>)}
+            
+            <InputField label="Email" name="email" value={formData.email} onChange={handleInputChange} error={errors.email} />
+            <InputField label="Address" name="address" value={formData.address} onChange={handleInputChange} error={errors.address} />
+            <InputField label="Date of Birth" name="DOB" type="date" value={formData.DOB} onChange={handleInputChange} error={errors.DOB} />
+            <InputField label="Reference" name="reference" value={formData.reference} onChange={handleInputChange} error={errors.reference} />
+            <InputField label="Role" name="role" value={formData.role} onChange={handleInputChange} error={errors.role} />
+            <InputField label="Gender" name="gender" value={formData.gender} onChange={handleInputChange} error={errors.gender} />
+            <InputField label="Position" name="position" value={formData.position} onChange={handleInputChange} error={errors.position} />
+            <InputField label="Department" name="department" value={formData.department} onChange={handleInputChange} error={errors.department} />
+            <InputField label="Team Lead" name="teamLead" value={formData.teamLead} onChange={handleInputChange} error={errors.teamLead} />
           </div>
 
-          <div className="flex flex-col">
-            <label className="text-gray-700 font-medium mb-1">
-              Gender<span className="text-red-500">*</span>
-            </label>
-            <input
-              type="text"
-              name="gender"
-              value={formData.gender}
-              onChange={handleInputChange}
-              className="border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-teal-500"
-            />
-            {errors.gender && (<p className="text-sm text-red-500 mt-1">{errors.gender}</p>)}
+          <div className="flex justify-end mt-6">
+            <button type="submit" className="bg-teal-500 text-white px-6 py-2 rounded-md">
+              Save
+            </button>
           </div>
-
-          <div className="flex flex-col">
-            <label className="text-gray-700 font-medium mb-1">
-              Department<span className="text-red-500">*</span>
-            </label>
-            <input
-              type="text"
-              name="department"
-              value={formData.department}
-              onChange={handleInputChange}
-              className="border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-teal-500"
-            />
-            {errors.department && (<p className="text-sm text-red-500 mt-1">{errors.department}</p>)}
-          </div>
-
-          <div className="flex flex-col">
-            <label className="text-gray-700 font-medium mb-1">
-              Applied Role<span className="text-red-500">*</span>
-            </label>
-            <input
-              type="text"
-              name="role"
-              value={formData.role}
-              onChange={handleInputChange}
-              className="border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-teal-500"
-            />
-            {errors.role && (<p className="text-sm text-red-500 mt-1">{errors.role}</p>)}
-          </div>
-
-          <div className="flex flex-col">
-            <label className="text-gray-700 font-medium mb-1">
-              Position Name<span className="text-red-500">*</span>
-            </label>
-            <input
-              type="text"
-              name="position"
-              value={formData.position}
-              onChange={handleInputChange}
-              className="border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-teal-500"
-            />
-            {errors.position && (<p className="text-sm text-red-500 mt-1">{errors.position}</p>)}
-          </div>
-
-          <div className="flex flex-col">
-            <label className="text-gray-700 font-medium mb-1">
-              If reference,Employee ID<span className="text-red-500">*</span>
-            </label>
-            <input
-              type="text"
-              name="reference"
-              value={formData.reference}
-              onChange={handleInputChange}
-              className="border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-teal-500"
-            />
-            {errors.reference && (<p className="text-sm text-red-500 mt-1">{errors.reference}</p>)}
-          </div>
-        </div>
-
-        {/* Save Button */}
-        <div className="flex justify-end mt-6">
-          <button
-            onClick={handleSubmit}
-            className="bg-teal-500 text-white px-6 py-2 rounded-md hover:bg-teal-600"
-          >
-            Save
-          </button>
-        </div>
+        </form>
       </div>
     </div>
   );
 };
 
+const InputField = ({ label, name, type = "text", value, onChange, error }) => (
+  <div className="flex flex-col">
+    <label className="text-gray-700 font-medium mb-1">
+      {label} <span className="text-red-500">*</span>
+    </label>
+    <input
+      type={type}
+      name={name}
+      value={value}
+      onChange={onChange}
+      className="border border-gray-300 rounded-md px-3 py-2"
+    />
+    {error && <ErrorMessage message={error} />}
+  </div>
+);
+
+const ErrorMessage = ({ message }) => <p className="text-sm text-red-500 mt-1">{message}</p>;
+
 export default EmployeeForm;
-
-

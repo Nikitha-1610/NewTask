@@ -69,19 +69,7 @@ const SemiCircularProgressBar = ({ value1, value2 }) => {
           strokeWidth={strokeWidth}
         />
 
-        {/* Faint color for value1 */}
-        <path
-          d={`M ${strokeWidth / 2},${radius + strokeWidth / 2} 
-              A ${radius},${radius} 0 0,1 ${radius * 2 + strokeWidth / 2},${
-            radius + strokeWidth / 2
-          }`}
-          fill="none"
-          
-           stroke="#C25F01"
-          strokeWidth={strokeWidth}
-          strokeDasharray={semicircle}
-          strokeDashoffset={offset1}
-        />
+    
 
         {/* Darker color for value2 */}
         <path
@@ -90,10 +78,26 @@ const SemiCircularProgressBar = ({ value1, value2 }) => {
             radius + strokeWidth / 2
           }`}
           fill="none"
-          stroke="#FCC590"
+           stroke="#FCC590"
           strokeWidth={strokeWidth}
           strokeDasharray={semicircle}
           strokeDashoffset={offset2}
+        />
+
+            {/* Faint color for value1 */}
+            <path
+          d={`M ${strokeWidth / 2},${radius + strokeWidth / 2} 
+              A ${radius},${radius} 0 0,1 ${radius * 2 + strokeWidth / 2},${
+            radius + strokeWidth / 2
+          }`}
+          fill="none"
+          
+
+          
+           stroke="#C25F01"
+          strokeWidth={strokeWidth}
+          strokeDasharray={semicircle}
+          strokeDashoffset={offset1}
         />
       </svg>
 
