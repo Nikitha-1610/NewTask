@@ -20,6 +20,13 @@ const MyTask = () => {
     setShowDiv1(false); // Hide the div
   };
 
+  const handleInputChange = (e) => {
+    const { name, value } = e.target;
+    setFormData((prev) => ({
+      ...prev,
+      [name]: value,
+    }));
+  };
   useEffect(() => {
     // Fetch the tasks from the API
     fetch("https://3qhglx2bhd.execute-api.us-east-1.amazonaws.com/task/getEmployeeTask/Mukilan")
@@ -162,14 +169,22 @@ const MyTask = () => {
                 </div>
                 <div className="" >
                 <span className="flex"><FiMessageCircle />Comments(8)</span><br></br>
-                <div className="flex items-center gap-2 p-2 text-sm text-gray-700 bg-blue-100 border border-gray-300 rounded-md">
-                    <img src="" alt="" />
-                    <img src='Images/person.jpeg' alt="User Profile" className="w-[15px] h-[15px] rounded-full" />
-                    Comments Here...
-                    </div><br></br>
-                 <div className="flex items-center gap-2 p-2 text-sm text-gray-700 bg-blue-100 border border-gray-300 rounded-md">
-                <img src='Images/person.jpeg' alt="User Profile" className="w-[15px] h-[15px] rounded-full" />
-                Your Comment</div>
+               
+                <textarea
+            className={'w-full h-10 flex items-center gap-2 p-2 text-sm text-gray-700 bg-blue-100 border border-gray-300 rounded-md'}
+            name="taskDescription"
+           
+            onChange={handleInputChange}
+            placeholder="Comment Here..."
+          />
+                    <br></br>
+                    <textarea
+            className={'w-full h-10 flex items-center gap-2 p-2 text-sm text-gray-700 bg-blue-100 border border-gray-300 rounded-md'}
+            name="taskDescription"
+           
+            onChange={handleInputChange}
+            placeholder="Your Comment..."
+          />
                 </div><br></br>
                 <div className="w-[990px] h-[50px] relative justify-center">
                   <button onClick={handleToggleDiv1} className="px-3 py-2 text-sm relative left-[450px] text-white bg-teal-500 rounded hover:bg-teal-600">
