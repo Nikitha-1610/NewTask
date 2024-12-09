@@ -1,5 +1,5 @@
 import StatsCard from "../Components/UserDashBoard/Stats";
-import TaskList from "../Components/UserDashBoard/TaskList";
+import TaskList from "../components/UserDashBoard/TaskList";
 import ProjectList from "../Components/UserDashBoard/projectList";
 import MostWorkedCard from "../Components/UserDashBoard/MostWorkedCard";
 import ProductivityChart from "../Components/UserDashBoard/ProductivityChart";
@@ -13,9 +13,11 @@ import TaskManager from "../Components/UserDashBoard/TaskManager";
 import { useState, useEffect } from "react";
 import axios from "axios";
 import { FaPlay } from "react-icons/fa";
+import ReactLoading from "react-loading";
 
 const MainPage = () => {
 
+  // const [stats, setStats] = useState(null); 
   const [stats, setStats] = useState({
     todayCompletedHours: 0,
     lastWeekCompletedHours: 0,
@@ -23,45 +25,29 @@ const MainPage = () => {
     project: 0,
     hoursByLabel: {},
   });
+  
   const [upcomingDeadlineTasks, setUpcomingDeadlineTasks] = useState([]);
   const [daywiseCompletedHours, setDaywiseCompletedHours] = useState({});
   const [mostWorked, setMostWorked] = useState([]);
-  // const [tasks, setTasks] = useState([]);
-  // const [projects, setProjects] = useState([]);
+  const [tasks, setTasks] = useState([]);
+  const [projects, setProjects] = useState([]);
   const [loading, setLoading] = useState(true);
   const [employeeTasks, setEmployeeTasks] = useState([]);
-  const name = localStorage.getItem("name");
-  const [tasks, setTasks] = useState([
-    { name: "Create Wireframe", completed: true },
-    { name: "Slack Logo Design", subtasks: 3, completed: false },
-    { name: "Dashboard Design", completed: false },
-    { name: "Create Wireframe", completed: true },
-    { name: "App Icon Design", completed: false },
-  ]);
-  
-
-  const projects = [
-    { name: "Project Four", time: "00:30:00", progress: 25 },
-    { name: "Project Four", time: "00:30:00", progress: 50 },
-    { name: "Project Four", time: "00:30:00", progress: 75 },
-    { name: "Project Four", time: "00:30:00", progress: 90 },
-  ];
-
-
+  // const employeeName = localStorage.getItem("name");
+  const name = localStorage.getItem("name")
 
   useEffect(() => {
     const fetchDashboardData = async () => {
       try {
-     
-        const dashboardResponse = await axios.get(
-          `https://3qhglx2bhd.execute-api.us-east-1.amazonaws.com/task/getDashboard/${name}`,
-          { responseType: "json" }
-        );
+      const dashboardResponse = await axios.get(
+  `https://3qhglx2bhd.execute-api.us-east-1.amazonaws.com/task/getDashboard/${name}`,
+  { responseType: "json" }
+);
 
+        
 
         if (dashboardResponse.data && dashboardResponse.data.message) {
           const data = dashboardResponse.data.message;
-        
 
           setStats({
             todayCompletedHours: data.todayCompletedHours || 0,
@@ -88,21 +74,58 @@ const MainPage = () => {
 
 
 
-  
+    const fetchEmployeeTasks = async () => {
+      try {
+        const employeeTaskResponse = await axios.get(
+          `https://3qhglx2bhd.execute-api.us-east-1.amazonaws.com/task/getEmployeeTask/${name}`,
+          { responseType: "json" }
+        );
+
+
+        // Extract the tasks from the 'message' property
+        const tasks = employeeTaskResponse.data.message.map((task) => ({
+          taskId: task.taskId,
+          taskName: task.taskName,
+          taskStatus: task.taskStatus,
+          priority: task.priority,
+          assignedTo: task.assignedTo,
+          assignedDate: task.assignedDate,
+          taskDescription: task.taskDescription,
+        }));
+
+       
+        setEmployeeTasks(tasks);
+      } catch (error) {
+        console.error("Error fetching employee tasks:", error);
+        setEmployeeTasks([]);  
+      }
+    };
 
 
 
 
     const fetchAllData = async () => {
       setLoading(true);
-      await Promise.all([fetchDashboardData()]);
+      await Promise.all([fetchDashboardData(), fetchEmployeeTasks()]);
       setLoading(false);
     };
 
     fetchAllData();
   }, []);
 
+  const handleAddTask = (newTask) => {
+    console.log("Adding task:", newTask);
+    setTasks([...employeeTasks, newTask]);
+  };
 
+
+  if (loading) {
+    return (
+      <div className="flex justify-center items-center min-h-screen">
+        <ReactLoading type="spin" color="#a3f7f0" height={50} width={50} />
+      </div>
+    );
+  }
 
   const formatHours = (value) => {
     return value === 0 ? "0:00:00" : value;
@@ -114,59 +137,18 @@ const MainPage = () => {
 
 
 
-
-
-
-
-
-
-
-
-
-  const handleAddTask = (newTask) => {
-    console.log("clicking");
-
-    setTasks([...tasks, newTask]);
-  };
-
   return (
-    <div className="min-h-screen p-6">
-      {/* Header Section */}
-      {/* <header className="mb-8">
-        <h1 className="text-2xl font-bold text-gray-800">Hello User</h1>
-        <p className="text-gray-500">
-          Have a great day at work. Happy Working!
-        </p>
-
-      </header> */}
-
-    
-    
-
-
-<header className="flex items-center justify-between mb-8">
-  {/* Left Side: Greeting */}
-  <div>
+<div className="min-h-screen p-6">
+  {/* Header Section */}
+  <header className="mb-8">
     <h1 className="text-2xl font-bold text-gray-800">Hello User</h1>
-    <p className="text-gray-500">Have a great day at work. Happy Working!!!</p>
-  </div>
+    <p className="text-gray-500">Have a great day at work. Happy Working!</p>
+  </header>
 
-  {/* Right Side: Start Time Tracker */}
-  <div className="flex items-center space-x-2 p-2 rounded-lg border shadow-sm">
-    <p className="text-gray-800 font-medium">Start Time Tracker</p>
-    {/* Play Icon */}
-    <div className="flex items-center justify-center w-8 h-8 bg-green-100 rounded-full">
-      <FaPlay className="text-cyan-500" />
-    </div>
-  </div>
-</header>
-
-
-
-      {/* Main Content Section */}
-      <div className="flex flex-col lg:flex-row gap-6">
-        {/* Left Section */}
-        <div className="flex-1">
+  {/* Main Content Section */}
+  <div className="flex flex-col lg:flex-row gap-6">
+    {/* Left Section */}
+    <div className="flex-1">
       {/* Stats Cards */}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
         <StatsCard
@@ -192,15 +174,17 @@ const MainPage = () => {
       </div>
 
       {/* Task List and Timer Section */}
-          {/* Task List and Timer */}
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-8">
-            <div className="lg:col-span-1">
-              <TaskList tasks={tasks} onAddTask={handleAddTask} /> 
-            </div>
-            <div className="lg:col-span-1">
-              <TaskManager />
-            </div>
-          </div>
+        <div className={`grid grid-cols-1 ${projects.length > 0 || upcomingDeadlineTasks.length > 0 ? "lg:grid-cols-2" : ""} gap-6 mb-8`}>
+    {/* Task List */}
+    <div className="col-span-1">
+      <TaskList employeeTasks={employeeTasks} onAddTask={handleAddTask} />
+    </div>
+
+    {/* Timer */}
+    <div className="col-span-1">
+      <TaskManager />
+    </div>
+  </div>
 
   {/* Conditionally Render Project Sections */}
   {projects.length > 0 || upcomingDeadlineTasks.length > 0 ? (
@@ -219,30 +203,43 @@ const MainPage = () => {
 
     </div>
 
+    {/* Right Section */}
+    <div className="flex flex-col gap-6 lg:w-1/3">
+      <TaskSchedule employeeTasks={employeeTasks} setTasks={setEmployeeTasks} />
+      <MostWorkedCard hoursByLabel={stats.hoursByLabel || {}} />
+    </div>
+  </div>
 
-        {/* Right Section */}
-        <div className="flex flex-col gap-6 lg:w-1/3">
-          <TaskSchedule />
-          <MostWorkedCard hoursByLabel={stats.hoursByLabel || {}} />
-        </div>
-      </div>
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mt-8">
-      <div className={`col-span-1 ${projects.length === 0 ? "lg:col-span-2" : "lg:col-span-1"}`}>
+  {/* Conditional Rendering of ProductivityChart and ProjectProgress */}
+  <div className={`grid grid-cols-1 ${projects.length > 0 ? "lg:grid-cols-2" : ""} gap-6 mt-8`}>
+  {/* Always display the ProductivityChart */}
+  <div className={`col-span-1 ${projects.length === 0 ? "lg:col-span-2" : "lg:col-span-1"}`}>
     <ProductivityChart 
       daywiseHours={daywiseCompletedHours} 
       isFullWidth={projects.length === 0}  // Full width if no projects
     />
   </div>
-        <ProjectProgress />
-      </div>
 
-      {/* Messages and Assignments */}
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mt-8">
-        <Messages />
-        <Assignments />
-      </div>
+  {/* Render ProjectProgress only if projects are available */}
+  {projects.length > 0 && (
+    <div className="col-span-1">
+      <ProjectProgress projects={projects} />
     </div>
+  )}
+</div>
+
+
+
+  {/* Messages and Assignments */}
+  <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mt-8">
+    <Messages />
+    <Assignments />
+  </div>
+</div>
+
   );
+  
+  
 };
 
 export default MainPage;
