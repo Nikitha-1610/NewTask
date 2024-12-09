@@ -8,7 +8,7 @@ const AddProject = () => {
   const [formData, setFormData] = useState({
     projectName: "",
     startDate: "",
-    dueDate: "",
+    endDate: "",
     projectLead: [],
     frontendLead: [],
     backendLead: [],
@@ -22,7 +22,7 @@ const AddProject = () => {
   const [errors, setErrors] = useState({
     projectName: "",
     startDate: "",
-    dueDate: "",
+    endDate: "",
     projectLead: "",
     frontendLead: "",
     backendLead: "",
@@ -121,7 +121,7 @@ const AddProject = () => {
     const newErrors = {
       projectName: "",
       startDate: "",
-      dueDate: "",
+      endDate: "",
       projectLead: "",
       frontendLead: "",
       backendLead: "",
@@ -138,8 +138,8 @@ const AddProject = () => {
     if (!formData.startDate) {
       newErrors.startDate = "Start date is required.";
     }
-    if (!formData.dueDate) {
-      newErrors.dueDate = "Due date is required.";
+    if (!formData.endDate) {
+      newErrors.endDate = "Due date is required.";
     }
     if (!formData.projectLead) {
       newErrors.projectLead = "At least one person must be assigned.";
@@ -156,9 +156,7 @@ const AddProject = () => {
     if (!formData.priority) {
       newErrors.priority = "Select One";
     }
-    if (!formData.projectDescription) {
-      newErrors.projectDescription = "Project name is required.";
-    }
+   
     if (formData.referenceFileUrl.length === 0) {
       newErrors.referenceFileUrl = "At least one reference file is required.";
     }
@@ -183,7 +181,7 @@ const AddProject = () => {
         setFormData({
           projectName: "",
           startDate: "",
-          dueDate: "",
+          endDate: "",
           projectLead: [],
           frontendLead: [],
           backendLead: [],
@@ -246,11 +244,11 @@ const AddProject = () => {
               <input
                 type="date"
                 className="w-full p-2 border border-gray-300 rounded mt-2"
-                name="dueDate"
-                value={formData.dueDate}
+                name="endDate"
+                value={formData.endDate}
                 onChange={handleInputChange}
               />
-              {errors.dueDate && (<p className="text-sm text-red-500 mt-1">{errors.dueDate}</p>)}
+              {errors.endDate && (<p className="text-sm text-red-500 mt-1">{errors.endDate}</p>)}
             </div>
           </div>
         </div>

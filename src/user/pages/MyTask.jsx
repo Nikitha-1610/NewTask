@@ -8,6 +8,7 @@ import { MdOutlineDescription } from "react-icons/md";
 import { BsPaperclip } from "react-icons/bs";
 import { FiMessageCircle } from "react-icons/fi";
 import { HiOutlineDotsVertical } from "react-icons/hi";
+import { Icon } from "@iconify/react";
 
 const MyTask = () => {
   const [tasks, setTasks] = useState([]);
@@ -84,7 +85,7 @@ const MyTask = () => {
           </div>
         </div>
 
-        <div className="w-[1050px] h-auto bg-[#FFFFFF] border-[0.2px] border-[#565557] rounded p-2">
+        <div className="w-full mx-auto p-6 bg-white rounded-lg shadow-md border border-gray-200">
           {tasks.map((task) => (
             <div key={task.taskId} className="mb-4">
               <span className="font-bold">Task: {task.taskName}</span>
@@ -136,14 +137,17 @@ const MyTask = () => {
                   </tr>
                 </tbody>
               </table>
-              <div className="mt-2">
-                <span className="flex">
-                  <MdOutlineDescription /> Description
-                </span>
-                <div className="w-[990px] h-[80px] bg-[#FFFFFF] border-[0.2px] border-[#565557] rounded p-2">
-                  {task.taskDescription}
-                </div>
-              </div><br></br>
+          <div className="mt-8">
+        <div className="flex items-center gap-2">
+          <Icon icon="tabler:file-description" height={22} width={22} />
+          <h2 className="text-base font-semibold">Description</h2>
+        </div>
+        <textarea
+          value={task.taskDescription || "No description available."}
+          placeholder="Description"
+          className="w-full p-2 mt-4 text-sm text-gray-700 bg-gray-100 border border-gray-300 rounded-md resize-none focus:outline-none"
+        />
+      </div><br></br>
               <div>
                     <div className="flex justify-between">                    
                 <span className="flex"><BsPaperclip />Attachment(4)</span>
@@ -158,12 +162,12 @@ const MyTask = () => {
                 </div>
                 <div className="" >
                 <span className="flex"><FiMessageCircle />Comments(8)</span><br></br>
-                <div className="w-[990px] h-[50px] bg-[#FFFFFF] border-[0.2px] border-[#565557] rounded p-2 text-[#8B8A8E] flex">
+                <div className="flex items-center gap-2 p-2 text-sm text-gray-700 bg-blue-100 border border-gray-300 rounded-md">
                     <img src="" alt="" />
                     <img src='Images/person.jpeg' alt="User Profile" className="w-[15px] h-[15px] rounded-full" />
                     Comments Here...
                     </div><br></br>
-                <div className="w-[990px] h-[50px] bg-[#D0FCF9] border-[0.2px] border-[#565557] rounded p-2 text-[#8B8A8E] flex">
+                 <div className="flex items-center gap-2 p-2 text-sm text-gray-700 bg-blue-100 border border-gray-300 rounded-md">
                 <img src='Images/person.jpeg' alt="User Profile" className="w-[15px] h-[15px] rounded-full" />
                 Your Comment</div>
                 </div><br></br>

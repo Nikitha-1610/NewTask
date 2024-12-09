@@ -7,7 +7,7 @@ import CountUp from "react-countup";
 import ReactLoading from "react-loading";
 
 const People = () => {
-  const [allUsers, setAllUsers] = useState([]);
+  const [allUsers, setAllUsers] = useState([]); 
   const [currentPage, setCurrentPage] = useState(1);
   const [usersPerPage] = useState(7);
   const [modalVisible, setModalVisible] = useState(false);
@@ -95,49 +95,48 @@ const filteredUsers = allUsers.filter((user) => {
     closeModal();
   };
 
+  
+  
+
   const handleAction = async (action) => {
     if (selectedUserIndex !== null) {
       const user = currentUsers[selectedUserIndex];
-
+    
       try {
-        // Handle action based on the type (approve, on-hold, reject)
         switch (action) {
           case "approve":
             await axiosInstance.put(`/employee/approve/${user.email}`);
             toast.success(`${user.name} has been approved.`);
             console.log(`User approved:`, user.email);
             break;
-
+  
           case "on-hold":
-            // Pass status: "On-Hold" in the request body
             await axiosInstance.put(`/user/updateDetails/${user.email}`, {
               status: "On-Hold",
             });
             toast.success(`${user.name} has been placed on hold.`);
             console.log(`User on-hold:`, user.email);
             break;
-
+  
           case "reject":
             await axiosInstance.delete(`/user/reject/${user.email}`);
             toast.success(`${user.name} has been rejected.`);
             console.log(`User rejected:`, user.email);
             break;
-
+  
           default:
             throw new Error("Unknown action");
         }
-
-        // Refresh the user list after action
-        getAllusers();
       } catch (error) {
-        console.error(`Error performing ${action} action:`, error);
+        console.error("An error occurred while handling the action:", error);
         toast.error(`Failed to ${action} the user.`);
       } finally {
-        // Ensure modal is closed in both success and failure cases
-        closeModal();
+        getAllusers(); // Call this outside the switch case to refresh the user list
+        closeModal(); // Ensure the modal closes
       }
     }
   };
+  
  
   const positions = ["All", ...new Set(allUsers.map(user => user.position))];
   const statusOptions = ["All", ...new Set(allUsers.map(user => user.status))];
@@ -397,4 +396,3 @@ const filteredUsers = allUsers.filter((user) => {
 };
 
 export default People;
-
