@@ -1,4 +1,4 @@
-import StatsCard from "../components/UserDashBoard/Stats";
+import StatsCard from '../Components/UserDashBoard/Stats';
 import TaskList from "../components/UserDashBoard/TaskList";
 import ProjectList from "../components/UserDashBoard/projectList";
 import MostWorkedCard from "../components/UserDashBoard/MostWorkedCard";
