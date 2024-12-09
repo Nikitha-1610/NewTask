@@ -1,23 +1,21 @@
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import bgImage from "../../assets/BgImage.jpg";
 import axiosInstance from "../../common/utils/axios/axiosInstance";
 
-const ResetPasswordPage = ({ userEmail, userName }) => {
+const ResetPasswordPage = ({ userName }) => {
   const navigate = useNavigate();
 
-  // Initialize state to manage form data
   const [formData, setFormData] = useState({
-    previousPassword: "", // This will hold the previous password
+    previousPassword: "",
     newPassword: "",
     confirmPassword: "",
   });
 
   const [loading, setLoading] = useState(false);
 
-  // Password validation state
   const [passwordValidations, setPasswordValidations] = useState({
     length: false,
     containsNumberOrSymbol: false,
@@ -26,16 +24,14 @@ const ResetPasswordPage = ({ userEmail, userName }) => {
 
   const [passwordStrength, setPasswordStrength] = useState("");
 
-  // Handle form input changes (including the previous password)
   const handleInputChange = (e) => {
     const { name, value } = e.target;
     setFormData((prevData) => ({
       ...prevData,
-      [name]: name === "mobile" ? parseInt(value, 10) || 0 : value, // Ensure mobile is stored as an integer
+      [name]: value,
     }));
   };
 
-  // Dynamic validation and strength evaluation for the new password
   const handlePasswordChange = (password) => {
     setFormData((prevData) => ({ ...prevData, newPassword: password }));
 
@@ -52,22 +48,17 @@ const ResetPasswordPage = ({ userEmail, userName }) => {
     const validations = {
       length: password.length >= 8,
       containsNumberOrSymbol: /[0-9!@#$%^&*]/.test(password),
-      doesNotContainUserInfo: !password.includes(userName) && !password.includes(userEmail),
+      doesNotContainUserInfo: !password.includes(userName),
     };
 
     setPasswordValidations(validations);
 
     const strength = Object.values(validations).filter(Boolean).length;
-    if (strength <= 1) {
-      setPasswordStrength("Weak");
-    } else if (strength === 2) {
-      setPasswordStrength("Medium");
-    } else {
-      setPasswordStrength("Strong");
-    }
+    setPasswordStrength(
+      strength === 1 ? "Weak" : strength === 2 ? "Medium" : "Strong"
+    );
   };
 
-  // Handle form submission
   const handleSubmit = async (e) => {
     e.preventDefault();
 
@@ -78,7 +69,8 @@ const ResetPasswordPage = ({ userEmail, userName }) => {
       return;
     }
 
-    const { length, containsNumberOrSymbol, doesNotContainUserInfo } = passwordValidations;
+    const { length, containsNumberOrSymbol, doesNotContainUserInfo } =
+      passwordValidations;
 
     if (!length || !containsNumberOrSymbol || !doesNotContainUserInfo) {
       toast.error("Password does not meet all the criteria!");
@@ -88,10 +80,10 @@ const ResetPasswordPage = ({ userEmail, userName }) => {
     setLoading(true);
 
     try {
-      // Send the previous password and new password for reset
-      const response = await axiosInstance.put(`/user/resetPassword/${previousPassword}`, {
-        newPassword, // Send the new password
-      });
+      const response = await axiosInstance.put(
+        `/user/resetPassword/${previousPassword}`,
+        { newPassword }
+      );
 
       if (response.data.success) {
         toast.success("Password reset successfully!");
@@ -138,7 +130,6 @@ const ResetPasswordPage = ({ userEmail, userName }) => {
         </div>
       </div>
 
-
       {/* Right Section */}
       <div className="lg:w-7/12 w-full flex items-center justify-center p-6 md:p-10 bg-gray-50">
         <div className="w-full max-w-md">
@@ -175,22 +166,6 @@ const ResetPasswordPage = ({ userEmail, userName }) => {
                 className="w-full p-3 border rounded-md border-gray-300 focus:ring focus:ring-teal-400"
                 required
               />
-              {formData.newPassword && (
-                <div className="mt-2 text-sm text-gray-600">
-                  <p>Password Strength: <strong>{passwordStrength}</strong></p>
-                  <ul className="list-disc pl-5 space-y-1">
-                    <li className={passwordValidations.length ? "text-green-600" : "text-gray-600"}>
-                      At least 8 characters
-                    </li>
-                    <li className={passwordValidations.containsNumberOrSymbol ? "text-green-600" : "text-gray-600"}>
-                      Contains a number or symbol
-                    </li>
-                    <li className={passwordValidations.doesNotContainUserInfo ? "text-green-600" : "text-gray-600"}>
-                      Does not contain your name or email
-                    </li>
-                  </ul>
-                </div>
-              )}
             </div>
 
             <div>
@@ -206,6 +181,22 @@ const ResetPasswordPage = ({ userEmail, userName }) => {
                 className="w-full p-3 border rounded-md border-gray-300 focus:ring focus:ring-teal-400"
                 required
               />
+              {formData.newPassword && (
+                <div className="mt-2 text-sm text-gray-600">
+                  <p>Password Strength: <strong>{passwordStrength}</strong></p>
+                  <ul className="list-disc pl-5 space-y-1">
+                    <li className={passwordValidations.length ? "text-green-600" : "text-gray-600"}>
+                      At least 8 characters
+                    </li>
+                    <li className={passwordValidations.containsNumberOrSymbol ? "text-green-600" : "text-gray-600"}>
+                      Contains a number or symbol
+                    </li>
+                    <li className={passwordValidations.doesNotContainUserInfo ? "text-green-600" : "text-gray-600"}>
+                      Does not contain your username
+                    </li>
+                  </ul>
+                </div>
+              )}
             </div>
 
             <button
@@ -218,7 +209,6 @@ const ResetPasswordPage = ({ userEmail, userName }) => {
           </form>
         </div>
       </div>
-
       <ToastContainer />
     </div>
   );
