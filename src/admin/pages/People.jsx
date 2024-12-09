@@ -35,17 +35,17 @@ const People = () => {
     getAllusers();
   }, []);
 
-  const departments = ["All", "Tester", "HR", "Marketing"];
-  const userType = ["All", "On-Hold", "Init"];
+  const departments = ["All Position", "Tester", "HR", "Marketing"];
+  const userType = ["All Department", "On-Hold", "Init"];
 
   const filteredUsers = allUsers.filter((user) => {
     // Filter by selected department
     const matchesDepartment =
-      selectedDepartment === "All" || user.department === selectedDepartment;
+      selectedDepartment === "All Position" || user.department === selectedDepartment;
 
     // Filter by selected user type (status)
     const matchesUserType =
-      selectedUserType === "All" || user.status === selectedUserType;
+      selectedUserType === "All Department" || user.status === selectedUserType;
 
     return matchesDepartment && matchesUserType;
   });
@@ -105,20 +105,20 @@ const People = () => {
         // Handle action based on the type (approve, on-hold, reject)
         switch (action) {
           case "approve":
-            await axiosInstance.put(`/employee/approve/${user.email,user.name}`);
+            await axiosInstance.put(`/employee/approve/${user.email}`);
             toast.success(`${user.name} has been approved.`);
             break;
 
           case "on-hold":
             // Pass status: "On-Hold" in the request body
-            await axiosInstance.put(`/user/updateDetails/${user.email,user.name}`, {
+            await axiosInstance.put(`/user/updateDetails/${user.email}`, {
               status: "On-Hold",
             });
             toast.success(`${user.name} has been placed on hold.`);
             break;
 
           case "reject":
-            await axiosInstance.delete(`/user/reject/${user.email,user.name}`);
+            await axiosInstance.delete(`/user/reject/${user.email}`);
             toast.success(`${user.name} has been rejected.`);
             break;
 
