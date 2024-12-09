@@ -223,21 +223,7 @@ const AddTasks = () => {
           </div>
         </div>
       )}
-      <div className="flex md:justify-end justify-center mb-5">
-        <div className="flex flex-wrap justify-end gap-4">
-          {/* Add Task Button */}
-          <button className="flex items-center gap-2 bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded-md shadow-md transition">
-            <Icon icon="ic:round-add" height={22} width={22} />
-            <span>Add Task</span>
-          </button>
-
-          {/* Filter Button */}
-          <button className="flex items-center gap-2 border border-gray-300 hover:border-gray-400 text-gray-600 px-4 py-2 rounded-md shadow-md transition">
-            <Icon icon="lets-icons:filter" height={22} width={22} />
-            <span>Filter</span>
-          </button>
-        </div>
-      </div>
+      
       <form onSubmit={handleSubmit} className="w-full md:w-8/12">
         {/* Project Name and Due Date */}
         <div className="flex flex-wrap space-y-4 md:space-y-0 md:space-x-4 mb-4">

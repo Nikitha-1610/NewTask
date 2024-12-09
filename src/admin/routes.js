@@ -10,6 +10,8 @@ import userEmail from "./pages/Usersemail";
 import Chats from "./pages/Chats";
 import MainPage from "./pages/MainPage";
 import InProgressTasks from "./pages/InProgressTask";
+import Completed from "./pages/Completed";
+import TodayAssigned from "./pages/TodayAssigned";
 import IntestTasks from "./pages/InTest";
 import AssignTasks from "./pages/Assigntask";
 import TaskCardDetails from "./components/TaskCardDetails";
@@ -32,6 +34,8 @@ const adminRoutes = [
   },
   { path: "intest", component: IntestTasks },
   { path: "inprogress", component: InProgressTasks },
+  { path: "completed", component: Completed },
+  { path: "assign", component: TodayAssigned },
   { path: "assign", component: AssignTasks },
   { path: "task/:taskId", component: TaskCardDetails },
   { path: "addtasks", component: AddTasks },

@@ -105,20 +105,20 @@ const People = () => {
         // Handle action based on the type (approve, on-hold, reject)
         switch (action) {
           case "approve":
-            await axiosInstance.put(`/employee/approve/${user.email}`);
+            await axiosInstance.put(`/employee/approve/${user.email,user.name}`);
             toast.success(`${user.name} has been approved.`);
             break;
 
           case "on-hold":
             // Pass status: "On-Hold" in the request body
-            await axiosInstance.put(`/user/updateDetails/${user.email}`, {
+            await axiosInstance.put(`/user/updateDetails/${user.email,user.name}`, {
               status: "On-Hold",
             });
             toast.success(`${user.name} has been placed on hold.`);
             break;
 
           case "reject":
-            await axiosInstance.delete(`/user/reject/${user.email}`);
+            await axiosInstance.delete(`/user/reject/${user.email,user.name}`);
             toast.success(`${user.name} has been rejected.`);
             break;
 
@@ -229,7 +229,7 @@ const People = () => {
                         <td className="px-4 py-2 hidden md:table-cell">
                           {user.mobile}
                         </td>
-                        <td className="px-4 py-2">{user.position}</td>
+                        <td className="px-4 py-2">{user.department}</td>
                         <td className="px-4 py-2 hidden md:table-cell">
                           {user.appliedDate}
                         </td>

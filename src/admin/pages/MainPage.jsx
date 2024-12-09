@@ -16,7 +16,15 @@ import ReactLoading from "react-loading";
 
 const MainPage = () => {
 
-  const [stats, setStats] = useState(null); 
+  // const [stats, setStats] = useState(null); 
+  const [stats, setStats] = useState({
+    todayCompletedHours: 0,
+    lastWeekCompletedHours: 0,
+    weeklyActivity: "0%",
+    project: 0,
+    hoursByLabel: {},
+  });
+  
   const [upcomingDeadlineTasks, setUpcomingDeadlineTasks] = useState([]);
   const [daywiseCompletedHours, setDaywiseCompletedHours] = useState({});
   const [mostWorked, setMostWorked] = useState([]);

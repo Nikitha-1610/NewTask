@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import axiosInstance from "../../common/utils/axios/axiosInstance";
+import { FaEye, FaEyeSlash } from "react-icons/fa";
 
 const EmployeeForm = () => {
   const [formData, setFormData] = useState({
@@ -35,6 +36,10 @@ const EmployeeForm = () => {
     teamLead: "",
     appliedDate: "",
   });
+
+  const [showPassword, setShowPassword] = useState(false); // <-- Added this state
+  const togglePasswordVisibility = () => setShowPassword((prev) => !prev); // <-- Added this function
+
 
   const generateEmployeeId = async () => {
     try {
@@ -227,33 +232,54 @@ const EmployeeForm = () => {
             {errors.email && (<p className="text-sm text-red-500 mt-1">{errors.email}</p>)}
           </div>
 
-          <div className="flex flex-col">
-            <label className="text-gray-700 font-medium mb-1">
-              Phone Number<span className="text-red-500">*</span>
-            </label>
-            <input
-              type="number"
-              name="mobile"
-              value={formData.mobile}
-              onChange={handleInputChange}
-              className="border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-teal-500"
-            />
-            {errors.mobile && (<p className="text-sm text-red-500 mt-1">{errors.mobile}</p>)}
-          </div>
+         
+
+<div className="flex flex-col">
+  <label className="text-gray-700 font-medium mb-1">
+    Phone Number<span className="text-red-500">*</span>
+  </label>
+  <input
+    type="number"
+    name="mobile"
+    value={formData.mobile}
+    onChange={handleInputChange}
+    className="border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-teal-500"
+  />
+  {errors.mobile && (<p className="text-sm text-red-500 mt-1">{errors.mobile}</p>)}
+</div>
+
+
 
           <div className="flex flex-col">
-            <label className="text-gray-700 font-medium mb-1">
-              Password<span className="text-red-500">*</span>
-            </label>
-            <input
-              type="text"
-              name="password"
-              value={formData.password}
-              onChange={handleInputChange}
-              className="border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-teal-500"
-            />
-            {errors.password && (<p className="text-sm text-red-500 mt-1">{errors.password}</p>)}
-          </div>
+  <label className="text-gray-700 font-medium mb-1">
+    Password<span className="text-red-500">*</span>
+  </label>
+  <div className="relative">
+    <input
+      type={showPassword ? "text" : "password"}
+      name="password"
+      value={formData.password}
+      onChange={handleInputChange}
+      placeholder="Enter your password"
+      className="border border-gray-300 rounded-md px-3 py-2 pr-10 focus:outline-none focus:ring-2 focus:ring-teal-500 w-full" // Ensure full width and right padding for icon
+    />
+    <button
+      type="button"
+      onClick={togglePasswordVisibility}
+      className="absolute right-3 top-1/2 transform -translate-y-1/2" 
+    >
+      {showPassword ? (
+        <FaEyeSlash className="w-5 h-5 text-gray-600" />
+      ) : (
+        <FaEye className="w-5 h-5 text-gray-600" />
+      )}
+    </button>
+  </div>
+  {errors.password && (
+    <p className="text-sm text-red-500 mt-1">{errors.password}</p>
+  )}
+</div>
+
 
           <div className="flex flex-col">
             <label className="text-gray-700 font-medium mb-1">
@@ -355,3 +381,5 @@ const EmployeeForm = () => {
 };
 
 export default EmployeeForm;
+
+
