@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import { useNavigate } from "react-router-dom";
-import Modal from "react-modal";
+// import Modal from "react-modal";
 import bgImage from "../../assets/BgImage.jpg";
 import axiosInstance from "../../common/utils/axios/axiosInstance";
 
