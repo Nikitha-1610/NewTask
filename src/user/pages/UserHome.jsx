@@ -137,13 +137,7 @@ const UserHome = () => {
           DESIGN TEAM
         </h1>
         <div className="flex space-x-4 flex-wrap items-center sm:ml-auto sm:space-x-4 md:space-x-6">
-          <button
-            onClick={handleAddTask}
-            className="flex items-center px-4 py-2 bg-teal-500 text-white font-bold rounded-2xl hover:bg-green-600"
-          >
-            <FontAwesomeIcon icon={faPlus} className="mr-2" />
-            Add a task
-          </button>
+          
           <div className="relative">
             <button
               onClick={() => setShowFilterDropdown(!showFilterDropdown)}
@@ -208,56 +202,56 @@ const UserHome = () => {
             {(!collapsedColumns[colIndex] || window.innerWidth >= 1024) && (
               <div className="mt-4">
                 {column.tasks.map((task, taskIndex) => (
-                  <Link
-                    to={`/task/${task.taskId}`}
-                    key={taskIndex}
-                    className="block bg-white shadow rounded-lg p-4 mb-4 relative border border-gray-400 w-full"
-                  >
-                    <div className="absolute top-2 right-2">
-                      {task.taskStatus === "Completed" ? (
-                        <div className="flex items-center text-green-500 text-xs font-bold">
-                          <span className="mr-1">✔✔</span>
-                          <span>Done</span>
-                        </div>
-                      ) : (
-                        <div className="flex items-center text-gray-500 text-sm">
-                          <FontAwesomeIcon
-                            icon={faCalendarAlt}
-                            className="mr-1"
-                          />
-                          <DateDisplay isoDate={task.deadline} />
-                        </div>
-                      )}
-                    </div>
-                    {task.taskName && (
-                      <span
-                        className={`text-xs font-semibold mb-2 mt-4 inline-block px-2 py-1 rounded ${generateRandomColor()}`}
-                      >
-                        {task.taskName}
-                      </span>
-                    )}
-                    <div className="flex justify-between">
-                      <div>
-                        <div className="text-sm text-black-100">
-                          {task.taskDescription || "No description available."}
-                        </div>
-                        <div className="flex items-center text-sm text-gray-600 mt-2 space-x-4">
-                          <div className="flex items-center">
-                            <FontAwesomeIcon
-                              icon={faComment}
-                              className="mr-1"
-                            />
-                            {task.comment?.length || 0} Comments
-                          </div>
-                          <div className="flex items-center">
-                            <FontAwesomeIcon icon={faLink} className="mr-1" />
-                            {task.attachments?.length || 0} Attachments
-                          </div>
-                        </div>
-                      </div>
-                    </div>
-                  </Link>
-                ))}
+  <div
+    key={taskIndex}
+    className="block bg-white shadow rounded-lg p-4 mb-4 relative border border-gray-400 w-full"
+  >
+    <div className="absolute top-2 right-2">
+      {task.taskStatus === "Completed" ? (
+        <div className="flex items-center text-green-500 text-xs font-bold">
+          <span className="mr-1">✔✔</span>
+          <span>Done</span>
+        </div>
+      ) : (
+        <div className="flex items-center text-gray-500 text-sm">
+          <FontAwesomeIcon
+            icon={faCalendarAlt}
+            className="mr-1"
+          />
+          <DateDisplay isoDate={task.deadline} />
+        </div>
+      )}
+    </div>
+    {task.taskName && (
+      <span
+        className={`text-xs font-semibold mb-2 mt-4 inline-block px-2 py-1 rounded ${generateRandomColor()}`}
+      >
+        {task.taskName}
+      </span>
+    )}
+    <div className="flex justify-between">
+      <div>
+        <div className="text-sm text-black-100">
+          {task.taskDescription || "No description available."}
+        </div>
+        <div className="flex items-center text-sm text-gray-600 mt-2 space-x-4">
+          <div className="flex items-center">
+            <FontAwesomeIcon
+              icon={faComment}
+              className="mr-1"
+            />
+            {task.comment?.length || 0} Comments
+          </div>
+          <div className="flex items-center">
+            <FontAwesomeIcon icon={faLink} className="mr-1" />
+            {task.attachments?.length || 0} Attachments
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+))}
+
               </div>
             )}
           </div>

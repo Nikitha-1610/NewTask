@@ -53,9 +53,9 @@ const Layout =({ role }) => {
   };
 
   return (
-    <div className="flex h-screen">
+    <div className="flex h-screen overflow-auto scrollbar-hide ">
       {/* Sidebar */}
-      <Sidebar
+      <Sidebar 
         role={role}
         isOpen={isOpen}
         toggleSidebar={toggleSidebar}
@@ -64,7 +64,7 @@ const Layout =({ role }) => {
 
       {/* Main Content */}
       <div
-        className="flex-1 flex flex-col"
+        className="flex-1 flex flex-col  "
         style={{
           paddingTop: "4rem",
           marginLeft: getMarginLeft(),
