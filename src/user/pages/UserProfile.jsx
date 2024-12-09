@@ -69,10 +69,18 @@ const UserProfile = () => {
       Object.keys(editedData).forEach((key) =>
         formData.append(key, editedData[key])
       );
+      
+      
 
       const response = await axios.put(
         `https://3qhglx2bhd.execute-api.us-east-1.amazonaws.com/employee/update/${employeeId}`,
-        formData
+        {name:editedData.name,
+          email:editedData.email,
+          DOB: editedData.DOB,
+          address: editedData.address,
+          alterMobile: Number(editedData.alterMobile),
+          mobile: Number(editedData.mobile)
+        }
       );
 
       if (response.status === 200) {
@@ -83,6 +91,8 @@ const UserProfile = () => {
         throw new Error("Failed to save changes");
       }
     } catch (err) {
+      console.log(err);
+      
       toast.error("Error saving changes: " + err.message);
     }
   };
@@ -293,20 +303,20 @@ const UserProfile = () => {
 
           <div>
             <label htmlFor="role" className="block font-bold mb-1">
-              Role
+              Alter Mobile
             </label>
             <input
               type="text"
-              id="role"
-              name="role"
-              value={editedData.role}
+              id="alterMobile"
+              name="alterMobile"
+              value={editedData?.alterMobile}
               onChange={handleInputChange}
               className="w-full p-3 border rounded"
-              placeholder="Role"
+              placeholder="Alter Mobile No"
             />
           </div>
 
-          <div>
+          {/* <div>
             <label htmlFor="appliedDate" className="block font-bold mb-1">
               Applied Date
             </label>
@@ -318,9 +328,9 @@ const UserProfile = () => {
               onChange={handleInputChange}
               className="w-full p-3 border rounded"
             />
-          </div>
+          </div> */}
 
-          <div>
+          {/* <div>
             <label htmlFor="reference" className="block font-bold mb-1">
               Reference
             </label>
@@ -333,7 +343,7 @@ const UserProfile = () => {
               className="w-full p-3 border rounded"
               placeholder="Reference"
             />
-          </div>
+          </div> */}
         </div>
       </div>
 

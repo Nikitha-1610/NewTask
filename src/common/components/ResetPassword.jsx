@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate,useParams } from "react-router-dom";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import bgImage from "../../assets/BgImage.jpg";
@@ -7,6 +7,7 @@ import axiosInstance from "../../common/utils/axios/axiosInstance";
 
 const ResetPasswordPage = ({ userName }) => {
   const navigate = useNavigate();
+  const { employeeId } = useParams();
 
   const [formData, setFormData] = useState({
     previousPassword: "",
@@ -62,7 +63,7 @@ const ResetPasswordPage = ({ userName }) => {
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    const { newPassword, confirmPassword, previousPassword } = formData;
+    const { newPassword, confirmPassword } = formData;
 
     if (newPassword !== confirmPassword) {
       toast.error("Passwords do not match!");
@@ -80,19 +81,16 @@ const ResetPasswordPage = ({ userName }) => {
     setLoading(true);
 
     try {
-      const response = await axiosInstance.put(
-        `/user/resetPassword/${previousPassword}`,
-        { newPassword }
+      const response = await axiosInstance.post(
+        `user/changePasswoad`,
+        { password:newPassword,
+          employeeId: employeeId
+         }
       );
-
-      if (response.data.success) {
         toast.success("Password reset successfully!");
         setTimeout(() => {
           navigate("/login");
         }, 1500);
-      } else {
-        toast.error(response.data.message || "Failed to reset password!");
-      }
     } catch (error) {
       console.error("Error resetting password:", error);
       toast.error("An error occurred while resetting password!");
@@ -138,7 +136,7 @@ const ResetPasswordPage = ({ userName }) => {
           </h2>
 
           <form onSubmit={handleSubmit} className="space-y-4">
-            <div>
+            {/* <div>
               <label htmlFor="previousPassword" className="block text-sm font-medium">
                 Previous Password
               </label>
@@ -151,7 +149,7 @@ const ResetPasswordPage = ({ userName }) => {
                 className="w-full p-3 border rounded-md border-gray-300 focus:ring focus:ring-teal-400"
                 required
               />
-            </div>
+            </div> */}
 
             <div>
               <label htmlFor="newPassword" className="block text-sm font-medium">
