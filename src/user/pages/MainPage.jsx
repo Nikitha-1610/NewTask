@@ -1,5 +1,5 @@
 import StatsCard from "../Components/UserDashBoard/Stats";
-import TaskList from "../components/UserDashBoard/TaskList";
+import TaskList from "../Components/UserDashBoard/TaskList";
 import ProjectList from "../Components/UserDashBoard/projectList";
 import MostWorkedCard from "../Components/UserDashBoard/MostWorkedCard";
 import ProductivityChart from "../Components/UserDashBoard/ProductivityChart";
