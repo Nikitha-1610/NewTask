@@ -1,5 +1,8 @@
 import { FaCheckCircle, FaExclamationCircle } from "react-icons/fa";
-import { useState, useRef } from "react";
+import { useState, useRef, useEffect } from "react";
+import axios from "axios";
+import { ClipLoader } from "react-spinners"; // Importing the spinner
+
 
 const SemiCircularProgressBar = ({ value1, value2 }) => {
   const isMobile = window.innerWidth <= 768; // Example breakpoint for mobile screens
@@ -73,7 +76,8 @@ const SemiCircularProgressBar = ({ value1, value2 }) => {
             radius + strokeWidth / 2
           }`}
           fill="none"
-          stroke="#FCC590"
+          
+           stroke="#C25F01"
           strokeWidth={strokeWidth}
           strokeDasharray={semicircle}
           strokeDashoffset={offset1}
@@ -86,7 +90,7 @@ const SemiCircularProgressBar = ({ value1, value2 }) => {
             radius + strokeWidth / 2
           }`}
           fill="none"
-          stroke="#C25F01"
+          stroke="#FCC590"
           strokeWidth={strokeWidth}
           strokeDasharray={semicircle}
           strokeDashoffset={offset2}
@@ -111,7 +115,43 @@ const SemiCircularProgressBar = ({ value1, value2 }) => {
   );
 };
 
-const Production = ({ projectDetails }) => {
+const Production = ({ projectDetails,  }) => {
+
+  const [data, setData] = useState({ lastMonth: 0, currentMonth: 0 });
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const response = await axios.get(
+          "https://3qhglx2bhd.execute-api.us-east-1.amazonaws.com/task/projectDetails"
+        );
+        // Navigate to the monthwise object
+        const monthwise = response.data?.message?.monthwise || { lastMonth: 0, currentMonth: 0 };
+
+        // Set the state with extracted values
+        setData(monthwise);
+
+        // For debugging
+        console.log("Extracted Monthwise Data:", monthwise);
+      } catch (error) {
+        console.error("Error fetching data:", error);
+      } finally {
+        setLoading(false); // Set loading to false once the data is fetched
+      }
+    };
+
+    fetchData();
+  }, []);
+
+  // Display loader while data is loading
+  if (loading) {
+    return (
+      <div className="flex justify-center items-center h-full">
+        <ClipLoader size={50} color={"#C25F01"} />
+      </div>
+    );
+  }
   return (
     <div className="flex flex-col md:flex-row justify-between gap-4 items-stretch p-0 sm:h-auto h-auto mt-0">
       {/* Left Section */}
@@ -122,7 +162,13 @@ const Production = ({ projectDetails }) => {
 
         {/* SVG Display as a Progress Representation */}
         <div className="flex items-center justify-center mt-0 sm:mt-0 w-full h-[200px]">
-          <SemiCircularProgressBar value1={35} value2={45} />
+        <SemiCircularProgressBar
+  value1={data.lastMonth}
+  value2={data.currentMonth}
+/>
+
+
+          
         </div>
 
         {/* Stats Section */}
@@ -139,9 +185,9 @@ const Production = ({ projectDetails }) => {
             </svg>
             <div>
               <div className="text-sm sm:text-sm font-bold text-gray-800">
-                35%
+              {data.lastMonth}%
               </div>
-              <div className="text-sm sm:text-sm text-gray-500">October</div>
+              <div className="text-sm sm:text-sm text-gray-500">Last Month</div>
             </div>
           </div>
 
@@ -157,9 +203,9 @@ const Production = ({ projectDetails }) => {
             </svg>
             <div>
               <div className="text-sm sm:text-sm font-bold text-gray-800">
-                46%
+              {data.currentMonth}%
               </div>
-              <div className="text-sm sm:text-sm text-gray-500">This Month</div>
+              <div className="text-sm sm:text-sm text-gray-500">Current Month</div>
             </div>
           </div>
         </div>
