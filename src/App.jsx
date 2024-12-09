@@ -85,6 +85,8 @@ import adminRoutes from "./admin/routes";
 import userRoutes from "./user/routes";
 import ProtectedRoute from "./common/components/ProtectedRoute";
 import RegistrationPage from "./common/components/Registration";
+import ForgetPasswordPage from "./common/components/ForgotPassword";
+import ResetPasswordPage from "./common/components/ResetPassword";
 
 const App = () => {
   const isAuthenticated = useSelector((state) => state.auth.isAuthenticated);
@@ -103,7 +105,8 @@ const App = () => {
           {/* Login Route */}
           <Route path="/login" element={<Login />} />
           <Route path="/register" element={<RegistrationPage />} />
-          
+          <Route path="/forgot-password" element={<ForgetPasswordPage />} />
+          <Route path="/reset-password" element={<ResetPasswordPage />} />
           {/* Admin Routes */}
           <Route
             path="/admin/*" 
