@@ -134,11 +134,11 @@ const MyTask = () => {
       </div>
 
       {showDiv1 && (
-        <div className="w-[300px] h-[170px] absolute top-20 right-20 bg-white border border-gray-300 shadow-md rounded-md">
-          <h1 className="p-4 text-lg">Update Task Status</h1>
+        <div className="w-[300px] h-[170px] absolute top-20 right-20 bg-white border border-gray-300 shadow-md rounded-md p-2">
+          <h1 className=" text-lg">Update Task Status</h1>
           <input
             type="number"
-            placeholder="Enter hours"
+            placeholder="Hours spent on task?"
             value={hoursSpent}
             onChange={(e) => setHoursSpent(e.target.value)}
             className="w-full p-2 mb-4 border border-gray-300 rounded-md"

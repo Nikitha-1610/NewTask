@@ -1,5 +1,5 @@
 import axios from "axios";
-import { useState, useEffect } from "react";
+import React,{ useState, useEffect } from "react";
 
 import { Icon } from "@iconify/react";
 import { ClipLoader } from "react-spinners"; // Import the loader
@@ -15,6 +15,57 @@ const UserProfile = () => {
   const [profileImage, setProfileImage] = useState(null);
   const [previewImage, setPreviewImage] = useState(null);
   const employeeId = localStorage.getItem('employeeId');
+  const [errors, setErrors] = React.useState({});
+
+
+
+{/* Email Validation */}
+const validateEmail = (email) => {
+  const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/; // Basic email regex
+  return emailRegex.test(email);
+};
+
+const validateMobileNumber = (number) => {
+  const mobileRegex = /^[6-9]\d{9}$/; // Indian mobile number regex
+  return mobileRegex.test(number);
+};
+
+{/* Handle Input Change */}
+const handleInputChanges = (e) => {
+  const { name, value } = e.target;
+  setEditedData((prevData) => ({ ...prevData, [name]: value }));
+
+  if (name === "mobile") {
+    if (!validateMobileNumber(value)) {
+      setErrors((prevErrors) => ({
+        ...prevErrors,
+        mobile: "Please enter a valid 10-digit mobile number starting with 6-9.",
+      }));
+    } else {
+      setErrors((prevErrors) => {
+        const { mobile, ...rest } = prevErrors;
+        return rest;
+      });
+    }
+  }
+
+  if (name === "email") {
+    if (!validateEmail(value)) {
+      setErrors((prevErrors) => ({
+        ...prevErrors,
+        email: "Please enter a valid email address.",
+      }));
+    } else {
+      setErrors((prevErrors) => {
+        const { email, ...rest } = prevErrors;
+        return rest;
+      });
+    }
+  }
+};
+
+{/* State to Manage Errors */}
+
 
   useEffect(() => {
     const fetchUserData = async () => {
@@ -243,34 +294,42 @@ const UserProfile = () => {
           </div>
 
           <div>
-            <label htmlFor="email" className="block font-bold mb-1">
-              Email
-            </label>
-            <input
-              type="email"
-              id="email"
-              name="email"
-              value={editedData.email}
-              onChange={handleInputChange}
-              className="w-full p-3 border rounded"
-              placeholder="Email"
-            />
-          </div>
+  <label htmlFor="email" className="block font-bold mb-1">
+    Email
+  </label>
+  <input
+    type="email"
+    id="email"
+    name="email"
+    value={editedData.email}
+    onChange={handleInputChange}
+    className={`w-full p-3 border rounded ${errors.email ? "border-red-500" : ""}`}
+    placeholder="Email"
+  />
+  {errors.email && (
+    <span className="text-red-500 text-sm mt-1">{errors.email}</span>
+  )}
+</div>
+
 
           <div>
-            <label htmlFor="mobile" className="block font-bold mb-1">
-              Mobile
-            </label>
-            <input
-              type="text"
-              id="mobile"
-              name="mobile"
-              value={editedData.mobile}
-              onChange={handleInputChange}
-              className="w-full p-3 border rounded"
-              placeholder="Mobile"
-            />
-          </div>
+  <label htmlFor="mobile" className="block font-bold mb-1">
+    Mobile
+  </label>
+  <input
+    type="text"
+    id="mobile"
+    name="mobile"
+    value={editedData.mobile}
+    onChange={handleInputChanges}
+    className={`w-full p-3 border rounded ${errors.mobile ? "border-red-500" : ""}`}
+    placeholder="Mobile"
+  />
+  {errors.mobile && (
+    <span className="text-red-500 text-sm mt-1">{errors.mobile}</span>
+  )}
+</div>
+
 
           <div>
             <label htmlFor="address" className="block font-bold mb-1">
