@@ -161,7 +161,7 @@ const MyTask = () => {
       </div>
 
       {showDiv1 && (
-        <div className="w-64 h-[200px] absolute top-20 right-20 bg-white border border-gray-300 shadow-md rounded-md">
+        <div className="w-[300px] h-[170px] absolute top-20 right-20 bg-white border border-gray-300 shadow-md rounded-md">
           <h1 className="p-4 text-lg">Update Task Status</h1>
           <input
             type="number"
@@ -171,9 +171,9 @@ const MyTask = () => {
             className="w-full p-2 mb-4 border border-gray-300 rounded-md"
           />
           <div className="flex justify-around">
-            <button onClick={(e) => handleSubmit(e, 'Completed')} className="bg-green-400 px-3 py-2 rounded">Completed</button>
-            <button onClick={(e) => handleSubmit(e, 'In-Progress')} className="bg-orange-400 px-3 py-2 rounded">In Progress</button>
-            <button onClick={(e) => handleSubmit(e, 'In-Test')} className="bg-red-400 px-3 py-2 rounded">In Test</button>
+            <button onClick={(e) => handleSubmit(e, 'Completed')} className=" px-3 py-2 text-sm text-white bg-teal-500 rounded hover:bg-teal-600">Completed</button>
+            <button onClick={(e) => handleSubmit(e, 'In-Progress')} className="px-3 py-2 text-sm text-white bg-orange-500 rounded hover:bg-orange-600">In Progress</button>
+            <button onClick={(e) => handleSubmit(e, 'In-Test')} className="px-3 py-2 text-sm text-white bg-red-500 rounded hover:bg-red-600">In Test</button>
           </div>
         </div>
       )}
