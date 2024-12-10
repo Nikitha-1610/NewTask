@@ -1,31 +1,44 @@
 import React, { useState, useEffect } from "react";
 import { Icon } from "@iconify/react";
+import axios from 'axios';
 
 const MyTask = () => {
   const [tasks, setTasks] = useState([]);
   const [showDiv1, setShowDiv1] = useState(false);
   const [hoursSpent, setHoursSpent] = useState("");
   const [selectedTask, setSelectedTask] = useState(null);
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    localStorage.setItem("employeeName", "Mukilan");
-    const employeeName = localStorage.getItem("employeeName");
+    // Get the employee's name from localStorage (set during login)
+    const employeeName = localStorage.getItem('name');  // No need to set it here unless necessary
 
     if (employeeName) {
-      fetch(
-        `https://3qhglx2bhd.execute-api.us-east-1.amazonaws.com/task/getEmployeeTask/${employeeName}`
-      )
-        .then((response) => response.json())
-        .then((data) => {
-          if (data.status === 200) {
-            setTasks(data.message);
+      const baseUrl = "https://3qhglx2bhd.execute-api.us-east-1.amazonaws.com/"; 
+      const url = `${baseUrl}/task/getEmployeeTask/${employeeName}?days=7`;
+
+      console.log("Request URL:", url); 
+
+      axios.get(url)
+        .then(response => {
+          if (response.data.status === 200) {
+            // Filter tasks assigned to the logged-in employee
+            const filteredTasks = response.data.message.filter(task =>
+              task.assignedTo.includes(employeeName)
+            );
+            setTasks(filteredTasks);
           } else {
-            console.error("Failed to fetch tasks:", data);
+            setTasks([]); 
           }
+          setLoading(false); 
         })
-        .catch((error) => console.error("Error fetching tasks:", error));
+        .catch(error => {
+          console.error('Error:', error); 
+          setLoading(false); 
+        });
     } else {
-      console.error("Employee name not found in localStorage.");
+      setLoading(false); 
+      console.log('No employee name found in localStorage');
     }
   }, []);
 
@@ -81,7 +94,7 @@ const MyTask = () => {
   return (
     <div className="space-y-5">
       <h2 className="text-xl font-bold px-2 py-1 rounded-md text-gray-700">MyTask</h2>
-
+    
       <div className="w-full bg-white rounded-lg shadow-md border border-gray-200">
         {tasks.map((task) => (
           <div
