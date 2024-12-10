@@ -47,48 +47,48 @@ const Position = () => {
 
   
   
+  const fetchUsers = async () => {
+    setLoading(true);
+    try {
+      const response = await axiosInstance.get("employee/untag");
+      const data = response.data;
 
+      if (Array.isArray(data.message)) {
+        // Store users in state
+        setUsers(data.message);
+
+        // Get tagged employees from localStorage
+        const taggedEmployees = JSON.parse(localStorage.getItem("taggedEmployees")) || [];
+
+        // Filter out tagged employees
+        let untaggedUsers = data.message.filter(user => 
+          !taggedEmployees.includes(user.name)
+        );
+
+        // Update untagged users state
+        setUntaggedUsers(untaggedUsers);
+
+        // Set filtered users without tagged ones
+        setFilteredUsers(untaggedUsers);
+
+        // Extract unique positions and departments
+        const uniquePositions = [
+          ...new Set(data.message.map((user) => user.position)),
+        ];
+        const uniqueDepartments = [
+          ...new Set(data.message.map((user) => user.team || "General")),
+        ];
+        setPositions(uniquePositions);
+        setDepartments(uniqueDepartments);
+      }
+    } catch (error) {
+      console.error("Error fetching users:", error);
+    }
+    setLoading(false)
+  };
   
   useEffect(() => {
-    const fetchUsers = async () => {
-      setLoading(true);
-      try {
-        const response = await axiosInstance.get("employee/getAll");
-        const data = response.data;
-  
-        if (Array.isArray(data.message)) {
-          // Store users in state
-          setUsers(data.message);
-  
-          // Get tagged employees from localStorage
-          const taggedEmployees = JSON.parse(localStorage.getItem("taggedEmployees")) || [];
-  
-          // Filter out tagged employees
-          let untaggedUsers = data.message.filter(user => 
-            !taggedEmployees.includes(user.name)
-          );
-  
-          // Update untagged users state
-          setUntaggedUsers(untaggedUsers);
-  
-          // Set filtered users without tagged ones
-          setFilteredUsers(untaggedUsers);
-  
-          // Extract unique positions and departments
-          const uniquePositions = [
-            ...new Set(data.message.map((user) => user.position)),
-          ];
-          const uniqueDepartments = [
-            ...new Set(data.message.map((user) => user.team || "General")),
-          ];
-          setPositions(uniquePositions);
-          setDepartments(uniqueDepartments);
-        }
-      } catch (error) {
-        console.error("Error fetching users:", error);
-      }
-      setLoading(false)
-    };
+    
   
     fetchUsers();
    
@@ -157,9 +157,12 @@ const handleSubmit = async () => {
         employeeName: selectedEmployee.name,
         teamLeadName: selectedTeamLead,
       });
+      fetchUsers();
+      
 
       if (response.status === 200) {
-        toast.success(response.data.message || "Operation successful!");
+        toast.success(response.data.message.message || "Operation successful!");
+        
 
         // Remove the tagged user from the lists
         setUsers((prevUsers) =>
