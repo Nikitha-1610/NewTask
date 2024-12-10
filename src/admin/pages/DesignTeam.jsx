@@ -97,7 +97,7 @@ const Board = () => {
     inTestTasks: [],
     inProgressTasks: [],
     completedTasks: [],
-    todayAssignedTasks: [],
+    assignedTasks: [],
   });
   const [filterLabel, setFilterLabel] = useState("");
   const [showFilterDropdown, setShowFilterDropdown] = useState(false);
@@ -106,10 +106,7 @@ const Board = () => {
   const navigate = useNavigate();
   const employeeName = localStorage.getItem('name');
  
-  // useEffect(() => {
-  //   const employeeName = "TeamLead1"; 
-  //   localStorage.setItem('name', employeeName); 
-  // }, []);
+  
 
   useEffect(() => {
     setLoading(true);
@@ -117,13 +114,15 @@ const Board = () => {
       .get(`task/getTaskDashboard/${employeeName}`)
       .then((response) => {
         if (response.data && response.data.message) {
-          setTaskData(response.data.message);
+          const { inTestTasks, inProgressTasks, completedTasks, assignedTasks } = response.data.message;
+
+          setTaskData({ inTestTasks, inProgressTasks, completedTasks, assignedTasks });
         } else {
           setTaskData({
             inTestTasks: [],
             inProgressTasks: [],
             completedTasks: [],
-            todayAssignedTasks: [],
+            assignedTasks: [],
           });
         }
         setError(null); 
@@ -155,9 +154,9 @@ const Board = () => {
       ...taskData.inTestTasks,
       ...taskData.inProgressTasks,
       ...taskData.completedTasks,
-      ...taskData.todayAssignedTasks,
+      ...taskData.assignedTasks,
     ];
-    const uniqueTaskNames = Array.from(new Set(allTasks.map(task => task.taskName).filter(Boolean))); // Remove duplicates
+    const uniqueTaskNames = Array.from(new Set(allTasks.map(task => task.taskName).filter(Boolean)));
     return uniqueTaskNames;
   };
 
@@ -169,9 +168,9 @@ const Board = () => {
     {
       title: "ASSIGNED TASKS",
       color: "green",
-      tasks: filterTasks(taskData.todayAssignedTasks),
+      tasks: filterTasks(taskData.assignedTasks),
       path: "assign",
-      status: "Today-Assigned",
+      status: "Assigned",
       assignedBy: "TeamLead1",
     },
     {
@@ -201,14 +200,14 @@ const Board = () => {
   ];
 
   const columnMapping = {
-    "TODAY ASSIGNED": "todayAssignedTasks",
+    "ASSIGNED TASKS": "assignedTasks",
     "IN PROGRESS": "inProgressTasks",
     "IN TEST": "inTestTasks",
     "COMPLETED": "completedTasks",
   };
 
   const titleToStatusMap = {
-    "TODAY ASSIGNED": "Today-Assigned",
+    "ASSIGNED TASKS": "Assigned",
     "IN PROGRESS": "In-Progress",
     "IN TEST": "In-Test",
     "COMPLETED": "Completed"
@@ -216,12 +215,14 @@ const Board = () => {
 
   const moveTask = (draggedTask, targetColumnTitle) => {
     const targetColumn = columnMapping[targetColumnTitle];
+     console.log("Target Column Key:", targetColumn);
     if (!targetColumn) {
       console.error(`Target column "${targetColumnTitle}" does not exist.`);
       return;
     }
+
     
-    // Remove the task from its current column and add it to the new one
+    
     const updatedTaskData = { ...taskData };
     Object.keys(updatedTaskData).forEach((columnKey) => {
       updatedTaskData[columnKey] = updatedTaskData[columnKey].filter(
@@ -229,9 +230,9 @@ const Board = () => {
       );
     });
     updatedTaskData[targetColumn].push(draggedTask);
-    setTaskData(updatedTaskData); // Update the state with the new task positions
+    setTaskData(updatedTaskData); 
   
-    // **Get the corresponding status using the title-to-status mapping**
+    
     const newTaskStatus = titleToStatusMap[targetColumnTitle];
     
     if (!newTaskStatus) {
@@ -239,7 +240,7 @@ const Board = () => {
       return;
     }
   
-    // **Send the PUT request to update task status in the backend**
+   
     axiosInstance
       .put(`task/updateTask/${draggedTask.taskId}`, { taskStatus: newTaskStatus })
       .then((response) => {
