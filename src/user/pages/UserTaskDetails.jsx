@@ -3,6 +3,7 @@ import { useState, useEffect } from "react";
 import axiosInstance from "../../common/utils/axios/axiosInstance";
 import { Icon } from "@iconify/react";
 import ReactLoading from "react-loading";
+import { BsPaperclip } from "react-icons/bs";
 
 const UserTaskCardDetails = () => {
   const { taskId } = useParams();
@@ -10,10 +11,8 @@ const UserTaskCardDetails = () => {
   const [taskDetails, setTaskDetails] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
-  const [hoursSpent, setHoursSpent] = useState(""); // New state for hours spent input
-  const [successMessage, setSuccessMessage] = useState(""); // New state for success message
-  const [selectedTask, setSelectedTask] = useState(null);
-    const [tasks, setTasks] = useState([]);
+  const [hoursSpent, setHoursSpent] = useState(""); // State for hours spent
+  const [successMessage, setSuccessMessage] = useState(""); // State for success message
 
   useEffect(() => {
     axiosInstance
@@ -45,30 +44,18 @@ const UserTaskCardDetails = () => {
       hoursSpent: status === "Completed" ? hoursSpent : undefined,
     };
 
-    fetch(
-      `https://3qhglx2bhd.execute-api.us-east-1.amazonaws.com/task/updateTask/${selectedTask.taskId}`,
-      {
-        method: "PUT",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(body),
-      }
-    )
-      .then((response) => response.json())
-      .then((data) => {
-        if (data.status === 200) {
-          setTasks((prevTasks) =>
-            prevTasks.map((task) =>
-              task.taskId === selectedTask.taskId
-                ? { ...task, taskStatus: status }
-                : task
-            )
-          );
-         
-          setHoursSpent("");
+    axiosInstance
+      .put(`task/updateTask/${taskId}`, body)
+      .then((response) => {
+        if (response.status === 200) {
+          setSuccessMessage(`Task successfully updated to ${status}`);
+          setTaskDetails((prevDetails) => ({
+            ...prevDetails,
+            taskStatus: status,
+          }));
+          setHoursSpent(""); // Reset hours spent input
         } else {
-          console.error("Failed to update task:", data);
+          console.error("Failed to update task:", response.data);
         }
       })
       .catch((error) => console.error("Error updating task:", error));
@@ -154,13 +141,26 @@ const UserTaskCardDetails = () => {
           />
         </div>
 
+        <div>
+                    <div className="flex justify-between">                    
+                <span className="flex"><BsPaperclip />Attachment(4)</span>
+                <button className="text-blue-500">Download</button>
+                </div><br></br>
+                <div className="flex justify-between">
+                    <div className="w-[250px] h-[70px] p-2 rounded  bg-white shadow-[2px_2px_4px_0px_#7F767626] shadow-2px_2px_2px_0px_#7F767626]"></div>
+                    <div className="w-[250px] h-[70px] p-2 rounded  bg-white shadow-[2px_2px_4px_0px_#7F767626] shadow-2px_2px_2px_0px_#7F767626]"></div>
+                    <div className="w-[250px] h-[70px] p-2 rounded  bg-white shadow-[2px_2px_4px_0px_#7F767626] shadow-2px_2px_2px_0px_#7F767626]"></div>
+                    <div className="w-[70px] h-[70px] p-2 rounded  bg-white shadow-[2px_2px_4px_0px_#7F767626] shadow-2px_2px_2px_0px_#7F767626]"></div>
+                </div>
+                </div>
+
         {/* Update Task Section */}
         <div className="mt-4">
           <h4 className="text-xl font-semibold">Update Task</h4>
           <div className="mt-2 flex flex-col space-y-3">
             {taskStatus === "Assigned" && (
               <button
-              onClick={(e) => handleSubmit(e, "In-Progress")}
+                onClick={(e) => handleSubmit(e, "In-Progress")}
                 className="px-4 py-2 bg-orange-500 text-white rounded-md hover:bg-orange-600"
               >
                 In Progress
@@ -168,7 +168,7 @@ const UserTaskCardDetails = () => {
             )}
             {taskStatus === "In-Progress" && (
               <button
-              onClick={(e) => handleSubmit(e, "In-Test")}
+                onClick={(e) => handleSubmit(e, "In-Test")}
                 className="px-4 py-2 bg-red-500 text-white rounded-md hover:bg-red-600"
               >
                 In Test

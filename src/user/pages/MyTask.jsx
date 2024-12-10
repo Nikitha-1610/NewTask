@@ -156,56 +156,75 @@ const MyTask = () => {
                 <span className="text-gray-700 font-medium">{task.assignedBy}</span>
               </div>
             </div>
+
+            {/* Attachment section */}
+            <div className="mt-4">
+              {task.attachments && task.attachments.length > 0 ? (
+                <div>
+                  <h4 className="font-medium">Attachments:</h4>
+                  <ul className="list-disc pl-5">
+                    {task.attachments.map((attachment, index) => (
+                      <li key={index}>
+                        <a href={attachment.url} target="_blank" rel="noopener noreferrer" className="text-blue-500">
+                          {attachment.name}
+                        </a>
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+              ) : (
+                <p>No attachments available.</p>
+              )}
+            </div>
           </div>
         ))}
       </div>
 
       {showDiv1 && selectedTask && (
-  <div className="w-[300px] h-auto p-4 absolute top-20 right-20 bg-white border border-gray-300 shadow-md rounded-md">
-    <h1 className="mb-4 text-lg">Update Task Status</h1>
-    {selectedTask.taskStatus === "Assigned" && (
-      <button
-        onClick={(e) => handleSubmit(e, "In-Progress")}
-        className="w-full px-3 py-2 text-sm text-white bg-orange-500 rounded hover:bg-orange-600"
-      >
-        In Progress
-      </button>
-    )}
-    {selectedTask.taskStatus === "In-Progress" && (
-      <button
-        onClick={(e) => handleSubmit(e, "In-Test")}
-        className="w-full px-3 py-2 text-sm text-white bg-red-500 rounded hover:bg-red-600"
-      >
-        In Test
-      </button>
-    )}
-    {selectedTask.taskStatus === "In-Test" && (
-      <div>
-        <input
-          type="number"
-          placeholder="Enter hours spent"
-          value={hoursSpent}
-          onChange={(e) => setHoursSpent(e.target.value)}
-          className="w-full p-2 mb-4 border border-gray-300 rounded-md"
-        />
-        <button
-          onClick={(e) => handleSubmit(e, "Completed")}
-          className="w-full px-3 py-2 text-sm text-white bg-teal-500 rounded hover:bg-teal-600"
-        >
-          Completed
-        </button>
-      </div>
-    )}
-    {/* Cancel Button */}
-    <button
-      onClick={() => setShowDiv1(false)}
-      className="w-full px-3 py-2 mt-4 text-sm text-gray-600 bg-gray-200 rounded hover:bg-gray-300"
-    >
-      Cancel
-    </button>
-  </div>
-)}
-
+        <div className="w-[300px] h-auto p-4 absolute top-20 right-20 bg-white border border-gray-300 shadow-md rounded-md">
+          <h1 className="mb-4 text-lg">Update Task Status</h1>
+          {selectedTask.taskStatus === "Assigned" && (
+            <button
+              onClick={(e) => handleSubmit(e, "In-Progress")}
+              className="w-full px-3 py-2 text-sm text-white bg-orange-500 rounded hover:bg-orange-600"
+            >
+              In Progress
+            </button>
+          )}
+          {selectedTask.taskStatus === "In-Progress" && (
+            <button
+              onClick={(e) => handleSubmit(e, "In-Test")}
+              className="w-full px-3 py-2 text-sm text-white bg-red-500 rounded hover:bg-red-600"
+            >
+              In Test
+            </button>
+          )}
+          {selectedTask.taskStatus === "In-Test" && (
+            <div>
+              <input
+                type="number"
+                placeholder="Enter hours spent"
+                value={hoursSpent}
+                onChange={(e) => setHoursSpent(e.target.value)}
+                className="w-full p-2 mb-4 border border-gray-300 rounded-md"
+              />
+              <button
+                onClick={(e) => handleSubmit(e, "Completed")}
+                className="w-full px-3 py-2 text-sm text-white bg-teal-500 rounded hover:bg-teal-600"
+              >
+                Completed
+              </button>
+            </div>
+          )}
+          {/* Cancel Button */}
+          <button
+            onClick={() => setShowDiv1(false)}
+            className="w-full px-3 py-2 mt-4 text-sm text-gray-600 bg-gray-200 rounded hover:bg-gray-300"
+          >
+            Cancel
+          </button>
+        </div>
+      )}
     </div>
   );
 };
