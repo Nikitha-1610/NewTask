@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect,useRef } from "react";
 import {
   FaPhone,
   FaVideo,
@@ -12,19 +12,111 @@ import VoiceCall from "./VoiceCall";
 import { FaArrowLeft } from "react-icons/fa";
 import Picker from 'emoji-picker-react'; // For emoji picker
 import { Icon } from '@iconify/react'; // For Iconify
+import io from 'socket.io-client';
+import axios from "axios";
 
-
+let socket;
 const IndividualChat = ({ contact, handleBackToContacts }) => {
+  const employeeId = localStorage.getItem('employeeId');
+  const user = localStorage.getItem('name');
+  const selectedEmployeeId = contact?.employeeID;
   const [selectedOption, setSelectedOption] = useState("Chat");
   const [activeFeature, setActiveFeature] = useState(null);
   const [selectedFiles, setSelectedFiles] = useState([]);
   const [showActions, setShowActions] = useState(false);
   const menuOptions = ["Chat", "Files", "Media"];
   const [showDownloadToast, setShowDownloadToast] = useState(false);
-const [showDeletePopup, setShowDeletePopup] = useState(false);
-const [isRecording, setIsRecording] = useState(false);
+  const [showDeletePopup, setShowDeletePopup] = useState(false);
+  const [isRecording, setIsRecording] = useState(false);
   const [message, setMessage] = useState('');
+  const [messages, setMessages] = useState([]);
   const [showEmojiPicker, setShowEmojiPicker] = useState(false);
+  const [onlineUsers, setOnlineUsers] = useState([]);
+  const socketUrl = 'https://chat-2-1dgm.onrender.com';
+
+  const messageEndRef = useRef(null);
+  const chatContainerRef = useRef(null);
+
+  useEffect(() => {
+    // Check if the chat container is available
+    if (chatContainerRef.current) {
+      // Scroll to the bottom by setting scrollTop to the scrollHeight of the container
+      chatContainerRef.current.scrollTop = chatContainerRef.current.scrollHeight;
+    }
+  }, [messages]);
+  
+
+
+  const getMessages = async () => {
+    if (!selectedEmployeeId) return;
+    try {
+        const response = await axios.get(`https://chat-2-1dgm.onrender.com/getMessages`, {
+            params: { sender: employeeId, receiver: selectedEmployeeId }
+        });
+        setMessages(response.data.messages); // Set the fetched messages
+    } catch (err) {
+        console.error(err);
+    }
+  };
+  
+  
+
+
+  useEffect(() => {
+        socket = io(socketUrl);
+
+        //Join the employeeId when the user connects
+        socket.emit('join', { user, employeeId }, (err) => {
+            if (err) {
+                console.error(err);
+            }
+        });
+
+        return () => {
+            socket.disconnect();
+            socket.off();
+        };
+    }, [socketUrl, user, employeeId]);
+
+    useEffect(() => {
+      getMessages();
+  }, [selectedEmployeeId]); 
+
+    useEffect(() => {
+        socket.on('message', (msg) => {
+            // Only update messages if they belong to the selected conversation
+            
+            if (
+                (msg.sender === employeeId && msg.receiver === selectedEmployeeId) ||
+                (msg.sender === selectedEmployeeId && msg.receiver === employeeId)
+            ) {
+                setMessages((prevMsg) => [...prevMsg, msg]); // Append new message
+            }
+
+            // Scroll to the bottom when a new message arrives
+            if (chatContainerRef.current) {
+              // Scroll to the bottom by setting scrollTop to the scrollHeight of the container
+              chatContainerRef.current.scrollTop = chatContainerRef.current.scrollHeight;
+            }
+        });
+
+        socket.on('roomMembers', (usrs) => {
+            setOnlineUsers(usrs);
+        });
+    }, [employeeId, selectedEmployeeId]);
+
+    const sendMessage = () => {
+      
+        if (message.trim() && selectedEmployeeId) {
+            // Emit message to the receiver and the sender
+            socket.emit('sendMessage', employeeId, message, selectedEmployeeId, () => setMessage(''));
+        }
+    };
+
+    const filteredMessages = messages?.filter(msg =>
+      (msg.sender === employeeId && msg.receiver === selectedEmployeeId) || 
+      (msg.sender === selectedEmployeeId && msg.receiver === employeeId)
+  );
 
   const handleMicClick = () => {
     if (!isRecording) {
@@ -130,34 +222,8 @@ const [isRecording, setIsRecording] = useState(false);
     document.getElementById('fileInput').click();
   };
 
-  // Function to handle mic click (voice recorder - placeholder for now)
   
 
-  const userMessages = [
-    { text: "Hey! What's up?", file: null, timestamp: 1 },
-    { text: "Check out this image I took!", file: { type: "image", url: "/Images/image1.jpeg" }, timestamp: 3 },
-    { text: "Here's the document you requested.", file: { type: "document", url: "/documents/1.pdf" }, timestamp: 5 },
-    { text: "When is the deadline?", file: null, timestamp: 7 },
-    { text: "Listen to this track!", file: { type: "audio", url: "/audio/audio1.mp3" }, timestamp: 9 },
-    { text: "See you at 5 PM.", file: null, timestamp: 11 },
-    { text: "Did you finish the project?", file: null, timestamp: 13 },
-    { text: "Check out this new file I uploaded.", file: { type: "image", url: "/Images/image2.jpeg" }, timestamp: 15 },
-    { text: "I have a new version of the document.", file: { type: "document", url: "/documents/2.pdf" }, timestamp: 17 },
-    { text: "Here's a song I just found.", file: { type: "audio", url: "/audio/audio2.mp3" }, timestamp: 19 },
-  ];
-  
-  const contactMessages = [
-    { text: "Not much, you?", file: null, timestamp: 2 },
-    { text: "Cool picture!", file: null, timestamp: 4 },
-    { text: "Thanks for the document.", file: null, timestamp: 6 },
-    { text: "The deadline is next Friday.", file: null, timestamp: 8 },
-    { text: "Nice track! Here's a video you might like.", file: { type: "video", url: "/videos/video1.mp4" }, timestamp: 10 },
-    { text: "Sure thing, see you then!", file: null, timestamp: 12 },
-    { text: "I finished the project!", file: null, timestamp: 14 },
-    { text: "Here is the updated file.", file: { type: "image", url: "/Images/image3.jpeg" }, timestamp: 16 },
-    { text: "I just added new details to the document.", file: { type: "document", url: "/documents/3.pdf" }, timestamp: 18 },
-    { text: "This song is great! You should hear it.", file: { type: "audio", url: "/audio/audio3.mp3" }, timestamp: 20 },
-  ];
   
   
   // const toggleSelectFile = (file) => {
@@ -235,6 +301,32 @@ const [isRecording, setIsRecording] = useState(false);
     // Logic for deleting the file
     alert(`File ${extractFileName(fileUrl)} will be deleted.`);
   };
+
+  const userMessages = [
+    { text: "Hey! What's up?", file: null, timestamp: 1 },
+    { text: "Check out this image I took!", file: { type: "image", url: "/Images/image1.jpeg" }, timestamp: 3 },
+    { text: "Here's the document you requested.", file: { type: "document", url: "/documents/1.pdf" }, timestamp: 5 },
+    { text: "When is the deadline?", file: null, timestamp: 7 },
+    { text: "Listen to this track!", file: { type: "audio", url: "/audio/audio1.mp3" }, timestamp: 9 },
+    { text: "See you at 5 PM.", file: null, timestamp: 11 },
+    { text: "Did you finish the project?", file: null, timestamp: 13 },
+    { text: "Check out this new file I uploaded.", file: { type: "image", url: "/Images/image2.jpeg" }, timestamp: 15 },
+    { text: "I have a new version of the document.", file: { type: "document", url: "/documents/2.pdf" }, timestamp: 17 },
+    { text: "Here's a song I just found.", file: { type: "audio", url: "/audio/audio2.mp3" }, timestamp: 19 },
+  ];
+  
+  const contactMessages = [
+    { text: "Not much, you?", file: null, timestamp: 2 },
+    { text: "Cool picture!", file: null, timestamp: 4 },
+    { text: "Thanks for the document.", file: null, timestamp: 6 },
+    { text: "The deadline is next Friday.", file: null, timestamp: 8 },
+    { text: "Nice track! Here's a video you might like.", file: { type: "video", url: "/videos/video1.mp4" }, timestamp: 10 },
+    { text: "Sure thing, see you then!", file: null, timestamp: 12 },
+    { text: "I finished the project!", file: null, timestamp: 14 },
+    { text: "Here is the updated file.", file: { type: "image", url: "/Images/image3.jpeg" }, timestamp: 16 },
+    { text: "I just added new details to the document.", file: { type: "document", url: "/documents/3.pdf" }, timestamp: 18 },
+    { text: "This song is great! You should hear it.", file: { type: "audio", url: "/audio/audio3.mp3" }, timestamp: 20 },
+  ];
   
   return (
     <>
@@ -318,414 +410,54 @@ const [isRecording, setIsRecording] = useState(false);
 {/* Chat Body - Scrollable */}
 <div className="flex-1 overflow-y-auto sm:p-4 p-2 scrollbar-hide ">
 
-  {selectedOption === "Chat" && (
-    <div className=" overflow-y-auto">
-      {/* Conditional Rendering for 'design group' */}
-      {contact.name === "Design Group" ? (
-        <div className="mt-0">
-          {/* First User Message */}
-          <div className="flex items-start gap-2">
-            <div className="relative">
-              <FaUserCircle className="w-8 sm:w-9 h-8 sm:h-9 text-gray-700" />
-            </div>
-            <div className="flex flex-col gap-2">
-              <div className="flex flex-col bg-white shadow p-2 rounded-lg w-64">
-                <div className="flex justify-between w-full">
-                  <span className="font-semibold text-base text-black">
-                    Revathy
+{selectedOption === "Chat" && (
+  <div className="overflow-y-auto" ref={chatContainerRef}>
+    {messages.map((userMessage, index) => (
+      <div key={index} className="flex items-start mb-4 " >
+        {/* Contact's Message */}
+        {userMessage.sender === selectedEmployeeId && (
+          <div className="flex items-start sm:gap-3 gap-2 ">
+            <FaUserCircle className="w-7 sm:w-8 h-7 sm:h-8 text-gray-700" />
+            <div className="flex flex-col mt-2 mb-2 w-full">
+              <div className="bg-white shadow-md p-2 rounded-lg max-w-sm sm:max-w-md">
+                <div className="flex justify-between mb-1">
+                  <span className="font-semibold text-[15px] text-black">
+                    {userMessage.sender === selectedEmployeeId ? contact?.name : "You"}
                   </span>
-                  <span className="text-gray-500 text-sm">10:30 AM</span>
-                </div>
-                <p className="text-base text-black leading-normal">
-                  Hi, I am having a doubt on profile Screen.
-                </p>
-              </div>
-
-              <div className="flex flex-col bg-white shadow p-2 rounded-lg w-72">
-                <div className="flex items-center gap-2 mb-2">
-                  <span className="font-semibold text-base text-black">
-                    Revathy
+                  <span className="text-gray-500 text-sm">
+                    {new Date(userMessage.timestamp).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
                   </span>
                 </div>
-
-                <div className="flex items-center gap-2 border-gray-300 bg-gray-100 mb-2 p-2 border rounded-md h-12">
-                  <FaFilePdf className="text-red-500 text-xl" />
-                  <span className="font-semibold text-black text-sm">
-                    Profile_Document.pdf
-                  </span>
-                </div>
-
-                <p className="text-base text-black leading-normal">
-                  Hi, I am having a doubt on profile Screen.
-                </p>
+                <p className="text-base text-black">{userMessage.text}</p>
               </div>
             </div>
           </div>
+        )}
 
-          {/* Second User Message */}
-          <div className="mt-5"></div>
-          <div className="flex items-start gap-3">
-            <div className="relative">
-              <FaUserCircle className="w-8 sm:w-9 h-8 sm:h-9 text-blue-600" />
-            </div>
-            <div className="flex flex-col gap-2">
-              <div className="flex flex-col bg-white shadow p-2 rounded-lg w-64">
-                <div className="flex justify-between w-full">
-                  <span className="font-semibold text-base text-black">
-                    Santosh
-                  </span>
-                  <span className="text-gray-500 text-sm">10:30 AM</span>
-                </div>
-                <p className="text-base text-black leading-normal">
-                  Hi, I am having a doubt on profile Screen.
-                </p>
-              </div>
-
-              <div className="flex flex-col bg-white shadow p-2 rounded-lg w-64 sm:w-[482px]">
-                <div className="flex items-center gap-1 mb-0">
-                  <span className="font-semibold text-black text-sm">
-                    Santosh
-                  </span>
-                </div>
-
-                <div className="flex items-center gap-1">
-                  <img
-                    src="/Images/chat1.jpg"
-                    alt="specification"
-                    className="p-2 h-28"
-                  />
-                </div>
-
-                <p className="mt-0 text-black text-sm leading-normal">
-                  Hi, I am having a doubt on profile Screen.
-                </p>
-              </div>
-            </div>
-          </div>
-
-          <div className="mt-5"></div>
-
-          {/* Third User Message */}
-          <div className="flex items-start gap-3">
-            <div className="relative">
-              <FaUserCircle className="w-8 sm:w-9 h-8 sm:h-9 text-gray-700" />
-            </div>
-            <div className="flex flex-col gap-2">
-              <div className="flex flex-col bg-white shadow p-2 rounded-lg w-64 sm:w-[30rem]">
-                <div className="flex justify-between gap-1 mb-0">
-                  <span className="flex font-semibold text-base text-black">
-                    Revathy
-                  </span>
-                  <span className="text-gray-500 text-sm">10:45 AM</span>
-                </div>
-
-                <div className="flex items-center gap-1">
-                  <img
-                    src="/Images/chat2.jpg"
-                    alt="specification"
-                    className="p-2 h-28"
-                  />
-                </div>
-
-                <p className="mt-0 text-base text-black leading-normal">
-                  Hi, I am having a doubt on profile Screen.
-                </p>
-              </div>
-            </div>
-          </div>
-
-          <div className="mt-5"></div>
-
-          {/* User's Message */}
+        {/* Your Message (currentUserId's message) */}
+        {userMessage.sender !== selectedEmployeeId && (
           <div className="flex justify-end w-full">
-            <div className="flex flex-col gap-2">
-              <div className="flex flex-col justify-end bg-green-100 shadow-md p-2 rounded-lg w-72 sm:w-96 min-h-8">
-                <div className="flex justify-between mb-2 w-full">
-                  <span className="font-semibold text-base text-black">
-                    You
-                  </span>
-                  <span className="text-gray-500 text-sm">10:45 AM</span>
-                </div>
-                <p className="text-base text-black text-left leading-normal">
-                  Hi, I am having a doubt on profile Screen.
-                </p>
+            <div className="bg-green-100 shadow-md p-2 rounded-lg max-w-sm sm:max-w-md">
+              <div className="flex justify-between mb-1">
+                <span className="font-semibold text-[15px] text-black pr-1">
+                  You
+                </span>
+                <span className="text-gray-500 text-sm">
+                  {new Date(userMessage.timestamp).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
+                </span>
               </div>
-
-              <div className="flex flex-col justify-end bg-green-100 shadow-md p-2 rounded-lg w-72 sm:w-96">
-                <p className="text-black text-left text-sm leading-normal">
-                  Yes, Sure!
-                </p>
-              </div>
+              <p className="text-base text-black">{userMessage.text}</p>
             </div>
           </div>
-        </div>
-      ) : (
-        // Render default chat
-        userMessages.map((userMessage, index) => {
-          // Randomly pick a contact message except the first one
-          const randomContactMessage =
-            index === 0
-              ? contact.lastMessage // Ensure the first contact message is sequential
-              : contactMessages[Math.floor(Math.random() * (contactMessages.length - 1)) + 1]; // Pick randomly from the rest
-              const dummyTimestamp = "10:00 AM";
-          // Skip rendering for the first user message (handled sequentially)
-          if (index === 0) {
-            return (
-              <div key={index} className="flex-1 overflow-y-auto">
-                {/* Contact's First Message */}
-                <div className="flex items-start sm:gap-3 gap-2">
-                  {contact?.image ? (
-                    <img
-                      src={contact.image}
-                      alt="Profile"
-                      className="rounded-full w-7 sm:w-8 h-7 sm:h-8 object-cover"
-                    />
-                  ) : (
-                    <FaUserCircle className="w-7 sm:w-8 h-7 sm:h-8 text-gray-700" />
-                  )}
-                  <div className="flex flex-col mt-2 mb-2">
-                    <div className="bg-white shadow-md p-2 rounded-lg max-w-sm sm:max-w-md">
-                      <div className="flex justify-between mb-1">
-                        <span className="font-semibold text-[15px] text-black">
-                          {contact?.name}
-                        </span>
-                        <span className="text-gray-500 text-sm">{dummyTimestamp}</span>
-                      </div>
-                      <p className="text-base text-black">{contact.lastMessage}</p>
-                    </div>
-                  </div>
-                </div>
+        )}
+        <div ref={messageEndRef} />
         
-                {/* User's First Message */}
-                <div className="flex justify-end mt-2 mb-2">
-                  <div className="bg-teal-100 shadow-md p-2 rounded-lg max-w-sm sm:max-w-md">
-                    <div className="flex justify-between mb-1">
-                      <span className="font-semibold text-[15px] text-black">You</span>
-                      <span className="text-gray-500 text-sm">
-                        {new Date(userMessage.timestamp).toLocaleTimeString()}
-                      </span>
-                    </div>
-                    <p className="text-base text-black">{userMessage.text}</p>
-                  </div>
-                </div>
-              </div>
-            );
-          }
-          // Render for subsequent messages
-         // Render for subsequent messages
-return (
-  <div key={index}>
-    <div className="flex items-start gap-2">
-      <div className="relative">
-        {contact?.image ? (
-          <img
-            src={contact.image}
-            alt="Profile"
-            className="rounded-full w-7 sm:w-8 h-7 sm:h-8 object-cover"
-          />
-        ) : (
-          <FaUserCircle className="sm:w-8 sm:h-8 w-7 h-7 text-gray-700" />
-        )}
       </div>
-      <div className="flex flex-col mt-2 mb-2">
-        <div className="bg-white shadow-md p-2 rounded-lg max-w-xs sm:max-w-md">
-          <div className="flex justify-between mb-1">
-            <span className="font-semibold text-[15px] text-black">{contact?.name}</span>
-            <span className="text-gray-500 text-sm">{dummyTimestamp}</span>
-          </div>
-
-          {/* Check if file exists before rendering */}
-          {randomContactMessage?.file && randomContactMessage.file.type === 'document' && (
-            <div className="flex items-center gap-2 mt-2">
-              {/* File icon */}
-              {getFileIcon(randomContactMessage.file?.ext)}
-
-              {/* File details */}
-              <div className="text-black font-semibold text-ellipsis overflow-hidden max-w-[200px] sm:max-w-none">
-                {extractFileName(randomContactMessage.file?.url)} {/* Extract file name */}
-              </div>
-              <div className="text-gray-500 text-sm">
-                {randomContactMessage.file?.size
-                  ? formatFileSize(randomContactMessage.file?.size)
-                  : '100 KB'} {/* If size is available, use it; otherwise, use a dummy size */}
-              </div>
-              <a
-                href={randomContactMessage.file?.url}
-                download
-                className="text-blue-500 ml-2 text-lg"
-              >
-                <FaDownload />
-              </a>
-            </div>
-          )}
-
-          {/* Check for audio file */}
-          {randomContactMessage?.file && randomContactMessage.file.type === 'audio' && (
-            <div className="relative mt-2 flex items-center gap-2 rounded-lg p-2 w-[180px] sm:w-[350px]">
-              {/* Download Icon */}
-              <a
-                href={randomContactMessage.file?.url}
-                download
-                className="text-black"
-                title="Download Audio"
-              >
-                <Icon icon="mdi:download" className="text-2xl bg-white p-1 rounded-full shadow-md" />
-              </a>
-
-              {/* Audio Player */}
-              <audio controls className="flex-grow">
-                <source src={randomContactMessage.file?.url} type="audio/mp3" />
-                Your browser does not support the audio element.
-              </audio>
-            </div>
-          )}
-
-          {/* Check for image file */}
-          {randomContactMessage?.file && randomContactMessage.file.type === 'image' && (
-            <div className="relative">
-              <img
-                src={randomContactMessage.file?.url}
-                alt="file"
-                className="max-w-full h-auto mt-2 rounded-lg sm:max-w-sm"
-              />
-              <a
-                href={randomContactMessage.file?.url}
-                download
-                className="absolute top-2 right-2 text-black"
-              >
-                <Icon icon="mdi:download" className="text-2xl bg-white p-1 rounded-full shadow-md" />
-              </a>
-            </div>
-          )}
-
-          {/* Check for video file */}
-          {randomContactMessage?.file && randomContactMessage.file.type === 'video' && (
-            <div className="relative">
-              <video controls className="mt-2 w-[180px] sm:w-[350px] rounded-lg">
-                <source src={randomContactMessage.file?.url} type="video/mp4" />
-                Your browser does not support the video element.
-              </video>
-              <a
-                href={randomContactMessage.file?.url}
-                download
-                className="absolute top-2 right-2 text-black"
-              >
-                <Icon icon="mdi:download" className="text-2xl bg-white p-1 rounded-full shadow-md" />
-              </a>
-            </div>
-          )}
-
-          {/* Render text message after the file */}
-          <p className="text-base text-black pt-2 break-words">{randomContactMessage?.text}</p>
-        </div>
-      </div>
-    </div>
-
-    {/* User's message */}
-    <div className="flex justify-end mt-2 mb-2">
-      <div className="bg-teal-100 shadow-md p-2 rounded-lg max-w-xs sm:max-w-md">
-        <div className="flex justify-between mb-1">
-          <span className="font-semibold text-base text-black">You</span>
-          <span className="text-gray-500 text-sm">{new Date(userMessage.timestamp).toLocaleTimeString()}</span>
-        </div>
-
-        {/* Check for image file */}
-        {userMessage?.file && userMessage.file.type === 'image' && (
-          <div className="relative">
-            <img
-              src={userMessage.file?.url}
-              alt="file"
-              className="w-full h-auto mt-2 rounded-lg sm:max-w-sm"
-            />
-            <a
-              href={userMessage.file?.url}
-              download
-              className="absolute top-2 right-2 text-black"
-            >
-              <Icon icon="mdi:download" className="text-2xl bg-white p-1 rounded-full shadow-md" />
-            </a>
-          </div>
-        )}
-
-        {/* Check for video file */}
-        {userMessage?.file && userMessage.file.type === 'video' && (
-          <div className="relative">
-            <video controls className="mt-1 w-[180px] sm:w-[350px] rounded-lg">
-              <source src={userMessage.file?.url} type="video/mp4" />
-              Your browser does not support the video element.
-            </video>
-            <a
-              href={userMessage.file?.url}
-              download
-              className="absolute top-2 right-2 text-black"
-            >
-              <Icon icon="mdi:download" className="text-2xl bg-white p-1 rounded-full shadow-md" />
-            </a>
-          </div>
-        )}
-
-        {/* Check for document file */}
-        {userMessage?.file && userMessage.file.type === 'document' && (
-          <div className="flex items-center gap-2 mt-2">
-            {/* File icon */}
-            {getFileIcon(userMessage.file?.ext)}
-
-            {/* File details */}
-            <div className="text-black font-semibold text-ellipsis overflow-hidden max-w-[200px] sm:max-w-none">
-              {extractFileName(userMessage.file?.url)} {/* Extract file name */}
-            </div>
-            <div className="text-gray-500 text-sm">
-              {userMessage.file?.size
-                ? formatFileSize(userMessage.file?.size)
-                : '100 KB'} {/* If size is available, use it; otherwise, use a dummy size */}
-            </div>
-
-            {/* Download icon */}
-            <a
-              href={userMessage.file?.url}
-              download
-              className="text-blue-500 ml-2"
-            >
-              <FaDownload />
-            </a>
-          </div>
-        )}
-
-        {/* Check for audio file */}
-        {userMessage?.file && userMessage.file.type === 'audio' && (
-          <div className="relative mt-2 flex items-center gap-2 rounded-lg p-2 w-[180px] sm:w-[350px]">
-            {/* Download Icon */}
-            <a
-              href={userMessage.file?.url}
-              download
-              className="text-black"
-              title="Download Audio"
-            >
-              <Icon icon="mdi:download" className="text-2xl bg-white p-1 rounded-full shadow-md" />
-            </a>
-
-            {/* Audio Player */}
-            <audio controls className="flex-grow">
-              <source src={userMessage.file?.url} type="audio/mp3" />
-              Your browser does not support the audio element.
-            </audio>
-          </div>
-        )}
-
-        {/* Render user text message after the file */}
-        <p className="text-base text-black pt-2 break-words">{userMessage?.text}</p>
-      </div>
-    </div>
+    ))}
   </div>
-);
+)}
 
-          
-          
-        })
-      )}
-     
-    </div>
-  )}
+
 
 {selectedOption === "Files" && (
   <div>
@@ -1091,6 +823,11 @@ return (
           type="text"
           value={message}
           onChange={(e) => setMessage(e.target.value)}
+          onKeyDown={(e) => {
+            if (e.key === 'Enter') {
+                sendMessage(); // Call sendMessage when Enter is pressed
+            }
+        }}
           placeholder="Type a message..."
           className="flex-grow px-2 border-none font-[700] text-gray-700 text-sm sm:text-base md:text-clip outline-none sm:h-10 h-8"
           onFocus={() => setShowEmojiPicker(false)} // Close emoji picker on focus
@@ -1102,7 +839,7 @@ return (
             icon={message.length > 0 ? 'fluent:send-24-filled' : isRecording ? 'carbon:microphone-off-filled' : 'carbon:microphone-filled'}
             width="20"
             height="20"
-            onClick={message.length > 0 ? () => alert('Message sent!') : handleMicClick}
+            onClick={message.length > 0 ? () => sendMessage : handleMicClick}
             className="cursor-pointer font-bold"
             style={{ color: '#01C2B5' }}
           />
@@ -1110,13 +847,6 @@ return (
       </div>
     )
   }
-
-
-
-
-
-
-
 
         </div>
 
