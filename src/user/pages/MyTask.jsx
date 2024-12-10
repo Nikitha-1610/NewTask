@@ -2,9 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { GoClock } from "react-icons/go";
 import { CiCalendar } from "react-icons/ci";
 import { FaRegCircle } from "react-icons/fa";
-import { GoPeople } from "react-icons/go";
-import { GoPerson } from "react-icons/go";
-import { MdOutlineDescription } from "react-icons/md";
+import { GoPeople, GoPerson } from "react-icons/go";
 import { BsPaperclip } from "react-icons/bs";
 import { FiMessageCircle } from "react-icons/fi";
 import { HiOutlineDotsVertical } from "react-icons/hi";
@@ -14,48 +12,50 @@ const MyTask = () => {
   const [tasks, setTasks] = useState([]);
   const [showDiv1, setShowDiv1] = useState(false);
   const [showDiv2, setShowDiv2] = useState(false);
+  const [hoursSpent, setHoursSpent] = useState('');
+  const [selectedTaskId, setSelectedTaskId] = useState(null);
 
-  const handleSubmit = (e) => {
-    e.preventDefault(); // Prevent default form submission behavior
-    setShowDiv1(false); // Hide the div
-  };
-
-  const handleInputChange = (e) => {
-    const { name, value } = e.target;
-    setFormData((prev) => ({
-      ...prev,
-      [name]: value,
-    }));
-  };
+  // Fetch tasks on component mount
   useEffect(() => {
-    // Fetch the tasks from the API
-    fetch("https://3qhglx2bhd.execute-api.us-east-1.amazonaws.com/task/getEmployeeTask/Mukilan")
-      .then((response) => response.json())
-      .then((data) => {
-        if (data.status === 200) {
-          setTasks(data.message);
-        } else {
-          console.error("Failed to fetch tasks:", data);
-        }
-      })
-      .catch((error) => console.error("Error fetching tasks:", error));
+    localStorage.setItem('employeeName', 'Mukilan');
+    const employeeName = localStorage.getItem('employeeName');
+
+    if (employeeName) {
+      fetch(`https://3qhglx2bhd.execute-api.us-east-1.amazonaws.com/task/getEmployeeTask/${employeeName}`)
+        .then((response) => response.json())
+        .then((data) => {
+          if (data.status === 200) {
+            setTasks(data.message);
+          } else {
+            console.error("Failed to fetch tasks:", data);
+          }
+        })
+        .catch((error) => console.error("Error fetching tasks:", error));
+    } else {
+      console.error("Employee name not found in localStorage.");
+    }
   }, []);
 
-  const handleToggleDiv1 = () => {
-    setShowDiv1((prev) => !prev); // Toggle visibility of Div 1
+  // Toggle status update menu
+  const handleToggleDiv1 = (taskId) => {
+    setSelectedTaskId(taskId);
+    setShowDiv1((prev) => !prev);
   };
 
-  const handleToggleDiv2 = () => {
-    setShowDiv2((prev) => !prev); // Toggle visibility of Div 2
-  };
+  // Handle task status update
+  const handleSubmit = (e, status) => {
+    e.preventDefault();
+    if (!hoursSpent) {
+      console.error("Please enter hours spent.");
+      return;
+    }
 
-  const handleCompleteTask = (taskId) => {
     const body = {
-      taskStatus: "Completed",
-      hoursSpent: "3"
+      taskStatus: status,
+      hoursSpent: hoursSpent,
     };
 
-    fetch(`https://3qhglx2bhd.execute-api.us-east-1.amazonaws.com/task/updateTask/${taskId}`, {
+    fetch(`https://3qhglx2bhd.execute-api.us-east-1.amazonaws.com/task/updateTask/${selectedTaskId}`, {
       method: 'PUT',
       headers: {
         'Content-Type': 'application/json',
@@ -65,13 +65,12 @@ const MyTask = () => {
       .then((response) => response.json())
       .then((data) => {
         if (data.status === 200) {
-          // Update the task status in the local state
           setTasks((prevTasks) =>
             prevTasks.map((task) =>
-              task.taskId === taskId ? { ...task, taskStatus: "Completed" } : task
+              task.taskId === selectedTaskId ? { ...task, taskStatus: status } : task
             )
           );
-          console.log("Task updated successfully:", data);
+          setShowDiv1(false);
         } else {
           console.error("Failed to update task:", data);
         }
@@ -80,162 +79,107 @@ const MyTask = () => {
   };
 
   return (
-    <>
-      <div className="space-y-5">
-        <div className="flex items-center justify-between pb-4 border-gray-300">
-          <h2 className="text-xl font-bold bg-yellow-200 px-2 p-1 rounded-md text-gray-700">MyTask</h2>
-          <div className="flex gap-3">
-           
-            <button onClick={handleToggleDiv2} className="px-3 py-2 text-sm text-white bg-gray-300 rounded hover:bg-gray-600">
-              Message
-            </button>
-          </div>
-        </div>
+    <div className="space-y-5">
+      <h2 className="text-xl font-bold px-2 py-1 rounded-md text-gray-700">MyTask</h2>
 
-        <div className="w-full mx-auto p-6 bg-white rounded-lg shadow-md border border-gray-200">
-          {tasks.map((task) => (
-            <div key={task.taskId} className="mb-4">
-              <span className="font-bold">Task: {task.taskName}</span>
-              <table className="border-separate border-spacing-2 border-none mt-2">
-                <tbody>
-                  <tr>
-                    <td className="status w-50 flex">
-                      <GoClock /> <div>Status</div>
-                    </td>
-                    <td>
-                      <div className="flex">
-                        <FaRegCircle /> <div>{task.taskStatus}</div>
-                      </div>
-                    </td>
-                  </tr>
-                  <tr>
-                    <td className="date w-50 flex">
-                      <CiCalendar /> <div>Due Date</div>
-                    </td>
-                    <td>{new Date(task.deadline).toLocaleDateString()}</td>
-                  </tr>
-                  <tr>
-                    <td className="flex">
-                    <GoPeople /><div>Assigned to</div>
-                    </td>
-                    <td>
-                      {task.assignedTo.map((assignee, index) => (
-                        <div key={index} className="flex items-center">
-                          {/* <img
-                            src="Images/person.jpeg"
-                            alt="User Profile"
-                            className="w-[15px] h-[15px] rounded-full mr-2"
-                          /> */} <GoPerson />
-                          {assignee}
-                        </div>
-                      ))}
-                    </td>
-                  </tr>
-                  <tr>
-                    <td className="flex">
-                    <GoPerson /><div>Assigned By</div>
-                    </td>
-                    <td>
-                      <div className="flex items-center">
-                      <GoPerson />
-                        {task.assignedBy}
-                      </div>
-                    </td>
-                  </tr>
-                </tbody>
-              </table>
-          <div className="mt-8">
-        <div className="flex items-center gap-2">
-          <Icon icon="tabler:file-description" height={22} width={22} />
-          <h2 className="text-base font-semibold">Description</h2>
-        </div>
-        <textarea
-          value={task.taskDescription || "No description available."}
-          placeholder="Description"
-          className="w-full p-2 mt-4 text-sm text-gray-700 bg-gray-100 border border-gray-300 rounded-md resize-none focus:outline-none"
-        />
-      </div><br></br>
-              <div>
-                    <div className="flex justify-between">                    
-                <span className="flex"><BsPaperclip />Attachment(4)</span>
+      <div className="w-full  bg-white rounded-lg shadow-md border border-gray-200">
+        {tasks.map((task) => (
+          <div key={task.taskId} className="mb-5 p-4 bg-gray-50 border rounded-md relative">
+            {/* Update Button */}
+            <button 
+              onClick={() => handleToggleDiv1(task.taskId)} 
+              className="absolute top-4 right-4 px-3 py-2 text-sm text-white bg-teal-500 rounded hover:bg-teal-600"
+            >
+              Update
+            </button>
+
+            <h3 className="font-bold text-xl">{task.taskName}</h3>
+
+            <table className="border-separate border-spacing-2 border-none mt-2">
+              <tbody>
+                <tr>
+                  <td><GoClock /> Status</td>
+                  <td><FaRegCircle /> {task.taskStatus}</td>
+                </tr>
+                <tr>
+                  <td><CiCalendar /> Due Date</td>
+                  <td>{new Date(task.deadline).toLocaleDateString()}</td>
+                </tr>
+                <tr>
+                  <td><GoPeople /> Assigned to</td>
+                  <td>{task.assignedTo.join(', ')}</td>
+                </tr>
+                <tr>
+                  <td><GoPerson /> Assigned By</td>
+                  <td>{task.assignedBy}</td>
+                </tr>
+              </tbody>
+            </table>
+
+            {/* Attachments Section */}
+            <div className="mt-4">
+              <div className="flex justify-between items-center">
+                <div className="flex items-center">
+                  <BsPaperclip /> <span>Attachment</span>
+                </div>
                 <button className="text-blue-500">Download</button>
-                </div><br></br>
-                <div className="flex justify-between">
-                    <div className="w-[250px] h-[70px] p-2 rounded  bg-white shadow-[2px_2px_4px_0px_#7F767626] shadow-2px_2px_2px_0px_#7F767626]"></div>
-                    <div className="w-[250px] h-[70px] p-2 rounded  bg-white shadow-[2px_2px_4px_0px_#7F767626] shadow-2px_2px_2px_0px_#7F767626]"></div>
-                    <div className="w-[250px] h-[70px] p-2 rounded  bg-white shadow-[2px_2px_4px_0px_#7F767626] shadow-2px_2px_2px_0px_#7F767626]"></div>
-                    <div className="w-[70px] h-[70px] p-2 rounded  bg-white shadow-[2px_2px_4px_0px_#7F767626] shadow-2px_2px_2px_0px_#7F767626]"></div>
-                </div>
-                </div>
-                <div className="" >
-                <span className="flex"><FiMessageCircle />Comments(8)</span><br></br>
-               
-                <textarea
-            className={'w-full h-10 flex items-center gap-2 p-2 text-sm text-gray-700 bg-blue-100 border border-gray-300 rounded-md'}
-            name="taskDescription"
-           
-            onChange={handleInputChange}
-            placeholder="Comment Here..."
-          />
-                    <br></br>
-                    <textarea
-            className={'w-full h-10 flex items-center gap-2 p-2 text-sm text-gray-700 bg-blue-100 border border-gray-300 rounded-md'}
-            name="taskDescription"
-           
-            onChange={handleInputChange}
-            placeholder="Your Comment..."
-          />
-                </div><br></br>
-                <div className="w-[990px] h-[50px] relative justify-center">
-                  <button onClick={handleToggleDiv1} className="px-3 py-2 text-sm relative left-[450px] text-white bg-teal-500 rounded hover:bg-teal-600">
-              Updates
-            </button></div>
+              </div>
+              <div className="flex mt-3 gap-2">
+                {[...Array(4)].map((_, index) => (
+                  <div key={index} className="w-1/4 h-[70px] p-2 bg-white shadow-md rounded"></div>
+                ))}
+              </div>
             </div>
-            
-          ))}
-        </div>
-        {showDiv1 && (
-   <div className="w-64 h-[140px] absolute top-20 right-20 bg-white border border-gray-300 shadow-md rounded-md">
-   <div><h1 className="flex relative left-4">What is your project's status</h1></div>
-   <div className="w-[230px] h-12 relative top-3 left-3 bg-white border border-gray-300 shadow-md rounded-md">
-       <p className="text-xs text-gray-500">Tell us,how the project's going</p>
-   </div>
-   <div className="relative flex top-5 justify-around">
-   <button onClick={handleSubmit} className="px-3 py-2 text-white text-xs bg-green-400  rounded hover:bg-green-600">Completed</button>
-   <button onClick={handleSubmit} className="px-3 py-2 text-white text-xs bg-orange-400  rounded hover:bg-orange-600">In Progress</button>
-   <button onClick={handleSubmit} className="px-3 py-2 text-white text-xs bg-red-400  rounded hover:bg-red-600">In Test</button>
-   </div>
- </div>
-    
-      )}
-      {showDiv2 && (
-        <div className="w-64 h-[280px] absolute top-20 right-20 bg-white border border-gray-300 shadow-md rounded-md">
-          <div className="w-full h-15 flex  bg-white  p-2">
-            <img src="/Images/person1.png" className="w-10 h-10 rounded-s-full"></img>
-            <div className="relative left-4">
-              <span className="text-sm">Username 4</span><br></br>
-              <span className="text-xs">2024/10/21</span>
+
+            {/* Comments Section */}
+            <div className="mt-4">
+              <div className="flex items-center gap-2">
+                <FiMessageCircle /> <span>Comments</span>
+              </div>
+              <div className="p-2 bg-blue-100 border border-gray-300 rounded-md">
+                {task.comments && task.comments.length > 0 ? (
+                  task.comments.map((comment, index) => (
+                    <div key={index} className="p-2 bg-white rounded-md mb-2">
+                      {comment}
+                    </div>
+                  ))
+                ) : (
+                  <span>No comments available</span>
+                )}
+              </div>
+
+              <div className="mt-2">
+                <input 
+                  type="text" 
+                  placeholder="Your comment..." 
+                  className="w-full p-2 border border-gray-300 rounded-md"
+                />
+              </div>
             </div>
-            <button className="relative left-[100px] "><HiOutlineDotsVertical /></button>
           </div>
-          <div className="p-3">
-            <p className="text-xs text-gray-800">Did you done the first project, please me the completed pdfs.</p>
-          </div>
-          <div className="w-[230px] h-[100px] relative left-3 bg-gray-300 border border-gray-300 shadow-md rounded-md">
-            <p className="text-xs">@Jhon,Write your Comment.</p>
-          </div>
-          <div className="w-[130px] h-[30px] relative left-[120px] top-4 flex justify-around">
-            <button className="px-3 py-2 text-white text-xs bg-gray-300  rounded hover:bg-gray-600">Close</button>
-            <button className="px-3 py-2 text-white text-xs  bg-green-500  rounded hover:bg-teal-600">Save</button>
-          </div>
-        </div>
-          )
-      }
+        ))}
       </div>
 
-      
-    </>
+      {showDiv1 && (
+        <div className="w-[300px] h-[170px] absolute top-20 right-20 bg-white border border-gray-300 shadow-md rounded-md">
+          <h1 className="p-4 text-lg">Update Task Status</h1>
+          <input
+            type="number"
+            placeholder="Enter hours"
+            value={hoursSpent}
+            onChange={(e) => setHoursSpent(e.target.value)}
+            className="w-full p-2 mb-4 border border-gray-300 rounded-md"
+          />
+          <div className="flex justify-around">
+            <button onClick={(e) => handleSubmit(e, 'Completed')} className=" px-3 py-2 text-sm text-white bg-teal-500 rounded hover:bg-teal-600">Completed</button>
+            <button onClick={(e) => handleSubmit(e, 'In-Progress')} className="px-3 py-2 text-sm text-white bg-orange-500 rounded hover:bg-orange-600">In Progress</button>
+            <button onClick={(e) => handleSubmit(e, 'In-Test')} className="px-3 py-2 text-sm text-white bg-red-500 rounded hover:bg-red-600">In Test</button>
+          </div>
+        </div>
+      )}
+    </div>
   );
 };
 
 export default MyTask;
+
