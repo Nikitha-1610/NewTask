@@ -75,7 +75,7 @@ const People = () => {
 
   const closeModal = () => {
     setModalVisible(false);
-    setModalActionVisible(false); // Added this line to ensure action modal is also closed
+    setModalActionVisible(false); 
     setConfirmModalVisible(false);
     setSelectedUserIndex(null);
     setModalType("");
@@ -89,7 +89,7 @@ const People = () => {
         await axiosInstance.put(`employee/apporve/${user.email}`);
         toast.success(`${user.name} has been approved.`);
         console.log(`User approved:`, user.email);
-        getAllusers(); // Refresh the user list after approval
+        getAllusers(); 
       } catch (error) {
         console.error("Error approving user:", error);
         toast.error("Failed to approve the user.");
@@ -103,7 +103,7 @@ const People = () => {
       const user = currentUsers[selectedUserIndex];
 
       try {
-        // Handle action based on the type (approve, on-hold, reject)
+        
         switch (action) {
           case "approve":
             await axiosInstance.put(`/employee/approve/${user.email}`);
@@ -112,7 +112,7 @@ const People = () => {
             break;
 
           case "on-hold":
-            // Pass status: "On-Hold" in the request body
+            
             await axiosInstance.put(`/user/updateDetails/${user.email}`, {
               status: "On-Hold",
             });
@@ -130,13 +130,13 @@ const People = () => {
             throw new Error("Unknown action");
         }
 
-        // Refresh the user list after action
+       
         getAllusers();
       } catch (error) {
         console.error(`Error performing ${action} action:`, error);
         toast.error(`Failed to ${action} the user.`);
       } finally {
-        // Ensure modal is closed in both success and failure cases
+        
         closeModal();
       }
     }
@@ -173,8 +173,7 @@ const People = () => {
             </div>
           </div>
 
-          {/* Filter Section */}
-          {/* Filter Section */}
+        
          <div className="flex flex-wrap gap-4 items-center mb-4">
             <select
               className="border border-gray-300 bg-gray-200 rounded-lg p-2 text-gray-700"
@@ -202,13 +201,13 @@ const People = () => {
             </select>
           </div>
 
-          {/* Table with Fixed Height */}
+         
           <div
-            className="relative w-full border border-gray-300 rounded-lg"
+            className="relative w-full  rounded-lg"
             style={{ height: "400px" }}
           >
-            <div className="h-full overflow-y-auto">
-              <div className="overflow-x-auto">
+            <div className="relative w-full  rounded-lg flex flex-col" style={{ height: 'auto' }} >
+              <div className="flex-grow overflow-y-auto">
                 <table className="min-w-full border-collapse">
                   <thead className="bg-gray-100 sticky top-0">
                     <tr>
@@ -276,7 +275,7 @@ const People = () => {
             </div>
 
            
-            <div className="absolute bottom-0 w-full bg-white border-t border-gray-300 py-2 flex justify-between items-center px-4">
+            <div className="bg-white  py-2 flex justify-between items-center px-4">
  
   <button
     className="text-gray-500 hover:text-black"
@@ -315,7 +314,7 @@ const People = () => {
 
           </div>
 
-          {/* Approve Confirmation Modal */}
+          
           {confirmModalVisible && (
             <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
               <div className="bg-white p-6 rounded-lg shadow-lg">
@@ -347,7 +346,7 @@ const People = () => {
                 <div className="flex justify-end">
                   <button
                     className="bg-gray-300 px-1 py-1 rounded-lg"
-                    onClick={closeModal} // Fix: Ensures modal closes on clicking close icon
+                    onClick={closeModal} 
                   >
                     <Icon icon="material-symbols:close" />
                   </button>
@@ -376,7 +375,7 @@ const People = () => {
                 <div className="flex justify-end">
                   <button
                     className="bg-gray-300 px-1 py-1 rounded-lg"
-                    onClick={closeModal} // Fix: Ensures modal closes on clicking close icon
+                    onClick={closeModal} 
                   >
                     <Icon icon="material-symbols:close" />
                   </button>

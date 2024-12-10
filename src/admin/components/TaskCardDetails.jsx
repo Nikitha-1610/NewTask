@@ -14,8 +14,7 @@ const TaskCardDetails = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [priority, setPriority] = useState("Normal");
-  const [fileSize, setFileSize] = useState(null);
-  const [downloading, setDownloading] = useState(false);
+ 
  
 
   useEffect(() => {
@@ -37,27 +36,9 @@ const TaskCardDetails = () => {
     navigate("/admin/task");
   };
 
-  const downloadFile = async (url) => {
-    try {
-      setDownloading(true);
-      const response = await axiosInstance.head(url);
-      const contentLength = response.headers["content-length"];
-      const sizeInKB = (contentLength / 1024).toFixed(2);
-      setFileSize(sizeInKB);
+  
 
-      // Create a download link and trigger the download
-      const link = document.createElement("a");
-      link.href = url;
-      link.download = url.split("/").pop();
-      link.click(); // Trigger the download
-    } catch (error) {
-      console.error("Error downloading file:", error);
-    } finally {
-      setDownloading(false); // Reset downloading state
-    }
-  };
-
-    // Loader for page load
+    
     if (loading) {
       return (
         <div className="flex justify-center items-center h-screen">
@@ -192,77 +173,39 @@ const TaskCardDetails = () => {
         </div>
 
         <div className="mt-4">
-          <div className="flex justify-between">
-            <div className=" flex gap-2">
-              <Icon
-                icon="cuida:attachment-clip-outline"
-                height={22}
-                width={22}
-              />
-              <h4 className="text-base font-semibold text-gray-400">
-                Attachments ({referenceFileUrl.length})
-              </h4>
-            </div>
-            <div className=" flex gap-2 text-blue-400 cursor-pointer">
-              <h2>Download</h2>
-              <div>
-                <Icon
-                  icon="material-symbols-light:download"
-                  height={22}
-                  width={22}
-                  onClick={() => downloadFile(referenceFileUrl[0])} // Trigger download for the first file
-                />
-              </div>
-            </div>
-          </div>
-          <div className="flex flex-wrap gap-4 mt-2">
-            {referenceFileUrl.map((url, index) => (
-              <div
-                key={index}
-                className="flex items-center gap-3 p-2 border rounded-md border-gray-300 bg-gray-50 w-full md:w-80"
-              >
-                <Icon
-                  icon="mdi:file-pdf"
-                  className="text-red-500"
-                  height={40}
-                  width={40}
-                />
-                <div className="flex-grow">
-                  <div className="text-base font-medium"></div>
-                  <div className="text-sm text-gray-500"></div>
-                  <div className="text-sm flex gap-2">
-                    <span className="font-medium">Size:</span>
-                    <a href="#" className="ml-2 text-blue-600 underline">
-                      Download
-                    </a>
-                    <Icon
-                      icon="material-symbols-light:download"
-                      height={20}
-                      width={20}
-                      className=" text-blue-600"
-                    />
-                  </div>
-                </div>
-                {taskStatus === "completed" ? (
-                  <Icon
-                    icon="fluent-mdl2:completed-solid"
-                    height={22}
-                    width={22}
-                  />
-                ) : (
-                  <Icon
-                    icon="material-symbols-light:arrow-upload-progress"
-                    height={22}
-                    width={22}
-                  />
-                )}
-              </div>
-            ))}
-            {/* <button className="flex items-center justify-center h-20 w-16 border rounded-md border-gray-300 text-gray-600 hover:bg-gray-100">
-              <Icon icon="mdi:plus" height={30} width={30} />
-            </button> */}
-          </div>
+  <div className="flex justify-between">
+    <div className="flex gap-2">
+      <Icon icon="cuida:attachment-clip-outline" height={22} width={22} />
+      <h4 className="text-base font-semibold text-gray-400">
+        Attachments ({referenceFileUrl.length})
+      </h4>
+    </div>
+  </div>
+  <div className="flex flex-wrap gap-4 mt-2">
+    {referenceFileUrl.map((url, index) => (
+      <div
+        key={index}
+        className="flex items-center gap-3 p-2 border rounded-md border-gray-300 bg-gray-50 w-full md:w-80"
+      >
+        <Icon
+          icon="mdi:file-pdf"
+          className="text-red-500"
+          height={40}
+          width={40}
+        />
+        <div className="flex">
+          {/* Removed the size text */}
         </div>
+        <div className="text-blue-600 cursor-pointer">
+          <a href={url} target="_blank" rel="noopener noreferrer">
+            <button className="text-blue-600 hover:underline">View</button>
+          </a>
+        </div>
+      </div>
+    ))}
+  </div>
+</div>
+
 
         <div className="mt-4">
           <div className="flex items-center gap-2">

@@ -41,7 +41,7 @@ const UserHome = () => {
     inTestTasks: [],
     inProgressTasks: [],
     completedTasks: [],
-    todayAssignedTasks: [],
+    assignedTasks: [],
   });
   const [filterLabel, setFilterLabel] = useState("");
   const [showFilterDropdown, setShowFilterDropdown] = useState(false);
@@ -64,7 +64,7 @@ const UserHome = () => {
         });
         if (response.ok) {
           const data = await response.json();
-          console.log("Fetched task data:", data);
+          console.log("Fetched task data:", data); 
           setTaskData(data.message); 
         } else {
           console.error("Failed to fetch tasks:", response.status);
@@ -76,6 +76,7 @@ const UserHome = () => {
       }
     };
     
+    
 
     fetchTasks();
   }, []); 
@@ -86,7 +87,7 @@ const UserHome = () => {
       ...(taskData.inTestTasks?.flatMap((task) => task.taskName) || []),
       ...(taskData.inProgressTasks?.flatMap((task) => task.taskName) || []),
       ...(taskData.completedTasks?.flatMap((task) => task.taskName) || []),
-      ...(taskData.todayAssignedTasks?.flatMap((task) => task.taskName) || []),
+      ...(taskData.assignedTasks?.flatMap((task) => task.taskName) || []),
     ]),
   ];
 
@@ -99,7 +100,7 @@ const UserHome = () => {
     {
       title: "ASSIGNED TASKS",
       color: "green",
-      tasks: taskData.todayAssignedTasks.filter((task) =>
+      tasks: taskData.assignedTasks.filter((task) =>
         filterLabel ? task.taskName === filterLabel : true
       ),
       path: "/assign",
@@ -137,9 +138,7 @@ const UserHome = () => {
     }));
   };
 
-  const handleAddTask = () => {
-    navigate("/addtasks");
-  };
+  
 
   return (
     <div className="p-2 min-h-screen">
@@ -222,7 +221,7 @@ const UserHome = () => {
   <div
     key={taskIndex}
     className="block bg-white shadow rounded-lg p-4 mb-4 relative border border-gray-400 w-full cursor-pointer"
-    onClick={() => navigate(`/user/home/${task.taskId}`)}  // Navigate to the details page
+    onClick={() => navigate(`/user/home/${task.taskId}`)}  
   >
     <div className="absolute top-2 right-2">
       {task.taskStatus === "Completed" ? (
@@ -253,18 +252,17 @@ const UserHome = () => {
           {task.taskDescription || "No description available."}
         </div>
         <div className="flex items-center text-sm text-gray-600 mt-2 space-x-4">
-          <div className="flex items-center">
-            <FontAwesomeIcon
-              icon={faComment}
-              className="mr-1"
-            />
-            {task.comment?.length || 0} Comments
-          </div>
-          <div className="flex items-center">
-            <FontAwesomeIcon icon={faLink} className="mr-1" />
-            {task.attachments?.length || 0} Attachments
-          </div>
-        </div>
+  <div className="flex items-center">
+    <FontAwesomeIcon icon={faComment} className="mr-1" />
+    {Array.isArray(task.comment) ? task.comment.length : 0} Comments
+  </div>
+  <div className="flex items-center">
+    <FontAwesomeIcon icon={faLink} className="mr-1" />
+    {Array.isArray(task.referenceFileUrl) ? task.referenceFileUrl.length : 0} Attachments
+  </div>
+</div>
+
+
       </div>
     </div>
   </div>
