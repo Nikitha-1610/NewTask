@@ -275,28 +275,44 @@ const People = () => {
               </div>
             </div>
 
-            {/* Fixed Pagination */}
+           
             <div className="absolute bottom-0 w-full bg-white border-t border-gray-300 py-2 flex justify-between items-center px-4">
-              <button
-                className="text-gray-500 hover:text-black"
-                onClick={() => setCurrentPage((prev) => Math.max(prev - 1, 1))}
-                disabled={currentPage === 1}
-              >
-                Previous
-              </button>
-              <p>
-                Page {currentPage} of {totalPages}
-              </p>
-              <button
-                className="text-gray-500 hover:text-black"
-                onClick={() =>
-                  setCurrentPage((prev) => Math.min(prev + 1, totalPages))
-                }
-                disabled={currentPage === totalPages}
-              >
-                Next
-              </button>
-            </div>
+ 
+  <button
+    className="text-gray-500 hover:text-black"
+    onClick={() => setCurrentPage((prev) => Math.max(prev - 1, 1))}
+    disabled={currentPage === 1}
+  >
+    Previous
+  </button>
+
+ 
+  <div className="flex gap-2">
+    {Array.from({ length: totalPages }, (_, index) => index + 1).map((page) => (
+      <button
+        key={page}
+        onClick={() => setCurrentPage(page)}
+        className={`px-3 py-1 rounded-md ${
+          currentPage === page 
+            ? 'bg-blue-500 text-white' 
+            : 'bg-gray-200 text-gray-700 hover:bg-blue-500 hover:text-white'
+        }`}
+      >
+        {page}
+      </button>
+    ))}
+  </div>
+
+  
+  <button
+    className="text-gray-500 hover:text-black"
+    onClick={() => setCurrentPage((prev) => Math.min(prev + 1, totalPages))}
+    disabled={currentPage === totalPages}
+  >
+    Next
+  </button>
+</div>
+
           </div>
 
           {/* Approve Confirmation Modal */}
