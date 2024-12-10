@@ -1,4 +1,6 @@
 import { useEffect, useState } from "react";
+import axios from "axios";
+
 import { Icon } from "@iconify/react";
 import axiosInstance from "../../common/utils/axios/axiosInstance";
 import { s3Client } from "../../common/utils/aws/awsconfig";
@@ -30,6 +32,29 @@ const AddTasks = () => {
   const [displayReferences, setDisplayReferences] = useState([]);
   const [uploading, setUploading] = useState(false);
   const employeeId = localStorage.getItem("employeeId");
+
+  const [projectOptions, setProjectOptions] = useState([]);
+
+// Function to fetch project names
+useEffect(() => {
+  const fetchProjects = async () => {
+    try {
+      const response = await axios.get(
+        "https://3qhglx2bhd.execute-api.us-east-1.amazonaws.com/project/names"
+      );
+      if (response.status === 200 && response.data.message) {
+        setProjectOptions(response.data.message); // Set the project names from API response
+      } else {
+        console.error("Unexpected API response format:", response);
+      }
+    } catch (error) {
+      console.error("Error fetching project names:", error);
+    }
+  };
+
+  fetchProjects();
+}, []);
+
   
   const getAllEmp = async () => {
     try {
@@ -54,6 +79,8 @@ const AddTasks = () => {
       [name]: value,
     }));
   };
+
+ 
 
   const handleSelectUser = (user) => {
     setFormData((prev) => ({
@@ -294,6 +321,29 @@ const AddTasks = () => {
             <p className="text-sm text-red-500 mt-1">{errors.assignedTo}</p>
            )}
         </div>
+        <div className="mb-4">
+      <label className="block text-sm font-semibold text-gray-500 mb-6">
+        Select Project
+        <select
+          className={`mt-1 block w-full px-3 py-2 bg-white border ${
+            errors.category ? "border-red-500" : "border-gray-300"
+          } rounded-md shadow-sm focus:outline-none focus:ring-teal-500 focus:border-teal-500 sm:text-sm`}
+          name="category"
+          value={formData.category || ""}
+          onChange={handleInputChange}
+        >
+          <option value="">Select a Project</option>
+          {projectOptions.map((project, index) => (
+            <option key={index} value={project}>
+              {project}
+            </option>
+          ))}
+        </select>
+      </label>
+      {errors.category && (
+        <p className="text-sm text-red-500 mt-1">{errors.category}</p>
+      )}
+    </div>
         <div className="mb-4">
           <label className="block text-sm font-semibold text-gray-500 mb-6">
             Select Category
