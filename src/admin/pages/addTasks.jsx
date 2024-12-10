@@ -9,7 +9,7 @@ import { PutObjectCommand } from "@aws-sdk/client-s3";
 const AddTasks = () => {
   const [formData, setFormData] = useState({
     taskName: "",
-    dueDate: "",
+    deadline: "",
     assignedTo: [],
     assignedBy: "john",
     reviewers: "", // Single reviewer as a string
@@ -22,7 +22,7 @@ const AddTasks = () => {
   const [isPopupVisible, setIsPopupVisible] = useState(false); //popup
   const [errors, setErrors] = useState({
     taskName: "",
-    dueDate: "",
+    deadline: "",
     assignedTo: "",
     taskDescription: "",
     project: "",
@@ -159,7 +159,7 @@ const AddTasks = () => {
      // Initialize an errors object to track invalid fields
   const newErrors = {
     taskName: "",
-    dueDate: "",
+    deadline: "",
     assignedTo: "",
     reviewers: "",
     category: "",
@@ -173,9 +173,10 @@ const AddTasks = () => {
   if (!formData.taskName) {
     newErrors.taskName = "Task name is required.";
   }
-  if (!formData.dueDate) {
-    newErrors.dueDate = "Due date is required.";
+  if (!formData.deadline) {
+    newErrors.deadline = "Due date is required.";
   }
+  
   if (formData.assignedTo.length === 0) {
     newErrors.assignedTo = "At least one person must be assigned.";
   }
@@ -215,7 +216,7 @@ const AddTasks = () => {
         // Reset form (if needed)
         setFormData({
           taskName: "",
-          dueDate: "",
+          deadline: "",
           assignedTo: [],
           assignedBy: "john",
           reviewers: "",
@@ -225,7 +226,8 @@ const AddTasks = () => {
           category:"",
           project: "",
         });
-        setDisplayReferences([]);
+        setSelectedProject(""); // Reset the selected project
+        setDisplayReferences([]); // Clear uploaded references
 
         // show popup after successful submission
         setIsPopupVisible(true);
@@ -291,14 +293,15 @@ const AddTasks = () => {
           <div className="w-full md:flex-1">
             <label className="block text-sm font-semibold">Due Date</label>
             <input
-              type="date"
-              className={'w-full p-2 border ${errors.dueDate ? "border-red-500" : "border-gray-300"} rounded mt-2'}
-              name="dueDate"
-              value={formData.dueDate}
-              onChange={handleInputChange}
-            />
+  type="date"
+  className={`w-full p-2 border ${errors.deadline ? "border-red-500" : "border-gray-300"} rounded mt-2`}
+  name="deadline" // Corrected from "dueDate" to "deadline"
+  value={formData.deadline}
+  onChange={handleInputChange}
+/>
+
           </div>
-          {errors.dueDate && (<p className="text-sm text-red-500 mt-1">{errors.dueDate}</p>)}
+          {errors.deadline && (<p className="text-sm text-red-500 mt-1">{errors.deadline}</p>)}
         </div>
 
         {/* assignedTo Section */}

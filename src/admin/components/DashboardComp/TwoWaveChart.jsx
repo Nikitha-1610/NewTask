@@ -114,54 +114,66 @@ const processApiData = (apiData) => {
 
  
 
-  // Helper to get unique colors for projects
-  const getColor = (project) => {
-    const colors = {
-      "Task M": "#6AD2FF",
-      Textaile: "#01C2B5",
-      others: "#FFA500",
-    };
-    return colors[project] || "#CCCCCC";
+const getColor = (project) => {
+  const predefinedColors = {
+    "Task M": "#6AD2FF",
+    Textaile: "#01C2B5",
+    others: "#FFA500",
   };
 
-  const options = {
-    responsive: true,
-    aspectRatio: window.innerWidth < 768 ? 2 : 3,
-    plugins: {
-      legend: { display: true },
-      tooltip: {
-        enabled: true,
-        backgroundColor: "#05CD99",
-        titleColor: "#fff",
-        bodyColor: "#fff",
-        borderColor: "#fff",
-        borderWidth: 1,
-        displayColors: false,
-        padding: 10,
-        bodyFont: { size: 16, weight: "bold" },
-        cornerRadius: 8,
-        callbacks: {
-          title: () => "",
-          label: (context) => `${context.raw}K`,
-        },
+  if (predefinedColors[project]) {
+    return predefinedColors[project];
+  }
+
+  // Generate random dark color
+  const randomDarkColor = `#${Math.floor(Math.random() * 128).toString(16).padStart(2, '0')}${Math.floor(Math.random() * 128).toString(16).padStart(2, '0')}${Math.floor(Math.random() * 128).toString(16).padStart(2, '0')}`;
+  return randomDarkColor;
+};
+
+const options = {
+  responsive: true,
+  aspectRatio: window.innerWidth < 768 ? 2 : 3,
+  plugins: {
+    legend: { display: true ,
+      labels: {
+        font: { size: 16 }, // Increase font size of wave headings
+        color: "#000", // Optional: Adjust color if needed
       },
     },
-    maintainAspectRatio: false,
-    scales: {
-      x: {
-        grid: { display: false },
-        ticks: { padding: 10, maxTicksLimit: 6 },
-      },
-      y: {
-        display: true,
-        ticks: {
-          stepSize: 10,
-          callback: (value) => `${value}K`,
-        },
-        grid: { display: false },
+    tooltip: {
+      enabled: true,
+      backgroundColor: "#05CD99",
+      titleColor: "#fff",
+      bodyColor: "#fff",
+      borderColor: "#fff",
+      borderWidth: 1,
+      displayColors: false,
+      padding: 10,
+      bodyFont: { size: 14, weight: "bold" },
+      cornerRadius: 8,
+      callbacks: {
+        title: () => "",
+        label: (context) => `${context.raw} hrs`, // Tooltip label in hours
       },
     },
-  };
+  },
+  maintainAspectRatio: false,
+  scales: {
+    x: {
+      grid: { display: false },
+      ticks: { padding: 10, maxTicksLimit: 6 },
+    },
+    y: {
+      display: true,
+      ticks: {
+        stepSize: 10,
+        callback: (value) => `${value} hrs`,
+        font: { size: 14 }, // Show values in hours
+      },
+      grid: { display: false },
+    },
+  },
+};
 
   if (loading)
     return (

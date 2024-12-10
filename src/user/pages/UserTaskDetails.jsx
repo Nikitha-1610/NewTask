@@ -12,13 +12,14 @@ const UserTaskCardDetails = () => {
   const [error, setError] = useState(null);
   const [downloading, setDownloading] = useState(false);
   const [fileSize, setFileSize] = useState(null);
+  const [showUpdateModal, setShowUpdateModal] = useState(false);
+  const [hoursSpent, setHoursSpent] = useState('');
 
   useEffect(() => {
-   
     axiosInstance
       .get(`task/getOne/${taskId}`)
       .then((response) => {
-        setTaskDetails(response.data.message); 
+        setTaskDetails(response.data.message);
         setLoading(false);
       })
       .catch((err) => {
@@ -28,10 +29,23 @@ const UserTaskCardDetails = () => {
   }, [taskId]);
 
   const goBack = () => {
-    navigate("/user/home"); 
+    navigate("/user/home");
   };
 
-  
+  const handleUpdateClick = () => {
+    setShowUpdateModal(true);
+  };
+
+  const handleStatusChange = (status) => {
+    // Handle status update logic here
+    setShowUpdateModal(false);
+    // For example: Send request to update task status
+    // axiosInstance.put(`task/updateStatus/${taskId}`, { status, hoursSpent });
+  };
+
+  const handleHoursChange = (e) => {
+    setHoursSpent(e.target.value);
+  };
 
   if (loading) {
     return (
@@ -47,7 +61,6 @@ const UserTaskCardDetails = () => {
 
   return (
     <div className="w-full mx-auto p-6 bg-white rounded-lg shadow-md">
-      {/* Back Arrow Button */}
       <button
         onClick={goBack}
         style={{ background: "transparent", border: "none", cursor: "pointer", fontSize: "24px" }}
@@ -55,41 +68,33 @@ const UserTaskCardDetails = () => {
         <Icon icon="mdi:arrow-left" height={24} width={24} />
       </button>
 
-      
       <h3 className="mt-4 text-2xl font-semibold">{taskName}</h3>
 
       <div className="mt-4 space-y-3">
-       
         <div className="flex items-center gap-3 text-lg">
           <Icon icon="ic:outline-watch-later" height={24} width={24} />
           <span>Status:</span>
           <span className="font-medium">{taskStatus}</span>
         </div>
 
-       
         <div className="flex items-center gap-3 text-lg">
           <Icon icon="ic:outline-calendar-today" height={24} width={24} />
           <span>Due Date:</span>
-          <span className="font-medium">
-            {new Date(deadline).toLocaleDateString("en-US")}
-          </span>
+          <span className="font-medium">{new Date(deadline).toLocaleDateString("en-US")}</span>
         </div>
 
-       
         <div className="flex items-center gap-3 text-lg">
           <Icon icon="lucide:users" height={24} width={24} />
           <span>Assigned To:</span>
           <span className="font-medium">{assignedTo.join(", ")}</span>
         </div>
 
-       
         <div className="flex items-center gap-3 text-lg">
           <Icon icon="mdi:user-outline" height={24} width={24} />
           <span>Assigned By:</span>
           <span className="font-medium">{assignedBy}</span>
         </div>
 
-     
         <div className="mt-4">
           <h4 className="text-xl font-semibold">Description</h4>
           <textarea
@@ -99,7 +104,6 @@ const UserTaskCardDetails = () => {
           />
         </div>
 
-       
         <div className="mt-4">
           <h4 className="text-xl font-semibold">Comments</h4>
           {comments.length > 0 ? (
@@ -116,33 +120,62 @@ const UserTaskCardDetails = () => {
           )}
         </div>
 
-        
         <div className="mt-4">
-  <div className="flex justify-between items-center">
-    <div className="flex items-center gap-2">
-      <Icon icon="cuida:attachment-clip-outline" height={22} width={22} />
-      <h4 className="text-lg font-semibold text-gray-600">Attachments ({referenceFileUrl.length})</h4>
-    </div>
-    
-  </div>
-  <div className="flex flex-wrap gap-4 mt-4">
-    {referenceFileUrl.map((url, index) => (
-      <div
-        key={index}
-        className="flex items-center gap-4 p-4 border rounded-lg border-gray-300 bg-gray-50 w-full md:w-80"
-      >
-        <Icon icon="mdi:file-pdf" className="text-red-500" height={40} width={40} />
-        <div className="flex-grow">
-          <div className="text-sm text-gray-500">Size: {fileSize} KB</div>
-          <a href={url} className="mt-2 text-blue-600 underline" download>
-            Download
-          </a>
+          <button 
+            onClick={handleUpdateClick} 
+            className="px-4 py-2 bg-green-500 text-white rounded hover:bg-green-600"
+          >
+            Update
+          </button>
         </div>
-      </div>
-    ))}
-  </div>
-</div>
 
+        {/* Update Modal */}
+        {showUpdateModal && (
+          <div className="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center">
+            <div className="bg-white p-6 rounded-md shadow-md w-80">
+              <h2 className="text-xl font-semibold mb-4">Update Task Status</h2>
+              {taskStatus === "Assigned" && (
+                <button
+                  onClick={() => handleStatusChange("In-Progress")}
+                  className="w-full py-2 mb-2 bg-orange-500 text-white rounded hover:bg-orange-600"
+                >
+                  In Progress
+                </button>
+              )}
+              {taskStatus === "In-Progress" && (
+                <button
+                  onClick={() => handleStatusChange("In-Test")}
+                  className="w-full py-2 mb-2 bg-red-500 text-white rounded hover:bg-red-600"
+                >
+                  In Test
+                </button>
+              )}
+              {taskStatus === "In-Test" && (
+                <>
+                  <input
+                    type="number"
+                    placeholder="Enter hours spent"
+                    value={hoursSpent}
+                    onChange={handleHoursChange}
+                    className="w-full p-2 mb-4 border border-gray-300 rounded"
+                  />
+                  <button
+                    onClick={() => handleStatusChange("Completed")}
+                    className="w-full py-2 mb-2 bg-teal-500 text-white rounded hover:bg-teal-600"
+                  >
+                    Completed
+                  </button>
+                </>
+              )}
+              <button
+                onClick={() => setShowUpdateModal(false)}
+                className="w-full py-2 bg-gray-500 text-white rounded hover:bg-gray-600"
+              >
+                Cancel
+              </button>
+            </div>
+          </div>
+        )}
       </div>
     </div>
   );
