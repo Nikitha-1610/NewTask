@@ -8,7 +8,7 @@ const AssignedTasks = () => {
 
   useEffect(() => {
     // Get the employee's name from localStorage (set during login)
-    const employeeName = localStorage.getItem('employeeName');  // No need to set it here unless necessary
+    const employeeName = localStorage.getItem('name');  // No need to set it here unless necessary
 
     if (employeeName) {
       const baseUrl = "https://3qhglx2bhd.execute-api.us-east-1.amazonaws.com/"; 

@@ -52,7 +52,7 @@ const UserHome = () => {
 
   
   useEffect(() => {
-    const employeeName = localStorage.getItem('employeeName');
+    const employeeName = localStorage.getItem('name');
     console.log("Employee Name from localStorage:", employeeName);
  
    
