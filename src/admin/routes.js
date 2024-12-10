@@ -37,7 +37,7 @@ const adminRoutes = [
   { path: "inprogress", component: InProgressTasks },
   { path: "completed", component: Completed },
   { path: "assign", component: TodayAssigned },
-  { path: "assign", component: AssignTasks },
+  // { path: "assign", component: AssignTasks },
   { path: "task/:taskId", component: TaskCardDetails },
   { path: "addtasks", component: AddTasks },
   {

@@ -3,6 +3,7 @@ import { useState, useEffect } from "react";
 import axiosInstance from "../../common/utils/axios/axiosInstance";
 import { Icon } from "@iconify/react";
 import ReactLoading from "react-loading";
+import { BsPaperclip } from "react-icons/bs";
 
 const UserTaskCardDetails = () => {
   const { taskId } = useParams();
@@ -10,10 +11,8 @@ const UserTaskCardDetails = () => {
   const [taskDetails, setTaskDetails] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
-  const [downloading, setDownloading] = useState(false);
-  const [fileSize, setFileSize] = useState(null);
-  const [showUpdateModal, setShowUpdateModal] = useState(false);
-  const [hoursSpent, setHoursSpent] = useState('');
+  const [hoursSpent, setHoursSpent] = useState(""); // State for hours spent
+  const [successMessage, setSuccessMessage] = useState(""); // State for success message
 
   useEffect(() => {
     axiosInstance
@@ -22,7 +21,7 @@ const UserTaskCardDetails = () => {
         setTaskDetails(response.data.message);
         setLoading(false);
       })
-      .catch((err) => {
+      .catch(() => {
         setError("Failed to fetch task details.");
         setLoading(false);
       });
@@ -32,19 +31,34 @@ const UserTaskCardDetails = () => {
     navigate("/user/home");
   };
 
-  const handleUpdateClick = () => {
-    setShowUpdateModal(true);
-  };
+  const handleSubmit = (e, status) => {
+    e.preventDefault();
 
-  const handleStatusChange = (status) => {
-    // Handle status update logic here
-    setShowUpdateModal(false);
-    // For example: Send request to update task status
-    // axiosInstance.put(`task/updateStatus/${taskId}`, { status, hoursSpent });
-  };
+    if (status === "Completed" && !hoursSpent) {
+      console.error("Please enter hours spent.");
+      return;
+    }
 
-  const handleHoursChange = (e) => {
-    setHoursSpent(e.target.value);
+    const body = {
+      taskStatus: status,
+      hoursSpent: status === "Completed" ? hoursSpent : undefined,
+    };
+
+    axiosInstance
+      .put(`task/updateTask/${taskId}`, body)
+      .then((response) => {
+        if (response.status === 200) {
+          setSuccessMessage(`Task successfully updated to ${status}`);
+          setTaskDetails((prevDetails) => ({
+            ...prevDetails,
+            taskStatus: status,
+          }));
+          setHoursSpent(""); // Reset hours spent input
+        } else {
+          console.error("Failed to update task:", response.data);
+        }
+      })
+      .catch((error) => console.error("Error updating task:", error));
   };
 
   if (loading) {
@@ -57,44 +71,67 @@ const UserTaskCardDetails = () => {
 
   if (error) return <div className="text-center mt-10 text-red-500">{error}</div>;
 
-  const { taskName, deadline, taskDescription, assignedTo, taskStatus, assignedBy, comments = [], referenceFileUrl = [] } = taskDetails || {};
+  const {
+    taskName,
+    deadline,
+    taskDescription,
+    assignedTo,
+    taskStatus,
+    assignedBy,
+  } = taskDetails || {};
 
   return (
     <div className="w-full mx-auto p-6 bg-white rounded-lg shadow-md">
+      {/* Go Back */}
       <button
         onClick={goBack}
-        style={{ background: "transparent", border: "none", cursor: "pointer", fontSize: "24px" }}
+        className="flex items-center text-gray-600 hover:text-gray-800"
       >
         <Icon icon="mdi:arrow-left" height={24} width={24} />
+        <span className="ml-2">Back</span>
       </button>
 
       <h3 className="mt-4 text-2xl font-semibold">{taskName}</h3>
 
+      {/* Success Message */}
+      {successMessage && (
+        <div className="mt-4 p-4 bg-green-100 text-green-800 rounded-md">
+          {successMessage}
+        </div>
+      )}
+
       <div className="mt-4 space-y-3">
+        {/* Status */}
         <div className="flex items-center gap-3 text-lg">
           <Icon icon="ic:outline-watch-later" height={24} width={24} />
           <span>Status:</span>
           <span className="font-medium">{taskStatus}</span>
         </div>
 
+        {/* Deadline */}
         <div className="flex items-center gap-3 text-lg">
           <Icon icon="ic:outline-calendar-today" height={24} width={24} />
           <span>Due Date:</span>
-          <span className="font-medium">{new Date(deadline).toLocaleDateString("en-US")}</span>
+          <span className="font-medium">
+            {new Date(deadline).toLocaleDateString("en-US")}
+          </span>
         </div>
 
+        {/* Assigned To */}
         <div className="flex items-center gap-3 text-lg">
           <Icon icon="lucide:users" height={24} width={24} />
           <span>Assigned To:</span>
           <span className="font-medium">{assignedTo.join(", ")}</span>
         </div>
 
+        {/* Assigned By */}
         <div className="flex items-center gap-3 text-lg">
           <Icon icon="mdi:user-outline" height={24} width={24} />
           <span>Assigned By:</span>
           <span className="font-medium">{assignedBy}</span>
         </div>
 
+        {/* Description */}
         <div className="mt-4">
           <h4 className="text-xl font-semibold">Description</h4>
           <textarea
@@ -104,78 +141,58 @@ const UserTaskCardDetails = () => {
           />
         </div>
 
-        <div className="mt-4">
-          <h4 className="text-xl font-semibold">Comments</h4>
-          {comments.length > 0 ? (
-            <div className="space-y-2">
-              {comments.map((comment, index) => (
-                <div key={index} className="p-4 border rounded-lg border-gray-300 bg-gray-50">
-                  <div className="text-lg font-medium">{comment.user}</div>
-                  <div className="text-sm text-gray-500">{comment.text}</div>
+        <div>
+                    <div className="flex justify-between">                    
+                <span className="flex"><BsPaperclip />Attachment(4)</span>
+                <button className="text-blue-500">Download</button>
+                </div><br></br>
+                <div className="flex justify-between">
+                    <div className="w-[250px] h-[70px] p-2 rounded  bg-white shadow-[2px_2px_4px_0px_#7F767626] shadow-2px_2px_2px_0px_#7F767626]"></div>
+                    <div className="w-[250px] h-[70px] p-2 rounded  bg-white shadow-[2px_2px_4px_0px_#7F767626] shadow-2px_2px_2px_0px_#7F767626]"></div>
+                    <div className="w-[250px] h-[70px] p-2 rounded  bg-white shadow-[2px_2px_4px_0px_#7F767626] shadow-2px_2px_2px_0px_#7F767626]"></div>
+                    <div className="w-[70px] h-[70px] p-2 rounded  bg-white shadow-[2px_2px_4px_0px_#7F767626] shadow-2px_2px_2px_0px_#7F767626]"></div>
                 </div>
-              ))}
-            </div>
-          ) : (
-            <div className="p-4 text-gray-500">No comments available.</div>
-          )}
-        </div>
+                </div>
 
+        {/* Update Task Section */}
         <div className="mt-4">
-          <button 
-            onClick={handleUpdateClick} 
-            className="px-4 py-2 bg-green-500 text-white rounded hover:bg-green-600"
-          >
-            Update
-          </button>
-        </div>
-
-        {/* Update Modal */}
-        {showUpdateModal && (
-          <div className="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center">
-            <div className="bg-white p-6 rounded-md shadow-md w-80">
-              <h2 className="text-xl font-semibold mb-4">Update Task Status</h2>
-              {taskStatus === "Assigned" && (
-                <button
-                  onClick={() => handleStatusChange("In-Progress")}
-                  className="w-full py-2 mb-2 bg-orange-500 text-white rounded hover:bg-orange-600"
-                >
-                  In Progress
-                </button>
-              )}
-              {taskStatus === "In-Progress" && (
-                <button
-                  onClick={() => handleStatusChange("In-Test")}
-                  className="w-full py-2 mb-2 bg-red-500 text-white rounded hover:bg-red-600"
-                >
-                  In Test
-                </button>
-              )}
-              {taskStatus === "In-Test" && (
-                <>
-                  <input
-                    type="number"
-                    placeholder="Enter hours spent"
-                    value={hoursSpent}
-                    onChange={handleHoursChange}
-                    className="w-full p-2 mb-4 border border-gray-300 rounded"
-                  />
-                  <button
-                    onClick={() => handleStatusChange("Completed")}
-                    className="w-full py-2 mb-2 bg-teal-500 text-white rounded hover:bg-teal-600"
-                  >
-                    Completed
-                  </button>
-                </>
-              )}
+          <h4 className="text-xl font-semibold">Update Task</h4>
+          <div className="mt-2 flex flex-col space-y-3">
+            {taskStatus === "Assigned" && (
               <button
-                onClick={() => setShowUpdateModal(false)}
-                className="w-full py-2 bg-gray-500 text-white rounded hover:bg-gray-600"
+                onClick={(e) => handleSubmit(e, "In-Progress")}
+                className="px-4 py-2 bg-orange-500 text-white rounded-md hover:bg-orange-600"
               >
-                Cancel
+                In Progress
               </button>
-            </div>
+            )}
+            {taskStatus === "In-Progress" && (
+              <button
+                onClick={(e) => handleSubmit(e, "In-Test")}
+                className="px-4 py-2 bg-red-500 text-white rounded-md hover:bg-red-600"
+              >
+                In Test
+              </button>
+            )}
+            {taskStatus === "In-Test" && (
+              <>
+                <input
+                  type="number"
+                  placeholder="Enter hours spent"
+                  value={hoursSpent}
+                  onChange={(e) => setHoursSpent(e.target.value)}
+                  className="p-2 border border-gray-300 rounded-md"
+                />
+                <button
+                  onClick={(e) => handleSubmit(e, "Completed")}
+                  className="px-4 py-2 bg-teal-500 text-white rounded-md hover:bg-teal-600"
+                >
+                  Completed
+                </button>
+              </>
+            )}
           </div>
-        )}
+        </div>
       </div>
     </div>
   );
