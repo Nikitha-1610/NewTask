@@ -3,6 +3,7 @@ import { useState, useEffect } from "react";
 import axiosInstance from "../../common/utils/axios/axiosInstance";
 import { Icon } from "@iconify/react";
 import ReactLoading from "react-loading";
+import { BsPaperclip } from "react-icons/bs";
 
 const UserTaskCardDetails = () => {
   const { taskId } = useParams();
@@ -10,7 +11,8 @@ const UserTaskCardDetails = () => {
   const [taskDetails, setTaskDetails] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
-  const [hoursSpent, setHoursSpent] = useState(""); // New state for hours spent input
+  const [hoursSpent, setHoursSpent] = useState(""); // State for hours spent
+  const [successMessage, setSuccessMessage] = useState(""); // State for success message
 
   useEffect(() => {
     axiosInstance
@@ -29,30 +31,34 @@ const UserTaskCardDetails = () => {
     navigate("/user/home");
   };
 
-  // Handle task status update
-  const updateTaskStatus = (newStatus) => {
-    if (newStatus === "Completed" && !hoursSpent) {
-      alert("Please enter hours spent to complete the task.");
+  const handleSubmit = (e, status) => {
+    e.preventDefault();
+
+    if (status === "Completed" && !hoursSpent) {
+      console.error("Please enter hours spent.");
       return;
     }
 
-    const updateData = newStatus === "Completed"
-      ? { taskStatus: newStatus, hoursSpent: parseFloat(hoursSpent) }
-      : { taskStatus: newStatus };
+    const body = {
+      taskStatus: status,
+      hoursSpent: status === "Completed" ? hoursSpent : undefined,
+    };
 
     axiosInstance
-      .put(`task/update/${taskId}`, updateData)
-      .then(() => {
-        setTaskDetails((prevDetails) => ({
-          ...prevDetails,
-          taskStatus: newStatus,
-        }));
-        if (newStatus === "Completed") setHoursSpent(""); // Clear input
-        alert("Task updated successfully!");
+      .put(`task/updateTask/${taskId}`, body)
+      .then((response) => {
+        if (response.status === 200) {
+          setSuccessMessage(`Task successfully updated to ${status}`);
+          setTaskDetails((prevDetails) => ({
+            ...prevDetails,
+            taskStatus: status,
+          }));
+          setHoursSpent(""); // Reset hours spent input
+        } else {
+          console.error("Failed to update task:", response.data);
+        }
       })
-      .catch(() => {
-        alert("Failed to update the task.");
-      });
+      .catch((error) => console.error("Error updating task:", error));
   };
 
   if (loading) {
@@ -72,25 +78,28 @@ const UserTaskCardDetails = () => {
     assignedTo,
     taskStatus,
     assignedBy,
-    comments = [],
-    referenceFileUrl = [],
   } = taskDetails || {};
 
   return (
     <div className="w-full mx-auto p-6 bg-white rounded-lg shadow-md">
+      {/* Go Back */}
       <button
         onClick={goBack}
-        style={{
-          background: "transparent",
-          border: "none",
-          cursor: "pointer",
-          fontSize: "24px",
-        }}
+        className="flex items-center text-gray-600 hover:text-gray-800"
       >
         <Icon icon="mdi:arrow-left" height={24} width={24} />
+        <span className="ml-2">Back</span>
       </button>
 
       <h3 className="mt-4 text-2xl font-semibold">{taskName}</h3>
+
+      {/* Success Message */}
+      {successMessage && (
+        <div className="mt-4 p-4 bg-green-100 text-green-800 rounded-md">
+          {successMessage}
+        </div>
+      )}
+
       <div className="mt-4 space-y-3">
         {/* Status */}
         <div className="flex items-center gap-3 text-lg">
@@ -132,13 +141,26 @@ const UserTaskCardDetails = () => {
           />
         </div>
 
+        <div>
+                    <div className="flex justify-between">                    
+                <span className="flex"><BsPaperclip />Attachment(4)</span>
+                <button className="text-blue-500">Download</button>
+                </div><br></br>
+                <div className="flex justify-between">
+                    <div className="w-[250px] h-[70px] p-2 rounded  bg-white shadow-[2px_2px_4px_0px_#7F767626] shadow-2px_2px_2px_0px_#7F767626]"></div>
+                    <div className="w-[250px] h-[70px] p-2 rounded  bg-white shadow-[2px_2px_4px_0px_#7F767626] shadow-2px_2px_2px_0px_#7F767626]"></div>
+                    <div className="w-[250px] h-[70px] p-2 rounded  bg-white shadow-[2px_2px_4px_0px_#7F767626] shadow-2px_2px_2px_0px_#7F767626]"></div>
+                    <div className="w-[70px] h-[70px] p-2 rounded  bg-white shadow-[2px_2px_4px_0px_#7F767626] shadow-2px_2px_2px_0px_#7F767626]"></div>
+                </div>
+                </div>
+
         {/* Update Task Section */}
         <div className="mt-4">
           <h4 className="text-xl font-semibold">Update Task</h4>
           <div className="mt-2 flex flex-col space-y-3">
             {taskStatus === "Assigned" && (
               <button
-                onClick={() => updateTaskStatus("In-Progress")}
+                onClick={(e) => handleSubmit(e, "In-Progress")}
                 className="px-4 py-2 bg-orange-500 text-white rounded-md hover:bg-orange-600"
               >
                 In Progress
@@ -146,7 +168,7 @@ const UserTaskCardDetails = () => {
             )}
             {taskStatus === "In-Progress" && (
               <button
-                onClick={() => updateTaskStatus("In-Test")}
+                onClick={(e) => handleSubmit(e, "In-Test")}
                 className="px-4 py-2 bg-red-500 text-white rounded-md hover:bg-red-600"
               >
                 In Test
@@ -162,7 +184,7 @@ const UserTaskCardDetails = () => {
                   className="p-2 border border-gray-300 rounded-md"
                 />
                 <button
-                  onClick={() => updateTaskStatus("Completed")}
+                  onClick={(e) => handleSubmit(e, "Completed")}
                   className="px-4 py-2 bg-teal-500 text-white rounded-md hover:bg-teal-600"
                 >
                   Completed
