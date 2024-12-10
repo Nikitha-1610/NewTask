@@ -323,7 +323,7 @@ const Board = () => {
 
     const handleTitleClick = () => {
       axiosInstance
-        .post("task/getTaskByStatus", { status: column.status, assignedBy: column.assignedBy })
+        .post("task/getTaskByStatus", { status: column.status, assignedBy: employeeName })
         .then((response) => {
           console.log("API Response:", response.data);
           navigate(`/admin/${column.path}`, { state: response.data.message || [] });
