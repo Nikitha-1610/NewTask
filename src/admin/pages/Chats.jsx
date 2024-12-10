@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 
 import {
@@ -7,10 +7,11 @@ import {
 } from "@fortawesome/free-solid-svg-icons";
 import img8 from "../../assets/img8.jpeg";
 import img9 from "../../assets/img9.jpeg";
-import { Icon } from '@iconify/react'; // For Iconify
+import IndividualChat from '../../user/Components/ChatComp/IndividualChat';
+import axiosInstance from "../../common/utils/axios/axiosInstance";
+import io from 'socket.io-client';
 
 // import GroupChat from "../components/chatComp/GroupChat";
-import IndividualChat from "../components/chatComp/IndividualChat";
 // Updated list of contacts
 
 const contacts = [
@@ -110,6 +111,7 @@ const pinnedContacts = [
   },
 ];
 
+let socket;
 const removeDuplicates = (array) => {
   return array.filter(
     (value, index, self) =>
@@ -121,13 +123,17 @@ const ChatApp = () => {
   const [searchQuery, setSearchQuery] = useState("");
   const [filteredContacts, setFilteredContacts] = useState(contacts);
   const [filteredPinnedContacts, setFilteredPinnedContacts] =
-    useState(pinnedContacts);
+    useState([]);
   const [selectedContact, setSelectedContact] = useState(null);
   const [selectedOption, setSelectedOption] = useState("Chat");
+  const socketUrl = 'https://chat-2-1dgm.onrender1.com';
+  const employeeId = localStorage.getItem('employeeId');
+  const user = localStorage.getItem('name');
 
   const [showEmojiPicker, setShowEmojiPicker] = useState(false);
   const [message, setMessage] = useState("");
   const [isLeftVisible, setIsLeftVisible] = useState(false);
+  const [loading, setLoading] = useState(true);
   
   const handleSearchChange = (event) => {
     const query = event.target.value;
@@ -153,6 +159,70 @@ const ChatApp = () => {
       setFilteredPinnedContacts(removeDuplicates(pinnedContacts));
     }
   };
+
+  const getUsers = async () => {
+    try {
+      const response = await axiosInstance.get('employee/getAll');
+      setFilteredContacts(response.data.message);
+    } catch (err) {
+      // Set error state in case of failure
+      console.log(err.response ? err.response.data : err.message);
+    } finally {
+      // Set loading to false after the request is completed
+      setLoading(false);
+    };
+  }
+
+  useEffect(() => {
+    getUsers();
+
+  },[]);
+
+  useEffect(() => {
+        socket = io(socketUrl);
+
+        // Join the employeeId when the user connects
+        socket.emit('join', { user, employeeId }, (err) => {
+            if (err) {
+                console.error(err);
+            }
+        });
+
+        return () => {
+            socket.disconnect();
+            socket.off();
+        };
+    }, [socketUrl, user, employeeId]);
+
+    // useEffect(() => {
+    //     socket.on('message', (msg) => {
+    //         // Only update messages if they belong to the selected conversation
+    //         if (
+    //             (msg.sender === employeeId && msg.receiver === selectedEmployeeId) ||
+    //             (msg.sender === selectedEmployeeId && msg.receiver === employeeId)
+    //         ) {
+    //             setMessages((prevMsg) => [...prevMsg, msg]); // Append new message
+    //         }
+
+    //         // Scroll to the bottom when a new message arrives
+    //         if (messageEndRef.current) {
+    //             messageEndRef.current.scrollIntoView({ behavior: 'smooth' });
+    //         }
+    //     });
+
+    //     socket.on('roomMembers', (usrs) => {
+    //         setOnlineUsers(usrs);
+    //     });
+    // }, [employeeId, selectedEmployeeId]);
+
+    // const sendMessage = () => {
+    //     if (message.trim() && selectedEmployeeId) {
+    //         // Emit message to the receiver and the sender
+    //         socket.emit('sendMessage', employeeId, message, selectedEmployeeId, () => setMessage(''));
+    //     }
+    // };
+
+  
 
   // Handle selecting a contact
   const handleContactClick = (contact) => {
@@ -199,35 +269,11 @@ const ChatApp = () => {
             </div>
           </div>
 
-          {/* Pinned Contacts */}
-          <h3 className="mb-1 font-semibold text-black-500 text-xl">Pinned</h3>
-          <div className="space-y-1 overflow-y-auto">
-            {filteredPinnedContacts.map((contact, index) => (
-              <div
-                key={index}
-                className="flex items-start bg-gray-100 hover:bg-gray-200 p-2 rounded-md"
-                onClick={() => handleContactClick(contact)}
-              >
-                <img
-                  src={contact.image}
-                  alt="User"
-                  className="mr-2 rounded-full w-8 h-8"
-                />
-                <div className="flex-1">
-                  <p className="font-bold text-[14px] text-lg sm:text-xs leading-tight">
-                    {contact.name}
-                  </p>
-                  <p className="text-[14px] text-base text-gray-600 sm:text-xs truncate">
-                    {contact.lastMessage}
-                  </p>
-                </div>
-              </div>
-            ))}
-          </div>
+          
 
           {/* Recent Contacts */}
           <h3 className="mb-1 font-semibold text-[22px] text-black-500 sm:text-xl ">
-            Recent
+            Users
           </h3>
           <div className="space-y-1 overflow-y-auto">
             {filteredContacts.map((contact, index) => (
@@ -237,7 +283,7 @@ const ChatApp = () => {
                 onClick={() => handleContactClick(contact)}
               >
                 <img
-                  src={contact.image}
+                  src={img9}
                   alt="User"
                   className="mr-2 rounded-full w-8 h-8"
                 />
@@ -246,7 +292,7 @@ const ChatApp = () => {
                     {contact.name}
                   </p>
                   <p className="text-[14px] text-base text-gray-600 sm:text-xs truncate">
-                    {contact.lastMessage}
+                    {contact?.lastMessage||""}
                   </p>
                 </div>
               </div>
