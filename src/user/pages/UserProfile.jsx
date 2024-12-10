@@ -19,36 +19,24 @@ const UserProfile = () => {
 
 
 
-{/* Email Validation */}
-const validateEmail = (email) => {
-  const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/; // Basic email regex
-  return emailRegex.test(email);
-};
+  const validateEmail = (email) => {
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/; // Ensures valid domain and TLD
+    return emailRegex.test(email);
+  };
+  
 
 const validateMobileNumber = (number) => {
   const mobileRegex = /^[6-9]\d{9}$/; // Indian mobile number regex
   return mobileRegex.test(number);
 };
 
-{/* Handle Input Change */}
 const handleInputChanges = (e) => {
   const { name, value } = e.target;
+
+  // Update the edited data
   setEditedData((prevData) => ({ ...prevData, [name]: value }));
 
-  if (name === "mobile") {
-    if (!validateMobileNumber(value)) {
-      setErrors((prevErrors) => ({
-        ...prevErrors,
-        mobile: "Please enter a valid 10-digit mobile number starting with 6-9.",
-      }));
-    } else {
-      setErrors((prevErrors) => {
-        const { mobile, ...rest } = prevErrors;
-        return rest;
-      });
-    }
-  }
-
+  // Handle validation
   if (name === "email") {
     if (!validateEmail(value)) {
       setErrors((prevErrors) => ({
@@ -57,12 +45,28 @@ const handleInputChanges = (e) => {
       }));
     } else {
       setErrors((prevErrors) => {
-        const { email, ...rest } = prevErrors;
+        const { email, ...rest } = prevErrors; // Remove the email error
+        return rest;
+      });
+    }
+  }
+
+  // Validation for mobile and alterMobile
+  if (name === "mobile" || name === "alterMobile") {
+    if (!validateMobileNumber(value)) {
+      setErrors((prevErrors) => ({
+        ...prevErrors,
+        [name]: "Please enter a valid 10-digit mobile number starting with 6-9.",
+      }));
+    } else {
+      setErrors((prevErrors) => {
+        const { [name]: removedError, ...rest } = prevErrors; // Remove the specific mobile error
         return rest;
       });
     }
   }
 };
+
 
 {/* State to Manage Errors */}
 
@@ -292,7 +296,6 @@ const handleInputChanges = (e) => {
               placeholder="Name"
             />
           </div>
-
           <div>
   <label htmlFor="email" className="block font-bold mb-1">
     Email
@@ -301,8 +304,8 @@ const handleInputChanges = (e) => {
     type="email"
     id="email"
     name="email"
-    value={editedData.email}
-    onChange={handleInputChange}
+    value={editedData.email || ""}
+    onChange={handleInputChanges} 
     className={`w-full p-3 border rounded ${errors.email ? "border-red-500" : ""}`}
     placeholder="Email"
   />
@@ -359,21 +362,25 @@ const handleInputChanges = (e) => {
               className="w-full p-3 border rounded"
             />
           </div>
-
           <div>
-            <label htmlFor="role" className="block font-bold mb-1">
-              Alter Mobile
-            </label>
-            <input
-              type="text"
-              id="alterMobile"
-              name="alterMobile"
-              value={editedData?.alterMobile}
-              onChange={handleInputChange}
-              className="w-full p-3 border rounded"
-              placeholder="Alter Mobile No"
-            />
-          </div>
+  <label htmlFor="alterMobile" className="block font-bold mb-1">
+    Alternate Mobile
+  </label>
+  <input
+    type="text"
+    id="alterMobile"
+    name="alterMobile"
+    value={editedData.alterMobile || ""}
+    onChange={handleInputChanges}
+    className={`w-full p-3 border rounded ${
+      errors.alterMobile ? "border-red-500" : ""
+    }`}
+    placeholder="Alternate Mobile Number"
+  />
+  {errors.alterMobile && (
+    <span className="text-red-500 text-sm mt-1">{errors.alterMobile}</span>
+  )}
+</div>
 
           {/* <div>
             <label htmlFor="appliedDate" className="block font-bold mb-1">

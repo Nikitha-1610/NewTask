@@ -15,7 +15,8 @@ const AddTasks = () => {
     reviewers: "", // Single reviewer as a string
     priority: "Low",
     taskDescription: "",
-    referenceFileUrl: [], // Reference as an array
+    referenceFileUrl: [],
+    project: "", // Reference as an array
   });
 
   const [isPopupVisible, setIsPopupVisible] = useState(false); //popup
@@ -24,6 +25,7 @@ const AddTasks = () => {
     dueDate: "",
     assignedTo: "",
     taskDescription: "",
+    project: "",
   });
 
   const [showUserList, setShowUserList] = useState(false);
@@ -33,29 +35,32 @@ const AddTasks = () => {
   const [uploading, setUploading] = useState(false);
   const employeeId = localStorage.getItem("employeeId");
 
+  
+
+  const [selectedProject, setSelectedProject] = useState(""); // New state for project selection
+
   const [projectOptions, setProjectOptions] = useState([]);
 
-// Function to fetch project names
-useEffect(() => {
-  const fetchProjects = async () => {
-    try {
-      const response = await axios.get(
-        "https://3qhglx2bhd.execute-api.us-east-1.amazonaws.com/project/names"
-      );
-      if (response.status === 200 && response.data.message) {
-        setProjectOptions(response.data.message); // Set the project names from API response
-      } else {
-        console.error("Unexpected API response format:", response);
+  // Function to fetch project names
+  useEffect(() => {
+    const fetchProjects = async () => {
+      try {
+        const response = await axios.get(
+          "https://3qhglx2bhd.execute-api.us-east-1.amazonaws.com/project/names"
+        );
+        if (response.status === 200 && response.data.message) {
+          setProjectOptions(response.data.message);
+        } else {
+          console.error("Unexpected API response format:", response);
+        }
+      } catch (error) {
+        console.error("Error fetching project names:", error);
       }
-    } catch (error) {
-      console.error("Error fetching project names:", error);
-    }
-  };
+    };
 
-  fetchProjects();
-}, []);
+    fetchProjects();
+  }, []);
 
-  
   const getAllEmp = async () => {
     try {
       const url = `employee/getMembers/${employeeId}`
@@ -137,6 +142,17 @@ useEffect(() => {
     }
   };
 
+
+  const handleProjectChange = (e) => {
+    const value = e.target.value;
+    setSelectedProject(value); // Update project state
+    setFormData((prev) => ({
+      ...prev,
+      project: value, // Save selected project into the form data
+    }));
+  };
+
+
   const handleSubmit = async (e) => {
     e.preventDefault();
 
@@ -150,6 +166,7 @@ useEffect(() => {
     priority: "",
     taskDescription: "",
     referenceFileUrl: "",
+    project:"",
   };
 
   // Check if required fields are filled and set error messages
@@ -164,6 +181,9 @@ useEffect(() => {
   }
   if (!formData.reviewers) {
     newErrors.reviewers = "A reviewer is required.";
+  }
+  if (!formData.project) {
+    newErrors.project = "Please select a project.";
   }
   if (!formData.category) {
     newErrors.category = "Please select a category.";
@@ -202,6 +222,8 @@ useEffect(() => {
           priority: "Low",
           taskDescription: "",
           referenceFileUrl: [],
+          category:"",
+          project: "",
         });
         setDisplayReferences([]);
 
@@ -322,15 +344,13 @@ useEffect(() => {
            )}
         </div>
         <div className="mb-4">
-      <label className="block text-sm font-semibold text-gray-500 mb-6">
-        Select Project
+        <label className="block text-sm font-semibold text-gray-500 mb-2">
+          Select Project
+        </label>
         <select
-          className={`mt-1 block w-full px-3 py-2 bg-white border ${
-            errors.category ? "border-red-500" : "border-gray-300"
-          } rounded-md shadow-sm focus:outline-none focus:ring-teal-500 focus:border-teal-500 sm:text-sm`}
-          name="category"
-          value={formData.category || ""}
-          onChange={handleInputChange}
+          className= {'mt-1 block w-full px-3 py-2 bg-white border ${errors.project ? "border-red-500" : "border-gray-300"} rounded-md shadow-sm focus:outline-none focus:ring-teal-500 focus:border-teal-500 sm:text-sm font-semibold text-gray-500'}
+          value={selectedProject}
+          onChange={handleProjectChange}
         >
           <option value="">Select a Project</option>
           {projectOptions.map((project, index) => (
@@ -339,11 +359,8 @@ useEffect(() => {
             </option>
           ))}
         </select>
-      </label>
-      {errors.category && (
-        <p className="text-sm text-red-500 mt-1">{errors.category}</p>
-      )}
-    </div>
+      
+      </div>
         <div className="mb-4">
           <label className="block text-sm font-semibold text-gray-500 mb-6">
             Select Category

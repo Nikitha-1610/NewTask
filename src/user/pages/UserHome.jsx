@@ -50,16 +50,22 @@ const UserHome = () => {
   const navigate = useNavigate();
   const baseUrl = "https://3qhglx2bhd.execute-api.us-east-1.amazonaws.com/";
 
-  // Fetch tasks from the API
+  
   useEffect(() => {
+    const employeeName = localStorage.getItem('name');
+    console.log("Employee Name from localStorage:", employeeName);
+ 
+   
+
     const fetchTasks = async () => {
       try {
-        const response = await fetch(`${baseUrl}task/userTasks/Mukilan`, {
+        const response = await fetch(`${baseUrl}task/userTasks/${employeeName}`, { 
           method: "GET",
         });
         if (response.ok) {
           const data = await response.json();
-          setTaskData(data.message);
+          console.log("Fetched task data:", data);
+          setTaskData(data.message); 
         } else {
           console.error("Failed to fetch tasks:", response.status);
         }
@@ -69,9 +75,11 @@ const UserHome = () => {
         setLoading(false);
       }
     };
+    
 
     fetchTasks();
-  }, []);
+  }, []); 
+  
 
   const labels = [
     ...new Set([
@@ -89,7 +97,7 @@ const UserHome = () => {
 
   const filteredColumns = [
     {
-      title: "TODAY ASSIGNED",
+      title: "ASSIGNED TASKS",
       color: "green",
       tasks: taskData.todayAssignedTasks.filter((task) =>
         filterLabel ? task.taskName === filterLabel : true
