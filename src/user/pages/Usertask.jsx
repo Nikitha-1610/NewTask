@@ -7,24 +7,19 @@ const AssignedTasks = () => {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    if (!localStorage.getItem('name')) {
-      localStorage.setItem('name', 'Mukilan');
-    }
-
-    const employeeName = localStorage.getItem('name');
+    // Get the employee's name from localStorage (set during login)
+    const employeeName = localStorage.getItem('employeeName');  // No need to set it here unless necessary
 
     if (employeeName) {
-      
       const baseUrl = "https://3qhglx2bhd.execute-api.us-east-1.amazonaws.com/"; 
       const url = `${baseUrl}/task/getEmployeeTask/${employeeName}?days=7`;
 
       console.log("Request URL:", url); 
 
-      
       axios.get(url)
         .then(response => {
           if (response.data.status === 200) {
-           
+            // Filter tasks assigned to the logged-in employee
             const filteredTasks = response.data.message.filter(task =>
               task.assignedTo.includes(employeeName)
             );
@@ -45,7 +40,7 @@ const AssignedTasks = () => {
   }, []);
 
   return (
-    <div className="min-h-auto  bg-gray-100 flex justify-center">
+    <div className="min-h-auto bg-gray-100 flex justify-center">
       <div className="bg-white p-6 rounded-lg w-full max-w-8xl">
         <h1 className="text-2xl font-semibold text-center text-gray-700 mb-4">Assigned Tasks</h1>
 

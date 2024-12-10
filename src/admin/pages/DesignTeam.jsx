@@ -167,7 +167,7 @@ const Board = () => {
 
   const filteredColumns = [
     {
-      title: "TODAY ASSIGNED",
+      title: "ASSIGNED TASKS",
       color: "green",
       tasks: filterTasks(taskData.todayAssignedTasks),
       path: "assign",
