@@ -153,18 +153,28 @@ const handleTagButtonClick = () => {
 const handleSubmit = async () => {
   if (selectedEmployee && selectedTeamLead) {
     try {
+      console.log("Selected Employee:", selectedEmployee);
+      console.log("Selected Team Lead:", selectedTeamLead);
+
       const response = await axiosInstance.put("employee/tag", {
         employeeName: selectedEmployee.name,
         teamLeadName: selectedTeamLead,
       });
-      fetchUsers();
-      
+
+      console.log("API Response:", response);
 
       if (response.status === 200) {
-        toast.success(response.data.message.message || "Operation successful!");
-        
+        fetchUsers(); // Refresh user list
+        toast.success(response.data.message.message || "Operation successful!", {
+          position: "top-right",
+          autoClose: 3000,
+          hideProgressBar: false,
+          closeOnClick: true,
+          pauseOnHover: true,
+          draggable: true,
+          theme: "colored",
+        });
 
-        // Remove the tagged user from the lists
         setUsers((prevUsers) =>
           prevUsers.filter((user) => user.name !== selectedEmployee.name)
         );
@@ -172,21 +182,27 @@ const handleSubmit = async () => {
           prevFilteredUsers.filter((user) => user.name !== selectedEmployee.name)
         );
 
-
-        // Reset states
         setShow(false);
         setSelectedTeamLead("");
         setSelectedEmployee(null);
       } else {
+        console.error("Unexpected API Response:", response.data);
         toast.error(response.data.message || "Error occurred.");
       }
     } catch (error) {
-      toast.error(error.response?.data?.message || "Failed to tag the employee. Please try again.");
+      console.error("Error tagging employee:", error);
+      toast.error(error.response?.data?.message || "Failed to tag the employee. Please try again.", {
+        position: "top-right",
+        autoClose: 3000,
+        theme: "colored",
+      });
     }
   } else {
+    console.warn("Missing Employee or Team Lead");
     toast.error("Please select an employee and a team lead.");
   }
 };
+
 
 
 

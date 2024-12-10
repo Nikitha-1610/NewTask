@@ -1,4 +1,6 @@
 import { useEffect, useState } from "react";
+import axios from "axios";
+
 import { Icon } from "@iconify/react";
 import axiosInstance from "../../common/utils/axios/axiosInstance";
 import { s3Client } from "../../common/utils/aws/awsconfig";
@@ -7,21 +9,23 @@ import { PutObjectCommand } from "@aws-sdk/client-s3";
 const AddTasks = () => {
   const [formData, setFormData] = useState({
     taskName: "",
-    dueDate: "",
+    deadline: "",
     assignedTo: [],
     assignedBy: "john",
     reviewers: "", // Single reviewer as a string
     priority: "Low",
     taskDescription: "",
-    referenceFileUrl: [], // Reference as an array
+    referenceFileUrl: [],
+    project: "", // Reference as an array
   });
 
   const [isPopupVisible, setIsPopupVisible] = useState(false); //popup
   const [errors, setErrors] = useState({
     taskName: "",
-    dueDate: "",
+    deadline: "",
     assignedTo: "",
     taskDescription: "",
+    project: "",
   });
 
   const [showUserList, setShowUserList] = useState(false);
@@ -30,7 +34,33 @@ const AddTasks = () => {
   const [displayReferences, setDisplayReferences] = useState([]);
   const [uploading, setUploading] = useState(false);
   const employeeId = localStorage.getItem("employeeId");
+
   
+
+  const [selectedProject, setSelectedProject] = useState(""); // New state for project selection
+
+  const [projectOptions, setProjectOptions] = useState([]);
+
+  // Function to fetch project names
+  useEffect(() => {
+    const fetchProjects = async () => {
+      try {
+        const response = await axios.get(
+          "https://3qhglx2bhd.execute-api.us-east-1.amazonaws.com/project/names"
+        );
+        if (response.status === 200 && response.data.message) {
+          setProjectOptions(response.data.message);
+        } else {
+          console.error("Unexpected API response format:", response);
+        }
+      } catch (error) {
+        console.error("Error fetching project names:", error);
+      }
+    };
+
+    fetchProjects();
+  }, []);
+
   const getAllEmp = async () => {
     try {
       const url = `employee/getMembers/${employeeId}`
@@ -54,6 +84,8 @@ const AddTasks = () => {
       [name]: value,
     }));
   };
+
+ 
 
   const handleSelectUser = (user) => {
     setFormData((prev) => ({
@@ -110,33 +142,49 @@ const AddTasks = () => {
     }
   };
 
+
+  const handleProjectChange = (e) => {
+    const value = e.target.value;
+    setSelectedProject(value); // Update project state
+    setFormData((prev) => ({
+      ...prev,
+      project: value, // Save selected project into the form data
+    }));
+  };
+
+
   const handleSubmit = async (e) => {
     e.preventDefault();
 
      // Initialize an errors object to track invalid fields
   const newErrors = {
     taskName: "",
-    dueDate: "",
+    deadline: "",
     assignedTo: "",
     reviewers: "",
     category: "",
     priority: "",
     taskDescription: "",
     referenceFileUrl: "",
+    project:"",
   };
 
   // Check if required fields are filled and set error messages
   if (!formData.taskName) {
     newErrors.taskName = "Task name is required.";
   }
-  if (!formData.dueDate) {
-    newErrors.dueDate = "Due date is required.";
+  if (!formData.deadline) {
+    newErrors.deadline = "Due date is required.";
   }
+  
   if (formData.assignedTo.length === 0) {
     newErrors.assignedTo = "At least one person must be assigned.";
   }
   if (!formData.reviewers) {
     newErrors.reviewers = "A reviewer is required.";
+  }
+  if (!formData.project) {
+    newErrors.project = "Please select a project.";
   }
   if (!formData.category) {
     newErrors.category = "Please select a category.";
@@ -168,15 +216,18 @@ const AddTasks = () => {
         // Reset form (if needed)
         setFormData({
           taskName: "",
-          dueDate: "",
+          deadline: "",
           assignedTo: [],
           assignedBy: "john",
           reviewers: "",
           priority: "Low",
           taskDescription: "",
           referenceFileUrl: [],
+          category:"",
+          project: "",
         });
-        setDisplayReferences([]);
+        setSelectedProject(""); // Reset the selected project
+        setDisplayReferences([]); // Clear uploaded references
 
         // show popup after successful submission
         setIsPopupVisible(true);
@@ -242,14 +293,15 @@ const AddTasks = () => {
           <div className="w-full md:flex-1">
             <label className="block text-sm font-semibold">Due Date</label>
             <input
-              type="date"
-              className={'w-full p-2 border ${errors.dueDate ? "border-red-500" : "border-gray-300"} rounded mt-2'}
-              name="dueDate"
-              value={formData.dueDate}
-              onChange={handleInputChange}
-            />
+  type="date"
+  className={`w-full p-2 border ${errors.deadline ? "border-red-500" : "border-gray-300"} rounded mt-2`}
+  name="deadline" // Corrected from "dueDate" to "deadline"
+  value={formData.deadline}
+  onChange={handleInputChange}
+/>
+
           </div>
-          {errors.dueDate && (<p className="text-sm text-red-500 mt-1">{errors.dueDate}</p>)}
+          {errors.deadline && (<p className="text-sm text-red-500 mt-1">{errors.deadline}</p>)}
         </div>
 
         {/* assignedTo Section */}
@@ -294,6 +346,24 @@ const AddTasks = () => {
             <p className="text-sm text-red-500 mt-1">{errors.assignedTo}</p>
            )}
         </div>
+        <div className="mb-4">
+        <label className="block text-sm font-semibold text-gray-500 mb-2">
+          Select Project
+        </label>
+        <select
+          className= {'mt-1 block w-full px-3 py-2 bg-white border ${errors.project ? "border-red-500" : "border-gray-300"} rounded-md shadow-sm focus:outline-none focus:ring-teal-500 focus:border-teal-500 sm:text-sm font-semibold text-gray-500'}
+          value={selectedProject}
+          onChange={handleProjectChange}
+        >
+          <option value="">Select a Project</option>
+          {projectOptions.map((project, index) => (
+            <option key={index} value={project}>
+              {project}
+            </option>
+          ))}
+        </select>
+      
+      </div>
         <div className="mb-4">
           <label className="block text-sm font-semibold text-gray-500 mb-6">
             Select Category
