@@ -6,10 +6,12 @@ import bgImage from "../../assets/BgImage.jpg";
 import axiosInstance from "../../common/utils/axios/axiosInstance";
 import { useDispatch } from "react-redux";
 import { login } from "../../redux/authSlice.jsx";
+import { FaEye, FaEyeSlash } from "react-icons/fa";
+
 
 const AuthPage = () => {
   const [formData, setFormData] = useState({ employeeId: "", password: "" });
-  const [isPasswordVisible, setIsPasswordVisible] = useState(false); 
+  // const [isPasswordVisible, setIsPasswordVisible] = useState(false); 
   const navigate = useNavigate();
   const dispatch = useDispatch();
 
@@ -17,6 +19,10 @@ const AuthPage = () => {
     const { name, value } = e.target;
     setFormData({ ...formData, [name]: value });
   };
+
+
+  const [showPassword, setShowPassword] = useState(false); // <-- Added this state
+  const togglePasswordVisibility = () => setShowPassword((prev) => !prev); // <-- Added this function
 
   const handleSignIn = async (e) => {
     e.preventDefault();
@@ -110,19 +116,24 @@ const AuthPage = () => {
         <div className="relative">
           <input
             id="password"
-            type={isPasswordVisible ? "text" : "password"}
+            type={showPassword ? "text" : "password"}
             name="password"
             placeholder="********"
             className="mt-1 w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-teal-500 focus:border-teal-500"
             value={formData.password}
             onChange={handleInputChange}
           />
-          <span
-            className="absolute inset-y-0 right-3 flex items-center cursor-pointer text-gray-500"
-            onClick={() => setIsPasswordVisible(!isPasswordVisible)}
-          >
-            👁️
-          </span>
+          <button
+                    type="button"
+                    onClick={togglePasswordVisibility}
+                    className="absolute right-3 top-1/2 transform -translate-y-1/2" 
+                  >
+                    {showPassword ? (
+                      <FaEyeSlash className="w-5 h-5 text-gray-600" />
+                    ) : (
+                      <FaEye className="w-5 h-5 text-gray-600" />
+                    )}
+                  </button>
         </div>
       </div>
 

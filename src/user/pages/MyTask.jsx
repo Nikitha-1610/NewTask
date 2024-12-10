@@ -174,20 +174,31 @@ const MyTask = () => {
       </div>
 
             {/* Attachments Section */}
-            <div className="mt-4">
-                <div className="flex justify-between items-center">
-                  <div className="flex items-center">
-                    <BsPaperclip /> <span>Attachment</span>
-                  </div>
-                  <button className="text-blue-500">Download</button>
-                </div>
-                <div className="flex mt-3 gap-2">
-                {[...Array(0)].map((_, index) => (
-                  <div key={index} className="w-1/4 h-[70px] p-2 bg-white shadow-md rounded"></div>
-                ))}
-              </div>
-            
-              </div>
+            {/* Attachments Section */}
+<div className="mt-4">
+  <div className="flex justify-between items-center">
+    <div className="flex items-center">
+      <BsPaperclip /> <span>Attachment</span>
+    </div>
+    {task.attachmentUrl ? (
+      <a
+        href={task.attachmentUrl}
+        download
+        className="text-blue-500"
+        target="_blank"
+        rel="noopener noreferrer"
+      >
+        Download
+      </a>
+    ) : (
+      <span className="text-gray-500">No attachment</span>
+    )}
+  </div>
+  <div className="flex mt-3 gap-2">
+    {/* Optionally render thumbnails/previews if needed */}
+  </div>
+</div>
+
 
             {/* Comments Section */}
             <div className="mt-4">
