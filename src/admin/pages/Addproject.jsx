@@ -457,14 +457,16 @@ const AddProject = () => {
         <div className="mb-4">
           <label className="block text-sm font-semibold">taskDescription</label>
           <textarea
-            className="w-full h-40 p-2 border border-gray-300 rounded mt-4"
-            name="taskDescription"
-            value={formData.projectDescription}
-            onChange={handleInputChange}
-            placeholder="Enter a projectDescription of the task"
-          />
+  className="w-full h-40 p-2 border border-gray-300 rounded mt-4"
+  name="projectDescription" // ✅ Corrected name
+  value={formData.projectDescription}
+  onChange={handleInputChange}
+  placeholder="Enter a description of the project"
+/>
           {errors.projectDescription && (<p className="text-sm text-red-500 mt-1">{errors.projectDescription}</p>)}
         </div>
+        
+
 
         {/* File Reference */}
         <div className="mb-4">

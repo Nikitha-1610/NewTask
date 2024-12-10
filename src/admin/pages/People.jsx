@@ -1,13 +1,13 @@
 import { useEffect, useState } from "react";
 import { Icon } from "@iconify/react";
-import axiosInstance from "../../common/utils/axios/axiosInstance";
 
 import toast, { Toaster } from "react-hot-toast";
 import CountUp from "react-countup";
 import ReactLoading from "react-loading";
+import axiosInstance from "../../common/utils/axios/axiosInstance";
 
 const People = () => {
-  const [allUsers, setAllUsers] = useState([]); 
+  const [allUsers, setAllUsers] = useState([]);
   const [currentPage, setCurrentPage] = useState(1);
   const [usersPerPage] = useState(7);
   const [modalVisible, setModalVisible] = useState(false);
@@ -19,6 +19,7 @@ const People = () => {
   const [selectedUserType, setSelectedUserType] = useState("All");
   const [loading, setLoading] = useState(true);
   const [selectedPosition, setSelectedPosition] = useState("All");
+
 
   const getAllusers = async () => {
     try {
@@ -39,13 +40,15 @@ const People = () => {
   }, []);
 
   const departments = ["All", ...new Set(allUsers.map(user => user.department))];
-const userType = ["All", ...new Set(allUsers.map(user => user.status))];
+  const userType = ["All", ...new Set(allUsers.map(user => user.status))];
 
-const filteredUsers = allUsers.filter((user) => {
-  const matchesPosition = selectedPosition === "All" || user.position === selectedPosition;
-  const matchesUserType = selectedUserType === "All" || user.status === selectedUserType;
-  return matchesPosition && matchesUserType;
-});
+  const filteredUsers = allUsers.filter((user) => {
+    const matchesPosition = selectedPosition === "All" || user.position === selectedPosition;
+    const matchesUserType = selectedUserType === "All" || user.status === selectedUserType;
+    return matchesPosition && matchesUserType;
+  });
+  
+  
 
   const indexOfLastUser = currentPage * usersPerPage;
   const indexOfFirstUser = indexOfLastUser - usersPerPage;
@@ -95,53 +98,53 @@ const filteredUsers = allUsers.filter((user) => {
     closeModal();
   };
 
-  
-  
-
   const handleAction = async (action) => {
     if (selectedUserIndex !== null) {
       const user = currentUsers[selectedUserIndex];
-    
+
       try {
+        // Handle action based on the type (approve, on-hold, reject)
         switch (action) {
           case "approve":
             await axiosInstance.put(`/employee/approve/${user.email}`);
             toast.success(`${user.name} has been approved.`);
             console.log(`User approved:`, user.email);
             break;
-  
+
           case "on-hold":
+            // Pass status: "On-Hold" in the request body
             await axiosInstance.put(`/user/updateDetails/${user.email}`, {
               status: "On-Hold",
             });
             toast.success(`${user.name} has been placed on hold.`);
             console.log(`User on-hold:`, user.email);
             break;
-  
+
           case "reject":
             await axiosInstance.delete(`/user/reject/${user.email}`);
             toast.success(`${user.name} has been rejected.`);
             console.log(`User rejected:`, user.email);
             break;
-  
+
           default:
             throw new Error("Unknown action");
         }
+
+        // Refresh the user list after action
+        getAllusers();
       } catch (error) {
-        console.error("An error occurred while handling the action:", error);
+        console.error(`Error performing ${action} action:`, error);
         toast.error(`Failed to ${action} the user.`);
       } finally {
-        getAllusers(); // Call this outside the switch case to refresh the user list
-        closeModal(); // Ensure the modal closes
+        // Ensure modal is closed in both success and failure cases
+        closeModal();
       }
     }
   };
+
   
- 
   const positions = ["All", ...new Set(allUsers.map(user => user.position))];
   const statusOptions = ["All", ...new Set(allUsers.map(user => user.status))];
-
- 
 
   return (
     <div className="p-5">
@@ -170,8 +173,8 @@ const filteredUsers = allUsers.filter((user) => {
             </div>
           </div>
 
-         
-         {/* Filter Section */}
+          {/* Filter Section */}
+          {/* Filter Section */}
          <div className="flex flex-wrap gap-4 items-center mb-4">
             <select
               className="border border-gray-300 bg-gray-200 rounded-lg p-2 text-gray-700"
@@ -198,7 +201,6 @@ const filteredUsers = allUsers.filter((user) => {
               ))}
             </select>
           </div>
-
 
           {/* Table with Fixed Height */}
           <div
@@ -273,36 +275,44 @@ const filteredUsers = allUsers.filter((user) => {
               </div>
             </div>
 
-            {/* Fixed Pagination */}
-            <div className="absolute bottom-0 w-full bg-white border-t border-gray-300 py-2 flex justify-center items-center px-4">
-              <button
-                className="text-gray-500 hover:text-black mr-2"
-                onClick={() => setCurrentPage((prev) => Math.max(prev - 1, 1))}
-                disabled={currentPage === 1}
-              >
-                Previous
-              </button>
-              <div className="flex items-center gap-2">
-    {[...Array(totalPages)].map((_, index) => (
+           
+            <div className="absolute bottom-0 w-full bg-white border-t border-gray-300 py-2 flex justify-between items-center px-4">
+ 
+  <button
+    className="text-gray-500 hover:text-black"
+    onClick={() => setCurrentPage((prev) => Math.max(prev - 1, 1))}
+    disabled={currentPage === 1}
+  >
+    Previous
+  </button>
+
+ 
+  <div className="flex gap-2">
+    {Array.from({ length: totalPages }, (_, index) => index + 1).map((page) => (
       <button
-        key={index}
-        className={`px-3 py-1 rounded-md ${currentPage === index + 1 ? 'bg-blue-500 text-white' : 'bg-white text-gray-500'}`}
-        onClick={() => setCurrentPage(index + 1)}
+        key={page}
+        onClick={() => setCurrentPage(page)}
+        className={`px-3 py-1 rounded-md ${
+          currentPage === page 
+            ? 'bg-blue-500 text-white' 
+            : 'bg-gray-200 text-gray-700 hover:bg-blue-500 hover:text-white'
+        }`}
       >
-        {index + 1}
+        {page}
       </button>
     ))}
   </div>
-              <button
-                className="text-gray-500 hover:text-black ml-2"
-                onClick={() =>
-                  setCurrentPage((prev) => Math.min(prev + 1, totalPages))
-                }
-                disabled={currentPage === totalPages}
-              >
-                Next
-              </button>
-            </div>
+
+  
+  <button
+    className="text-gray-500 hover:text-black"
+    onClick={() => setCurrentPage((prev) => Math.min(prev + 1, totalPages))}
+    disabled={currentPage === totalPages}
+  >
+    Next
+  </button>
+</div>
+
           </div>
 
           {/* Approve Confirmation Modal */}
