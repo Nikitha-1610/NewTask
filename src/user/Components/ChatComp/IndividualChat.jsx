@@ -108,6 +108,8 @@ const IndividualChat = ({ contact, handleBackToContacts }) => {
     const sendMessage = () => {
       
         if (message.trim() && selectedEmployeeId) {
+            const msg = { sender: employeeId, text: message, receiver: selectedEmployeeId, timestamp: Date.now() }
+            setMessages((prevMsg) => [...prevMsg, msg]);
 
             // Emit message to the receiver and the sender
             socket.emit('sendMessage', employeeId, message, selectedEmployeeId, () => setMessage(''));
