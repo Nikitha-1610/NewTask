@@ -115,7 +115,7 @@ const AddTasks = () => {
         const command = new PutObjectCommand(params);
         await s3Client.send(command);
         const region = "us-east-1";
-        return "https://${BUCKET_NAME}.s3.${region}.amazonaws.com/${fileName}";
+        return `https://${BUCKET_NAME}.s3.${region}.amazonaws.com/${fileName}`;
       } catch (err) {
         console.error("Error uploading file to S3: ", err);
         return null;

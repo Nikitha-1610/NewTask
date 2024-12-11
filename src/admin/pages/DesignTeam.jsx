@@ -47,7 +47,7 @@ const BoardHeader = ({ showFilterDropdown, setShowFilterDropdown, taskNames, han
     <div className="p-2">
       <div className="flex flex-col sm:flex-row justify-between items-center mb-6 space-y-4 sm:space-y-0 md:space-y-0 ml-5 mt-2">
         <h1 className="text-2xl font-bold text-gray-700 bg-teal-100 rounded-lg w-60 h-9 text-center">
-          DESIGN TEAM
+          TASKS
         </h1>
         <div className="flex space-x-4 flex-wrap items-center sm:ml-auto sm:space-x-4 md:space-x-6">
           <button
