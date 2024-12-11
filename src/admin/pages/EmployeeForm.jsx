@@ -68,7 +68,67 @@ const EmployeeForm = () => {
     }));
   };
 
-  // Handle form submit
+  // // Handle form submit
+  // const handleSubmit = async (e) => {
+  //   e.preventDefault();
+  //   const newErrors = {};
+  
+  //   // Validate all fields
+  //   Object.keys(formData).forEach((field) => {
+  //     if (!formData[field]) {
+  //       newErrors[field] = `${field} is required.`;
+  //     }
+  //   });
+  
+  //   const updatedFormData = { ...formData };
+  //   updatedFormData.mobile = parseInt(formData.mobile, 10); 
+  
+  //   const dob = new Date(formData.DOB);
+  //   updatedFormData.DOB = dob.toISOString().split('T')[0]; 
+  
+  //   const appliedDate = new Date(formData.appliedDate);
+  //   updatedFormData.appliedDate = appliedDate.toISOString().split('T')[0]; 
+  
+  //   if (formData.password && formData.password.length < 8) {
+  //     newErrors.password = "Password must be at least 8 characters long.";
+  //   }
+  
+  //   if (Object.keys(newErrors).length > 0) {
+  //     setErrors(newErrors);
+  //     return;
+  //   }
+  
+  //   try {
+  //     const response = await axiosInstance.post("/employee/add", updatedFormData);
+  //     if ([200, 201].includes(response.status)) {
+  //       console.log("Server Response:", response.data);
+  //       setFormData({
+  //         employeeID: "",
+  //         name: "",
+  //         mobile: "",
+  //         password: "",
+  //         email: "",
+  //         address: "",
+  //         DOB: "",
+  //         reference: "",
+  //         role: "",
+  //         gender: "",
+  //         position: "",
+  //         department: "",
+  //         teamLead: "",
+  //         appliedDate: "",
+  //       });
+  //     } else {
+  //       console.error("Unexpected response:", response);
+  //     }
+  //   } catch (error) {
+  //     console.error("Error submitting form data:", error);
+  //     if (error.response) {
+  //       console.error("Server Response Data:", error.response.data);
+  //     }
+  //   }
+  // };
+
   const handleSubmit = async (e) => {
     e.preventDefault();
     const newErrors = {};
@@ -100,8 +160,11 @@ const EmployeeForm = () => {
   
     try {
       const response = await axiosInstance.post("/employee/add", updatedFormData);
+      
+      console.log("Response from server:", response); // Log the entire response object
+      
       if ([200, 201].includes(response.status)) {
-        console.log("Server Response:", response.data);
+        console.log("Server Response Data:", response.data); // Log the actual response data
         setFormData({
           employeeID: "",
           name: "",
@@ -128,6 +191,7 @@ const EmployeeForm = () => {
       }
     }
   };
+  
 
   return (
     <div className="min-h-screen flex flex-col items-center">
