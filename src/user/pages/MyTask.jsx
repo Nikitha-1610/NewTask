@@ -123,7 +123,7 @@ const MyTask = () => {
                   <span className="ml-2">Due Date:</span>
                 </div>
                 <span className="font-medium">
-                  {new Date(task.dueDate).toLocaleDateString("en-US", {
+                  {new Date(task.deadline).toLocaleDateString("en-US", {
                     day: "numeric",
                     month: "short",
                     year: "numeric",
