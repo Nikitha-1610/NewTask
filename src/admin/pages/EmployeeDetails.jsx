@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import axiosInstance from "../../common/utils/axios/axiosInstance";
+import ReactLoading from 'react-loading';
 
 const EmployeeDetails = () => {
   const [employees, setEmployees] = useState([]);
@@ -10,6 +11,7 @@ const EmployeeDetails = () => {
   const [roleDropdownOpen, setRoleDropdownOpen] = useState(false);
   const [currentPage, setCurrentPage] = useState(1);
   const [employeesPerPage] = useState(6);
+  
 
   const roleOptions = ['Employee', 'Intern', 'TeamLead', 'Manager'];
 
@@ -69,7 +71,11 @@ const EmployeeDetails = () => {
   const paginate = (pageNumber) => setCurrentPage(pageNumber);
 
   if (loading) {
-    return <div>Loading...</div>;
+    return (
+      <div className="flex justify-center items-center min-h-screen">
+        <ReactLoading type="spin" color="#4CAFEE" height={50} width={50} />
+      </div>
+    );
   }
 
   return (
