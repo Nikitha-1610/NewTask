@@ -48,7 +48,10 @@ const Side = ({ isOpen, toggleSidebar, role }) => {
       { path: "/user/tasks", label: "Tasks", icon: "bi:list-task" },
       { path: "/user/profile", label: "Profile", icon: "iconamoon:profile" },
       { path: "/user/mainpage", label: "MainPage", icon: "duo-icons:dashboard" },
-      { path: "/user/calender", label: "Calender", icon: "iconamoon:calender" },
+      { path: "/user/calender", label: "Calender", icon: "bx:calendar-event" },
+
+
+
       { path: "/user/mytask", label: "MyTask", icon: "iconamoon:profile" },
       { path: "/user/chats", label: "Chats", icon: "bi:chat-dots" },
     ],

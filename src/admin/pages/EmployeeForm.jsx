@@ -23,7 +23,7 @@ const EmployeeForm = () => {
   const [teamLeads, setTeamLeads] = useState([]); // State to store team leads from API
   const [errors, setErrors] = useState({});
   const [showPassword, setShowPassword] = useState(false);
-
+  const [isPopupVisible, setIsPopupVisible] = useState(false);
   // Toggle password visibility
   const togglePasswordVisibility = () => setShowPassword((prev) => !prev);
 
@@ -68,67 +68,7 @@ const EmployeeForm = () => {
     }));
   };
 
-  // // Handle form submit
-  // const handleSubmit = async (e) => {
-  //   e.preventDefault();
-  //   const newErrors = {};
   
-  //   // Validate all fields
-  //   Object.keys(formData).forEach((field) => {
-  //     if (!formData[field]) {
-  //       newErrors[field] = `${field} is required.`;
-  //     }
-  //   });
-  
-  //   const updatedFormData = { ...formData };
-  //   updatedFormData.mobile = parseInt(formData.mobile, 10); 
-  
-  //   const dob = new Date(formData.DOB);
-  //   updatedFormData.DOB = dob.toISOString().split('T')[0]; 
-  
-  //   const appliedDate = new Date(formData.appliedDate);
-  //   updatedFormData.appliedDate = appliedDate.toISOString().split('T')[0]; 
-  
-  //   if (formData.password && formData.password.length < 8) {
-  //     newErrors.password = "Password must be at least 8 characters long.";
-  //   }
-  
-  //   if (Object.keys(newErrors).length > 0) {
-  //     setErrors(newErrors);
-  //     return;
-  //   }
-  
-  //   try {
-  //     const response = await axiosInstance.post("/employee/add", updatedFormData);
-  //     if ([200, 201].includes(response.status)) {
-  //       console.log("Server Response:", response.data);
-  //       setFormData({
-  //         employeeID: "",
-  //         name: "",
-  //         mobile: "",
-  //         password: "",
-  //         email: "",
-  //         address: "",
-  //         DOB: "",
-  //         reference: "",
-  //         role: "",
-  //         gender: "",
-  //         position: "",
-  //         department: "",
-  //         teamLead: "",
-  //         appliedDate: "",
-  //       });
-  //     } else {
-  //       console.error("Unexpected response:", response);
-  //     }
-  //   } catch (error) {
-  //     console.error("Error submitting form data:", error);
-  //     if (error.response) {
-  //       console.error("Server Response Data:", error.response.data);
-  //     }
-  //   }
-  // };
-
   const handleSubmit = async (e) => {
     e.preventDefault();
     const newErrors = {};
@@ -162,7 +102,8 @@ const EmployeeForm = () => {
       const response = await axiosInstance.post("/employee/add", updatedFormData);
       
       console.log("Response from server:", response); // Log the entire response object
-      
+      console.log("Form data being submitted:", updatedFormData);
+
       if ([200, 201].includes(response.status)) {
         console.log("Server Response Data:", response.data); // Log the actual response data
         setFormData({
@@ -181,6 +122,7 @@ const EmployeeForm = () => {
           teamLead: "",
           appliedDate: "",
         });
+        setIsPopupVisible(true); // Show the popup
       } else {
         console.error("Unexpected response:", response);
       }
@@ -303,7 +245,7 @@ const EmployeeForm = () => {
   );
 };
 
-const InputField = ({ label, name, type = "text", value, onChange, error }) => (
+const InputField = ({ label, name, type = "text", value, onChange, error, isPopupVisible }) => (
   <div className="flex flex-col">
     <label className="text-gray-700 font-medium mb-1">
       {label} <span className="text-red-500">*</span>
@@ -316,6 +258,34 @@ const InputField = ({ label, name, type = "text", value, onChange, error }) => (
       className="border border-gray-300 rounded-md px-3 py-2"
     />
     {error && <ErrorMessage message={error} />}
+
+     {/* Popup */}
+     {isPopupVisible && (
+        <div className="fixed top-0 left-0 w-full h-full bg-black bg-opacity-50 flex justify-center items-center">
+          <div className="bg-white rounded-lg p-6 shadow-lg relative w-11/12 md:w-1/3">
+            <button
+              className="absolute top-3 right-3 text-gray-500 hover:text-gray-700"
+              onClick={() => setIsPopupVisible(false)}
+            >
+              <Icon icon="mdi:alpha-x-circle" height={24} width={24} />
+            </button>
+            <div className="text-center">
+              <h2 className="text-xl font-bold text-gray-800">
+                Employee Saved Successfully!
+              </h2>
+              <p className="text-gray-600 mt-2">
+                The employee data has been added successfully.
+              </p>
+              <button
+                onClick={() => setIsPopupVisible(false)}
+                className="mt-6 bg-teal-500 text-white px-6 py-2 rounded-full"
+              >
+                Close
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
   </div>
 );
 

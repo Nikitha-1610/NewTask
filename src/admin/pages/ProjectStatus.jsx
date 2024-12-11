@@ -2,6 +2,7 @@ import { useState, useEffect } from "react";
 import { IoPersonSharp } from "react-icons/io5";
 import { GoPerson } from "react-icons/go";
 import { Oval } from 'react-loader-spinner'; // Import loader
+import axiosInstance from "../../common/utils/axios/axiosInstance";
 
 const ProjectStatus = ({ task }) => {
   const [priority, setPriority] = useState(task.priority || "Normal");
@@ -129,20 +130,10 @@ const App = () => {
   useEffect(() => {
     const fetchProjects = async () => {
       try {
-        const response = await fetch(
-          "https://3qhglx2bhd.execute-api.us-east-1.amazonaws.com/project/getAll",
-          {
-            method: "GET",
-          }
-        );
-        const data = await response.json();
-        if (response.ok) {
-          setProjects(data.message || []);
-        } else {
-          console.error("Error fetching projects:", data);
-        }
+        const response = await axiosInstance.get("/project/getAll");
+        setProjects(response.data.message || []);
       } catch (error) {
-        console.error("Error:", error);
+        console.error("Error fetching projects:", error);
       } finally {
         setLoading(false);
       }

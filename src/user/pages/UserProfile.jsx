@@ -4,6 +4,7 @@ import React,{ useState, useEffect } from "react";
 import { Icon } from "@iconify/react";
 import { ClipLoader } from "react-spinners"; // Import the loader
 import { toast, ToastContainer } from "react-toastify";
+import axiosInstance from "../../common/utils/axios/axiosInstance";
 import "react-toastify/dist/ReactToastify.css";
 
 const UserProfile = () => {
@@ -74,8 +75,8 @@ const handleInputChanges = (e) => {
   useEffect(() => {
     const fetchUserData = async () => {
       try {
-        const response = await axios.get(
-          `https://3qhglx2bhd.execute-api.us-east-1.amazonaws.com/employee/get/${employeeId}`
+        const response = await axiosInstance.get(
+          `employee/get/${employeeId}`
         );
         if (response.data.status === 200) {
           setUserData(response.data.message);
@@ -127,8 +128,8 @@ const handleInputChanges = (e) => {
       
       
 
-      const response = await axios.put(
-        `https://3qhglx2bhd.execute-api.us-east-1.amazonaws.com/employee/update/${employeeId}`,
+      const response = await axiosInstance.put(
+        `employee/update/${employeeId}`,
         {name:editedData.name,
           email:editedData.email,
           DOB: editedData.DOB,

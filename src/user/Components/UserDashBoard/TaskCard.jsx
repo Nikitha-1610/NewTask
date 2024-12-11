@@ -41,7 +41,7 @@ const TaskCard = ({ title, time, task }) => {
   
   const getPriorityColor = (priority) => {
     switch (priority) {
-      case "High":
+      case "Urgent":
         return "bg-red-500";
       case "Medium":
         return "bg-green-500";
@@ -136,36 +136,36 @@ const TaskCard = ({ title, time, task }) => {
 
         {/* Assigned By */}
         <div className="flex items-center space-x-3">
-          <Icon icon="mdi:account-outline" className="text-purple-500 text-2xl" />
-          <p className="text-gray-600">
-            <strong>Assigned By:</strong> {task.assignedBy || "N/A"}
-          </p>
-        </div>
+                <Icon icon="mdi:account-outline" className="text-purple-500 text-2xl" />
+                <p className="text-gray-600">
+                  <strong>Assigned By:</strong> {task.assignedBy || "N/A"}
+                </p>
+              </div>
 
         {/* Task Description */}
         <div className="p-4 bg-gray-100 border-l-4 border-blue-500 rounded-md">
           <p className="text-lg font-serif text-gray-700">{task.taskDescription || "N/A"}</p>
         </div>
 
-        {/* Reference File */}
         <div className="flex items-center space-x-3">
-          <Icon icon={getFileIcon(task.referenceFileUrl?.[0])} className="text-red-500 text-2xl" />
-          <p className="text-gray-600">
-            <strong>Reference File:</strong>{" "}
-            {task.referenceFileUrl?.[0] ? (
-              <a
-                href={task.referenceFileUrl[0]}
-                className="text-blue-500 underline"
-                target="_blank"
-                rel="noopener noreferrer"
-              >
-                View File
-              </a>
-            ) : (
-              "No File"
-            )}
-          </p>
-        </div>
+  <Icon icon={getFileIcon(task.referenceFileUrl?.[0])} className="text-red-500 text-2xl" />
+  <p className="text-gray-600">
+    <strong>Reference File:</strong>{" "}
+    {task.referenceFileUrl?.[0] ? (
+      <a
+        href={task.referenceFileUrl[0]}
+        className="text-blue-500 underline"
+        target="_blank"
+        rel="noopener noreferrer"
+      >
+        File 
+      </a>
+    ) : (
+      "No File"
+    )}
+  </p>
+</div>
+
       </div>
     </div>
   </div>

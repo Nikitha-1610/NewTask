@@ -11,6 +11,7 @@ import TaskSchedule from "../components/UserDashBoard/Taskschedule";
 import DeadLineProjects from "../components/UserDashBoard/DeadLineProjects";
 import TaskManager from "../components/UserDashBoard/TaskManager";
 import { useState, useEffect } from "react";
+import axiosInstance from "../../common/utils/axios/axiosInstance";
 import axios from "axios";
 import { FaPlay } from "react-icons/fa";
 import ReactLoading from "react-loading";
@@ -39,8 +40,8 @@ const MainPage = () => {
   useEffect(() => {
     const fetchDashboardData = async () => {
       try {
-      const dashboardResponse = await axios.get(
-  `https://3qhglx2bhd.execute-api.us-east-1.amazonaws.com/task/getDashboard/${name}`,
+      const dashboardResponse =  await axiosInstance.get(
+  `task/getDashboard/${name}`,
   { responseType: "json" }
 );
 
@@ -76,8 +77,8 @@ const MainPage = () => {
 
     const fetchEmployeeTasks = async () => {
       try {
-        const employeeTaskResponse = await axios.get(
-          `https://3qhglx2bhd.execute-api.us-east-1.amazonaws.com/task/getEmployeeTask/${name}`,
+        const employeeTaskResponse = await axiosInstance.get(
+          `task/getEmployeeTask/${name}`,
           { responseType: "json" }
         );
 
@@ -89,8 +90,10 @@ const MainPage = () => {
           taskStatus: task.taskStatus,
           priority: task.priority,
           assignedTo: task.assignedTo,
+          assignedBy: task.assignedBy,
           assignedDate: task.assignedDate,
           taskDescription: task.taskDescription,
+          referenceFileUrl: task.referenceFileUrl
         }));
 
        

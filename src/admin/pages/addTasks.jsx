@@ -45,8 +45,8 @@ const AddTasks = () => {
   useEffect(() => {
     const fetchProjects = async () => {
       try {
-        const response = await axios.get(
-          "https://3qhglx2bhd.execute-api.us-east-1.amazonaws.com/project/names"
+        const response = await axiosInstance.get(
+          "project/names"
         );
         if (response.status === 200 && response.data.message) {
           setProjectOptions(response.data.message);
