@@ -55,7 +55,7 @@ const ProjectStatus = ({ task, onUpdateStatus }) => {
             <span className="ml-2">Status:</span>
           </div>
           <div className="flex items-center">
-            <span className="icon-placeholder"><Icon icon="ri:progress-8-fill" height={18} width={18} /></span>
+            <span className="icon-placeholder">🔄</span>
             <span className="ml-1 font-medium">{task.projectStatus}</span>
           </div>
         </div>
@@ -209,10 +209,20 @@ const App = () => {
   useEffect(() => {
     const fetchProjects = async () => {
       try {
-        const response = await axiosInstance.get("/project/getAll");
-        setProjects(response.data.message || []);
+        const response = await fetch(
+          "https://3qhglx2bhd.execute-api.us-east-1.amazonaws.com/project/getAll",
+          {
+            method: "GET",
+          }
+        );
+        const data = await response.json();
+        if (response.ok) {
+          setProjects(data.message || []);
+        } else {
+          console.error("Error fetching projects:", data);
+        }
       } catch (error) {
-        console.error("Error fetching projects:", error);
+        console.error("Error:", error);
       } finally {
         setLoading(false);
       }
