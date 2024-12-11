@@ -24,7 +24,7 @@ const TwoWaveChart = () => {
   });
   const [isCalendarOpen, setIsCalendarOpen] = useState(false);
   const [showCalendar, setShowCalendar] = useState(false);
-  const [selectedDate, setSelectedDate] = useState(new Date());
+  const [selectedDateRange, setSelectedDateRange] = useState([new Date(), new Date()]);
   const [chartData, setChartData] = useState({
     labels: [],
     datasets: [],
@@ -49,44 +49,38 @@ const TwoWaveChart = () => {
     setShowCalendar(!showCalendar);
   };
 
-  const onDateChange = (date) => {
-    setSelectedDate(date);
-    setShowCalendar(false);
-  };
-
-  // Fetch data from API
   const axiosInstance = axios.create({
     baseURL: "https://3qhglx2bhd.execute-api.us-east-1.amazonaws.com/task",
   });
 
-  useEffect(() => {
-    const fetchData = async () => {
-      setLoading(true);
-      try {
-        const response = await axiosInstance.get("/projectDetails");
-        const data = response.data;
+  const fetchFilteredData = async (start, end) => {
+    setLoading(true);
+    try {
+      const response = await axiosInstance.get("/projectDetails");
+      const data = response.data;
 
-        if (data.message && data.message.projectwise) {
-          const processedData = processApiData(data.message.projectwise);
-          setChartData(processedData);
-        } else {
-          console.error(
-            "API response does not include 'projectwise' key inside 'message'."
-          );
-          setChartData({ labels: [], datasets: [] });
-        }
-      } catch (error) {
-        console.error("Error fetching API data:", error);
+      if (data.message && data.message.projectwise) {
+        const filteredData = processApiData(data.message.projectwise, start, end);
+        setChartData(filteredData);
+      } else {
+        console.error(
+          "API response does not include 'projectwise' key inside 'message'."
+        );
         setChartData({ labels: [], datasets: [] });
-      } finally {
-        setLoading(false);
       }
-    };
+    } catch (error) {
+      console.error("Error fetching API data:", error);
+      setChartData({ labels: [], datasets: [] });
+    } finally {
+      setLoading(false);
+    }
+  };
 
-    fetchData();
-  }, []);
+  useEffect(() => {
+    fetchFilteredData(selectedDateRange[0], selectedDateRange[1]);
+  }, [selectedDateRange]);
 
-  const processApiData = (apiData) => {
+  const processApiData = (apiData, start, end) => {
     const months = ["nov", "dec", "jan", "feb", "mar"];
     const labels = months.map((month) => month.toUpperCase());
 
@@ -139,7 +133,7 @@ const TwoWaveChart = () => {
         position: isMobile ? "top" : "right",
         align: "start",
         labels: {
-          font:isMobile ? {size:12} : { size: 16 },
+          font: isMobile ? { size: 12 } : { size: 16 },
           color: "#000",
           boxWidth: 10,
           boxHeight: 10,
@@ -191,15 +185,40 @@ const TwoWaveChart = () => {
   return (
     <div className="w-full max-w-screen-lg mx-auto relative flex flex-col pb-0 overflow-x-hidden">
       <div className="flex flex-col sm:flex-row justify-between items-center">
-        <div
-          className="flex items-center text-gray-400 bg-blue-50 p-2 rounded-md cursor-pointer"
-          onClick={toggleCalendar}
-        >
-          <FaCalendarAlt className="text-sm" />
-          <span className="ml-2 text-sm sm:text-base md:text-lg">
-            This Month
-          </span>
-        </div>
+      <div className="relative">
+  <div
+    className="flex items-center text-gray-400 bg-blue-50 p-2 rounded-md cursor-pointer"
+    onClick={toggleCalendar}
+  >
+    <FaCalendarAlt className="text-sm" />
+    <span className="ml-2 text-sm sm:text-base md:text-lg">
+      {`${selectedDateRange[0].toLocaleDateString()} - ${selectedDateRange[1].toLocaleDateString()}`}
+    </span>
+  </div>
+
+  {showCalendar && (
+    <div
+      style={{
+        position: "absolute",
+        top: "100%",
+        left: "0",
+        zIndex: 10,
+        background: "white", // Background color for calendar
+        boxShadow: "0px 4px 6px rgba(0, 0, 0, 0.1)",
+        borderRadius: "8px",
+        overflow: "hidden",
+      }}
+    >
+      <Calendar
+        selectRange
+        onChange={setSelectedDateRange}
+        value={selectedDateRange}
+      />
+    </div>
+  )}
+</div>
+
+
 
         <div
           className={`flex items-center justify-center text-teal-500 text-2xl sm:text-3xl rounded-full bg-blue-50 w-12 h-12 ${
@@ -211,22 +230,21 @@ const TwoWaveChart = () => {
       </div>
 
       {showCalendar && (
-        <div className="absolute top-12 left-0 z-10 bg-white shadow-lg p-4 rounded-lg">
-          <Calendar onChange={onDateChange} value={selectedDate} />
-        </div>
+        <Calendar
+          selectRange
+          onChange={setSelectedDateRange}
+          value={selectedDateRange}
+        />
       )}
 
       <div className="flex sm:flex-row flex-col mt-16">
         <div className="flex flex-col items-start">
           <div className="text-blue-900 font-bold text-xl sm:text-3xl">
-            3 Projects
-          </div>
-          <div className="flex items-center text-green-600 text-lg mt-2">
-            <span className="sm:text-lg  text-base font-bold text-teal-500">On Track</span>
+            {`${chartData.datasets.length} Waves`}
           </div>
         </div>
 
-        <div className="relative w-full mt-4 sm:mt-0  sm:ml-10">
+        <div className="relative w-full mt-4 sm:mt-0 sm:ml-10">
           <div
             style={{
               width: chartSize.width,

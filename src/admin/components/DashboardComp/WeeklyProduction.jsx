@@ -97,7 +97,10 @@ const WeeklyProduction = ({ weeklyData, monthlyData, yearlyData }) => {
       y: {
         beginAtZero: true,
         ticks: {
-          display: false,
+          stepSize: 20,
+          callback: (value) => `${value} hrs`,
+          display: true,
+          font: { size: 13 },
         },
         grid: {
           display: false,
