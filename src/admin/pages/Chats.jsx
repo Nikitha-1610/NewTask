@@ -163,7 +163,8 @@ const ChatApp = () => {
   const getUsers = async () => {
     try {
       const response = await axiosInstance.get('employee/getAll');
-      setFilteredContacts(response.data.message);
+      const filteredData = response.data.message.filter(item => item.employeeID !== employeeId);
+      setFilteredContacts(filteredData);
     } catch (err) {
       // Set error state in case of failure
       console.log(err.response ? err.response.data : err.message);
