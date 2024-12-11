@@ -17,11 +17,11 @@ const ForgetPasswordPage = () => {
     e.preventDefault();
 
     // Validate employee ID
-    const isValidEmployeeId = /^241100\d{1,9}$/.test(employeeId);
-    if (!isValidEmployeeId) {
-      toast.error("Invalid Employee ID. Must start with 241100 and have 1-9 digits.");
-      return;
-    }
+    // const isValidEmployeeId = /^241100\d{1,9}$/.test(employeeId);
+    // if (!isValidEmployeeId) {
+    //   toast.error("Invalid Employee ID. Must start with 241100 and have 1-9 digits.");
+    //   return;
+    // }
 
     setLoading(true);
     try {
