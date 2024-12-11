@@ -16,6 +16,7 @@ import IntestTasks from "./pages/InTest";
 import AssignTasks from "./pages/Assigntask";
 import TaskCardDetails from "./components/TaskCardDetails";
 import ProjectStatus from "./pages/ProjectStatus";
+import EmployeeDetails from "./pages/EmployeeDetails";
 
 const adminRoutes = [
   {
@@ -25,6 +26,8 @@ const adminRoutes = [
   { path: "teams", component: Teams },
   { path: "employee", component: EmployeeForm },
   { path: "people", component: People },
+  { path: "empdetails", component: EmployeeDetails },
+
   {
     path: "usersemail",
     component: userEmail,
