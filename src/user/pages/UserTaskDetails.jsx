@@ -164,9 +164,9 @@ const UserTaskCardDetails = () => {
         )}
 
         
-        <div className="mt-4">
+        <div className="mt-4 w-1/3">
  
-  <h4 className="text-xl font-semibold">
+  <h4 className="text-xl font-semibold ">
     {taskStatus === "Completed" ? "Task Completed" : "Update Task"}
   </h4>
 
