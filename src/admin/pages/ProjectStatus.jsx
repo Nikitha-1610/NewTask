@@ -3,6 +3,8 @@ import { IoPersonSharp } from "react-icons/io5";
 import { GoPerson } from "react-icons/go";
 import { Oval } from 'react-loader-spinner';
 import { Icon } from "@iconify/react";
+import { ToastContainer, toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 
 const ProjectStatus = ({ task, onUpdateStatus }) => {
   const [selectedStatus, setSelectedStatus] = useState(task.projectStatus);
@@ -27,11 +29,14 @@ const ProjectStatus = ({ task, onUpdateStatus }) => {
       if (response.ok) {
         onUpdateStatus(task.projectId, selectedStatus);
         setIsModalOpen(false);
+        toast.success("Project status updated successfully!");
       } else {
         console.error("Error updating status:", data);
+        toast.error("Failed to update project status.");
       }
     } catch (error) {
       console.error("Error:", error);
+      toast.error("An error occurred while updating status.");
     } finally {
       setUpdating(false);
     }
@@ -50,14 +55,11 @@ const ProjectStatus = ({ task, onUpdateStatus }) => {
             <span className="ml-2">Status:</span>
           </div>
           <div className="flex items-center">
-            <span className="icon-placeholder">
-              <Icon icon="ri:progress-8-fill" height={18} width={18} />
-            </span>
+            <span className="icon-placeholder"><Icon icon="ri:progress-8-fill" height={18} width={18} /></span>
             <span className="ml-1 font-medium">{task.projectStatus}</span>
           </div>
         </div>
 
-        {/* Other project details */}
         <div className="flex flex-wrap items-center gap-4">
           <div className="flex items-center">
             <span className="icon-placeholder"><IoPersonSharp /></span>
@@ -152,8 +154,7 @@ const ProjectStatus = ({ task, onUpdateStatus }) => {
           {task.projectDescription || "No description provided."}
         </p>
       </div>
-   
-
+      {/* Project details here */}
       <div className="mt-4">
         <button
           onClick={() => setIsModalOpen(true)}
@@ -240,16 +241,15 @@ const App = () => {
     );
   };
 
-  // Filter projects by status
-  const filteredProjects = statusFilter === "All"
-    ? projects
-    : projects.filter((project) => project.projectStatus === statusFilter);
+  const filteredProjects =
+    statusFilter === "All"
+      ? projects
+      : projects.filter((project) => project.projectStatus === statusFilter);
 
   return (
     <div className="container mx-auto">
+      <ToastContainer />
       <h1 className="text-2xl font-bold text-center mt-6">Project List</h1>
-
-      {/* Filter Dropdown */}
       <div className="mt-4 flex justify-center">
         <select
           value={statusFilter}
@@ -262,7 +262,6 @@ const App = () => {
           <option value="Completed">Completed</option>
         </select>
       </div>
-
       {loading ? (
         <div className="flex justify-center items-center mt-6">
           <Oval
