@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import axiosInstance from "../../common/utils/axios/axiosInstance";
 import { FaEye, FaEyeSlash } from "react-icons/fa";
+import { ToastContainer, toast } from "react-toastify";
 
 const EmployeeForm = () => {
   const [formData, setFormData] = useState({
@@ -105,6 +106,7 @@ const EmployeeForm = () => {
       console.log("Form data being submitted:", updatedFormData);
 
       if ([200, 201].includes(response.status)) {
+        toast.success("Employee Added successfully!");
         console.log("Server Response Data:", response.data); // Log the actual response data
         setFormData({
           employeeID: "",
@@ -124,9 +126,11 @@ const EmployeeForm = () => {
         });
         setIsPopupVisible(true); // Show the popup
       } else {
+
         console.error("Unexpected response:", response);
       }
     } catch (error) {
+      toast.error("Server error. Try again.");
       console.error("Error submitting form data:", error);
       if (error.response) {
         console.error("Server Response Data:", error.response.data);
@@ -137,6 +141,7 @@ const EmployeeForm = () => {
 
   return (
     <div className="min-h-screen flex flex-col items-center">
+      <ToastContainer />
       <div className="w-full max-w-6xl bg-white p-6 sm:p-8">
         <h1 className="text-xl sm:text-2xl font-semibold mb-6 text-teal-600">
           Employee Form

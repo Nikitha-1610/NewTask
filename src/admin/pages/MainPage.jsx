@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import axios from "axios";
+import axiosInstance from "../../common/utils/axios/axiosInstance";
 import StatsCard from "../components/UserDashBoard/StatsCard";
 import TaskList from "../components/UserDashBoard/TaskList";
 import ProjectList from "../components/UserDashBoard/projectList";
@@ -38,8 +38,8 @@ const MainPage = () => {
     const fetchDashboardData = async () => {
       try {
         // Fetch data for dashboard stats
-        const dashboardResponse = await axios.get(
-          `https://3qhglx2bhd.execute-api.us-east-1.amazonaws.com/task/getDashboard/${employeeName}`,
+        const dashboardResponse = await axiosInstance.get(
+          `/task/getDashboard/${employeeName}`,
           { responseType: "json" }
         );
 
@@ -73,9 +73,10 @@ const MainPage = () => {
 
     const fetchEmployeeTasks = async () => {
       try {
-        const employeeTaskResponse = await axios.get(
-          `https://3qhglx2bhd.execute-api.us-east-1.amazonaws.com/task/getEmployeeTask/${employeeName}`,
+        const employeeTaskResponse = await axiosInstance.get(
+          `/task/getEmployeeTask/${employeeName}`,
           { responseType: "json" }
+        
         );
 
 

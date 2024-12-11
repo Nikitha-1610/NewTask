@@ -33,7 +33,9 @@ const Side = ({ isOpen, toggleSidebar, role }) => {
       { path: "/admin/dashboard", label: "Dashboard", icon: "material-symbols:dashboard-outline" },
       { path: "/admin/teams", label: "Teams", icon: "la:teamspeak" },
       { path: "/admin/employee", label: "Employee", icon: "ic:twotone-update" },
+      { path: "/admin/empdetails", label: "EmpDetails", icon: "iconamoon:profile" },
       { path: "/admin/people", label: "People", icon: "iconamoon:profile" },
+      
       { path: "/admin/usersemail", label: "Users Email", icon: "material-symbols:action-key" },
       { path: "/admin/task", label: "Task", icon: "bi:list-task" },
       { path: "/admin/addtasks", label: "Add Task", icon: "mdi:plus-circle" },
@@ -42,6 +44,9 @@ const Side = ({ isOpen, toggleSidebar, role }) => {
       { path: "/admin/mainpage", label: "Main Page", icon: "duo-icons:dashboard" },
       { path: "/admin/addproject", label: "Add Project", icon: "ix:project-new" },
       { path: "/admin/projectstatus", label: "Project Status", icon: "pajamas:project" },
+    
+      
+
     ],
     Employee: [
       { path: "/user/home", label: "Home", icon: "material-symbols:home-outline" },

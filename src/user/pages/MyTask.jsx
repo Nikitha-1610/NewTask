@@ -1,8 +1,8 @@
 import React, { useState, useEffect } from "react";
 import { Icon } from "@iconify/react";
-import axios from 'axios';
 import { BsPaperclip } from 'react-icons/bs';
 import { Oval } from "react-loader-spinner"; 
+import axiosInstance from "../../common/utils/axios/axiosInstance"; // Import axiosInstance
 
 const MyTask = () => {
   const [tasks, setTasks] = useState([]);
@@ -15,10 +15,10 @@ const MyTask = () => {
     const employeeName = localStorage.getItem('name');
 
     if (employeeName) {
-      const baseUrl = "https://3qhglx2bhd.execute-api.us-east-1.amazonaws.com/"; 
-      const url = `${baseUrl}/task/getEmployeeTask/${employeeName}?days=7`;
+      const url = `/task/getEmployeeTask/${employeeName}?days=7`;
 
-      axios.get(url)
+      // Replace axios with axiosInstance
+      axiosInstance.get(url)
         .then(response => {
           if (response.data.status === 200) {
             const filteredTasks = response.data.message.filter(task =>
@@ -60,19 +60,10 @@ const MyTask = () => {
       hoursSpent: status === "Completed" ? hoursSpent : undefined,
     };
 
-    fetch(
-      `https://3qhglx2bhd.execute-api.us-east-1.amazonaws.com/task/updateTask/${selectedTask.taskId}`,
-      {
-        method: "PUT",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(body),
-      }
-    )
-      .then((response) => response.json())
-      .then((data) => {
-        if (data.status === 200) {
+    // Use axiosInstance for PUT request
+    axiosInstance.put(`/task/updateTask/${selectedTask.taskId}`, body)
+      .then((response) => {
+        if (response.data.status === 200) {
           setTasks((prevTasks) =>
             prevTasks.map((task) =>
               task.taskId === selectedTask.taskId
@@ -83,7 +74,7 @@ const MyTask = () => {
           setShowDiv1(false);
           setHoursSpent("");
         } else {
-          console.error("Failed to update task:", data);
+          console.error("Failed to update task:", response.data);
         }
       })
       .catch((error) => console.error("Error updating task:", error));
@@ -93,7 +84,6 @@ const MyTask = () => {
     <div className="space-y-5">
       <h2 className="text-xl font-bold px-2 py-1 rounded-md text-gray-700">MyTask</h2>
     
-     
       {loading ? (
         <div className="flex justify-center items-center my-10">
           <Oval color="#00BFFF" height={50} width={50} />
@@ -103,7 +93,7 @@ const MyTask = () => {
           {tasks.map((task) => (
             <div
               key={task.taskId}
-              className=" p-4 bg-gray-50 border rounded-md relative"
+              className="p-4 bg-gray-50 border rounded-md relative mb-4"  // Add margin-bottom here
             >
               {task.taskStatus !== "Completed" && (
                 <button
@@ -116,7 +106,6 @@ const MyTask = () => {
 
               <h3 className="font-bold text-xl mb-3">{task.taskName}</h3>
 
-             
               <div className="flex flex-wrap items-center gap-6 mb-4">
                 <div className="flex items-center">
                   <Icon icon="ic:outline-watch-later" height={18} width={18} />
@@ -128,14 +117,13 @@ const MyTask = () => {
                 </div>
               </div>
 
-              
               <div className="flex flex-wrap items-center gap-6 mb-4">
                 <div className="flex items-center">
                   <Icon icon="ic:outline-calendar-today" className="text-gray-500" />
                   <span className="ml-2">Due Date:</span>
                 </div>
                 <span className="font-medium">
-                  {new Date(task.dueDate).toLocaleDateString("en-US", {
+                  {new Date(task.deadline).toLocaleDateString("en-US", {
                     day: "numeric",
                     month: "short",
                     year: "numeric",
@@ -143,7 +131,6 @@ const MyTask = () => {
                 </span>
               </div>
 
-             
               <div className="flex flex-wrap items-center gap-6 mb-4">
                 <div className="flex items-center">
                   <Icon icon="lucide:users" height={22} width={22} />
@@ -164,8 +151,7 @@ const MyTask = () => {
                 </div>
               </div>
 
-              
-              <div className="flex flex-wrap items-center  mb-4">
+              <div className="flex flex-wrap items-center mb-4">
                 <Icon icon="mdi:user-outline" height={22} width={32} />
                 <span className=" ">Assigned by:</span>
                 <div className="flex items-center gap-3 ml-4">
@@ -179,11 +165,10 @@ const MyTask = () => {
                 </div>
               </div>
 
-             
               {task.referenceFileUrl && task.referenceFileUrl.length > 0 && (
                 <div className="mt-4">
                   <h4 className="text-xl font-semibold">Attachments</h4>
-                  <div className=" space-y-3 mt-2">
+                  <div className="space-y-3 mt-2">
                     {task.referenceFileUrl.map((url, index) => (
                       <div key={index} className="flex items-center space-x-3">
                         <BsPaperclip />
