@@ -279,14 +279,14 @@ const AddTasks = () => {
         {/* Project Name and Due Date */}
         <div className="flex flex-wrap space-y-4 md:space-y-0 md:space-x-4 mb-4">
           <div className="w-full md:flex-1">
-            <label className="block text-sm font-semibold">Project Name</label>
+            <label className="block text-sm font-semibold">Task Name</label>
             <input
               type="text"
               className={'w-full p-2 border ${errors.taskName ? "border-red-500" : "border-gray-300"}  rounded mt-2'}
               name="taskName"
               value={formData.taskName}
               onChange={handleInputChange}
-              placeholder="Enter project name"
+              placeholder="Enter Task name"
             />
             {errors.taskName && (<p className="text-sm text-red-500 mt-1">{errors.taskName}</p>)}
           </div>
