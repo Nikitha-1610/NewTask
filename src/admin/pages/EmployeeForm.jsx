@@ -21,14 +21,17 @@ const EmployeeForm = () => {
     appliedDate: ""  
   });
 
-  const [teamLeads, setTeamLeads] = useState([]); // State to store team leads from API
+  const [teamLeads, setTeamLeads] = useState([]); 
   const [errors, setErrors] = useState({});
   const [showPassword, setShowPassword] = useState(false);
   const [isPopupVisible, setIsPopupVisible] = useState(false);
-  // Toggle password visibility
+ 
   const togglePasswordVisibility = () => setShowPassword((prev) => !prev);
 
-  // Generate Employee ID
+  const departmentOptions = ["Design", "Development", "DevOps", "Marketing", "HR", "AI/ML"];
+  const roleOptions = ["Employee", "TeamLead", "Manager", "Intern"];
+
+
   const generateEmployeeId = async () => {
     try {
       const response = await axiosInstance.get("employee/generateId");
@@ -44,13 +47,13 @@ const EmployeeForm = () => {
     }
   };
 
-  // Fetch team leads from API
+
   useEffect(() => {
     const fetchTeamLeads = async () => {
       try {
         const response = await axiosInstance.get("employee/getOption/TeamLead");
         if (response?.data?.message) {
-          setTeamLeads(response.data.message); // Response is an array of names
+          setTeamLeads(response.data.message); 
         }
       } catch (error) {
         console.error("Error fetching team leads:", error);
@@ -60,7 +63,7 @@ const EmployeeForm = () => {
     fetchTeamLeads();
   }, []);
 
-  // Handle input change for all fields
+  
   const handleInputChange = (e) => {
     const { name, value } = e.target;
     setFormData((prevData) => ({
@@ -74,7 +77,7 @@ const EmployeeForm = () => {
     e.preventDefault();
     const newErrors = {};
   
-    // Validate all fields
+   
     Object.keys(formData).forEach((field) => {
       if (!formData[field]) {
         newErrors[field] = `${field} is required.`;
@@ -102,12 +105,12 @@ const EmployeeForm = () => {
     try {
       const response = await axiosInstance.post("/employee/add", updatedFormData);
       
-      console.log("Response from server:", response); // Log the entire response object
+      console.log("Response from server:", response); 
       console.log("Form data being submitted:", updatedFormData);
 
       if ([200, 201].includes(response.status)) {
         toast.success("Employee Added successfully!");
-        console.log("Server Response Data:", response.data); // Log the actual response data
+        console.log("Server Response Data:", response.data); 
         setFormData({
           employeeID: "",
           name: "",
@@ -124,7 +127,7 @@ const EmployeeForm = () => {
           teamLead: "",
           appliedDate: "",
         });
-        setIsPopupVisible(true); // Show the popup
+        setIsPopupVisible(true); 
       } else {
 
         console.error("Unexpected response:", response);
@@ -212,10 +215,10 @@ const EmployeeForm = () => {
             <InputField label="Address" name="address" value={formData.address} onChange={handleInputChange} error={errors.address} />
             <InputField label="Date of Birth" name="DOB" type="date" value={formData.DOB} onChange={handleInputChange} error={errors.DOB} />
             <InputField label="Reference" name="reference" value={formData.reference} onChange={handleInputChange} error={errors.reference} />
-            <InputField label="Role" name="role" value={formData.role} onChange={handleInputChange} error={errors.role} />
             <InputField label="Gender" name="gender" value={formData.gender} onChange={handleInputChange} error={errors.gender} />
             <InputField label="Position" name="position" value={formData.position} onChange={handleInputChange} error={errors.position} />
-            <InputField label="Department" name="department" value={formData.department} onChange={handleInputChange} error={errors.department} />
+            {/* <InputField label="Department" name="department" value={formData.department} onChange={handleInputChange} error={errors.department} /> */}
+
 
             {/* Team Lead Dropdown */}
             <div className="flex flex-col">
@@ -237,7 +240,39 @@ const EmployeeForm = () => {
               </select>
               {errors.teamLead && <ErrorMessage message={errors.teamLead} />}
             </div>
+            <div className="flex flex-col">
+              <label className="text-gray-700 font-medium mb-1">Department <span className="text-red-500">*</span></label>
+              <select
+                name="department"
+                value={formData.department}
+                onChange={handleInputChange}
+                className="border border-gray-300 rounded-md px-3 py-2"
+              >
+                <option value="">Select Department</option>
+                {departmentOptions.map((dept, index) => (
+                  <option key={index} value={dept}>{dept}</option>
+                ))}
+              </select>
+              {errors.department && <ErrorMessage message={errors.department} />}
+            </div>
+            <div className="flex flex-col">
+              <label className="text-gray-700 font-medium mb-1">role <span className="text-red-500">*</span></label>
+              <select
+                name="role"
+                value={formData.role}
+                onChange={handleInputChange}
+                className="border border-gray-300 rounded-md px-3 py-2"
+              >
+                <option value="">Select role</option>
+                {roleOptions.map((role, index) => (
+                  <option key={index} value={role}>{role}</option>
+                ))}
+              </select>
+              {errors.department && <ErrorMessage message={errors.role} />}
+            </div>
           </div>
+
+                
 
           <div className="flex justify-end mt-6">
             <button type="submit" className="bg-teal-500 text-white px-6 py-2 rounded-md">
@@ -264,7 +299,7 @@ const InputField = ({ label, name, type = "text", value, onChange, error, isPopu
     />
     {error && <ErrorMessage message={error} />}
 
-     {/* Popup */}
+   
      {isPopupVisible && (
         <div className="fixed top-0 left-0 w-full h-full bg-black bg-opacity-50 flex justify-center items-center">
           <div className="bg-white rounded-lg p-6 shadow-lg relative w-11/12 md:w-1/3">
@@ -297,3 +332,4 @@ const InputField = ({ label, name, type = "text", value, onChange, error, isPopu
 const ErrorMessage = ({ message }) => <p className="text-sm text-red-500 mt-1">{message}</p>;
 
 export default EmployeeForm;
+
