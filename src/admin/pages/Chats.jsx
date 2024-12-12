@@ -121,7 +121,8 @@ const removeDuplicates = (array) => {
 
 const ChatApp = () => {
   const [searchQuery, setSearchQuery] = useState("");
-  const [filteredContacts, setFilteredContacts] = useState(contacts);
+  const [data, setData] = useState([]);
+  const [filteredContacts, setFilteredContacts] = useState(data);
   const [filteredPinnedContacts, setFilteredPinnedContacts] =
     useState([]);
   const [selectedContact, setSelectedContact] = useState(null);
@@ -142,7 +143,7 @@ const ChatApp = () => {
     if (query) {
       setFilteredContacts(
         removeDuplicates(
-          contacts.filter((contact) =>
+          data.filter((contact) =>
             contact.name.toLowerCase().includes(query.toLowerCase())
           )
         )
@@ -155,7 +156,7 @@ const ChatApp = () => {
         )
       );
     } else {
-      setFilteredContacts(removeDuplicates(contacts));
+      setFilteredContacts(removeDuplicates(data));
       setFilteredPinnedContacts(removeDuplicates(pinnedContacts));
     }
   };
@@ -164,6 +165,7 @@ const ChatApp = () => {
     try {
       const response = await axiosInstance.get('employee/getAll');
       const filteredData = response.data.message.filter(item => item.employeeID !== employeeId);
+      setData(filteredData);
       setFilteredContacts(filteredData);
     } catch (err) {
       // Set error state in case of failure

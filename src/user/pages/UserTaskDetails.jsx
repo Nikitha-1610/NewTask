@@ -136,7 +136,7 @@ const UserTaskCardDetails = () => {
           <h4 className="text-xl font-semibold">Description</h4>
           <textarea
             value={taskDescription || "No description available."}
-            className="w-full p-4 mt-2 text-lg text-gray-700 bg-gray-100 border border-gray-300 rounded-md"
+            className="w-1/2 p-4 mt-2 text-lg text-gray-700 bg-gray-100 border border-gray-300 rounded-md"
             readOnly
           />
         </div>

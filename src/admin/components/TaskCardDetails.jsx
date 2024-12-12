@@ -1,7 +1,5 @@
 import { useParams, useNavigate } from "react-router-dom";
 import { useState, useEffect } from "react";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faLink, faUser, faComments } from "@fortawesome/free-solid-svg-icons";
 import axiosInstance from "../../common/utils/axios/axiosInstance";
 import { Icon } from "@iconify/react";
 import ReactLoading from "react-loading";

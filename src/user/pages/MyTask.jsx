@@ -2,7 +2,8 @@ import React, { useState, useEffect } from "react";
 import { Icon } from "@iconify/react";
 import { BsPaperclip } from 'react-icons/bs';
 import { Oval } from "react-loader-spinner"; 
-import axiosInstance from "../../common/utils/axios/axiosInstance"; // Import axiosInstance
+import axiosInstance from "../../common/utils/axios/axiosInstance"; 
+
 
 const MyTask = () => {
   const [tasks, setTasks] = useState([]);
@@ -11,13 +12,25 @@ const MyTask = () => {
   const [selectedTask, setSelectedTask] = useState(null);
   const [loading, setLoading] = useState(true);
 
+  const getStatusColor = (status) => {
+    switch (status) {
+      case "Assigned":
+        return "bg-gray-400"; 
+      case "In-Progress":
+        return "bg-orange-500"; 
+      case "In-Test":
+        return "bg-red-500"; 
+      case "Completed":
+        return "bg-teal-500"; 
+      default:
+        return "bg-gray-500"; 
+    }
+  };
+
   useEffect(() => {
     const employeeName = localStorage.getItem('name');
-
     if (employeeName) {
       const url = `/task/getEmployeeTask/${employeeName}?days=7`;
-
-      // Replace axios with axiosInstance
       axiosInstance.get(url)
         .then(response => {
           if (response.data.status === 200) {
@@ -60,7 +73,6 @@ const MyTask = () => {
       hoursSpent: status === "Completed" ? hoursSpent : undefined,
     };
 
-    // Use axiosInstance for PUT request
     axiosInstance.put(`/task/updateTask/${selectedTask.taskId}`, body)
       .then((response) => {
         if (response.data.status === 200) {
@@ -83,18 +95,15 @@ const MyTask = () => {
   return (
     <div className="space-y-5">
       <h2 className="text-xl font-bold px-2 py-1 rounded-md text-gray-700">MyTask</h2>
-    
+
       {loading ? (
         <div className="flex justify-center items-center my-10">
           <Oval color="#00BFFF" height={50} width={50} />
         </div>
       ) : (
-        <div className="w-full bg-white rounded-lg shadow-md border border-gray-200">
+        <div className="w-full bg-white rounded-lg shadow-md  ">
           {tasks.map((task) => (
-            <div
-              key={task.taskId}
-              className="p-4 bg-gray-50 border rounded-md relative mb-4"  // Add margin-bottom here
-            >
+            <div key={task.taskId} className="p-4 bg-gray-50 border rounded-md relative mb-4">
               {task.taskStatus !== "Completed" && (
                 <button
                   onClick={() => handleToggleDiv1(task)}
@@ -112,8 +121,10 @@ const MyTask = () => {
                   <span className="ml-2">Status:</span>
                 </div>
                 <div className="flex items-center">
-                  <Icon icon="ri:progress-8-fill" height={18} width={18} />
-                  <span className="ml-1 font-medium">{task.taskStatus}</span>
+                  <div
+                    className={`w-4 h-4 rounded-full ${getStatusColor(task.taskStatus)}`}
+                  />
+                  <span className="ml-2 font-medium">{task.taskStatus}</span>
                 </div>
               </div>
 
@@ -185,11 +196,15 @@ const MyTask = () => {
                   </div>
                 </div>
               )}
+
+
+             
             </div>
           ))}
         </div>
       )}
 
+      {/* Update task status modal */}
       {showDiv1 && selectedTask && (
         <div className="w-[300px] h-auto p-4 absolute top-20 right-20 bg-white border border-gray-300 shadow-md rounded-md">
           <h1 className="mb-4 text-lg">Update Task Status</h1>
@@ -226,7 +241,7 @@ const MyTask = () => {
               </button>
             </div>
           )}
-          
+
           <button
             onClick={() => setShowDiv1(false)}
             className="w-full px-3 py-2 mt-4 text-sm text-gray-600 bg-gray-200 rounded hover:bg-gray-300"

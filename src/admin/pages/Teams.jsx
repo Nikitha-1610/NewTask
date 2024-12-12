@@ -3,7 +3,6 @@ import { useState, useEffect } from "react";
 import MessageCard from "../components/MessageCard";
 import axiosInstance from "../../common/utils/axios/axiosInstance";
 
-
 // Custom Node Component
 const OrgChartNode = ({ data, onClick }) => (
   <div
@@ -31,10 +30,9 @@ const Teams = () => {
   const [selectedNode, setSelectedNode] = useState(null);
   const [showMessageCard, setShowMessageCard] = useState(false);
   const [hierarchyData, setHierarchyData] = useState(null); 
+  const [isLoading, setIsLoading] = useState(true); // Loader state
 
-  
   useEffect(() => {
-   
     axiosInstance
       .get("/employee/getHierarchy") 
       .then((response) => {
@@ -54,6 +52,9 @@ const Teams = () => {
       })
       .catch((error) => {
         console.error("Error fetching hierarchy data:", error);
+      })
+      .finally(() => {
+        setIsLoading(false); 
       });
   }, []);
 
@@ -69,7 +70,14 @@ const Teams = () => {
     setShowMessageCard(false); 
   };
 
-  if (!hierarchyData) return <div>Loading...</div>
+  if (isLoading) {
+    return (
+      <div className="flex justify-center items-center h-screen">
+        <div className="animate-spin rounded-full h-16 w-10 border-t-4 border-blue-500"></div>
+      </div>
+    );
+  }
+
   return (
     <div className="flex justify-center p-6 relative">
       <div>
@@ -82,7 +90,6 @@ const Teams = () => {
           )}
         </Tree>
 
-        {/* Buttons that appear when a node is selected */}
         {selectedNode && (
           <div
             className="absolute flex flex-col gap-2 bg-teal-100 p-2 rounded-md"
@@ -103,7 +110,6 @@ const Teams = () => {
           </div>
         )}
 
-        {/* Message Card */}
         {showMessageCard && (
           <div
             className="absolute top-32 right-44 transform translate-x-1/2"
