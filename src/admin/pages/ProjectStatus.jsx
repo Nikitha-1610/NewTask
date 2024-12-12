@@ -7,7 +7,7 @@ import axiosInstance from "../../common/utils/axios/axiosInstance";
 import "react-toastify/dist/ReactToastify.css";
 
 const ProjectStatus = ({ task, onUpdateStatus }) => {
-  const [selectedStatus, setSelectedStatus] = useState(task.projectStatus);
+  const [selectedStatus, setSelectedStatus] = useState(task.projectStatus=== 'Not-Started'? 'In-Progress': task.projectStatus);
   const [updating, setUpdating] = useState(false);
   const [isModalOpen, setIsModalOpen] = useState(false);
 
@@ -18,6 +18,8 @@ const ProjectStatus = ({ task, onUpdateStatus }) => {
         `project/update/${task.projectId}`,
         { projectStatus: selectedStatus }
       );
+      console.log(selectedStatus);
+      
 
       if (response.status === 200) {
         onUpdateStatus(task.projectId, selectedStatus);
