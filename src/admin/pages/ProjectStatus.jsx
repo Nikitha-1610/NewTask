@@ -2,8 +2,8 @@ import { useState, useEffect } from "react";
 import { IoPersonSharp } from "react-icons/io5";
 import { GoPerson } from "react-icons/go";
 import { Oval } from 'react-loader-spinner';
-import { Icon } from "@iconify/react";
 import { ToastContainer, toast } from "react-toastify";
+import axiosInstance from "../../common/utils/axios/axiosInstance";
 import "react-toastify/dist/ReactToastify.css";
 
 const ProjectStatus = ({ task, onUpdateStatus }) => {
@@ -14,24 +14,17 @@ const ProjectStatus = ({ task, onUpdateStatus }) => {
   const handleUpdate = async () => {
     setUpdating(true);
     try {
-      const response = await fetch(
-        `https://3qhglx2bhd.execute-api.us-east-1.amazonaws.com/project/update/${task.projectId}`,
-        {
-          method: "PUT",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify({ projectStatus: selectedStatus }),
-        }
+      const response = await axiosInstance.put(
+        `project/update/${task.projectId}`,
+        { projectStatus: selectedStatus }
       );
-      const data = await response.json();
 
-      if (response.ok) {
+      if (response.status === 200) {
         onUpdateStatus(task.projectId, selectedStatus);
         setIsModalOpen(false);
         toast.success("Project status updated successfully!");
       } else {
-        console.error("Error updating status:", data);
+        console.error("Error updating status:", response.data);
         toast.error("Failed to update project status.");
       }
     } catch (error) {
@@ -49,6 +42,7 @@ const ProjectStatus = ({ task, onUpdateStatus }) => {
       </h3>
 
       <div className="mt-4 text-sm md:text-base font-normal text-gray-600 space-y-4">
+        {/* Project Details */}
         <div className="flex flex-wrap items-center gap-4">
           <div className="flex items-center">
             <span className="icon-placeholder">🕒</span>
@@ -154,7 +148,11 @@ const ProjectStatus = ({ task, onUpdateStatus }) => {
           {task.projectDescription || "No description provided."}
         </p>
       </div>
-      {/* Project details here */}
+   
+    
+
+    
+
       <div className="mt-4">
         <button
           onClick={() => setIsModalOpen(true)}
@@ -209,20 +207,10 @@ const App = () => {
   useEffect(() => {
     const fetchProjects = async () => {
       try {
-        const response = await fetch(
-          "https://3qhglx2bhd.execute-api.us-east-1.amazonaws.com/project/getAll",
-          {
-            method: "GET",
-          }
-        );
-        const data = await response.json();
-        if (response.ok) {
-          setProjects(data.message || []);
-        } else {
-          console.error("Error fetching projects:", data);
-        }
+        const response = await axiosInstance.get("project/getAll");
+        setProjects(response.data.message || []);
       } catch (error) {
-        console.error("Error:", error);
+        console.error("Error fetching projects:", error);
       } finally {
         setLoading(false);
       }
