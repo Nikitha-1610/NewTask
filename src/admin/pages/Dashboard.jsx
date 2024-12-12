@@ -6,43 +6,7 @@ import TwoWaveChart from "../components/DashboardComp/TwoWaveChart";
 // import axiosInstance from "../utilities/axios/axiosInstance";
 import axiosInstance from "../../common/utils/axios/axiosInstance";
 import ReactLoading from "react-loading";
-// const getRandomColor = () => {
-//   const colors = [
-//     "bg-red-500", "bg-blue-500", "bg-green-500", "bg-yellow-500",
-//     "bg-purple-500", "bg-pink-500", "bg-teal-500", "bg-indigo-500"
-//   ];
-//   return colors[Math.floor(Math.random() * colors.length)];
-// };
 
-// const getFaintColor = (color) => {
-//   switch (color) {
-//     case "red":
-//       return "bg-red-100";
-//     case "blue":
-//       return "bg-blue-100";
-//     case "green":
-//       return "bg-green-100";
-//     case "yellow":
-//       return "bg-yellow-100";
-//     case "purple":
-//       return "bg-purple-100";
-//     case "pink":
-//       return "bg-pink-100";
-//     case "teal":
-//       return "bg-teal-100";
-//     case "indigo":
-//       return "bg-indigo-100";
-//     default:
-//       return "bg-gray-100";
-//   }
-// };
-// const getRandomColor = () => {
-//   const colors = [
-//     "red", "blue", "green", "yellow",
-//     "purple", "pink", "teal", "indigo"
-//   ];
-//   return colors[Math.floor(Math.random() * colors.length)];
-// };
 
 const colors = [
   { vibrant: "text-red-500", faint: "bg-red-100" },
