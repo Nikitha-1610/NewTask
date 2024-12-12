@@ -41,11 +41,19 @@ const EmployeeForm = () => {
           ...prev,
           employeeID: generatedId,
         }));
+  
+        
+        setErrors((prevErrors) => {
+          const newErrors = { ...prevErrors };
+          delete newErrors.employeeID; 
+          return newErrors;
+        });
       }
     } catch (error) {
       console.error("Error generating Employee ID:", error);
     }
   };
+  
 
 
   useEffect(() => {
@@ -66,18 +74,29 @@ const EmployeeForm = () => {
   
   const handleInputChange = (e) => {
     const { name, value } = e.target;
+  
+    
     setFormData((prevData) => ({
       ...prevData,
       [name]: value
     }));
+  
+   
+    setErrors((prevErrors) => {
+      const newErrors = { ...prevErrors };
+      if (value) {
+        delete newErrors[name]; 
+      }
+      return newErrors;
+    });
   };
+
 
   
   const handleSubmit = async (e) => {
     e.preventDefault();
     const newErrors = {};
   
-   
     Object.keys(formData).forEach((field) => {
       if (!formData[field]) {
         newErrors[field] = `${field} is required.`;
@@ -85,13 +104,31 @@ const EmployeeForm = () => {
     });
   
     const updatedFormData = { ...formData };
-    updatedFormData.mobile = parseInt(formData.mobile, 10); 
+    updatedFormData.mobile = parseInt(formData.mobile, 10);
   
-    const dob = new Date(formData.DOB);
-    updatedFormData.DOB = dob.toISOString().split('T')[0]; 
+    
+    if (formData.DOB) {
+      const dob = new Date(formData.DOB);
+      if (isNaN(dob.getTime())) {
+        newErrors.DOB = "Invalid date of birth.";
+      } else {
+        updatedFormData.DOB = dob.toISOString().split('T')[0]; 
+      }
+    } else {
+      newErrors.DOB = "Date of birth is required.";
+    }
   
-    const appliedDate = new Date(formData.appliedDate);
-    updatedFormData.appliedDate = appliedDate.toISOString().split('T')[0]; 
+    
+    if (formData.appliedDate) {
+      const appliedDate = new Date(formData.appliedDate);
+      if (isNaN(appliedDate.getTime())) {
+        newErrors.appliedDate = "Invalid applied date.";
+      } else {
+        updatedFormData.appliedDate = appliedDate.toISOString().split('T')[0]; 
+      }
+    } else {
+      newErrors.appliedDate = "Applied date is required.";
+    }
   
     if (formData.password && formData.password.length < 8) {
       newErrors.password = "Password must be at least 8 characters long.";
@@ -104,13 +141,12 @@ const EmployeeForm = () => {
   
     try {
       const response = await axiosInstance.post("/employee/add", updatedFormData);
-      
-      console.log("Response from server:", response); 
+      console.log("Response from server:", response);
       console.log("Form data being submitted:", updatedFormData);
-
+  
       if ([200, 201].includes(response.status)) {
         toast.success("Employee Added successfully!");
-        console.log("Server Response Data:", response.data); 
+        console.log("Server Response Data:", response.data);
         setFormData({
           employeeID: "",
           name: "",
@@ -127,9 +163,8 @@ const EmployeeForm = () => {
           teamLead: "",
           appliedDate: "",
         });
-        setIsPopupVisible(true); 
+        setIsPopupVisible(true);
       } else {
-
         console.error("Unexpected response:", response);
       }
     } catch (error) {
@@ -140,6 +175,8 @@ const EmployeeForm = () => {
       }
     }
   };
+  
+  
   
 
   return (
@@ -217,10 +254,9 @@ const EmployeeForm = () => {
             <InputField label="Reference" name="reference" value={formData.reference} onChange={handleInputChange} error={errors.reference} />
             <InputField label="Gender" name="gender" value={formData.gender} onChange={handleInputChange} error={errors.gender} />
             <InputField label="Position" name="position" value={formData.position} onChange={handleInputChange} error={errors.position} />
-            {/* <InputField label="Department" name="department" value={formData.department} onChange={handleInputChange} error={errors.department} /> */}
+           
 
-
-            {/* Team Lead Dropdown */}
+           
             <div className="flex flex-col">
               <label className="text-gray-700 font-medium mb-1">
                 Team Lead <span className="text-red-500">*</span>
@@ -295,7 +331,7 @@ const InputField = ({ label, name, type = "text", value, onChange, error, isPopu
       name={name}
       value={value}
       onChange={onChange}
-      className="border border-gray-300 rounded-md px-3 py-2"
+      className={`border ${error ? 'border-red-500' : 'border-gray-300'} rounded-md px-3 py-2`}
     />
     {error && <ErrorMessage message={error} />}
 
