@@ -240,7 +240,7 @@ const TwoWaveChart = () => {
       <div className="flex sm:flex-row flex-col mt-16">
         <div className="flex flex-col items-start">
           <div className="text-blue-900 font-bold text-xl sm:text-3xl">
-            {`${chartData.datasets.length} Waves`}
+            {`${chartData.datasets.length} Projects`}
           </div>
         </div>
 
