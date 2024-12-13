@@ -7,8 +7,8 @@ import {
   FaFilePdf,
    FaFileWord, FaFileExcel, FaDownload, FaTrashAlt
 } from "react-icons/fa";
-import VideoCall from "./VideoCall";
-import VoiceCall from "./VoiceCall";
+import VideoCall from "../../user/Components/ChatComp/VideoCall";
+import VoiceCall from "../../user/Components/ChatComp/VoiceCall";
 import { FaArrowLeft } from "react-icons/fa";
 import Picker from 'emoji-picker-react'; // For emoji picker
 import { Icon } from '@iconify/react'; // For Iconify
@@ -16,10 +16,11 @@ import io from 'socket.io-client';
 import axios from "axios";
 
 let socket;
-const IndividualChat = ({ contact, handleBackToContacts }) => {
+const GroupChat = ({ contact, handleBackToContacts }) => {
   const employeeId = localStorage.getItem('employeeId');
+  const senderName = localStorage.getItem('name');
   const user = localStorage.getItem('name');
-  const selectedEmployeeId = contact?.employeeID;
+  const selectedEmployeeId = contact?.id;
   const [selectedOption, setSelectedOption] = useState("Chat");
   const [activeFeature, setActiveFeature] = useState(null);
   const [selectedFiles, setSelectedFiles] = useState([]);
@@ -33,6 +34,8 @@ const IndividualChat = ({ contact, handleBackToContacts }) => {
   const [showEmojiPicker, setShowEmojiPicker] = useState(false);
   const [onlineUsers, setOnlineUsers] = useState([]);
   const socketUrl = 'https://chat-2-1dgm.onrender.com';
+  console.log(user);
+  
 
   const messageEndRef = useRef(null);
   const chatContainerRef = useRef(null);
@@ -50,8 +53,8 @@ const IndividualChat = ({ contact, handleBackToContacts }) => {
   const getMessages = async () => {
     if (!selectedEmployeeId) return;
     try {
-        const response = await axios.get(`https://chat-2-1dgm.onrender.com/getMessages`, {
-            params: { sender: employeeId, receiver: selectedEmployeeId }
+        const response = await axios.get(`https://chat-2-1dgm.onrender.com/getGroupMessages`, {
+            params: { group: selectedEmployeeId  }
         });
         setMessages(response.data.messages); // Set the fetched messages
     } catch (err) {
@@ -66,7 +69,7 @@ const IndividualChat = ({ contact, handleBackToContacts }) => {
         socket = io(socketUrl);
 
         //Join the employeeId when the user connects
-        socket.emit('join', { user, employeeId }, (err) => {
+        socket.emit('joinGroup', { user, room: selectedEmployeeId }, (err) => {
             if (err) {
                 console.error(err);
             }
@@ -84,9 +87,10 @@ const IndividualChat = ({ contact, handleBackToContacts }) => {
 
     useEffect(() => {
         socket.on('message', (msg) => {
-          console.log(msg);
-          
             // Only update messages if they belong to the selected conversation
+            console.log(msg);
+            
+            setMessages((prevMsg) => [...prevMsg, msg]); // Append new message
             
             if (
                 (msg.sender === employeeId && msg.receiver === selectedEmployeeId) ||
@@ -110,11 +114,8 @@ const IndividualChat = ({ contact, handleBackToContacts }) => {
     const sendMessage = () => {
       
         if (message.trim() && selectedEmployeeId) {
-            const msg = { sender: employeeId, text: message, receiver: selectedEmployeeId, timestamp: Date.now() }
-            setMessages((prevMsg) => [...prevMsg, msg]);
-
             // Emit message to the receiver and the sender
-            socket.emit('sendMessage', employeeId, message, selectedEmployeeId, () => setMessage(''));
+            socket.emit('sendGroupMessage', message, () => setMessage(''));
         }
     };
 
@@ -251,6 +252,7 @@ const IndividualChat = ({ contact, handleBackToContacts }) => {
   const handleSelectionChange = () => {
     setShowActions(selectedFiles.length > 0);
   };
+  
 
   // Handle delete action
   
@@ -332,6 +334,7 @@ const IndividualChat = ({ contact, handleBackToContacts }) => {
     { text: "I just added new details to the document.", file: { type: "document", url: "/documents/3.pdf" }, timestamp: 18 },
     { text: "This song is great! You should hear it.", file: { type: "audio", url: "/audio/audio3.mp3" }, timestamp: 20 },
   ];
+  console.log(contact);
   
   return (
     <>
@@ -420,14 +423,14 @@ const IndividualChat = ({ contact, handleBackToContacts }) => {
     {messages.map((userMessage, index) => (
       <div key={index} className="flex items-start mb-4 " >
         {/* Contact's Message */}
-        {userMessage.sender === selectedEmployeeId && (
+        {userMessage.sender !== user && (
           <div className="flex items-start sm:gap-3 gap-2 ">
             <FaUserCircle className="w-7 sm:w-8 h-7 sm:h-8 text-gray-700" />
             <div className="flex flex-col mt-2 mb-2 w-full">
               <div className="bg-white shadow-md p-2 rounded-lg max-w-sm sm:max-w-md">
                 <div className="flex justify-between mb-1">
                   <span className="font-semibold text-[15px] text-black">
-                    {userMessage.sender === selectedEmployeeId ? contact?.name : "You"}
+                    {userMessage.sender}
                   </span>
                   <span className="text-gray-500 text-sm">
                     {new Date(userMessage.timestamp).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
@@ -440,7 +443,7 @@ const IndividualChat = ({ contact, handleBackToContacts }) => {
         )}
 
         {/* Your Message (currentUserId's message) */}
-        {userMessage.sender !== selectedEmployeeId && (
+        {userMessage.sender === user && (
           <div className="flex justify-end w-full">
             <div className="bg-green-100 shadow-md p-2 rounded-lg max-w-sm sm:max-w-md">
               <div className="flex justify-between mb-1">
@@ -861,4 +864,4 @@ const IndividualChat = ({ contact, handleBackToContacts }) => {
   );
 };
 
-export default IndividualChat;
+export default GroupChat;
