@@ -35,11 +35,12 @@ const SemiCircularProgressBar = ({ value1, value2 }) => {
       Math.min(mouseY, height - tooltipHeight)
     );
 
-    setTooltip({
-      top: constrainedTop,
-      left: constrainedLeft,
-      value: `${value1}% and ${value2}%`,
-    });
+   setTooltip({
+  top: constrainedTop,
+  left: constrainedLeft,
+  value: `Last Month: ${value1}% | Current Month: ${value2}%`,
+});
+
   };
 
   const handleMouseLeave = () => {
@@ -53,53 +54,54 @@ const SemiCircularProgressBar = ({ value1, value2 }) => {
       onMouseMove={handleMouseMove}
       onMouseLeave={handleMouseLeave}
     >
-      <svg
-        width={radius * 2 + strokeWidth}
-        height={radius + strokeWidth}
-        viewBox={`0 0 ${radius * 2 + strokeWidth} ${radius + strokeWidth}`}
-      >
-        {/* Background circle (gray semicircle) */}
-        <path
-          d={`M ${strokeWidth / 2},${radius + strokeWidth / 2} 
-              A ${radius},${radius} 0 0,1 ${radius * 2 + strokeWidth / 2},${
-            radius + strokeWidth / 2
-          }`}
-          fill="none"
-          stroke="#FCC590"
-          strokeWidth={strokeWidth}
-        />
+    <svg
+  width={radius * 2 + strokeWidth}
+  height={radius + strokeWidth}
+  viewBox={`0 0 ${radius * 2 + strokeWidth} ${radius + strokeWidth}`}
+>
+  {/* Background circle (gray semicircle) */}
+  <path
+    d={`M ${strokeWidth / 2},${radius + strokeWidth / 2} 
+        A ${radius},${radius} 0 0,1 ${radius * 2 + strokeWidth / 2},${
+      radius + strokeWidth / 2
+    }`}
+    fill="none"
+    stroke="#FCC590" // Light gray for background
+    strokeWidth={strokeWidth}
+  />
 
-    
+  {/* Faint color for value1 (Last Month) */}
+  <path
+    d={`M ${strokeWidth / 2},${radius + strokeWidth / 2} 
+        A ${radius},${radius} 0 0,1 ${radius * 2 + strokeWidth / 2},${
+      radius + strokeWidth / 2
+    }`}
+    fill="none"
+    stroke="#FCC590" // Color for value1
+    strokeWidth={strokeWidth}
+    strokeDasharray={semicircle}
+    strokeDashoffset={offset1}
+    style={{
+      transition: "stroke-dashoffset 0.3s ease", // Smooth animation
+    }}
+  />
 
-        {/* Darker color for value2 */}
-        <path
-          d={`M ${strokeWidth / 2},${radius + strokeWidth / 2} 
-              A ${radius},${radius} 0 0,1 ${radius * 2 + strokeWidth / 2},${
-            radius + strokeWidth / 2
-          }`}
-          fill="none"
-           stroke="#FCC590"
-          strokeWidth={strokeWidth}
-          strokeDasharray={semicircle}
-          strokeDashoffset={offset2}
-        />
-
-            {/* Faint color for value1 */}
-            <path
-          d={`M ${strokeWidth / 2},${radius + strokeWidth / 2} 
-              A ${radius},${radius} 0 0,1 ${radius * 2 + strokeWidth / 2},${
-            radius + strokeWidth / 2
-          }`}
-          fill="none"
-          
-
-          
-           stroke="#C25F01"
-          strokeWidth={strokeWidth}
-          strokeDasharray={semicircle}
-          strokeDashoffset={offset1}
-        />
-      </svg>
+  {/* Darker color for value2 (Current Month) */}
+  <path
+    d={`M ${strokeWidth / 2},${radius + strokeWidth / 2} 
+        A ${radius},${radius} 0 0,1 ${radius * 2 + strokeWidth / 2},${
+      radius + strokeWidth / 2
+    }`}
+    fill="none"
+    stroke="#C25F01" // Color for value2
+    strokeWidth={strokeWidth}
+    strokeDasharray={semicircle}
+    strokeDashoffset={offset2}
+    style={{
+      transition: "stroke-dashoffset 0.3s ease", // Smooth animation
+    }}
+  />
+</svg>
 
       {/* Tooltip */}
       {tooltip && (
