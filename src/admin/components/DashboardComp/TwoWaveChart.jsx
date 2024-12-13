@@ -25,10 +25,15 @@ const TwoWaveChart = () => {
     height: window.innerWidth < 750 ? "180px" : "350px",
   });
   const [showCalendar, setShowCalendar] = useState(false);
+
   const [selectedDateRange, setSelectedDateRange] = useState([
     new Date("1970-01-01"),
     new Date("1970-01-01"),
   ]); // Default negligible value
+  const [tempDateRange, setTempDateRange] = useState([
+    new Date("1970-01-01"),
+    new Date("1970-01-01"),
+  ]);
   const [chartData, setChartData] = useState({
     labels: [],
     datasets: [],
@@ -51,15 +56,64 @@ const TwoWaveChart = () => {
 
 
 
-  const toggleCalendar = () => {
-    setShowCalendar((prev) => !prev); // Toggle visibility
-  };
   
+
+  const [isDateRangeComplete, setIsDateRangeComplete] = useState(false);
+
+
+  const handleDateChange = (index, date) => {
+    const updatedRange = [...selectedDateRange];
+    updatedRange[index] = new Date(date);
+    setSelectedDateRange(updatedRange);
+
+    // Check if both dates are selected
+    if (updatedRange[0].getTime() !== new Date("1970-01-01").getTime() &&
+        updatedRange[1].getTime() !== new Date("1970-01-01").getTime()) {
+      setIsDateRangeComplete(true);
+    }
+  };
+
+  const closeCalendarAndApply = () => {
+    if (isDateRangeComplete) {
+      setShowCalendar(false); // Close calendar only if both dates are selected
+    }
+  };
+
+  useEffect(() => {
+    if (isDateRangeComplete) {
+      console.log("Fetching filtered data with date range:", selectedDateRange);
+      // Call your data fetching logic here
+    }
+  }, [isDateRangeComplete, selectedDateRange]);
+
+  const toggleCalendar = () => setShowCalendar((prev) => !prev);
+
   const resetDateRange = () => {
     setSelectedDateRange([new Date("1970-01-01"), new Date("1970-01-01")]);
-    setShowCalendar(false); // Close popup
+    setTempDateRange([new Date("1970-01-01"), new Date("1970-01-01")]);
+    setShowCalendar(false);
   };
-  
+
+  const handleTempDateChange = (index, date) => {
+    const updatedRange = [...tempDateRange];
+    updatedRange[index] = new Date(date);
+    setTempDateRange(updatedRange);
+  };
+
+  const applyDateRange = () => {
+    setSelectedDateRange([...tempDateRange]); // Set the selected range
+    setShowCalendar(false); // Close the calendar
+  };
+
+  useEffect(() => {
+    if (
+      selectedDateRange[0].getTime() !== new Date("1970-01-01").getTime() &&
+      selectedDateRange[1].getTime() !== new Date("1970-01-01").getTime()
+    ) {
+      console.log("Fetching filtered data with date range:", selectedDateRange);
+      fetchFilteredData(selectedDateRange[0], selectedDateRange[1]);
+    }
+  }, [selectedDateRange])
 
   const fetchFilteredData = async (start, end) => {
     setLoading(true);
@@ -169,6 +223,7 @@ const TwoWaveChart = () => {
   //   setShowCalendar(false); // Close the calendar
   // };
   
+  
   const minDate = new Date("2023-01-01");
   if (loading)
     return (
@@ -181,82 +236,114 @@ const TwoWaveChart = () => {
     <div className="w-full max-w-screen-lg mx-auto relative flex flex-col pb-0">
       <div className="flex flex-col sm:flex-row justify-between items-center">
       <div className="relative">
-  {/* Calendar Icon and Display */}
+          <div
+            className="flex items-center text-gray-400 bg-blue-50 p-2 rounded-md cursor-pointer"
+            onClick={toggleCalendar}
+          >
+            <FaCalendarAlt className="text-sm" />
+            <span className="ml-2 text-sm sm:text-base md:text-lg">
+              {selectedDateRange[0].toISOString() === "1970-01-01T00:00:00.000Z"
+                ? "Monthwise Data"
+                : `${selectedDateRange[0].toLocaleDateString()} - ${selectedDateRange[1].toLocaleDateString()}`}
+            </span>
+            {selectedDateRange[0].toISOString() !== "1970-01-01T00:00:00.000Z" && (
+              <AiOutlineClose
+                className="ml-2 cursor-pointer text-red-500"
+                onClick={resetDateRange}
+              />
+            )}
+          </div>
+          {showCalendar && (
   <div
-    className="flex items-center text-gray-400 bg-blue-50 p-2 rounded-md cursor-pointer"
-    onClick={toggleCalendar} // Show calendar on click
+    style={{
+      position: "absolute",
+      top: "100%",
+      left: "50%",
+      transform: "translateX(-50%)",
+      zIndex: 10,
+      background: "white",
+      boxShadow: "0px 4px 6px rgba(0, 0, 0, 0.1)",
+      borderRadius: "8px",
+      padding: "10px",
+      width: "90%", // Responsive width for mobile screens
+      maxWidth: "400px", // Maximum width for larger screens
+      display: "flex",
+      flexDirection: "column",
+      alignItems: "center",
+    }}
   >
-    <FaCalendarAlt className="text-sm" />
-    <span className="ml-2 text-sm sm:text-base md:text-lg">
-      {selectedDateRange[0].toISOString() === "1970-01-01T00:00:00.000Z"
-        ? "Monthwise Data"
-        : `${selectedDateRange[0].toLocaleDateString()} - ${selectedDateRange[1].toLocaleDateString()}`}
-    </span>
-    {selectedDateRange[0].toISOString() !== "1970-01-01T00:00:00.000Z" && (
-      <AiOutlineClose
-        className="ml-2 cursor-pointer text-red-500"
-        onClick={resetDateRange} // Reset date range and close popup
-      />
-    )}
-  </div>
-
-  {/* Date Input Popup */}
-  {showCalendar && (
-    <div
+    {/* Cross Icon to Close the Calendar */}
+    <button
+      onClick={() => setShowCalendar(false)}
       style={{
         position: "absolute",
-        top: "100%",
-        left: "0",
-        zIndex: 10,
-        background: "white",
-        boxShadow: "0px 4px 6px rgba(0, 0, 0, 0.1)",
-        borderRadius: "8px",
-        padding: "10px",
-        width: "300px",
+        top: "10px",
+        right: "10px",
+        background: "transparent",
+        border: "none",
+        fontSize: "16px",
+        cursor: "pointer",
       }}
     >
-      <div className="flex justify-between items-center mb-4">
-        <span className="font-semibold">Set Date Range</span>
-        <AiOutlineClose
-          className="cursor-pointer text-red-500"
-          onClick={() => setShowCalendar(false)} // Close calendar popup
-          style={{ fontSize: "1.5rem" }}
-        />
-      </div>
+      ❌
+    </button>
 
-      <div className="mb-4">
-  <label className="block text-sm font-medium text-gray-700">Start Date:</label>
-  <input
-    type="date"
-    value={selectedDateRange[0].toISOString().split("T")[0]}
-    onChange={(e) => {
-      const newStartDate = new Date(e.target.value);
-      setSelectedDateRange([newStartDate, selectedDateRange[1]]);
-    }}
-    className="border rounded-md p-1 w-full"
-    min="2024-01-01"
-    
-  />
-</div>
-
-<div className="mb-4">
-  <label className="block text-sm font-medium text-gray-700">End Date:</label>
-  <input
-    type="date"
-    value={selectedDateRange[1].toISOString().split("T")[0]}
-    onChange={(e) => {
-      const newEndDate = new Date(e.target.value);
-      setSelectedDateRange([selectedDateRange[0], newEndDate]);
-    }}
-    className="border rounded-md p-1 w-full"
-    min="2024-01-01"
- 
-  />
-</div>
-
+    {/* Start Date Input */}
+    <div className="mb-4" style={{ width: "100%" }}>
+      <label style={{ display: "block", marginBottom: "5px" }}>Start Date:</label>
+      <input
+        type="date"
+        value={tempDateRange[0].toISOString().split("T")[0]}
+        min="2020-01-01"
+        onChange={(e) => handleTempDateChange(0, e.target.value)}
+        style={{
+          width: "100%",
+          padding: "8px",
+          borderRadius: "4px",
+          border: "1px solid #ccc",
+        }}
+      />
     </div>
-  )}
-</div>
+
+    {/* End Date Input */}
+    <div className="mb-4" style={{ width: "100%" }}>
+      <label style={{ display: "block", marginBottom: "5px" }}>End Date:</label>
+      <input
+        type="date"
+        value={tempDateRange[1].toISOString().split("T")[0]}
+        min="2020-01-01"
+        onChange={(e) => handleTempDateChange(1, e.target.value)}
+        style={{
+          width: "100%",
+          padding: "8px",
+          borderRadius: "4px",
+          border: "1px solid #ccc",
+        }}
+      />
+    </div>
+
+    {/* Apply Button */}
+    <button
+      onClick={applyDateRange}
+      style={{
+        background: "#3b82f6",
+        color: "white",
+        border: "none",
+        borderRadius: "4px",
+        padding: "8px 16px",
+        cursor: "pointer",
+        marginTop: "10px",
+        alignSelf: "center",
+      }}
+    >
+      Apply
+    </button>
+  </div>
+)}
+
+
+        </div>
+      
 <div
           className={`flex items-center justify-center text-teal-500 text-2xl sm:text-3xl rounded-full bg-blue-50 w-12 h-12 ${
             isMobile ? "mt-4" : ""

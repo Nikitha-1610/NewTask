@@ -2,32 +2,112 @@ import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import ReactLoading from 'react-loading';
 import 'react-calendar/dist/Calendar.css';
-
 import {
   Chart as ChartJS,
   BarElement,
   CategoryScale,
   LinearScale,
-  Tooltip
+  Tooltip,
 } from 'chart.js';
-
-// Import the Bar chart component from react-chartjs-2
 import { Bar } from 'react-chartjs-2';
 
 ChartJS.register(BarElement, CategoryScale, LinearScale, Tooltip);
 
-const WaveChartWithDateSelector = () => {
+const WaveChartWithDateSelector = ({ selectedDateRange }) => {
   const [chartData, setChartData] = useState({ labels: [], datasets: [] });
   const [loading, setLoading] = useState(false);
+  const [chartOptions, setChartOptions] = useState({});
+  const [containerStyle, setContainerStyle] = useState({});
+  const startDate = selectedDateRange[0].toISOString();
+  const endDate = selectedDateRange[1].toISOString();
 
-  // Fetch project data based on the default date range (2024-12-11)
+  const defaultStartDate = "2024-12-01";
+  const defaultEndDate = "2024-12-31";
+
+  const effectiveStartDate = startDate || defaultStartDate;
+  const effectiveEndDate = endDate || defaultEndDate;
+
+  const getMonthName = (startDate) => {
+    if (!startDate) return '';
+    const options = { month: 'long' };
+    return new Date(startDate).toLocaleDateString('en-US', options);
+  };
+
+  const monthName = getMonthName(effectiveStartDate);
+
+  const updateChartStyles = () => {
+    const width = window.innerWidth;
+    const barThickness = width > 1024 ? 50 : width > 768 ? 40 : 25;
+    const containerWidth = width > 850 ? '80%' : '95%';
+    const containerHeight = width > 850 ? '400px' : '300px';
+    const barPercentage = width < 850 ? 0.6 : 0.8; // Reduce gap on mobile
+
+    setChartOptions({
+      responsive: true,
+      plugins: {
+        legend: {
+          position: width < 850 ? 'top' : 'right',
+          labels: {
+            generateLabels: (chart) => {
+              const labels = chart.data.labels;
+              const datasets = chart.data.datasets;
+              if (datasets && datasets[0]?.backgroundColor) {
+                const colors = datasets[0].backgroundColor;
+                return labels.map((label, i) => ({
+                  text: label,
+                  fillStyle: colors[i] || 'rgba(0, 0, 0, 0.1)',
+                }));
+              }
+              return labels.map((label) => ({
+                text: label,
+                fillStyle: 'rgba(0, 0, 0, 0.1)',
+              }));
+            },
+          },
+        },
+        tooltip: {
+          callbacks: {
+            label: (context) => `${context.raw} hrs`,
+          },
+        },
+      },
+      scales: {
+        x: {
+          grid: { display: false },
+          ticks: { callback: (value) => value },
+        },
+        y: {
+          grid: { display: false },
+          ticks: {
+            stepSize: 1,
+            callback: (value) => `${value} hrs`,
+          },
+        },
+      },
+      barThickness, // Dynamic bar thickness
+      barPercentage, // Reduce the gap between the bars
+    });
+
+    setContainerStyle({ width: containerWidth, height: containerHeight });
+  };
+
+  useEffect(() => {
+    const handleResize = () => updateChartStyles();
+    window.addEventListener('resize', handleResize);
+
+    // Initial chart style setup
+    updateChartStyles();
+
+    return () => window.removeEventListener('resize', handleResize);
+  }, []);
+
   const fetchProjectData = async () => {
     setLoading(true);
     try {
-      const response = await axios.post('https://3qhglx2bhd.execute-api.us-east-1.amazonaws.com/task/getProjectData', {
-        startDate: "2024-12-11",  // Default date range
-        endDate: "2024-12-11"
-      });
+      const response = await axios.post(
+        'https://3qhglx2bhd.execute-api.us-east-1.amazonaws.com/task/getProjectData',
+        { startDate: effectiveStartDate, endDate: effectiveEndDate }
+      );
 
       const data = response.data;
       if (data.status === 200) {
@@ -40,116 +120,48 @@ const WaveChartWithDateSelector = () => {
     }
   };
 
-  // Process API data and format it for the chart
   const processDataForChart = (projectwiseData) => {
     const projects = Object.keys(projectwiseData);
-    const labels = projects;  // Set project names as labels on the X-axis
+    const labels = projects;
 
-    // Create datasets for each project, each bar with a random color
     const datasets = [
       {
         label: 'Project Hours',
-        data: projects.map((project) => projectwiseData[project] || 0),  // Set project hours as Y-values
-        backgroundColor: projects.map(() => getRandomColor()),  // Random color for each bar
-        borderColor: 'transparent',  // No border for bars
+        data: projects.map((project) => projectwiseData[project] || 0),
+        backgroundColor: projects.map(() => getRandomColor()),
+        borderColor: 'transparent',
         borderWidth: 1,
-        barThickness: 60,  // Reduce bar width
-      }
+      },
     ];
 
     setChartData({ labels, datasets });
   };
 
-  // Function to generate random color
   const getRandomColor = () => {
     return `#${Math.floor(Math.random() * 16777215).toString(16)}`;
   };
 
-  // Fetch project data when the component mounts
   useEffect(() => {
     fetchProjectData();
-  }, []);
-
-  // Chart options
-  const options = {
-    responsive: true,
-    plugins: {
-      legend: {
-        position: 'top',
-        labels: {
-          generateLabels: (chart) => {
-            const labels = chart.data.labels;
-            const datasets = chart.data.datasets;
-            
-            // Check if datasets are available and if the backgroundColor exists
-            if (datasets && datasets[0] && datasets[0].backgroundColor) {
-              const colors = datasets[0].backgroundColor;
-              return labels.map((label, i) => ({
-                text: `${label}`,  // Display project name
-                fillStyle: colors[i] || 'rgba(0, 0, 0, 0.1)',  // Use the corresponding color for each label or a fallback
-              }));
-            } else {
-              // Return default labels if no dataset or color is available
-              return labels.map(label => ({
-                text: label,
-                fillStyle: 'rgba(0, 0, 0, 0.1)',  // Fallback color
-              }));
-            }
-          },
-          boxWidth: 20,
-          padding: 15
-        }
-      },
-      tooltip: {
-        callbacks: {
-          label: (context) => `${context.raw} hrs`  // Tooltip showing hours
-        }
-      }
-    },
-    scales: {
-      x: {
-        grid: {
-          display: false
-        },
-        ticks: {
-          // Ensure project names are shown on the X-axis
-          callback: (value) => value
-        }
-      },
-      y: {
-        grid: { display: false },
-        ticks: {
-          stepSize: 1,  // Set stepSize to 1 for hours increments
-          callback: (value) => `${value} hrs`
-        }
-      }
-    }
-  };
-  
+  }, [effectiveStartDate, effectiveEndDate]);
 
   return (
     <div className="w-full max-w-screen-lg mx-auto">
-      {/* Loading Spinner */}
       {loading ? (
         <div className="flex justify-center items-center min-h-screen">
           <ReactLoading type="spin" color="#00bfa6" height={55} width={55} />
         </div>
       ) : (
-        <div className="flex flex-col ">
-          <div className="flex flex-row gap-9">
-            <div className="flex flex-col gap-3"><div className="text-blue-900 font-bold text-xl sm:text-3xl mt-16">{`${chartData.labels.length} Projects`}
-
-            </div>
-            <div className="text-blue-900 font-bold text-xl sm:text-2xl ">December </div>
-            <div className="text-green-900 font-bold">On Track</div>
-            
-            </div>
-          
-          <div style={{ width: '100%', height: '350px', maxWidth: '750px' }}>
-            <Bar data={chartData} options={options} />
+        <div className="flex flex-col lg:flex-row lg:gap-3 items-center">
+          <div className="flex flex-col"> <div className="text-blue-900 font-bold sm:text-3xl text-2xl mb-4">
+            {`${chartData.labels.length} Projects`}
           </div>
+          <div className="text-green-900 font-bold text-xl">{monthName}</div>
+          <div className="text-green-900 font-bold text-base mb-6">On Track</div></div>
+         
+          <div style={containerStyle}>
+            <Bar data={chartData} options={chartOptions} />
           </div>
-        
         </div>
       )}
     </div>
