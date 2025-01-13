@@ -36,11 +36,11 @@ const Side = ({ isOpen, toggleSidebar, role }) => {
       { path: "/admin/empdetails", label: "EmpDetails", icon: "iconamoon:profile" },
       { path: "/admin/people", label: "People", icon: "iconamoon:profile" },
       
-      { path: "/admin/usersemail", label: "Users Email", icon: "material-symbols:action-key" },
+      // { path: "/admin/usersemail", label: "Users Email", icon: "material-symbols:action-key" },
       { path: "/admin/task", label: "Task", icon: "bi:list-task" },
       { path: "/admin/addtasks", label: "Add Task", icon: "mdi:plus-circle" },
       { path: "/admin/position", label: "Position", icon: "iconoir:position-align" },
-      { path: "/admin/chats", label: "Chats", icon: "material-symbols:chat-outline" },
+      // { path: "/admin/chats", label: "Chats", icon: "material-symbols:chat-outline" },
       { path: "/admin/mainpage", label: "Main Page", icon: "duo-icons:dashboard" },
       { path: "/admin/addproject", label: "Add Project", icon: "ix:project-new" },
       { path: "/admin/projectstatus", label: "Project Status", icon: "pajamas:project" },
@@ -53,12 +53,12 @@ const Side = ({ isOpen, toggleSidebar, role }) => {
       { path: "/user/tasks", label: "Tasks", icon: "bi:list-task" },
       { path: "/user/profile", label: "Profile", icon: "iconamoon:profile" },
       { path: "/user/mainpage", label: "MainPage", icon: "duo-icons:dashboard" },
-      { path: "/user/calender", label: "Calender", icon: "bx:calendar-event" },
+      // { path: "/user/calender", label: "Calender", icon: "bx:calendar-event" },
 
 
 
       { path: "/user/mytask", label: "MyTask", icon: "iconamoon:profile" },
-      { path: "/user/chats", label: "Chats", icon: "bi:chat-dots" },
+      // { path: "/user/chats", label: "Chats", icon: "bi:chat-dots" },
     ],
   };
 
