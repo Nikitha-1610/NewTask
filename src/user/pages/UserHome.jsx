@@ -111,10 +111,11 @@ const UserHome = () => {
 
       {/* Loader */}
       {loading ? (
-        <div className="fixed inset-0 flex justify-center items-center bg-opacity-75 z-50">
-          <ReactLoading type="spin" color="#00bfae" height={50} width={50} />
-        </div>
-      ) : (
+  <div className="fixed inset-0 flex justify-center items-center bg-white bg-opacity-70 z-50">
+    <ReactLoading type="spin" color="#00bfae" height={50} width={50} />
+  </div>
+) : (
+
         <div className="flex flex-col md:flex-col lg:flex-row space-y-4 lg:space-y-0 lg:space-x-4">
           {filteredColumns.map((column, colIndex) => (
             <div key={colIndex} className="flex-2 w-full sm:w-full md:w-full lg:basis-1/3 lg:max-w-lg">

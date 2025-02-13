@@ -9,7 +9,7 @@ import UserTaskDetails from "./pages/UserTaskDetails";
 import AssignPage from "./pages/AssignPage";
 import InProgressPage from "./pages/InProgressPage"; 
 import InTestPage from "./pages/InTestPage"; 
-import CompletedPage from "./pages/CompletedPage"; // ✅ Add this
+import CompletedPage from "./pages/CompletedPage"; 
 
 const userRoutes = [
   { path: "home", component: UserHome },
@@ -23,7 +23,7 @@ const userRoutes = [
   { path: "assigned", component: AssignPage },
   { path: "in-progress", component: InProgressPage },
   { path: "in-test", component: InTestPage },
-  { path: "completed", component: CompletedPage } // ✅ Add this
+  { path: "completed", component: CompletedPage } 
 ];
 
 export default userRoutes;
