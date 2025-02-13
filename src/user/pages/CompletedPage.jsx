@@ -1,6 +1,6 @@
 import { useLocation, useNavigate } from "react-router-dom";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faCalendarAlt, faComment, faLink, faCheckCircle } from "@fortawesome/free-solid-svg-icons";
+import { faArrowLeft, faCalendarAlt, faComment, faLink, faCheckCircle } from "@fortawesome/free-solid-svg-icons";
 
 const DateDisplay = ({ isoDate }) => {
   if (!isoDate) return "No Date";
@@ -31,9 +31,18 @@ const CompletedPage = () => {
   const tasks = location.state?.tasks || [];
 
   return (
-    <div className="p-4 min-h-screen flex flex-col items-center">
+    <div className="p-4 min-h-screen flex flex-col items-center relative">
+      
+      {/* 🔙 Back Button */}
+      <button
+        onClick={() => navigate(-1)}
+        className="absolute left-4 top-4 p-2 rounded-full hover:bg-gray-200 transition"
+      >
+        <FontAwesomeIcon icon={faArrowLeft} className="text-gray-700 text-xl" />
+      </button>
+
       {/* Wrapper for consistent width */}
-      <div className="w-full max-w-xl">
+      <div className="w-full max-w-xl mt-12">
         {/* Header with fixed width */}
         <div className="flex items-center justify-between bg-teal-100 rounded-lg px-4 py-2 shadow">
           <h1 className="text-2xl font-bold text-gray-700">COMPLETED TASKS</h1>
