@@ -150,14 +150,14 @@ const Production = ({ projectDetails,  }) => {
     fetchData();
   }, []);
 
-  // Display loader while data is loading
-  if (loading) {
-    return (
-      <div className="flex justify-center items-center h-full">
-        <ClipLoader size={50} color={"#C25F01"} />
-      </div>
-    );
-  }
+  // // Display loader while data is loading
+  // if (loading) {
+  //   return (
+  //     <div className="flex justify-center items-center h-full">
+  //       <ClipLoader size={50} color={"#000"} />
+  //     </div>
+  //   );
+  // }
   return (
     <div className="flex flex-col md:flex-row justify-between gap-4 items-stretch p-0 sm:h-auto h-auto mt-0">
       {/* Left Section */}
