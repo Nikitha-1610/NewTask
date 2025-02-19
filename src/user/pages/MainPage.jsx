@@ -124,8 +124,8 @@ const MainPage = () => {
 
   if (loading) {
     return (
-      <div className="flex justify-center items-center min-h-screen">
-        <ReactLoading type="spin" color="#a3f7f0" height={50} width={50} />
+      <div className="fixed inset-0 flex justify-center items-center bg-white bg-opacity-40 z-50">
+        <ReactLoading type="spin" color="#00bfae" height={50} width={50} />
       </div>
     );
   }

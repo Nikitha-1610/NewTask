@@ -1,8 +1,10 @@
 import React, { useState, useEffect } from "react";
 import { Icon } from "@iconify/react";
 import { BsPaperclip } from 'react-icons/bs';
-import { Oval } from "react-loader-spinner"; 
+//import { Oval } from "react-loader-spinner"; 
 import axiosInstance from "../../common/utils/axios/axiosInstance"; 
+import ReactLoading from "react-loading";
+
 
 
 const MyTask = () => {
@@ -97,8 +99,8 @@ const MyTask = () => {
       <h2 className="text-xl font-bold px-2 py-1 rounded-md text-gray-700">MyTask</h2>
 
       {loading ? (
-        <div className="flex justify-center items-center my-10">
-          <Oval color="#00BFFF" height={50} width={50} />
+        <div className="fixed inset-0 flex justify-center items-center bg-white bg-opacity-40 z-50">
+        <ReactLoading type="spin" color="#00bfae" height={50} width={50} />
         </div>
       ) : (
         <div className="w-full bg-white rounded-lg shadow-md  ">
