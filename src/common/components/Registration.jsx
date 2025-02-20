@@ -3,6 +3,7 @@ import { useNavigate } from "react-router-dom";
 import axiosInstance from "../utils/axios/axiosInstance";
 import { FaEye, FaEyeSlash } from "react-icons/fa";
 
+
 const RegistrationPage = () => {
   const navigate = useNavigate();
 
@@ -40,7 +41,7 @@ const RegistrationPage = () => {
 
   const validate = () => {
     const newErrors = {};
-    const requiredFields = ["name", "mobile", "email", "DOB", "position", "role", "appliedDate"];
+    const requiredFields = ["name", "mobile","gender","password", "email", "DOB", "position","address","department", "role", "appliedDate"];
     requiredFields.forEach((key) => {
       if (!formData[key]) {
         newErrors[key] = "This field is required";
@@ -198,6 +199,34 @@ const RegistrationPage = () => {
                 </div>
               );
             }
+
+            
+            
+
+
+            if (field === "gender") {
+              return (
+                <div key={field} className="flex flex-col">
+                  <label className="font-medium text-gray-700">
+                    Gender {errors.role && <span className="text-red-500">*</span>}
+                  </label>
+                  <select
+                    name="gender"
+                    value={formData.gender}
+                    onChange={handleChange}
+                    className={`border p-2 rounded-md ${errors.role ? "border-red-500" : "border-cyan-200"}`}
+                  >
+                    <option value="">Select Gender</option>
+                    {["Male", "Female"].map((option) => (
+                      <option key={option} value={option}>
+                        {option}
+                      </option>
+                    ))}
+                  </select>
+                </div>
+              );
+            }
+
 
             return (
               <div key={field} className="flex flex-col">
