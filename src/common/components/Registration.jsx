@@ -2,6 +2,10 @@ import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import axiosInstance from "../utils/axios/axiosInstance";
 import { FaEye, FaEyeSlash } from "react-icons/fa";
+//import { toast } from "react-toastify";
+import { ToastContainer, toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
+
 
 
 const RegistrationPage = () => {
@@ -72,7 +76,7 @@ const RegistrationPage = () => {
         );
 
         if (response.status === 200) {
-          setSuccessMessage(response.data.message);
+          toast.success(response.data.message, { position: "top-right" });
           localStorage.setItem("authToken", response.data.token);
 
           setTimeout(() => {
@@ -82,9 +86,8 @@ const RegistrationPage = () => {
           setErrorMessage("Unexpected response. Please try again.");
         }
       } catch (error) {
-        setErrorMessage(
-          error.response?.data?.message || "An error occurred. Please try again"
-        );
+        toast.error(error.response?.data?.message || "An error occurred. Please try again", { position: "top-right" });
+
       }
     }
   };
@@ -104,6 +107,7 @@ const RegistrationPage = () => {
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-[#dff6f0]">
+         <ToastContainer />
       <div className="w-full max-w-2xl bg-white p-7 rounded-md shadow-md relative">
         <button
           onClick={() => navigate(-1)}
