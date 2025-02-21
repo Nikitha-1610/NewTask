@@ -42,6 +42,7 @@ const RegistrationPage = () => {
 
   const [showPassword, setShowPassword] = useState(false); // <-- Added this state
   const togglePasswordVisibility = () => setShowPassword((prev) => !prev); // <-- Added this function
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
   const validate = () => {
     const newErrors = {};
@@ -58,39 +59,48 @@ const RegistrationPage = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-
     if (validate()) {
+      setIsSubmitting(true); // Disable the button
+  
       try {
         const response = await axiosInstance.post(
           "user/signup",
           {
             ...formData,
-            mobile: Number(formData.mobile), 
-            alterMobile: Number(formData.alterMobile), 
+            mobile: Number(formData.mobile),
+            alterMobile: Number(formData.alterMobile),
           },
           {
             headers: {
-              'Content-Type': 'application/json',
+              "Content-Type": "application/json",
             },
           }
         );
-
+  
         if (response.status === 200) {
-          toast.success(response.data.message, { position: "top-right" });
+          toast.success(response.data.message, {
+            position: "top-right",
+            onClose: () => setIsSubmitting(false), // Enable button after toast
+          });
           localStorage.setItem("authToken", response.data.token);
-
+  
           setTimeout(() => {
             navigate("/login");
           }, 3000);
         } else {
           setErrorMessage("Unexpected response. Please try again.");
+          setIsSubmitting(false);
         }
       } catch (error) {
-        toast.error(error.response?.data?.message || "An error occurred. Please try again", { position: "top-right" });
-
+        toast.error(error.response?.data?.message || "An error occurred. Please try again", {
+          position: "top-right",
+          onClose: () => setIsSubmitting(false), // Enable button after toast
+        });
       }
     }
   };
+  
+  
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -250,12 +260,14 @@ const RegistrationPage = () => {
           })}
 
           <div className="col-span-2 flex justify-center mt-2">
-            <button
-              type="submit"
-              className="bg-teal-500 text-white px-6 py-2 rounded-md hover:bg-teal-600 transition"
-            >
-              Submit
-            </button>
+          <button
+  type="submit"
+  className="bg-teal-500 text-white px-6 py-2 rounded-md hover:bg-teal-600 transition disabled:bg-gray-400"
+  disabled={isSubmitting}
+>
+  {isSubmitting ? "Submitting..." : "Submit"}
+</button>
+
           </div>
         </form>
 

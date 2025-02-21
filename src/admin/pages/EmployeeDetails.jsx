@@ -78,6 +78,8 @@ const EmployeeDetails = () => {
     );
   }
 
+  
+
   return (
     <div className="p-4">
       <h1 className="text-2xl font-bold mb-4">
@@ -98,7 +100,7 @@ const EmployeeDetails = () => {
         <div className="relative">
           <button
             onClick={() => setRoleDropdownOpen(!roleDropdownOpen)}
-            className="bg-blue-500 text-white px-4 py-2 rounded"
+            className="bg-teal-500 text-white px-4 py-2 rounded"
           >
             {selectedRole || 'All Roles'}
           </button>
@@ -150,7 +152,7 @@ const EmployeeDetails = () => {
                   <div className="relative inline-block">
                     <button
                       onClick={() => toggleDropdown(employee.employeeID)}
-                      className="bg-blue-500 text-white px-4 py-2 rounded"
+                      className="bg-teal-500 text-white px-4 py-2 rounded"
                     >
                       Update
                     </button>
@@ -180,7 +182,7 @@ const EmployeeDetails = () => {
           {[...Array(Math.ceil(filteredEmployees.length / employeesPerPage))].map((_, index) => (
             <button
               key={index}
-              className={`px-4 py-2 border-t border-b border-gray-300 ${currentPage === index + 1 ? 'bg-blue-500 text-white' : 'bg-white'}`}
+              className={`px-4 py-2 border-t border-b border-gray-300 ${currentPage === index + 1 ? 'bg-teal-500 text-white' : 'bg-white'}`}
               onClick={() => paginate(index + 1)}
             >
               {index + 1}
@@ -199,7 +201,7 @@ const EmployeeDetails = () => {
             <p><strong>Role:</strong> {employee.role}</p>
             <p><strong>Position:</strong> {employee.position}</p>
             <button
-              className="bg-blue-500 text-white px-4 py-2 rounded mt-2"
+              className="bg-teal-500 text-white px-4 py-2 rounded mt-2"
               onClick={() => toggleDropdown(employee.employeeID)}
             >
               Update
