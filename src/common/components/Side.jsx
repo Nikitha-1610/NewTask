@@ -32,12 +32,12 @@ const Side = ({ isOpen, toggleSidebar, role }) => {
     TeamLead: [
       { path: "/admin/dashboard", label: "Dashboard", icon: "material-symbols:dashboard-outline" },
       { path: "/admin/teams", label: "Teams", icon: "la:teamspeak" },
-      { path: "/admin/employee", label: "Employee", icon: "ic:twotone-update" },
-      { path: "/admin/empdetails", label: "EmpDetails", icon: "iconamoon:profile" },
-      { path: "/admin/people", label: "People", icon: "iconamoon:profile" },
+      { path: "/admin/employee", label: "Employee", icon: "solar:users-group-rounded-bold" },
+      { path: "/admin/empdetails", label: "EmpDetails", icon: "fluent:contact-card-24-filled" },
+      { path: "/admin/people", label: "People", icon: "ph:users-three-fill" },
       
       // { path: "/admin/usersemail", label: "Users Email", icon: "material-symbols:action-key" },
-      { path: "/admin/task", label: "Task", icon: "bi:list-task" },
+      { path: "/admin/task", label: "Task", icon: "solar:clipboard-check-bold" },
       { path: "/admin/addtasks", label: "Add Task", icon: "mdi:plus-circle" },
       { path: "/admin/position", label: "Position", icon: "iconoir:position-align" },
       // { path: "/admin/chats", label: "Chats", icon: "material-symbols:chat-outline" },
@@ -57,7 +57,7 @@ const Side = ({ isOpen, toggleSidebar, role }) => {
 
 
 
-      { path: "/user/mytask", label: "MyTask", icon: "iconamoon:profile" },
+      { path: "/user/mytask", label: "MyTask", icon: "tabler:clipboard-list" },
       // { path: "/user/chats", label: "Chats", icon: "bi:chat-dots" },
     ],
   };

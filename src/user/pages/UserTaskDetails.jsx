@@ -63,8 +63,8 @@ const UserTaskCardDetails = () => {
 
   if (loading) {
     return (
-      <div className="flex justify-center items-center h-screen">
-        <ReactLoading type="spin" color="#0d6efd" height={50} width={40} />
+      <div className="fixed inset-0 flex justify-center items-center bg-opacity-70 z-50">
+        <ReactLoading type="spin" color="#00bfae" height={50} width={40} />
       </div>
     );
   }

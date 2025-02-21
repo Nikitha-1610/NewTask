@@ -3,6 +3,7 @@ import axiosInstance from "../../common/utils/axios/axiosInstance";
 import { FaEye, FaEyeSlash } from "react-icons/fa";
 import { ToastContainer, toast } from "react-toastify";
 
+
 const EmployeeForm = () => {
   const [formData, setFormData] = useState({
     employeeID: "",  
@@ -175,7 +176,6 @@ const EmployeeForm = () => {
       }
     }
   };
-  
   
   
 

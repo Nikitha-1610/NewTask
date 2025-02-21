@@ -2,6 +2,7 @@ import { Tree, TreeNode } from "react-organizational-chart";
 import { useState, useEffect } from "react";
 import MessageCard from "../components/MessageCard";
 import axiosInstance from "../../common/utils/axios/axiosInstance";
+import ReactLoading from "react-loading";
 
 // Custom Node Component
 const OrgChartNode = ({ data, onClick }) => (
@@ -72,11 +73,12 @@ const Teams = () => {
 
   if (isLoading) {
     return (
-      <div className="flex justify-center items-center h-screen">
-        <div className="animate-spin rounded-full h-16 w-10 border-t-4 border-blue-500"></div>
+      <div className="fixed inset-0 flex justify-center items-center bg-white bg-opacity-70 z-50">
+        <ReactLoading type="spin" color="#00bfa6" height={50} width={50} />
       </div>
     );
   }
+  
 
   return (
     <div className="flex justify-center p-6 relative">

@@ -49,11 +49,11 @@ const AssignedTasks = () => {
   return (
     <div className="min-h-auto bg-gray-100 flex justify-center">
       <div className="bg-white p-6 rounded-lg w-full max-w-8xl">
-        <h1 className="text-2xl font-semibold text-center text-gray-700 mb-4">Assigned Tasks</h1>
+        <h1 className="text-2xl font-semibold text-center  text-gray-700 mb-4">Assigned Tasks</h1>
 
         {loading ? (
-          <div className="flex justify-center items-center">
-            <ReactLoading type="spin" color="#00FFFF" height={50} width={50} />
+          <div className="fixed inset-0 flex justify-center items-center bg-white bg-opacity-40 z-50">
+            <ReactLoading type="spin" color="#00bfae" height={50} width={50} />
           </div>
         ) : tasks.length === 0 ? (
           <div className="text-center text-gray-500">No tasks assigned to you.</div>

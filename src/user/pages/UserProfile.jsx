@@ -2,10 +2,13 @@ import axios from "axios";
 import React,{ useState, useEffect } from "react";
 
 import { Icon } from "@iconify/react";
-import { ClipLoader } from "react-spinners"; // Import the loader
+//import { ClipLoader } from "react-spinners"; // Import the loader
+
 import { toast, ToastContainer } from "react-toastify";
 import axiosInstance from "../../common/utils/axios/axiosInstance";
 import "react-toastify/dist/ReactToastify.css";
+import ReactLoading from "react-loading";
+
 
 const UserProfile = () => {
   const [isEditing, setIsEditing] = useState(false);
@@ -156,8 +159,8 @@ const handleInputChanges = (e) => {
   // Loader component to display while loading
   if (loading) {
     return (
-      <div className="p-6 text-center">
-        <ClipLoader color="#01C2B5" loading={loading} size={50} />
+      <div className="fixed inset-0 flex justify-center items-center bg-white bg-opacity-40 z-50">
+         <ReactLoading type="spin" color="#00bfae" height={50} width={50} />
       </div>
     );
   }
