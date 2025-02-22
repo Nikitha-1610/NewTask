@@ -88,45 +88,57 @@ const EmployeeDetails = () => {
 
      
       <div className="flex flex-col md:flex-row items-center justify-between mb-4">
-        <input
-          type="text"
-          placeholder="Search by name"
-          value={searchQuery}
-          onChange={handleSearch}
-          className="border border-gray-300 rounded px-4 py-2 mb-2 md:mb-0 md:mr-4"
-        />
+  {/* Search Input */}
+  <input
+    type="text"
+    placeholder="Search by name"
+    value={searchQuery}
+    onChange={handleSearch}
+    className="border border-gray-300 rounded px-4 py-2 mb-2 md:mb-0 md:mr-4"
+  />
 
-        
-        <div className="relative">
+  {/* Role Dropdown */}
+  <div className="relative w-48"> {/* Set a fixed width for better alignment */}
+    <button
+      onClick={() => setRoleDropdownOpen(!roleDropdownOpen)}
+      className="border border-gray-300 text-gray-700 px-4 py-2 rounded flex justify-between items-center w-full bg-white"
+    >
+      {selectedRole || 'Select Role'}
+      <svg
+        xmlns="http://www.w3.org/2000/svg"
+        fill="none"
+        viewBox="0 0 24 24"
+        strokeWidth="2"
+        stroke="currentColor"
+        className="w-4 h-4 ml-2 transition-transform duration-200"
+        style={{ transform: roleDropdownOpen ? 'rotate(180deg)' : 'rotate(0deg)' }}
+      >
+        <path strokeLinecap="round" strokeLinejoin="round" d="M5 15l7-7 7 7" />
+      </svg>
+    </button>
+
+    {/* Dropdown Menu */}
+    {roleDropdownOpen && (
+      <div className="absolute mt-2 w-full bg-white border border-gray-300 rounded shadow-lg z-10">
+        <button
+          className="block px-4 py-2 text-left hover:bg-gray-100 w-full"
+          onClick={() => handleRoleFilter('')}
+        >
+          All Roles
+        </button>
+        {roleOptions.map((role, index) => (
           <button
-            onClick={() => setRoleDropdownOpen(!roleDropdownOpen)}
-            className="bg-teal-500 text-white px-4 py-2 rounded"
+            key={index}
+            className="block px-4 py-2 text-left hover:bg-gray-100 w-full"
+            onClick={() => handleRoleFilter(role)}
           >
-            {selectedRole || 'All Roles'}
+            {role}
           </button>
-
-          {roleDropdownOpen && (
-            <div className="absolute mt-2 w-30 bg-white border border-gray-300 rounded shadow-lg z-10">
-              <button
-                className="block px-4 py-2 text-left hover:bg-gray-100 w-full"
-                onClick={() => handleRoleFilter('')}
-              >
-                All Roles
-              </button>
-              {roleOptions.map((role, index) => (
-                <button
-                  key={index}
-                  className="block px-4 py-2 text-left hover:bg-gray-100 w-30"
-                  onClick={() => handleRoleFilter(role)}
-                >
-                  {role}
-                </button>
-              ))}
-            </div>
-          )}
-        </div>
+        ))}
       </div>
-
+    )}
+  </div>
+</div>
      
       <div className="hidden lg:block">
         <table className="min-w-full table-auto border-collapse border border-gray-300 ">
