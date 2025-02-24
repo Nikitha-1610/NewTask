@@ -1,7 +1,7 @@
 import React from "react";
 import { FaCalendarAlt, FaCog, FaChartPie, FaUsers, FaVideo } from "react-icons/fa";
 
-const Calender = () => {
+const Calender1 = () => {
   return (
     <div className="flex h-screen bg-gray-100">
       {/* Sidebar */}
@@ -109,4 +109,4 @@ const Calender = () => {
   );
 };
 
-export default Calender;
+export default Calender1;
