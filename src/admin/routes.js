@@ -17,6 +17,8 @@ import AssignTasks from "./pages/Assigntask";
 import TaskCardDetails from "./components/TaskCardDetails";
 import ProjectStatus from "./pages/ProjectStatus";
 import EmployeeDetails from "./pages/EmployeeDetails";
+import Calender from "./pages/CalenderAdmin"
+import MonthView from "./pages/MonthAdmin"
 
 const adminRoutes = [
   {
@@ -68,6 +70,15 @@ const adminRoutes = [
     component: TaskCardDetails,
    
   },
+  {
+    path: "calender",
+    component: Calender,
+  },
+  {
+    path: "month/:year/:month",
+    component: MonthView,
+  },
+
 ];
 
 export default adminRoutes;
