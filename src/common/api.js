@@ -22,16 +22,21 @@ export const getEventByDate = async (eventDate) => {
   try {
     const response = await fetch(`${BASE_URL}/getEvent/${eventDate}`, {
       method: "GET",
-      headers: {
-        "Content-Type": "application/json",
-      },
+      headers: { "Content-Type": "application/json" },
     });
+
+    if (!response.ok) {
+      console.error(`Error ${response.status}: ${response.statusText}`);
+      return null;
+    }
+
     return await response.json();
   } catch (error) {
     console.error("Error fetching event:", error);
     return null;
   }
 };
+
 
 // Function to update an event
 export const updateEvent = async (eventId, eventData) => {
