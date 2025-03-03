@@ -30,12 +30,14 @@ export const getEventByDate = async (eventDate) => {
       return null;
     }
 
-    return await response.json();
+    const data = await response.json();
+    return data.message || [];  // 🔥 Ensure we return the `message` array
   } catch (error) {
     console.error("Error fetching event:", error);
-    return null;
+    return [];
   }
 };
+
 
 
 // Function to update an event
