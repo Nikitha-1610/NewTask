@@ -88,3 +88,21 @@ export const getEventsByYear = async (year) => {
     return null;
   }
 };
+
+
+
+//Function to get events by month
+export const getEventsByMonth = async (year,month) => {
+  try {
+    const response = await fetch(`${BASE_URL}/getEventMonth/${year}/${month}`, {
+      method: "GET",
+      headers: {
+        "Content-Type": "application/json",
+      },
+    });
+    return await response.json();
+  } catch (error) {
+    console.error("Error fetching events by year:", error);
+    return null;
+  }
+};

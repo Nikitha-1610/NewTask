@@ -85,22 +85,6 @@ const Calendar = () => {
             );
           })}
         </div>
-
-        {/* Events for the Selected Month */}
-        <div className="mt-4">
-          <h3 className="text-lg font-bold text-gray-700">Events</h3>
-          {getEventsForMonth(selectedYear, currentMonth).length > 0 ? (
-            <ul className="mt-2 text-sm text-gray-600">
-              {getEventsForMonth(selectedYear, currentMonth).map((event, index) => (
-                <li key={index} className="border-b py-1">
-                  <span className="font-semibold text-teal-600">{event.date}:</span> {event.title}
-                </li>
-              ))}
-            </ul>
-          ) : (
-            <p className="text-sm text-gray-400">No events this month.</p>
-          )}
-        </div>
       </div>
 
       {/* Main Calendar Section */}
