@@ -147,7 +147,7 @@ const formatDate = (year, month, day) => `${year}-${String(month + 1).padStart(2
 return (
     <div className="flex h-screen p-4 bg-gray-100">
       {/* Sidebar - Mini Calendar */}
-      <div className="w-full md:w-1/5 p-3 border-r border-gray-300">
+      <div className="w-full md:w-1/5 lg:1/3 p-3 border-r border-gray-300">
         <button
           onClick={() => navigate(-1)}
           className="bg-gray-200 px-2 py-1 rounded-lg text-teal-600 hover:bg-teal-300 text-sm mb-3"
@@ -197,7 +197,7 @@ return (
 </div>
 
       {/* Main Calendar */}
-      <div className="w-4/5 p-6">
+      <div className="hidden md:block md:w-full lg:w-4/5 p-6 lg:ml-6">
         <h1 className="text-3xl font-bold mb-4">{months[selectedMonth]} {selectedYear}</h1>
         <div className="grid grid-cols-7 gap-4 bg-white p-4 rounded-lg shadow-lg">
           {/* Days of the week */}
@@ -267,6 +267,7 @@ return (
             <h2 className="text-lg font-bold mb-2">
               Events for {months[selectedMonth]} {selectedDay}
             </h2>
+
             {/* Add Event Section - Always Visible */}
             {(selectedYear > currentYear ||
               (selectedYear === currentYear && selectedMonth > currentMonth) ||
@@ -303,24 +304,37 @@ return (
                 </>
               )}
             {/* List of Events - Clicking switches to Update Mode */}
-            <ul>
-              {events[selectedDay]?.map(event => (
-                <li
-                  key={event.id}
-                  className="flex justify-between items-center p-2 bg-gray-200 rounded mb-2 cursor-pointer"
-                  onClick={() => { setEditingEvent(event); setEventInput(event.text); }}>
-                  {event.text}
-                  {/* Delete Button */}
-                  {selectedYear > currentYear ||
-                    (selectedYear === currentYear && selectedMonth > currentMonth) ||
-                    (selectedYear === currentYear && selectedMonth === currentMonth && selectedDay >= currentDate) ? (
-                    <button
-                      className="text-red-500 text-sm"
-                      onClick={(e) => { e.stopPropagation(); handleDeleteEvent(event.id); }}>✖</button>
-                  ) : null}
-                </li>
-              ))}
-            </ul>
+           {/* List of Events or "No events" Message */}
+{events[selectedDay] && events[selectedDay].length > 0 ? (
+  <ul>
+    {events[selectedDay].map(event => (
+      <li
+        key={event.id}
+        className="flex justify-between items-center p-2 bg-gray-200 rounded mb-2 cursor-pointer"
+        onClick={() => { setEditingEvent(event); setEventInput(event.text); }}>
+        {event.text}
+        {/* Delete Button for Future Events */}
+        {(selectedYear > currentYear ||
+          (selectedYear === currentYear && selectedMonth > currentMonth) ||
+          (selectedYear === currentYear && selectedMonth === currentMonth && selectedDay >= currentDate)) && (
+          <button
+            className="text-red-500 text-sm"
+            onClick={(e) => { e.stopPropagation(); handleDeleteEvent(event.id); }}>
+            ✖
+          </button>
+        )}
+      </li>
+    ))}
+  </ul>
+) : (
+  /* Show "No events" for past dates */
+  (selectedYear < currentYear ||
+    (selectedYear === currentYear && selectedMonth < currentMonth) ||
+    (selectedYear === currentYear && selectedMonth === currentMonth && selectedDay < currentDate)) ? (
+    <p className="text-gray-500 text-center mt-2">No events</p>
+  ) : null
+)}
+
             {/* Close Button */}
             <button className="bg-gray-300 px-3 py-1 rounded w-full mt-2" onClick={() => setModalOpen(false)}>Close</button>
           </div>

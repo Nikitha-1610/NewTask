@@ -91,9 +91,9 @@ const formatDate = (year, month, day) => `${year}-${String(month + 1).padStart(2
   }, [currentYear, currentMonth]); // Depend on the real-time month and year
   
 return (
-    <div className="flex h-screen p-4 bg-gray-100">
+    <div className="flex flex-col lg:flex-row h-screen p-4 bg-gray-100">
       {/* Sidebar - Mini Calendar */}
-      <div className="w-full md:w-1/5 p-3 border-r border-gray-300">
+      <div className="w-full md:w-1/5  lg:1/3 p-3 border-r border-gray-300">
         <button
           onClick={() => navigate(-1)}
           className="bg-gray-200 px-2 py-1 rounded-lg text-teal-600 hover:bg-teal-300 text-sm mb-3"
@@ -143,7 +143,7 @@ return (
 </div>
 
       {/* Main Calendar */}
-      <div className="w-4/5 p-6">
+      <div className="hidden md:block w-4/5 p-6 lg:ml-6">
         <h1 className="text-3xl font-bold mb-4">{months[selectedMonth]} {selectedYear}</h1>
         <div className="grid grid-cols-7 gap-4 bg-white p-4 rounded-lg shadow-lg">
           {/* Days of the week */}
@@ -213,6 +213,8 @@ return (
             <h2 className="text-lg font-bold mb-2">
               Events for {months[selectedMonth]} {selectedDay}
             </h2>
+            {events[selectedDay] && events[selectedDay].length > 0 ? (
+
             <ul>
               {events[selectedDay]?.map(event => (
                 <li
@@ -222,6 +224,9 @@ return (
                 </li>
               ))}
             </ul>
+             ) : (
+              <p className="text-gray-500 text-center mt-2">No events</p>
+            )}
             
             {/* Close Button */}
             <button className="bg-gray-300 px-3 py-1 rounded w-full mt-2" onClick={() => setModalOpen(false)}>Close</button>

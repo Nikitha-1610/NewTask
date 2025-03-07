@@ -47,8 +47,8 @@ const Calendar = () => {
   return (
     <div className="flex flex-col md:flex-row h-screen p-4">
       {/* Sidebar */}
-      <div className="w-full md:w-1/5 p-3 border-r border-gray-300">
-        <div className="flex items-center justify-between md:justify-start space-x-2">
+      <div className="w-full md:w-60 lg:w-1/5 p-3 border-r border-gray-300 flex-shrink-0 md:fixed md:left-4 lg:static">
+          <div className="flex items-center justify-between md:justify-start space-x-2">
           <h1 className="text-xl md:text-3xl font-bold">{selectedYear}</h1>
           <select
             className="border border-teal-500 px-3 py-1 rounded-lg text-teal-500 text-sm"
@@ -88,13 +88,13 @@ const Calendar = () => {
       </div>
 
       {/* Main Calendar Section */}
-      <div className="w-full md:w-4/5 p-4">
+      <div className="w-full md:w-full lg:w-4/5 p-4">
         <div className="flex justify-between items-center">
           <h1 className="text-3xl font-bold">Calendar</h1>
         </div>
 
         {/* Yearly Calendar Grid */}
-        <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mt-4">
+        <div className="grid grid-cols-1 sm:grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mt-4">
           {months.map((month, index) => (
             <div
               key={month}
