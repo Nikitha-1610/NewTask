@@ -83,6 +83,7 @@ const formatDate = (year, month, day) => `${year}-${String(month + 1).padStart(2
           )
         }));
         setEditingEvent(null);
+        await fetchMiniCalendarEvents();
       } catch (error) {
         console.error("Error updating event:", error);
       }
@@ -95,6 +96,7 @@ const formatDate = (year, month, day) => `${year}-${String(month + 1).padStart(2
           ...prev,
           [selectedDay]: [...(prev[selectedDay] || []), { id: createdEvent.id, text: eventInput, leave: false }]
         }));
+        await fetchMiniCalendarEvents();
       } catch (error) {
         console.error("Error adding event:", error);
       }
@@ -109,12 +111,13 @@ const formatDate = (year, month, day) => `${year}-${String(month + 1).padStart(2
         ...prev,
         [selectedDay]: prev[selectedDay].filter(event => event.id !== eventId)
       }));
+      await fetchMiniCalendarEvents();
     } catch (error) {
       console.error("Error deleting event:", error);
     }
   };
 
-  useEffect(() => {
+  
     const fetchMiniCalendarEvents = async () => {
       try {
         const eventsData = await getEventsByMonth(currentYear, currentMonth + 1);
@@ -127,7 +130,6 @@ const formatDate = (year, month, day) => `${year}-${String(month + 1).padStart(2
           if (event.eventDate) {
             const eventDate = new Date(event.eventDate);
             const day = eventDate.getDate();
-  
             if (!acc[day]) acc[day] = [];
             acc[day].push({
               id: event.id,
@@ -141,10 +143,12 @@ const formatDate = (year, month, day) => `${year}-${String(month + 1).padStart(2
       } catch (error) {
         console.error("Error fetching mini calendar events:", error);
       }};
-  fetchMiniCalendarEvents();
-  }, [currentYear, currentMonth]); // Depend on the real-time month and year
-  
-return (
+
+      useEffect(() => {
+        fetchMiniCalendarEvents();
+      }, [currentYear, currentMonth]); 
+      
+  return (
     <div className="flex h-screen p-4 bg-gray-100">
       {/* Sidebar - Mini Calendar */}
       <div className="w-full md:w-1/5 lg:1/3 p-3 border-r border-gray-300">
