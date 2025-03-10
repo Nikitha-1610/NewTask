@@ -91,17 +91,17 @@ const formatDate = (year, month, day) => `${year}-${String(month + 1).padStart(2
   }, [currentYear, currentMonth]); // Depend on the real-time month and year
   
 return (
-    <div className="flex flex-col lg:flex-row h-screen p-4 bg-gray-100">
+    <div className="flex lg:h-screen  lg:p-4 bg-gray-100">
       {/* Sidebar - Mini Calendar */}
-      <div className="w-full md:w-1/5  lg:1/3 p-3 border-r border-gray-300">
-        <button
+      <div className="w-full md:w-2/3 lg:w-1/4 p-3 lg:border-r border-gray-300 md:fixed md:left-40 lg:static">
+      <button
           onClick={() => navigate(-1)}
           className="bg-gray-200 px-2 py-1 rounded-lg text-teal-600 hover:bg-teal-300 text-sm mb-3"
         > ⬅</button>
           <h1 className="text-xl md:text-3xl font-bold">{currentYear}</h1>
           <h2 className="mt-4 text-lg font-bold">{months[currentMonth]}</h2>
         {/* Days of the week */}
-        <div className="grid grid-cols-7 gap-1 text-gray-700 text-xs mt-2">
+        <div className="grid grid-cols-7 gap-1 md:gap-4 text-gray-700 text-xs mt-2">
           {daysOfWeek.map((d, index) => (
             <span key={d} className={`font-bold text-center ${index === 6 ? "text-red-500" : ""}`}>
               {d}
@@ -143,8 +143,8 @@ return (
 </div>
 
       {/* Main Calendar */}
-      <div className="hidden md:block w-4/5 p-6 lg:ml-6">
-        <h1 className="text-3xl font-bold mb-4">{months[selectedMonth]} {selectedYear}</h1>
+      <div className="hidden lg:block lg:w-4/5 lg:p-6 lg:ml-6">
+      <h1 className="text-3xl font-bold mb-4">{months[selectedMonth]} {selectedYear}</h1>
         <div className="grid grid-cols-7 gap-4 bg-white p-4 rounded-lg shadow-lg">
           {/* Days of the week */}
           {daysOfWeek.map((day, index) => (
