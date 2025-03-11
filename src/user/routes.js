@@ -3,6 +3,7 @@ import UserProfile from "./pages/UserProfile";
 import UserTask from "./pages/Usertask";
 import MainPage from "./pages/MainPage";
 import Calendar from "./pages/Calender";
+import MonthView from "./pages/MonthView";
 import Chats from "./pages/Chats";
 import MyTask from "./pages/MyTask";
 import UserTaskDetails from "./pages/UserTaskDetails";
@@ -11,6 +12,8 @@ import InProgressPage from "./pages/InProgressPage";
 import InTestPage from "./pages/InTestPage"; 
 import CompletedPage from "./pages/CompletedPage"; 
 
+
+
 const userRoutes = [
   { path: "home", component: UserHome },
   { path: "profile", component: UserProfile },
@@ -18,6 +21,7 @@ const userRoutes = [
   { path: "mainpage", component: MainPage },
   { path: "mytask", component: MyTask },
   { path: "calender", component: Calendar },
+  { path: "month/:year/:month", component: MonthView }, 
   { path: "chats", component: Chats },
   { path: "home/:taskId", component: UserTaskDetails},
   { path: "assigned", component: AssignPage },

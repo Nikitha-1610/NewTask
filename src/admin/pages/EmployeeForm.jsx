@@ -31,7 +31,7 @@ const EmployeeForm = () => {
 
   const departmentOptions = ["Design", "Development", "DevOps", "Marketing", "HR", "AI/ML"];
   const roleOptions = ["Employee", "TeamLead", "Manager", "Intern"];
-
+  const genderOptions=["Male","Female"];
 
   const generateEmployeeId = async () => {
     try {
@@ -228,7 +228,7 @@ const EmployeeForm = () => {
                   name="password"
                   value={formData.password}
                   onChange={handleInputChange}
-                  className="border border-gray-300 rounded-md px-3 py-2"
+                  className="border border-gray-300 rounded-md px-3 py-2 pr-10 w-full"
                   placeholder="Enter your password"
                 />
                 <button
@@ -252,7 +252,6 @@ const EmployeeForm = () => {
             <InputField label="Address" name="address" value={formData.address} onChange={handleInputChange} error={errors.address} />
             <InputField label="Date of Birth" name="DOB" type="date" value={formData.DOB} onChange={handleInputChange} error={errors.DOB} />
             <InputField label="Reference" name="reference" value={formData.reference} onChange={handleInputChange} error={errors.reference} />
-            <InputField label="Gender" name="gender" value={formData.gender} onChange={handleInputChange} error={errors.gender} />
             <InputField label="Position" name="position" value={formData.position} onChange={handleInputChange} error={errors.position} />
            
 
@@ -275,6 +274,22 @@ const EmployeeForm = () => {
                 ))}
               </select>
               {errors.teamLead && <ErrorMessage message={errors.teamLead} />}
+            </div>
+
+            <div className="flex flex-col">
+              <label className="text-gray-700 font-medium mb-1">Gender <span className="text-red-500">*</span></label>
+              <select
+                name="gender"
+                value={formData.gender}
+                onChange={handleInputChange}
+                className="border border-gray-300 rounded-md px-3 py-2"
+              >
+                <option value="">Select gender</option>
+                {genderOptions.map((gender, index) => (
+                  <option key={index} value={gender}>{gender}</option>
+                ))}
+              </select>
+              {errors.gender && <ErrorMessage message={errors.gender} />}
             </div>
             <div className="flex flex-col">
               <label className="text-gray-700 font-medium mb-1">Department <span className="text-red-500">*</span></label>

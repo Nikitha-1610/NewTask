@@ -219,6 +219,8 @@ const Position = () => {
     if (currentPage < totalPages) setCurrentPage(currentPage + 1);
   };
 
+
+  
   return (
     loading ? (
       <div className="fixed inset-0 flex justify-center items-center bg-white bg-opacity-40 z-50">

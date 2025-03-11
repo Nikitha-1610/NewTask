@@ -49,20 +49,19 @@ const App = () => {
 
           {/* User Routes */}
           <Route
-            path="/user/*"
-            element={
-              <ProtectedRoute roleRequired="Employee">
-                <Layout role={role} />
-              </ProtectedRoute>
-            }
-          >
-            <Route index element={<Navigate to="/user/home" replace />} />
-            {userRoutes.map(({ path, component: Component }) => (
-              <Route key={path} path={path} element={<Component />} />
-            ))}
-            {/* ✅ New route for InTestPage */}
-            <Route path="intest" element={<InTestPage />} />
-          </Route>
+  path="/user/*"
+  element={
+    <ProtectedRoute roleRequired="Employee">
+      <Layout role={role} />
+    </ProtectedRoute>
+  }
+>
+  <Route index element={<Navigate to="/user/home" replace />} />
+  {userRoutes.map(({ path, component: Component }) => (
+    <Route key={path} path={path} element={<Component />} />
+  ))}
+  
+</Route>
 
           {/* Default Route */}
           <Route path="/" element={<Navigate to={defaultRoute} replace />} />

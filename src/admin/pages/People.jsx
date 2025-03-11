@@ -246,7 +246,7 @@ const People = () => {
                         <td className="px-4 py-2 flex gap-2">
                           {user.status === "Init" ? (
                             <button
-                              className="bg-blue-500 text-white px-4 py-2 rounded-lg hover:opacity-90"
+                              className="bg-teal-500 text-white px-4 py-2 rounded-lg hover:opacity-90"
                               onClick={() => openConfirmModal(index)}
                             >
                               Approve
@@ -293,8 +293,8 @@ const People = () => {
         onClick={() => setCurrentPage(page)}
         className={`px-3 py-1 rounded-md ${
           currentPage === page 
-            ? 'bg-blue-500 text-white' 
-            : 'bg-gray-200 text-gray-700 hover:bg-blue-500 hover:text-white'
+            ? 'bg-teal-500 text-white' 
+            : 'bg-gray-200 text-gray-700 hover:bg-teal-500 hover:text-white'
         }`}
       >
         {page}
@@ -323,7 +323,7 @@ const People = () => {
                 </p>
                 <div className="flex gap-4 justify-end">
                   <button
-                    className="bg-blue-500 text-white px-4 py-2 rounded-lg"
+                    className="bg-teal-500 text-white px-4 py-2 rounded-lg"
                     onClick={handleApprove}
                   >
                     Confirm
@@ -360,7 +360,7 @@ const People = () => {
                     Reject
                   </button>
                   <button
-                    className="bg-blue-500 text-white px-4 py-2 rounded-lg"
+                    className="bg-teal-500 text-white px-4 py-2 rounded-lg"
                     onClick={() => handleAction("approve")}
                   >
                     Approve

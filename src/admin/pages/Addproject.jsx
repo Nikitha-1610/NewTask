@@ -206,7 +206,7 @@ const AddProject = () => {
       <div className="flex md:justify-end justify-center mb-5">
         <div className="flex flex-wrap justify-end gap-4">
           {/* Add Task Button */}
-          <button className="flex items-center gap-2  bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded-3xl shadow-md transition">
+          <button className="flex items-center gap-2  bg-teal-500 hover:bg-teal-600 text-white px-4 py-2 rounded-3xl shadow-md transition">
             <Icon icon="ic:round-add" height={22} width={22} />
             <span>Add project</span>
           </button>
@@ -425,7 +425,7 @@ const AddProject = () => {
               type="button"
               className={`${
                 formData.priority === "Normal"
-                  ? "bg-blue-200 text-blue-700"
+                  ? "bg-blue-200 text-teal-500"
                   : "bg-gray-200 text-gray-700"
               } px-4 py-1 rounded-full flex justify-center items-center gap-2`}
               onClick={() =>

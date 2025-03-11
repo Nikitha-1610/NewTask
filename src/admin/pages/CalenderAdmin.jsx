@@ -45,10 +45,10 @@ const Calendar = () => {
   };
 
   return (
-    <div className="flex flex-col md:flex-row lg:flex-row h-screen">
+    <div className="flex flex-col md:flex-row h-screen p-4">
       {/* Sidebar */}
       <div className="w-full md:w-60 lg:w-1/5 p-3 lg:border-r border-gray-300 flex-shrink-0 md:fixed md:left-4 lg:static">
-      <div className="flex items-center justify-between md:justify-start space-x-2">
+          <div className="flex items-center justify-between md:justify-start space-x-2">
           <h1 className="text-xl md:text-3xl font-bold">{selectedYear}</h1>
           <select
             className="border border-teal-500 px-3 py-1 rounded-lg text-teal-500 text-sm"
@@ -63,8 +63,8 @@ const Calendar = () => {
         <h2 className="mt-4 text-lg font-bold">{months[currentMonth]}</h2>
 
         {/* Mini Calendar */}
-        <div className="grid grid-cols-7 gap-1 text-gray-700 text-[10px] sm:text-xs md:text-[10px] mt-2">
-        {daysOfWeek.map((d) => (
+        <div className="grid grid-cols-7 gap-1 text-gray-700 text-xs mt-2">
+          {daysOfWeek.map((d) => (
             <span key={d} className="font-bold text-center">{d}</span>
           ))}
           {Array.from({ length: getStartDayOfMonth(selectedYear, currentMonth) }).map((_, i) => (
@@ -88,19 +88,19 @@ const Calendar = () => {
       </div>
 
       {/* Main Calendar Section */}
-      <div className="w-full md:w-full lg:w-5/6 p-4">
+      <div className="w-full md:w-full lg:w-4/5 p-4">
         <div className="flex justify-between items-center">
           <h1 className="text-3xl font-bold">Calendar</h1>
         </div>
 
         {/* Yearly Calendar Grid */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-2 lg:grid-cols-4  gap-4 mt-4">
-        {months.map((month, index) => (
+        <div className="grid grid-cols-1 sm:grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mt-4">
+          {months.map((month, index) => (
             <div
               key={month}
               className={`text-sm relative p-4 border cursor-pointer hover:bg-gray-100 
                 ${selectedYear === currentYear && index === currentMonth ? "border-teal-400 border-2" : "border-gray-300"}`}
-              onClick={() => navigate(`/user/month/${selectedYear}/${index}`)}
+              onClick={() => navigate(`/admin/month/${selectedYear}/${index}`)}
             >
               <h2 className="text-center text-base font-bold mb-2">{month}</h2>
               <div className="grid grid-cols-7 gap-1 text-gray-500 text-xs">
