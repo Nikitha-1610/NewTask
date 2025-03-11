@@ -18,6 +18,9 @@ const MonthView = () => {
   const [modalOpen, setModalOpen] = useState(false);
   const [editingEvent, setEditingEvent] = useState(null);
   const [miniCalendarEvents, setMiniCalendarEvents] = useState({});
+  const [eventToDelete, setEventToDelete] = useState(null);
+const [successMessage, setSuccessMessage] = useState("");
+
  const daysOfWeek = ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"];
   const months = [
     "January", "February", "March", "April", "May", "June",
@@ -104,7 +107,7 @@ const formatDate = (year, month, day) => `${year}-${String(month + 1).padStart(2
     setEventInput("");
   };
 
-  const handleDeleteEvent = async (eventId) => {
+  const handleConfirmDelete = async (eventId) => {
     try {
       await deleteEvent(eventId);
       setEvents(prev => ({
@@ -112,13 +115,15 @@ const formatDate = (year, month, day) => `${year}-${String(month + 1).padStart(2
         [selectedDay]: prev[selectedDay].filter(event => event.id !== eventId)
       }));
       await fetchMiniCalendarEvents();
+      setSuccessMessage("Event deleted successfully!");
+      setTimeout(() => setSuccessMessage(""), 2000);
     } catch (error) {
       console.error("Error deleting event:", error);
     }
   };
-
   
-    const fetchMiniCalendarEvents = async () => {
+  
+const fetchMiniCalendarEvents = async () => {
       try {
         const eventsData = await getEventsByMonth(currentYear, currentMonth + 1);
   
@@ -321,11 +326,14 @@ const formatDate = (year, month, day) => `${year}-${String(month + 1).padStart(2
         {(selectedYear > currentYear ||
           (selectedYear === currentYear && selectedMonth > currentMonth) ||
           (selectedYear === currentYear && selectedMonth === currentMonth && selectedDay >= currentDate)) && (
-          <button
-            className="text-red-500 text-sm"
-            onClick={(e) => { e.stopPropagation(); handleDeleteEvent(event.id); }}>
-            ✖
-          </button>
+<button
+  className="text-red-500 text-sm"
+  onClick={(e) => {
+    e.stopPropagation();
+    setEventToDelete(event); // Store event details before confirming
+  }}>
+  ✖
+</button>
         )}
       </li>
     ))}
@@ -344,7 +352,35 @@ const formatDate = (year, month, day) => `${year}-${String(month + 1).padStart(2
           </div>
         </div>
       )}
+      {eventToDelete && (
+  <div className="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center">
+    <div className="bg-white p-4 rounded-lg shadow-lg text-center">
+      <p className="mb-4">Are you sure you want to delete "<strong>{eventToDelete.text}</strong>"?</p>
+      <div className="flex justify-center gap-3">
+        <button
+          className="bg-teal-500 text-white px-3 py-1 rounded"
+          onClick={async () => {
+            await handleConfirmDelete(eventToDelete.id);
+            setEventToDelete(null);
+          }}>
+          Confirm
+        </button>
+        <button
+          className="bg-gray-300 px-3 py-1 rounded"
+          onClick={() => setEventToDelete(null)}>
+          Cancel
+        </button>
+      </div>
     </div>
+  </div>
+)}
+{successMessage && (
+  <div className="fixed bottom-5 left-1/2 transform -translate-x-1/2 bg-teal-500 text-white px-4 py-2 rounded-lg shadow-lg">
+    {successMessage}
+    
+  </div>
+)}
+</div>
   );
 };
 
