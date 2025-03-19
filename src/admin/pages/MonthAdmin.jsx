@@ -4,38 +4,35 @@ import { useNavigate, useParams } from "react-router-dom";
 import { postEvent, getEventByDate, getEventsByMonth, updateEvent, deleteEvent } from "../../common/api";
 
 const MonthView = () => {
-  const navigate = useNavigate();
-  const { year, month } = useParams();
-  const selectedYear = Number(year);
-  const selectedMonth = Number(month);
-  const currentDate = new Date().getDate();
-  const currentYear = new Date().getFullYear();
-  const currentMonth = new Date().getMonth();
-
-  const [events, setEvents] = useState({});
-  const [selectedDay, setSelectedDay] = useState(null);
-  const [eventInput, setEventInput] = useState("");
-  const [modalOpen, setModalOpen] = useState(false);
-  const [editingEvent, setEditingEvent] = useState(null);
-  const [miniCalendarEvents, setMiniCalendarEvents] = useState({});
-  const [eventToDelete, setEventToDelete] = useState(null);
+const navigate = useNavigate();
+const { year, month } = useParams();
+const selectedYear = Number(year);
+const selectedMonth = Number(month);
+const currentDate = new Date().getDate();
+const currentYear = new Date().getFullYear();
+const currentMonth = new Date().getMonth();
+const [events, setEvents] = useState([]);
+const [selectedDay, setSelectedDay] = useState(null);
+const [eventInput, setEventInput] = useState("");
+const [eventType, setEventType] = useState(null); 
+const [modalOpen, setModalOpen] = useState(false);
+const [meetingTime, setMeetingTime] = useState("");
+const [timeModalOpen, setTimeModalOpen] = useState(false);
+const [editingEvent, setEditingEvent] = useState(null);
+const [miniCalendarEvents, setMiniCalendarEvents] = useState({});
+const [eventToDelete, setEventToDelete] = useState(null);
 const [successMessage, setSuccessMessage] = useState("");
-
- const daysOfWeek = ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"];
-  const months = [
-    "January", "February", "March", "April", "May", "June",
-    "July", "August", "September", "October", "November", "December"
-  ];
+const daysOfWeek = ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"];
+const months = ["January", "February", "March", "April", "May", "June","July", "August", "September", "October", "November", "December"];
 const getDaysInMonth = (year, month) => new Date(year, month + 1, 0).getDate();
-  const startDay = (new Date(selectedYear, selectedMonth, 1).getDay() || 7) - 1;
+const startDay = (new Date(selectedYear, selectedMonth, 1).getDay() || 7) - 1;
 const daysInMonth = getDaysInMonth(selectedYear, selectedMonth);
 const miniStartDay = (new Date(currentYear, currentMonth, 1).getDay() || 7) - 1;
 const miniDaysInMonth = getDaysInMonth(currentYear, currentMonth);
 const miniDaysArray = Array.from({ length: miniDaysInMonth }, (_, i) => i + 1);
 const daysArray = Array.from({ length: daysInMonth }, (_, i) => i + 1);
 const formatDate = (year, month, day) => `${year}-${String(month + 1).padStart(2, "0")}-${String(day).padStart(2, "0")}`;
-
-  useEffect(() => {
+useEffect(() => {
     const fetchAllEvents = async () => {
       try {
         const eventsData = await getEventsByMonth(selectedYear, selectedMonth + 1);
@@ -68,46 +65,92 @@ const formatDate = (year, month, day) => `${year}-${String(month + 1).padStart(2
   useEffect(() => {
       setEditingEvent(null);
       setEventInput("");
+      setEventType("");
     }, [modalOpen])
   }
 
   const handleAddOrUpdateEvent = async () => {
-    if (!selectedDay || !eventInput.trim()) {
-      alert("Event name is required.");
+    if (!selectedDay || !eventType) {
+      alert("Please select an event type.");
       return;
     }
+  
     if (editingEvent) {
-      try {
-        await updateEvent(editingEvent.id, { eventName: eventInput });
-        setEvents(prev => ({
-          ...prev,
-          [selectedDay]: prev[selectedDay].map(event =>
-            event.id === editingEvent.id ? { ...event, text: eventInput } : event
-          )
-        }));
-        setEditingEvent(null);
-        await fetchMiniCalendarEvents();
-      } catch (error) {
-        console.error("Error updating event:", error);
+      // Allow updates only for "Meeting" events
+      if (editingEvent.text.startsWith("Meeting at")) {
+        try {
+          // Format the updated time
+          const updatedMeetingText = `Meeting at ${new Date(`2000-01-01T${meetingTime}`)
+            .toLocaleTimeString([], { hour: "numeric", minute: "2-digit", hour12: true })}`;
+  
+          await updateEvent(editingEvent.id, { eventName: updatedMeetingText });
+  
+          // Update state
+          setEvents(prev => ({
+            ...prev,
+            [selectedDay]: prev[selectedDay].map(event =>
+              event.id === editingEvent.id ? { ...event, text: updatedMeetingText } : event
+            )
+          }));
+  
+          setMiniCalendarEvents(prev => ({
+            ...prev,
+            [selectedDay]: prev[selectedDay].map(event =>
+              event.id === editingEvent.id ? { ...event, text: updatedMeetingText } : event
+            )
+          }));
+  
+          setEditingEvent(null);
+          setMeetingTime(""); // Reset meeting time
+  
+        } catch (error) {
+          console.error("Error updating meeting time:", error);
+        }
+      } else {
+        alert("You can only update the meeting time.");
       }
     } else {
+      // Adding a new event
       try {
         const eventDate = formatDate(selectedYear, selectedMonth, selectedDay);
-        const newEventData = { eventDate, eventName: eventInput, leave: false };
+        
+        // Format event name
+        const eventName =
+          eventType === "Meeting" && meetingTime
+            ? `Meeting at ${new Date(`2000-01-01T${meetingTime}`)
+                .toLocaleTimeString([], { hour: "numeric", minute: "2-digit", hour12: true })}`
+            : eventType;
+  
+        const newEventData = { 
+          eventDate, 
+          eventName,
+          leave: eventType === "Holiday"
+        };
+  
         const createdEvent = await postEvent(newEventData);
+  
         setEvents(prev => ({
           ...prev,
-          [selectedDay]: [...(prev[selectedDay] || []), { id: createdEvent.id, text: eventInput, leave: false }]
+          [selectedDay]: [...(prev[selectedDay] || []), { id: createdEvent.id, text: eventName, leave: eventType === "Holiday" }]
         }));
-        await fetchMiniCalendarEvents();
+  
+        setMiniCalendarEvents(prev => ({
+          ...prev,
+          [selectedDay]: [...(prev[selectedDay] || []), { id: createdEvent.id, text: eventName, leave: eventType === "Holiday" }]
+        }));
+  
       } catch (error) {
         console.error("Error adding event:", error);
       }
     }
+  
+    // Reset fields after adding/updating event
     setEventInput("");
+    setEventType(null);
+    setMeetingTime("");
   };
-
-  const handleConfirmDelete = async (eventId) => {
+  
+    const handleConfirmDelete = async (eventId) => {
     try {
       await deleteEvent(eventId);
       setEvents(prev => ({
@@ -122,12 +165,10 @@ const formatDate = (year, month, day) => `${year}-${String(month + 1).padStart(2
     }
   };
   
-  
-const fetchMiniCalendarEvents = async () => {
+  const fetchMiniCalendarEvents = async () => {
       try {
         const eventsData = await getEventsByMonth(currentYear, currentMonth + 1);
-  
-        if (!eventsData || !Array.isArray(eventsData.message)) {
+         if (!eventsData || !Array.isArray(eventsData.message)) {
           console.error("Unexpected API response for mini calendar:", eventsData);
           return;
         }
@@ -148,8 +189,7 @@ const fetchMiniCalendarEvents = async () => {
       } catch (error) {
         console.error("Error fetching mini calendar events:", error);
       }};
-
-      useEffect(() => {
+useEffect(() => {
         fetchMiniCalendarEvents();
       }, [currentYear, currentMonth]); 
       
@@ -177,17 +217,19 @@ const fetchMiniCalendarEvents = async () => {
           {miniDaysArray.map(day => {
   const isSunday = new Date(currentYear, currentMonth, day).getDay() === 0;
   const hasEvents = miniCalendarEvents[day] && miniCalendarEvents[day].length > 0;
-  return (
-    <button
-      key={day}
-      className={`w-6 h-6 flex items-center justify-center rounded-full text-xs 
-        ${day === currentDate ? "bg-teal-500 text-white" : ""} 
-        ${hasEvents ? "bg-blue-500 text-white" : ""} 
-        ${isSunday ? "text-red-500 font-bold" : ""}`}
-      onClick={() => { setSelectedDay(day); setModalOpen(true); }}>
-      {day}
-    </button>
-  );
+  const isHoliday = hasEvents && miniCalendarEvents[day].some(event => event.leave);
+return (
+  <button
+  key={day}
+  className={`w-6 h-6 flex items-center justify-center rounded-full text-xs 
+    ${day === currentDate ? "bg-teal-500 text-white" : ""} 
+    ${hasEvents ? "bg-blue-500 text-white" : ""} 
+    ${isHoliday ? "bg-red-400 text-white" : ""} 
+    ${isSunday ? "text-red-500 font-bold" : ""}`}
+  onClick={() => { setSelectedDay(day); setModalOpen(true); }}>
+  {day}
+</button>
+);
 })}
 </div>
         {/* Mini Calendar Events Section */}
@@ -224,17 +266,18 @@ const fetchMiniCalendarEvents = async () => {
             const dayOfWeek = new Date(selectedYear, selectedMonth, day).getDay(); // Get the day of the week (0 = Sunday)
             const isSunday = dayOfWeek === 0; // Check if it's Sunday
             const hasEvents = events[day] && events[day].length > 0; // Check if there are events on this day
+            const isHoliday = hasEvents && events[day].some(event => event.leave);
             const isToday = day === currentDate && selectedMonth === currentMonth && selectedYear === currentYear; // Check if it's the current date
             return (
               <div
-                key={day}
-                className={`h-20 border p-2 relative cursor-pointer hover:bg-gray-200 
-            ${hasEvents ? (isToday ? "bg-teal-200" : "bg-blue-200") : ""}`}
-                onClick={() => {
-                  setSelectedDay(day);
-                  setModalOpen(true);
-                }}>
-                {/* Display Date inside a White Circle at the Top-Right */}
+             key={day}
+              className={`h-20 border p-2 relative cursor-pointer hover:bg-gray-200 
+              ${hasEvents ? (isToday ? "bg-teal-200" : "bg-blue-200") : ""} 
+              ${isHoliday ? "bg-red-300 text-black" : ""}`} // Add red background for holidays
+             onClick={() => {
+               setSelectedDay(day);
+                 setModalOpen(true);
+                   }}>{/* Display Date inside a White Circle at the Top-Right */}
                 <span
                   className={`absolute top-1 right-1 text-xs font-semibold w-4 h-4 flex items-center justify-center rounded-full bg-white 
                   ${isSunday ? "text-red-500" : ""}`}>
@@ -276,28 +319,58 @@ const fetchMiniCalendarEvents = async () => {
             <h2 className="text-lg font-bold mb-2">
               Events for {months[selectedMonth]} {selectedDay}
             </h2>
-
-            {/* Add Event Section - Always Visible */}
-            {(selectedYear > currentYear ||
+            {timeModalOpen && (
+  <div className="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center">
+    <div className="bg-white p-6 rounded-lg shadow-lg text-center">
+      <h2 className="text-lg font-bold mb-2">Select Meeting Time</h2>
+      <input
+        type="time"
+        value={meetingTime}
+        onChange={(e) => setMeetingTime(e.target.value)}
+        className="border p-2 w-full rounded mb-4"
+      />
+      <div className="flex justify-center gap-3">
+        <button
+          className="bg-teal-500 text-white px-3 py-1 rounded"
+          onClick={() => setTimeModalOpen(false)}
+        >
+          Confirm
+        </button>
+        <button
+          className="bg-gray-300 px-3 py-1 rounded"
+          onClick={() => {
+            setMeetingTime("");
+            setTimeModalOpen(false);
+          }}
+        >
+          Cancel
+        </button>
+      </div>
+    </div>
+  </div>
+)}
+{(selectedYear > currentYear ||
               (selectedYear === currentYear && selectedMonth > currentMonth) ||
               (selectedYear === currentYear && selectedMonth === currentMonth && selectedDay >= currentDate)) && (
                 <>
-                  {/* Input Field for Adding Events */}
-                  <input
-                    type="text"
-                    value={eventInput}
-                    onChange={(e) => setEventInput(e.target.value)}
-                    placeholder="Event details..."
-                    className="w-full border p-2 mb-2" 
-                    onKeyDown={(e) => {
-                      if (e.key === "Enter") {handleAddOrUpdateEvent(e.target.value);}
-                    }}/>
-                  {!editingEvent && (<button
+                <select
+  value={eventType || ""}
+  onChange={(e) => {
+    setEventType(e.target.value);
+    if (e.target.value === "Meeting") {
+      setTimeModalOpen(true); // Open the time modal
+    }
+  }}
+  className="w-full border p-2 mb-2"
+>
+  <option value="" disabled>Select Event Type</option>
+  <option value="Meeting">Meeting</option>
+  <option value="Holiday">Holiday</option>
+</select>
+{!editingEvent && (<button
                     className="bg-teal-500 text-white px-3 py-1 rounded w-full mb-2"
                     onClick={handleAddOrUpdateEvent}>Add Event</button>)}
-                    
-                  {/* Show "Update Event" and "Cancel Editing" ONLY if editing */}
-                  {editingEvent && (
+                    {editingEvent && (
                     <>
                       <button
                         className="bg-blue-500 text-white px-3 py-1 rounded w-full mb-2"
@@ -312,13 +385,10 @@ const fetchMiniCalendarEvents = async () => {
                   )}
                 </>
               )}
-            {/* List of Events - Clicking switches to Update Mode */}
-           {/* List of Events or "No events" Message */}
-{events[selectedDay] && events[selectedDay].length > 0 ? (
-  <ul>
-    {events[selectedDay].map(event => (
-      <li
-        key={event.id}
+       {events[selectedDay] && events[selectedDay].length > 0 ? (
+       <ul>
+      {events[selectedDay].map(event => (
+       <li key={event.id}
         className="flex justify-between items-center p-2 bg-gray-200 rounded mb-2 cursor-pointer"
         onClick={() => { setEditingEvent(event); setEventInput(event.text); }}>
         {event.text}
@@ -326,28 +396,23 @@ const fetchMiniCalendarEvents = async () => {
         {(selectedYear > currentYear ||
           (selectedYear === currentYear && selectedMonth > currentMonth) ||
           (selectedYear === currentYear && selectedMonth === currentMonth && selectedDay >= currentDate)) && (
-<button
-  className="text-red-500 text-sm"
-  onClick={(e) => {
-    e.stopPropagation();
-    setEventToDelete(event); // Store event details before confirming
-  }}>
-  ✖
-</button>
+       <button
+       className="text-red-500 text-sm"
+       onClick={(e) => {
+      e.stopPropagation();
+       setEventToDelete(event); // Store event details before confirming
+      }}>✖</button>
         )}
       </li>
     ))}
   </ul>
 ) : (
-  /* Show "No events" for past dates */
   (selectedYear < currentYear ||
     (selectedYear === currentYear && selectedMonth < currentMonth) ||
     (selectedYear === currentYear && selectedMonth === currentMonth && selectedDay < currentDate)) ? (
     <p className="text-gray-500 text-center mt-2">No events</p>
   ) : null
 )}
-
-            {/* Close Button */}
             <button className="bg-gray-300 px-3 py-1 rounded w-full mt-2" onClick={() => setModalOpen(false)}>Close</button>
           </div>
         </div>
@@ -377,11 +442,9 @@ const fetchMiniCalendarEvents = async () => {
 {successMessage && (
   <div className="fixed bottom-5 left-1/2 transform -translate-x-1/2 bg-teal-500 text-white px-4 py-2 rounded-lg shadow-lg">
     {successMessage}
-    
-  </div>
+    </div>
 )}
 </div>
   );
 };
-
 export default MonthView;
