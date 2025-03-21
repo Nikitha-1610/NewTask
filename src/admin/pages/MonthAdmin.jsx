@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { useEffect } from "react";
 import { useNavigate, useParams } from "react-router-dom";
-import { postEvent, getEventByDate, getEventsByMonth, updateEvent, deleteEvent } from "../../common/api";
+import { postEvent, getEventsByMonth, updateEvent, deleteEvent } from "../../common/api";
 
 const MonthView = () => {
 const navigate = useNavigate();
@@ -17,7 +17,6 @@ const [eventInput, setEventInput] = useState("");
 const [eventType, setEventType] = useState(null); 
 const [modalOpen, setModalOpen] = useState(false);
 const [meetingTime, setMeetingTime] = useState("");
-const [timeModalOpen, setTimeModalOpen] = useState(false);
 const [editingEvent, setEditingEvent] = useState(null);
 const [miniCalendarEvents, setMiniCalendarEvents] = useState({});
 const [eventToDelete, setEventToDelete] = useState(null);
@@ -69,23 +68,47 @@ useEffect(() => {
     }, [modalOpen])
   }
 
-  const handleAddOrUpdateEvent = async () => {
-    if (!selectedDay || !eventType) {
-      alert("Please select an event type.");
+  const handleAddOrUpdateEvent = async () => { 
+    if (!selectedDay) {
+      alert("Please select a date.");
       return;
     }
   
-    if (editingEvent) {
-      // Allow updates only for "Meeting" events
-      if (editingEvent.text.startsWith("Meeting at")) {
-        try {
-          // Format the updated time
-          const updatedMeetingText = `Meeting at ${new Date(`2000-01-01T${meetingTime}`)
-            .toLocaleTimeString([], { hour: "numeric", minute: "2-digit", hour12: true })}`;
+    const existingEvents = events[selectedDay] || [];
   
+    if (editingEvent) { 
+      if (editingEvent.leave) { 
+        // Holiday Event - Only Update Name
+        try {
+          await updateEvent(editingEvent.id, { eventName: eventInput });
+  
+          setEvents(prev => ({
+            ...prev,
+            [selectedDay]: prev[selectedDay].map(event =>
+              event.id === editingEvent.id ? { ...event, text: eventInput } : event
+            )
+          }));
+  
+          setMiniCalendarEvents(prev => ({
+            ...prev,
+            [selectedDay]: prev[selectedDay].map(event =>
+              event.id === editingEvent.id ? { ...event, text: eventInput } : event
+            )
+          }));
+  
+          setEditingEvent(null);
+          setEventInput(""); // Reset input
+        } catch (error) {
+          console.error("Error updating holiday event:", error);
+        }
+      } else if (editingEvent.text.includes("-")) { 
+        // Meeting Event - Update Name & Time
+        try {
+          const updatedMeetingText = `${eventInput} - ${new Date(`2000-01-01T${meetingTime}`)
+            .toLocaleTimeString([], { hour: "numeric", minute: "2-digit", hour12: true })}`;
+          
           await updateEvent(editingEvent.id, { eventName: updatedMeetingText });
   
-          // Update state
           setEvents(prev => ({
             ...prev,
             [selectedDay]: prev[selectedDay].map(event =>
@@ -101,46 +124,77 @@ useEffect(() => {
           }));
   
           setEditingEvent(null);
-          setMeetingTime(""); // Reset meeting time
-  
+          setMeetingTime(""); 
         } catch (error) {
-          console.error("Error updating meeting time:", error);
+          console.error("Error updating meeting event:", error);
         }
-      } else {
-        alert("You can only update the meeting time.");
       }
     } else {
       // Adding a new event
-      try {
-        const eventDate = formatDate(selectedYear, selectedMonth, selectedDay);
-        
-        // Format event name
-        const eventName =
-          eventType === "Meeting" && meetingTime
-            ? `Meeting at ${new Date(`2000-01-01T${meetingTime}`)
-                .toLocaleTimeString([], { hour: "numeric", minute: "2-digit", hour12: true })}`
-            : eventType;
+      if (!eventType) {
+        alert("Please select an event type.");
+        return;
+      }
   
-        const newEventData = { 
-          eventDate, 
-          eventName,
-          leave: eventType === "Holiday"
-        };
+      const hasMeeting = existingEvents.some(event => event.text.startsWith("Meeting at"));
   
-        const createdEvent = await postEvent(newEventData);
+      if (eventType === "Holiday" && hasMeeting) {
+        // Confirmation if trying to add a holiday when meetings exist
+        if (!window.confirm("Adding a holiday will delete all meeting events. Do you want to continue?")) {
+          return;
+        }
   
-        setEvents(prev => ({
-          ...prev,
-          [selectedDay]: [...(prev[selectedDay] || []), { id: createdEvent.id, text: eventName, leave: eventType === "Holiday" }]
-        }));
+        try {
+          // Delete all meeting events for that day
+          await Promise.all(existingEvents
+            .filter(event => event.text.startsWith("Meeting at"))
+            .map(event => deleteEvent(event.id))
+          );
   
-        setMiniCalendarEvents(prev => ({
-          ...prev,
-          [selectedDay]: [...(prev[selectedDay] || []), { id: createdEvent.id, text: eventName, leave: eventType === "Holiday" }]
-        }));
+          // Replace meetings with a holiday event
+          const eventDate = formatDate(selectedYear, selectedMonth, selectedDay);
+          const newEventData = { eventDate, eventName: eventInput, leave: true };
+          const createdEvent = await postEvent(newEventData);
   
-      } catch (error) {
-        console.error("Error adding event:", error);
+          setEvents(prev => ({
+            ...prev,
+            [selectedDay]: [{ id: createdEvent.id, text: eventInput, leave: true }]
+          }));
+  
+          setMiniCalendarEvents(prev => ({
+            ...prev,
+            [selectedDay]: [{ id: createdEvent.id, text: eventInput, leave: true }]
+          }));
+  
+        } catch (error) {
+          console.error("Error adding holiday event:", error);
+        }
+      } else {
+        try {
+          const eventDate = formatDate(selectedYear, selectedMonth, selectedDay);
+          const eventName =
+  eventType === "Meeting" && meetingTime
+    ? `${eventInput} - ${new Date(`2000-01-01T${meetingTime}`)
+        .toLocaleTimeString([], { hour: "numeric", minute: "2-digit", hour12: true })}`
+    : eventInput;
+
+  
+          const newEventData = { eventDate, eventName, leave: eventType === "Holiday" };
+          const createdEvent = await postEvent(newEventData);
+  
+          setEvents(prev => ({
+            ...prev,
+            [selectedDay]: [...(prev[selectedDay] || []), { id: createdEvent.id, text: eventName, leave: eventType === "Holiday" }]
+          }));
+  
+          setMiniCalendarEvents(prev => ({
+            ...prev,
+            [selectedDay]: [...(prev[selectedDay] || []), { id: createdEvent.id, text: eventName, leave: eventType === "Holiday" }]
+          }));
+  
+        } catch (error) {
+          console.error("Error adding event:", error);
+        }
       }
     }
   
@@ -149,6 +203,8 @@ useEffect(() => {
     setEventType(null);
     setMeetingTime("");
   };
+  
+  
   
     const handleConfirmDelete = async (eventId) => {
     try {
@@ -313,90 +369,75 @@ return (
       </div>
 
       {/* Modal for Adding Events */}
-      {modalOpen && (
-        <div className="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center">
-          <div className="bg-white p-6 rounded-lg w-80">
-            <h2 className="text-lg font-bold mb-2">
-              Events for {months[selectedMonth]} {selectedDay}
-            </h2>
-            {timeModalOpen && (
-  <div className="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center">
-    <div className="bg-white p-6 rounded-lg shadow-lg text-center">
-      <h2 className="text-lg font-bold mb-2">Select Meeting Time</h2>
-      <input
-        type="time"
-        value={meetingTime}
-        onChange={(e) => setMeetingTime(e.target.value)}
-        className="border p-2 w-full rounded mb-4"
-      />
-      <div className="flex justify-center gap-3">
-        <button
-          className="bg-teal-500 text-white px-3 py-1 rounded"
-          onClick={() => setTimeModalOpen(false)}
-        >
-          Confirm
-        </button>
-        <button
-          className="bg-gray-300 px-3 py-1 rounded"
-          onClick={() => {
-            setMeetingTime("");
-            setTimeModalOpen(false);
-          }}
-        >
-          Cancel
-        </button>
-      </div>
-    </div>
-  </div>
-)}
-{(selectedYear > currentYear ||
-              (selectedYear === currentYear && selectedMonth > currentMonth) ||
-              (selectedYear === currentYear && selectedMonth === currentMonth && selectedDay >= currentDate)) && (
-                <>
-                <select
+{modalOpen && (
+<div className="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center">
+<div className="bg-white p-6 rounded-lg w-80">
+  <h2 className="text-lg font-bold mb-2">Events for {months[selectedMonth]} {selectedDay}</h2>
+  {(selectedYear > currentYear ||
+    (selectedYear === currentYear && selectedMonth > currentMonth) ||
+    (selectedYear === currentYear && selectedMonth === currentMonth && selectedDay >= currentDate)) && (
+    <>
+    
+  <select
   value={eventType || ""}
   onChange={(e) => {
     setEventType(e.target.value);
     if (e.target.value === "Meeting") {
-      setTimeModalOpen(true); // Open the time modal
+      
+      setMeetingTime(""); 
     }
   }}
-  className="w-full border p-2 mb-2"
->
+  className="w-full border p-2 mb-2">
   <option value="" disabled>Select Event Type</option>
   <option value="Meeting">Meeting</option>
   <option value="Holiday">Holiday</option>
 </select>
-{!editingEvent && (<button
-                    className="bg-teal-500 text-white px-3 py-1 rounded w-full mb-2"
-                    onClick={handleAddOrUpdateEvent}>Add Event</button>)}
-                    {editingEvent && (
-                    <>
-                      <button
-                        className="bg-blue-500 text-white px-3 py-1 rounded w-full mb-2"
-                        onClick={handleAddOrUpdateEvent}>Update Event</button>
-                      <button
-                        className="bg-gray-400 text-white px-3 py-1 rounded w-full mb-2"
-                        onClick={() => {
-                          setEditingEvent(null);
-                          setEventInput("");
-                        }}>Cancel Editing</button>
-                    </>
-                  )}
-                </>
-              )}
-       {events[selectedDay] && events[selectedDay].length > 0 ? (
-       <ul>
-      {events[selectedDay].map(event => (
-       <li key={event.id}
-        className="flex justify-between items-center p-2 bg-gray-200 rounded mb-2 cursor-pointer"
-        onClick={() => { setEditingEvent(event); setEventInput(event.text); }}>
-        {event.text}
-        {/* Delete Button for Future Events */}
-        {(selectedYear > currentYear ||
-          (selectedYear === currentYear && selectedMonth > currentMonth) ||
-          (selectedYear === currentYear && selectedMonth === currentMonth && selectedDay >= currentDate)) && (
-       <button
+{/* Show event name input only after selecting an event type */}
+{eventType && (
+  <input
+    type="text"
+    value={eventInput}
+    onChange={(e) => setEventInput(e.target.value.trimStart())}
+    placeholder="Enter Event Name"
+    className="w-full border p-2 mb-2"
+  />
+)}
+{/* Time Input - Only Shown for Meetings */}
+{eventType === "Meeting" && (
+  <input
+    type="time"
+    value={meetingTime}
+    onChange={(e) => setMeetingTime(e.target.value)}
+    className="w-full border p-2 mb-2"/>
+)}
+{/* Add or Update Event Button */}
+<button
+  className="bg-teal-500 text-white px-3 py-1 rounded w-full mb-2"
+  onClick={handleAddOrUpdateEvent}
+  disabled={!eventInput || (eventType === "Meeting" && !meetingTime)}>
+  {editingEvent ? "Update Event" : "Add Event"}
+</button>
+</>
+)}
+{events[selectedDay] && events[selectedDay].length > 0 ? (
+<ul>
+ {events[selectedDay].map(event => (
+  <li key={event.id}
+    className="flex justify-between items-center p-2 bg-gray-200 rounded mb-2 cursor-pointer"
+    onClick={(e) => { 
+      if (e.target.tagName !== "BUTTON") { // Prevent click on delete button from triggering edit
+        setEditingEvent(event);
+        const [name, time] = event.text.includes(" - ") ? event.text.split(" - ") : [event.text, ""];
+        setEventInput(name || "");
+        setMeetingTime(time || "");
+      }
+    }}>    
+    {event.text}
+  {/* Delete Button for Future Events */}
+  {(selectedYear > currentYear ||
+    (selectedYear === currentYear && selectedMonth > currentMonth) ||
+    (selectedYear === currentYear && selectedMonth === currentMonth && selectedDay >= currentDate)) && (
+      <button
        className="text-red-500 text-sm"
        onClick={(e) => {
       e.stopPropagation();
@@ -413,11 +454,11 @@ return (
     <p className="text-gray-500 text-center mt-2">No events</p>
   ) : null
 )}
-            <button className="bg-gray-300 px-3 py-1 rounded w-full mt-2" onClick={() => setModalOpen(false)}>Close</button>
-          </div>
-        </div>
-      )}
-      {eventToDelete && (
+<button className="bg-gray-300 px-3 py-1 rounded w-full mt-2" onClick={() => setModalOpen(false)}>Close</button>
+</div>
+</div>
+)}
+{eventToDelete && (
   <div className="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center">
     <div className="bg-white p-4 rounded-lg shadow-lg text-center">
       <p className="mb-4">Are you sure you want to delete "<strong>{eventToDelete.text}</strong>"?</p>
