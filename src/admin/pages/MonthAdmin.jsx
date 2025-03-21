@@ -204,9 +204,7 @@ useEffect(() => {
     setMeetingTime("");
   };
   
-  
-  
-    const handleConfirmDelete = async (eventId) => {
+   const handleConfirmDelete = async (eventId) => {
     try {
       await deleteEvent(eventId);
       setEvents(prev => ({
