@@ -104,124 +104,124 @@ const MonthView = () => {
     
     const existingEvents = events[selectedDay] || [];
     let updatedEvent = null;
-  
-    if (editingEvent) {
-      try {
-        if (editingEvent.leave) {
-          await updateEvent(editingEvent.id, { eventName: eventInput });
-  
-          updatedEvent = { ...editingEvent, text: eventInput };
-        } else {
-          const formattedTime = new Date(`2000-01-01T${meetingTime}`).toLocaleTimeString([], {
-            hour: "numeric",
-            minute: "2-digit",
-            hour12: true
-          });
-                    const updatedMeetingText = `${eventInput} - ${formattedTime}`;
-          
-                    await updateEvent(editingEvent.id, {
-                      eventName: eventInput,
-                      eventTime: eventType === "Meeting" ? meetingTime : null, // Ensure correct time is saved
-                    });  
-          updatedEvent = { ...editingEvent, text: updatedMeetingText };
-        }
-  
-        setEvents(prev => ({
-          ...prev,
-          [selectedDay]: prev[selectedDay].map(event => event.id === editingEvent.id ? updatedEvent : event)
-        }));
-  
-        setMiniCalendarEvents(prev => ({
-          ...prev,
-          [selectedDay]: prev[selectedDay].map(event => event.id === editingEvent.id ? updatedEvent : event)
-        }));
-  
-      } catch (error) {
-        console.error("Error updating event:", error);
-      }
-    } else {
-      if (!eventType) {
-        alert("Please select an event type.");
-        return;
-      }
-  
-      const hasMeeting = existingEvents.some(event => event.text.includes(" - "));
-  
-      if (eventType === "Holiday" && hasMeeting) {
-        if (!window.confirm("Adding a holiday will delete all meeting events. Do you want to continue?")) {
-          return;
-        }
-  
-        try {
-          await Promise.all(existingEvents.filter(event => event.text.includes(" - ")).map(event => deleteEvent(event.id)));
-  
-          updatedEvent = { id: "temp-id", text: eventInput, leave: true };
-          const createdEvent = await postEvent({
-            eventDate: formatDate(selectedYear, selectedMonth, selectedDay),
-            eventType: eventType.toLowerCase(),
-            eventName: eventInput,
-            eventTime: eventType === "Meeting" ? meetingTime : null, // ✅ Store time
-          });
-            
-          updatedEvent.id = createdEvent.id;
-  
-        } catch (error) {
-          console.error("Error adding holiday event:", error);
-        }
-      } else {
-        try {
-          const formattedTime = meetingTime
-  ? new Date(`2000-01-01T${meetingTime}`).toLocaleTimeString([], {
-      hour: "numeric",
-      minute: "2-digit",
-      hour12: true
-    })
-  : "";
 
-  
-          const eventDisplayText = eventType === "Meeting" ? `${eventInput} - ${formattedTime}` : eventInput;
-          updatedEvent = { id: "temp-id", text: eventDisplayText, leave: eventType === "Holiday" };
-  
-          const createdEvent = await postEvent({
-            eventDate: formatDate(selectedYear, selectedMonth, selectedDay),
-            eventType: eventType.toLowerCase(),
-            eventName: eventInput,
-            eventTime: eventType === "Meeting" ? meetingTime : null
-          });
-  
-          updatedEvent.id = createdEvent.id;
-  
+    if (editingEvent) {
+        try {
+            if (editingEvent.leave) {
+                await updateEvent(editingEvent.id, { eventName: eventInput });
+                updatedEvent = { ...editingEvent, text: eventInput };
+            } else {
+                const formattedTime = new Date(`2000-01-01T${meetingTime}`).toLocaleTimeString([], {
+                    hour: "numeric",
+                    minute: "2-digit",
+                    hour12: true
+                });
+
+                const updatedMeetingText = `${eventInput} - ${formattedTime}`;
+
+                await updateEvent(editingEvent.id, {
+                    eventName: eventInput,
+                    eventTime: eventType === "Meeting" ? meetingTime : null,
+                });
+
+                updatedEvent = { ...editingEvent, text: updatedMeetingText };
+            }
+
+            setEvents(prev => ({
+                ...prev,
+                [selectedDay]: prev[selectedDay].map(event => event.id === editingEvent.id ? updatedEvent : event)
+            }));
+
+            setMiniCalendarEvents(prev => ({
+                ...prev,
+                [selectedDay]: prev[selectedDay].map(event => event.id === editingEvent.id ? updatedEvent : event)
+            }));
+
         } catch (error) {
-          console.error("Error adding event:", error);
+            console.error("Error updating event:", error);
         }
-      }
+    } else {
+        if (!eventType) {
+            alert("Please select an event type.");
+            return;
+        }
+
+        const hasMeeting = existingEvents.some(event => event.text.includes(" - "));
+
+        if (eventType === "Holiday" && hasMeeting) {
+            if (!window.confirm("Adding a holiday will delete all meeting events. Do you want to continue?")) {
+                return;
+            }
+
+            try {
+                // ✅ Delete ALL events for the selected day
+                await Promise.all(existingEvents.map(event => deleteEvent(event.id)));
+
+                // ✅ Now, create and add the new holiday event
+                updatedEvent = { id: "temp-id", text: eventInput, leave: true };
+                const createdEvent = await postEvent({
+                    eventDate: formatDate(selectedYear, selectedMonth, selectedDay),
+                    eventType: "holiday", // ✅ Ensure lowercase for consistency
+                    eventName: eventInput,
+                    eventTime: null,
+                });
+
+                updatedEvent.id = createdEvent.id;
+            } catch (error) {
+                console.error("Error adding holiday event:", error);
+            }
+        } else {
+            try {
+                const formattedTime = meetingTime
+                    ? new Date(`2000-01-01T${meetingTime}`).toLocaleTimeString([], {
+                        hour: "numeric",
+                        minute: "2-digit",
+                        hour12: true
+                    })
+                    : "";
+
+                const eventDisplayText = eventType === "Meeting" ? `${eventInput} - ${formattedTime}` : eventInput;
+                updatedEvent = { id: "temp-id", text: eventDisplayText, leave: eventType === "Holiday" };
+
+                const createdEvent = await postEvent({
+                    eventDate: formatDate(selectedYear, selectedMonth, selectedDay),
+                    eventType: eventType.toLowerCase(),
+                    eventName: eventInput,
+                    eventTime: eventType === "Meeting" ? meetingTime : null
+                });
+
+                updatedEvent.id = createdEvent.id;
+            } catch (error) {
+                console.error("Error adding event:", error);
+            }
+        }
     }
-  
+
     if (updatedEvent) {
-      setEvents(prev => ({
-        ...prev,
-        [selectedDay]: editingEvent
-          ? prev[selectedDay].map(event => event.id === editingEvent.id ? updatedEvent : event)
-          : [...(prev[selectedDay] || []), updatedEvent]
-      }));
-  
-      setMiniCalendarEvents(prev => ({
-        ...prev,
-        [selectedDay]: editingEvent
-          ? prev[selectedDay].map(event => event.id === editingEvent.id ? updatedEvent : event)
-          : [...(prev[selectedDay] || []), updatedEvent]
-      }));
+        setEvents(prev => ({
+            ...prev,
+            [selectedDay]: editingEvent
+                ? prev[selectedDay].map(event => event.id === editingEvent.id ? updatedEvent : event)
+                : [updatedEvent] // ✅ Replace all events instead of appending
+        }));
+
+        setMiniCalendarEvents(prev => ({
+            ...prev,
+            [selectedDay]: editingEvent
+                ? prev[selectedDay].map(event => event.id === editingEvent.id ? updatedEvent : event)
+                : [updatedEvent] // ✅ Replace all events instead of appending
+        }));
     }
-    await fetchMiniCalendarEvents(); // ✅ Re-fetch data after update
+
+    await fetchMiniCalendarEvents(); // ✅ Ensure re-fetching after update
 
     // Reset fields
     setEditingEvent(null);
     setEventInput("");
     setEventType(null);
     setMeetingTime("");
+};
 
-  };
-  
   
   const handleConfirmDelete = async (eventId) => {
     try {
@@ -246,42 +246,41 @@ const MonthView = () => {
         console.error("Unexpected API response for mini calendar:", eventsData);
         return;
       }
-  
+
       const allEvents = eventsData.message.reduce((acc, event) => {
         if (event.eventDate) {
           const eventDate = new Date(event.eventDate);
           const day = eventDate.getDate();
           if (!acc[day]) acc[day] = [];
-  
+
           let formattedText = event.eventName;
-  
+
           if (event.eventType?.toLowerCase() === "meeting" && event.eventTime) {
             const formattedTime = new Date(`2000-01-01T${event.eventTime}`).toLocaleTimeString([], {
               hour: "numeric",
               minute: "2-digit",
               hour12: true
             });
-  
             formattedText = `${event.eventName} - ${formattedTime}`;
           }
-  
+
           acc[day].push({
             id: event.id,
-            text: formattedText, // Now includes time
-            leave: event.isLeave || false,
+            text: formattedText,
+            leave: event.eventType?.toLowerCase() === "holiday"  // ✅ Ensure consistency
           });
         }
         return acc;
       }, {});
-  
+
       setMiniCalendarEvents(allEvents);
     } catch (error) {
       console.error("Error fetching mini calendar events:", error);
     }
-  };
-  useEffect(() => {
-    fetchMiniCalendarEvents();
-  }, [currentYear, currentMonth]);
+};
+useEffect(() => {
+  fetchMiniCalendarEvents();
+}, [currentYear, currentMonth]);
 
   return (
     <div className="flex  lg:h-screen lg:p-4 bg-gray-100">
@@ -310,15 +309,17 @@ const MonthView = () => {
             const isHoliday = hasEvents && miniCalendarEvents[day].some(event => event.leave);
             return (
               <button
-                key={day}
-                className={`w-6 h-6 flex items-center justify-center rounded-full text-xs 
+  key={day}
+  className={`w-6 h-6 flex items-center justify-center rounded-full text-xs 
     ${day === currentDate ? "bg-teal-500 text-white" : ""} 
-    ${hasEvents ? "bg-blue-500 text-white" : ""} 
-    ${isHoliday ? "bg-red-400 text-white" : ""} 
+    ${isHoliday ? "bg-red-400 text-white" : ""}  /* ✅ Prioritize holiday */
+    ${hasEvents && !isHoliday ? "bg-blue-500 text-white" : ""}  /* ✅ Meeting only if no holiday */
     ${isSunday ? "text-red-500 font-bold" : ""}`}
-                onClick={() => { setSelectedDay(day); setModalOpen(true); }}>
-                {day}
-              </button>
+  onClick={() => { setSelectedDay(day); setModalOpen(true); }}>
+  {day}
+</button>
+
+
             );
           })}
         </div>
@@ -375,7 +376,7 @@ const MonthView = () => {
                 </span>
                 {hasEvents && (
                   <ul className="mt-3 text-xs">
-                    {events[day].slice(0, 2).map(event => (
+                    {events[day].slice(0, 1).map(event => (
                       <li key={event.id} className="list-disc ml-3 "
                         onClick={() => {
                           setEditingEvent(event);
@@ -384,7 +385,7 @@ const MonthView = () => {
                         {event.text}
                       </li>
                     ))}
-                    {events[day].length > 2 && (
+                    {events[day].length > 1 && (
                       <li
                         className="text-black cursor-pointer ml-4 text-lg font-bold"
                         onClick={() => {

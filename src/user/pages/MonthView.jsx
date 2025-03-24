@@ -83,49 +83,48 @@ const formatDate = (year, month, day) => `${year}-${String(month + 1).padStart(2
 
 
    const fetchMiniCalendarEvents = async () => {
-      try {
-        const eventsData = await getEventsByMonth(currentYear, currentMonth + 1);
-        
-        if (!eventsData || !Array.isArray(eventsData.message)) {
-          console.error("Unexpected API response for mini calendar:", eventsData);
-          return;
-        }
-    
-        const allEvents = eventsData.message.reduce((acc, event) => {
-          if (event.eventDate) {
-            const eventDate = new Date(event.eventDate);
-            const day = eventDate.getDate();
-            if (!acc[day]) acc[day] = [];
-    
-            let formattedText = event.eventName;
-    
-            if (event.eventType?.toLowerCase() === "meeting" && event.eventTime) {
-              const formattedTime = new Date(`2000-01-01T${event.eventTime}`).toLocaleTimeString([], {
-                hour: "numeric",
-                minute: "2-digit",
-                hour12: true
-              });
-    
-              formattedText = `${event.eventName} - ${formattedTime}`;
-            }
-    
-            acc[day].push({
-              id: event.id,
-              text: formattedText, // Now includes time
-              leave: event.isLeave || false,
-            });
-          }
-          return acc;
-        }, {});
-    
-        setMiniCalendarEvents(allEvents);
-      } catch (error) {
-        console.error("Error fetching mini calendar events:", error);
-      }
-    };
-    useEffect(() => {
-      fetchMiniCalendarEvents();
-    }, [currentYear, currentMonth]);
+       try {
+         const eventsData = await getEventsByMonth(currentYear, currentMonth + 1);
+         
+         if (!eventsData || !Array.isArray(eventsData.message)) {
+           console.error("Unexpected API response for mini calendar:", eventsData);
+           return;
+         }
+   
+         const allEvents = eventsData.message.reduce((acc, event) => {
+           if (event.eventDate) {
+             const eventDate = new Date(event.eventDate);
+             const day = eventDate.getDate();
+             if (!acc[day]) acc[day] = [];
+   
+             let formattedText = event.eventName;
+   
+             if (event.eventType?.toLowerCase() === "meeting" && event.eventTime) {
+               const formattedTime = new Date(`2000-01-01T${event.eventTime}`).toLocaleTimeString([], {
+                 hour: "numeric",
+                 minute: "2-digit",
+                 hour12: true
+               });
+               formattedText = `${event.eventName} - ${formattedTime}`;
+             }
+   
+             acc[day].push({
+               id: event.id,
+               text: formattedText,
+               leave: event.eventType?.toLowerCase() === "holiday"  // ✅ Ensure consistency
+             });
+           }
+           return acc;
+         }, {});
+   
+         setMiniCalendarEvents(allEvents);
+       } catch (error) {
+         console.error("Error fetching mini calendar events:", error);
+       }
+   };
+   useEffect(() => {
+     fetchMiniCalendarEvents();
+   }, [currentYear, currentMonth]);
   
 return (
     <div className="flex lg:h-screen  lg:p-4 bg-gray-100">
@@ -154,15 +153,16 @@ return (
             const isHoliday = hasEvents && miniCalendarEvents[day].some(event => event.leave);
             return (
               <button
-                key={day}
-                className={`w-6 h-6 flex items-center justify-center rounded-full text-xs 
-    ${day === currentDate ? "bg-teal-500 text-white" : ""} 
-    ${hasEvents ? "bg-blue-500 text-white" : ""} 
-    ${isHoliday ? "bg-red-400 text-white" : ""} 
-    ${isSunday ? "text-red-500 font-bold" : ""}`}
-                onClick={() => { setSelectedDay(day); setModalOpen(true); }}>
-                {day}
-              </button>
+              key={day}
+              className={`w-6 h-6 flex items-center justify-center rounded-full text-xs 
+                ${day === currentDate ? "bg-teal-500 text-white" : ""} 
+                ${isHoliday ? "bg-red-400 text-white" : ""}  /* ✅ Prioritize holiday */
+                ${hasEvents && !isHoliday ? "bg-blue-500 text-white" : ""}  /* ✅ Meeting only if no holiday */
+                ${isSunday ? "text-red-500 font-bold" : ""}`}
+              onClick={() => { setSelectedDay(day); setModalOpen(true); }}>
+              {day}
+            </button>
+            
             );
           })}
         </div>
