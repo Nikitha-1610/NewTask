@@ -1,5 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
+import {  getEventsByMonth  } from "../../common/api";
+
 
 const Calendar = () => {
   const months = [
@@ -16,6 +18,9 @@ const Calendar = () => {
   const [events, setEvents] = useState({});
   const years = Array.from({ length: 21 }, (_, i) => currentYear - 10 + i);
   const navigate = useNavigate();
+  const [selectedMonth, setSelectedMonth] = useState(currentMonth);
+  const [miniCalendarEvents, setMiniCalendarEvents] = useState({});
+  
 
   useEffect(() => {
     const savedLeaves = JSON.parse(localStorage.getItem("leaveDays")) || {};
@@ -40,9 +45,56 @@ const Calendar = () => {
     return leaveDays[`${year}-${month}-${day}`];
   };
 
-  const getEventsForMonth = (year, month) => {
-    return events[`${year}-${month}`] || [];
-  };
+  useEffect(() => {
+    const fetchAllEvents = async () => {
+      try {
+        const eventsData = await getEventsByMonth(selectedYear, selectedMonth + 1);
+  
+        if (!eventsData || !Array.isArray(eventsData.message)) {
+          console.error("Unexpected API response format:", eventsData);
+          return;
+        }
+  
+        const allEvents = eventsData.message.reduce((acc, event) => {
+          if (event.eventDate) {
+            const eventDate = new Date(event.eventDate);
+            const day = eventDate.getDate(); // Extract the day of the month
+  
+            if (!acc[day]) acc[day] = [];
+  
+            let formattedText = event.eventName;
+  
+            if (event.eventType?.toLowerCase() === "meeting" && event.eventTime) {
+              const formattedTime = new Date(`2000-01-01T${event.eventTime}`).toLocaleTimeString([], {
+                hour: "numeric",
+                minute: "2-digit",
+                hour12: true
+              });
+              formattedText = `${event.eventName} - ${formattedTime}`;
+            }
+  
+            acc[day].push({
+              id: event.id,
+              text: formattedText,
+              eventType: event.eventType?.toLowerCase(), // ✅ Store eventType correctly
+              eventTime: event.eventTime,
+              leave: event.eventType?.toLowerCase() === "holiday"
+            });
+          }
+          return acc;
+        }, {});
+  
+        setEvents(allEvents);
+        setMiniCalendarEvents(allEvents); // ✅ Ensure eventType is stored in miniCalendarEvents
+  
+      } catch (error) {
+        console.error("Error fetching events for the month:", error);
+      }
+    };
+    fetchAllEvents();
+  }, [selectedYear, selectedMonth]);
+  
+       
 
   return (
     <div className="flex flex-col md:flex-row lg:flex-row h-screen">
@@ -85,6 +137,54 @@ const Calendar = () => {
             );
           })}
         </div>
+        {/* Events Section */}
+        <div className="mt-4">
+  <h3 className="text-md font-bold mb-1">Events for {months[selectedMonth]}</h3>
+
+  {/* Meetings Section */}
+  {Object.keys(miniCalendarEvents).some(day => 
+    miniCalendarEvents[day].some(event => event.eventType === "meeting")
+  ) ? (
+    <div className="mb-2">
+      <h4 className="text-blue-600 font-semibold">Meetings</h4>
+      <ul className="text-sm bg-gray-200 p-2 rounded">
+        {Object.entries(miniCalendarEvents).map(([day, events]) =>
+          events
+            .filter(event => event.eventType === "meeting")  // ✅ Corrected filtering logic
+            .map(event => (
+              <li key={event.id} className="border-b py-1">
+                • {day} - {event.text}
+              </li>
+            ))
+        )}
+      </ul>
+    </div>
+  ) : (
+    <p className="text-gray-500 text-sm">No meetings this month.</p>
+  )}
+
+  {/* Holidays Section */}
+  {Object.keys(miniCalendarEvents).some(day => 
+    miniCalendarEvents[day].some(event => event.leave)
+  ) ? (
+    <div>
+      <h4 className="text-red-600 font-semibold">Holidays</h4>
+      <ul className="text-sm bg-gray-200 p-2 rounded">
+        {Object.entries(miniCalendarEvents).map(([day, events]) =>
+          events
+            .filter(event => event.leave)  
+            .map(event => (
+              <li key={event.id} className="border-b py-1">
+                • {day} - {event.text}
+              </li>
+            ))
+        )}
+      </ul>
+    </div>
+  ) : (
+    <p className="text-gray-500 text-sm">No holidays this month.</p>
+  )}
+</div>
       </div>
 
       {/* Main Calendar Section */}
