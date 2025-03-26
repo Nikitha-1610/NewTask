@@ -4,6 +4,7 @@ import { useNavigate, useParams } from "react-router-dom";
 import { postEvent, getEventsByMonth, updateEvent, deleteEvent } from "../../common/api";
 import { motion, AnimatePresence } from "framer-motion";
 
+
 const MonthView = () => {
   const navigate = useNavigate();
   const { year, month } = useParams();
@@ -32,6 +33,8 @@ const MonthView = () => {
   const miniDaysArray = Array.from({ length: miniDaysInMonth }, (_, i) => i + 1);
   const daysArray = Array.from({ length: daysInMonth }, (_, i) => i + 1);
   const formatDate = (year, month, day) => `${year}-${String(month + 1).padStart(2, "0")}-${String(day).padStart(2, "0")}`;
+  
+
 
   useEffect(() => {
     const fetchAllEvents = async () => {
@@ -98,6 +101,66 @@ const MonthView = () => {
     }, [modalOpen])
   }
 
+  const fetchMiniCalendarEvents = async () => {
+    try {
+      const eventsData = await getEventsByMonth(currentYear, currentMonth + 1);
+      
+      if (!eventsData || !Array.isArray(eventsData.message)) {
+        console.error("Unexpected API response for mini calendar:", eventsData);
+        return;
+      }
+  
+      const allEvents = {};
+      
+      eventsData.message.forEach(event => {
+        if (event.eventDate) {
+          const eventDate = new Date(event.eventDate);
+          const day = eventDate.getDate();
+          
+          if (!allEvents[day]) allEvents[day] = [];
+  
+          let formattedText = event.eventName;
+          let formattedTime = "";
+  
+          if (event.eventTime && typeof event.eventTime === "string" && event.eventTime.trim() !== "") {
+            try {
+              if (!event.eventTime.includes("AM") && !event.eventTime.includes("PM")) {
+                formattedTime = new Date(`2000-01-01T${event.eventTime}`).toLocaleTimeString([], {
+                  hour: "numeric",
+                  minute: "2-digit",
+                  hour12: true
+                });
+              } else {
+                formattedTime = event.eventTime;
+              }
+            } catch (error) {
+              console.error("Invalid event time format:", event.eventTime);
+              formattedTime = "";
+            }
+          }
+  
+          if (formattedTime) {
+            formattedText += ` - ${formattedTime}`;
+          }
+  
+          allEvents[day].push({
+            id: event.id,
+            text: formattedText,
+            eventType: event.eventType?.toLowerCase(),
+            leave: event.eventType?.toLowerCase() === "holiday"
+          });
+        }
+      });
+  
+      // ✅ Ensure React detects changes
+      setMiniCalendarEvents({ ...allEvents });
+  
+    } catch (error) {
+      console.error("Error fetching mini calendar events:", error);
+    }
+  };
+  
+
   const handleAddOrUpdateEvent = async () => {
     if (!selectedDay) {
       alert("Please select a date.");
@@ -106,7 +169,6 @@ const MonthView = () => {
   
     setModalOpen(false); // ✅ Close modal immediately
   
-    const existingEvents = events[selectedDay] || [];
     let updatedEvent = null;
   
     if (editingEvent) {
@@ -117,12 +179,11 @@ const MonthView = () => {
           hour12: true
         }) : null;
   
-        // ✅ Update event in the database
+        // ✅ Update existing event in the database
         await updateEvent(editingEvent.id, {
           eventName: eventInput,
           eventTime: eventType === "Meeting" ? formattedTime : null,
         });
-        
   
         updatedEvent = { 
           ...editingEvent, 
@@ -130,66 +191,119 @@ const MonthView = () => {
           eventTime: formattedTime
         };
   
-        // ✅ Fetch the latest data after updating
-        const updatedEventsData = await getEventsByMonth(selectedYear, selectedMonth + 1);
-  
-        if (!updatedEventsData || !Array.isArray(updatedEventsData.message)) {
-          console.error("Unexpected API response format:", updatedEventsData);
-          return;
-        }
-  
-        const updatedEvents = updatedEventsData.message.reduce((acc, event) => {
-          if (event.eventDate) {
-            const eventDate = new Date(event.eventDate);
-            const day = eventDate.getDate(); // Extract the day of the month
-  
-            if (!acc[day]) acc[day] = [];
-  
-            let formattedText = event.eventName;
-            let fetchedTime = event.eventTime;
-  
-            if (event.eventType?.toLowerCase() === "meeting" && event.eventTime) {
-              try {
-                fetchedTime = new Date(`2000-01-01T${event.eventTime}`).toLocaleTimeString([], {
-                  hour: "numeric",
-                  minute: "2-digit",
-                  hour12: true
-                });
-              } catch (error) {
-                console.error("Invalid date format:", event.eventTime);
-                fetchedTime = ""; // ✅ Use an empty string instead of "Invalid Date"
-              }
-            } else {
-              fetchedTime = ""; // ✅ Ensure non-meeting events have an empty eventTime
-            }
-            
-            acc[day].push({
-              id: event.id,
-              text: fetchedTime ? `${event.eventName} - ${fetchedTime}` : event.eventName, // ✅ Only add time if valid
-              eventTime: fetchedTime,
-              leave: event.eventType?.toLowerCase() === "holiday"
-            });
-          }
-          return acc;
-        }, {});
-  
-        setEvents(updatedEvents);
-        setMiniCalendarEvents(updatedEvents);
-  
       } catch (error) {
         console.error("Error updating event:", error);
       }
+  
+    } else {
+      // ✅ Add new event logic (this was missing)
+      try {
+        let formattedTime = meetingTime ? new Date(`2000-01-01T${meetingTime}`).toLocaleTimeString([], {
+          hour: "numeric",
+          minute: "2-digit",
+          hour12: true
+        }) : null;
+  
+        const formattedEventDate = `${selectedYear}-${String(selectedMonth + 1).padStart(2, "0")}-${String(selectedDay).padStart(2, "0")}`;
+
+        const newEventData = {
+          eventDate: formattedEventDate, // ✅ Correct format
+          eventType: eventType?.trim().toLowerCase(), // ✅ Ensure lowercase & no extra spaces
+          eventName: eventInput,
+          eventTime: eventType?.toLowerCase() === "meeting" ? formattedTime : null,
+        };
+        
+        
+  
+        const createdEvent = await postEvent(newEventData);
+  
+        updatedEvent = {
+          id: createdEvent.id, 
+          text: eventType === "Meeting" ? `${eventInput} - ${formattedTime}` : eventInput,
+          eventTime: formattedTime,
+          leave: eventType?.toLowerCase() === "holiday"
+        };
+  
+      } catch (error) {
+        console.error("Error adding event:", error);
+        return;
+      }
     }
   
-    // Reset fields
+    // ✅ Fetch the latest data after adding/updating
+    try {
+      const updatedEventsData = await getEventsByMonth(selectedYear, selectedMonth + 1);
+  
+      if (!updatedEventsData || !Array.isArray(updatedEventsData.message)) {
+        console.error("Unexpected API response format:", updatedEventsData);
+        return;
+      }
+  
+      const updatedEvents = updatedEventsData.message.reduce((acc, event) => {
+        if (event.eventDate) {
+          const eventDate = new Date(event.eventDate);
+          const day = eventDate.getDate();
+        
+          if (!acc[day]) acc[day] = [];
+        
+          let formattedText = event.eventName;
+          let fetchedTime = event.eventTime;
+        
+          console.log("Raw eventTime:", event.eventTime); // Debugging
+        
+          if (event.eventType?.toLowerCase() === "meeting") {
+            try {
+              // ✅ Ensure eventTime is a valid non-empty string
+              if (typeof event.eventTime === "string" && event.eventTime.trim() !== "") {
+                // ✅ Convert 24-hour format (e.g., "15:00") and 12-hour format correctly
+                let timeString = event.eventTime;
+                
+                if (!timeString.includes("AM") && !timeString.includes("PM")) {
+                  // Convert 24-hour time to 12-hour format
+                  fetchedTime = new Date(`2000-01-01T${timeString}`).toLocaleTimeString([], {
+                    hour: "numeric",
+                    minute: "2-digit",
+                    hour12: true
+                  });
+                } else {
+                  // Already in 12-hour format
+                  fetchedTime = timeString;
+                }
+              } else {
+                fetchedTime = ""; // ✅ Ensure empty string instead of invalid date
+              }
+            } catch (error) {
+              console.error("Invalid date format:", event.eventTime);
+              fetchedTime = "";
+            }
+          } else {
+            fetchedTime = "";
+          }
+        
+          acc[day].push({
+            id: event.id,
+            text: fetchedTime ? `${event.eventName} - ${fetchedTime}` : event.eventName,
+            leave: event.eventType?.toLowerCase() === "holiday"
+          });
+        }
+        
+        return acc;
+      }, {});
+  
+      setEvents(updatedEvents);
+      setMiniCalendarEvents(updatedEvents);
+  
+    } catch (error) {
+      console.error("Error fetching updated events:", error);
+    }
+  
+    // ✅ Reset fields
     setEditingEvent(null);
     setEventInput("");
     setEventType(null);
     setMeetingTime("");
   };
   
-
-
   const handleConfirmDelete = async (eventId) => {
     try {
       await deleteEvent(eventId);
@@ -205,46 +319,6 @@ const MonthView = () => {
     }
   };
 
-  const fetchMiniCalendarEvents = async () => {
-    try {
-      const eventsData = await getEventsByMonth(currentYear, currentMonth + 1);
-
-      if (!eventsData || !Array.isArray(eventsData.message)) {
-        console.error("Unexpected API response for mini calendar:", eventsData);
-        return;
-      }
-
-      const allEvents = eventsData.message.reduce((acc, event) => {
-        if (event.eventDate) {
-          const eventDate = new Date(event.eventDate);
-          const day = eventDate.getDate();
-          if (!acc[day]) acc[day] = [];
-
-          let formattedText = event.eventName;
-
-          if (event.eventType?.toLowerCase() === "meeting" && event.eventTime) {
-            const formattedTime = new Date(`2000-01-01T${event.eventTime}`).toLocaleTimeString([], {
-              hour: "numeric",
-              minute: "2-digit",
-              hour12: true
-            });
-            formattedText = `${event.eventName} - ${formattedTime}`;
-          }
-
-          acc[day].push({
-            id: event.id,
-            text: formattedText,
-            leave: event.eventType?.toLowerCase() === "holiday"  // ✅ Ensure consistency
-          });
-        }
-        return acc;
-      }, {});
-
-      setMiniCalendarEvents(allEvents);
-    } catch (error) {
-      console.error("Error fetching mini calendar events:", error);
-    }
-  };
   useEffect(() => {
     fetchMiniCalendarEvents();
   }, [currentYear, currentMonth]);
@@ -292,17 +366,56 @@ const MonthView = () => {
         </div>
         {/* Mini Calendar Events Section */}
         <div className="mt-4">
-          <h3 className="text-md font-bold mb-1">Today's Events</h3>
-          {miniCalendarEvents[currentDate] && miniCalendarEvents[currentDate].length > 0 ? (
-            <ul className="text-sm bg-gray-200 p-2 rounded">
-              {miniCalendarEvents[currentDate].map(event => (
-                <li key={event.id} className="border-b py-1">• {event.text}</li>
-              ))}
-            </ul>
-          ) : (
-            <p className="text-gray-500 text-sm">No events today.</p>
-          )}
-        </div>
+  <h3 className="text-md font-bold mb-1">Events for {months[selectedMonth]}</h3>
+
+  {/* Meetings Section */}
+  {/* Meetings Section */}
+{miniCalendarEvents && Object.keys(miniCalendarEvents).length > 0 &&
+  Object.keys(miniCalendarEvents).some(day =>
+    miniCalendarEvents[day].some(event => event.eventType === "meeting")
+  ) ? (
+  <div className="mb-2">
+    <h4 className="text-blue-600 font-semibold">Meetings</h4>
+    <ul className="text-sm bg-gray-200 p-2 rounded">
+      {Object.entries(miniCalendarEvents).flatMap(([day, events]) =>
+        events
+          .filter(event => event.eventType === "meeting")
+          .map(event => (
+            <li key={`${day}-${event.id}`} className="border-b py-1">
+              • {day} - {event.text}
+            </li>
+          ))
+      )}
+    </ul>
+  </div>
+) : (
+  <p className="text-gray-500 text-sm">No meetings this month.</p>
+)}
+
+
+
+  {/* Holidays Section */}
+  {Object.keys(miniCalendarEvents).some(day => 
+    miniCalendarEvents[day].some(event => event.leave)
+  ) ? (
+    <div>
+      <h4 className="text-red-600 font-semibold">Holidays</h4>
+      <ul className="text-sm bg-gray-200 p-2 rounded">
+        {Object.entries(miniCalendarEvents).map(([day, events]) =>
+          events
+            .filter(event => event.leave)  
+            .map(event => (
+              <li key={event.id} className="border-b py-1">
+                • {day} - {event.text}
+              </li>
+            ))
+        )}
+      </ul>
+    </div>
+  ) : (
+    <p className="text-gray-500 text-sm">No holidays this month.</p>
+  )}
+</div>
       </div>
 
       {/* Main Calendar */}
