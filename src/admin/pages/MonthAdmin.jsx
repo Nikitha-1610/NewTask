@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import { useEffect } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { postEvent, getEventsByMonth, updateEvent, deleteEvent } from "../../common/api";
- import { motion, AnimatePresence } from "framer-motion";
+import { motion, AnimatePresence } from "framer-motion";
 
 const MonthView = () => {
   const navigate = useNavigate();
@@ -32,60 +32,64 @@ const MonthView = () => {
   const miniDaysArray = Array.from({ length: miniDaysInMonth }, (_, i) => i + 1);
   const daysArray = Array.from({ length: daysInMonth }, (_, i) => i + 1);
   const formatDate = (year, month, day) => `${year}-${String(month + 1).padStart(2, "0")}-${String(day).padStart(2, "0")}`;
-  
+
   useEffect(() => {
     const fetchAllEvents = async () => {
       try {
         const eventsData = await getEventsByMonth(selectedYear, selectedMonth + 1);
-        
+  
         if (!eventsData || !Array.isArray(eventsData.message)) {
           console.error("Unexpected API response format:", eventsData);
           return;
         }
-    
+  
         const allEvents = eventsData.message.reduce((acc, event) => {
           if (event.eventDate) {
             const eventDate = new Date(event.eventDate);
             const day = eventDate.getDate(); // Extract the day of the month
-    
+  
             if (!acc[day]) acc[day] = [];
-    
-            // Fix: Properly format the event time when fetching from DB
+  
             let formattedText = event.eventName;
-    
+            let formattedTime = event.eventTime;
+  
             if (event.eventType?.toLowerCase() === "meeting" && event.eventTime) {
-              // Convert `eventTime` from DB to a properly formatted string
-              const formattedTime = new Date(`2000-01-01T${event.eventTime}`).toLocaleTimeString([], {
-                hour: "numeric",
-                minute: "2-digit",
-                hour12: true
-              });
-    
+              // ✅ Handle cases where time is in "HH:MM AM/PM" format
+              if (/^\d{1,2}:\d{2}\s?[APap][Mm]$/.test(event.eventTime)) {
+                formattedTime = event.eventTime; // Already in correct format
+              } else {
+                // ✅ Convert time if it's in ISO format (HH:MM)
+                formattedTime = new Date(`2000-01-01T${event.eventTime}`).toLocaleTimeString([], {
+                  hour: "numeric",
+                  minute: "2-digit",
+                  hour12: true
+                });
+              }
+  
               formattedText = `${event.eventName} - ${formattedTime}`;
             }
-    
+  
             acc[day].push({
               id: event.id,
               text: formattedText,
-              eventTime: event.eventTime, // Ensure correct time is stored
+              eventTime: formattedTime, // Ensure correct time is stored
               leave: event.eventType?.toLowerCase() === "holiday"
             });
           }
           return acc;
         }, {});
-    
+  
         setEvents(allEvents);
         setMiniCalendarEvents(allEvents); // Ensure both states are updated
-    
+  
       } catch (error) {
         console.error("Error fetching events for the month:", error);
       }
     };
+  
     fetchAllEvents();
-    
-    
   }, [selectedYear, selectedMonth]);
-
+  
   {
     useEffect(() => {
       setEditingEvent(null);
@@ -99,130 +103,93 @@ const MonthView = () => {
       alert("Please select a date.");
       return;
     }
-    
+  
     setModalOpen(false); // ✅ Close modal immediately
-    
+  
     const existingEvents = events[selectedDay] || [];
     let updatedEvent = null;
-
+  
     if (editingEvent) {
-        try {
-            if (editingEvent.leave) {
-                await updateEvent(editingEvent.id, { eventName: eventInput });
-                updatedEvent = { ...editingEvent, text: eventInput };
+      try {
+        let formattedTime = meetingTime ? new Date(`2000-01-01T${meetingTime}`).toLocaleTimeString([], {
+          hour: "numeric",
+          minute: "2-digit",
+          hour12: true
+        }) : null;
+  
+        // ✅ Update event in the database
+        await updateEvent(editingEvent.id, {
+          eventName: eventInput,
+          eventTime: eventType === "Meeting" ? formattedTime : null,
+        });
+        
+  
+        updatedEvent = { 
+          ...editingEvent, 
+          text: eventType === "Meeting" ? `${eventInput} - ${formattedTime}` : eventInput,
+          eventTime: formattedTime
+        };
+  
+        // ✅ Fetch the latest data after updating
+        const updatedEventsData = await getEventsByMonth(selectedYear, selectedMonth + 1);
+  
+        if (!updatedEventsData || !Array.isArray(updatedEventsData.message)) {
+          console.error("Unexpected API response format:", updatedEventsData);
+          return;
+        }
+  
+        const updatedEvents = updatedEventsData.message.reduce((acc, event) => {
+          if (event.eventDate) {
+            const eventDate = new Date(event.eventDate);
+            const day = eventDate.getDate(); // Extract the day of the month
+  
+            if (!acc[day]) acc[day] = [];
+  
+            let formattedText = event.eventName;
+            let fetchedTime = event.eventTime;
+  
+            if (event.eventType?.toLowerCase() === "meeting" && event.eventTime) {
+              try {
+                fetchedTime = new Date(`2000-01-01T${event.eventTime}`).toLocaleTimeString([], {
+                  hour: "numeric",
+                  minute: "2-digit",
+                  hour12: true
+                });
+              } catch (error) {
+                console.error("Invalid date format:", event.eventTime);
+                fetchedTime = ""; // ✅ Use an empty string instead of "Invalid Date"
+              }
             } else {
-                const formattedTime = new Date(`2000-01-01T${meetingTime}`).toLocaleTimeString([], {
-                    hour: "numeric",
-                    minute: "2-digit",
-                    hour12: true
-                });
-
-                const updatedMeetingText = `${eventInput} - ${formattedTime}`;
-
-                await updateEvent(editingEvent.id, {
-                    eventName: eventInput,
-                    eventTime: eventType === "Meeting" ? meetingTime : null,
-                });
-
-                updatedEvent = { ...editingEvent, text: updatedMeetingText };
+              fetchedTime = ""; // ✅ Ensure non-meeting events have an empty eventTime
             }
-
-            setEvents(prev => ({
-                ...prev,
-                [selectedDay]: prev[selectedDay].map(event => event.id === editingEvent.id ? updatedEvent : event)
-            }));
-
-            setMiniCalendarEvents(prev => ({
-                ...prev,
-                [selectedDay]: prev[selectedDay].map(event => event.id === editingEvent.id ? updatedEvent : event)
-            }));
-
-        } catch (error) {
-            console.error("Error updating event:", error);
-        }
-    } else {
-        if (!eventType) {
-            alert("Please select an event type.");
-            return;
-        }
-
-        const hasMeeting = existingEvents.some(event => event.text.includes(" - "));
-
-        if (eventType === "Holiday" && hasMeeting) {
-            if (!window.confirm("Adding a holiday will delete all meeting events. Do you want to continue?")) {
-                return;
-            }
-
-            try {
-                // ✅ Delete ALL events for the selected day
-                await Promise.all(existingEvents.map(event => deleteEvent(event.id)));
-
-                // ✅ Now, create and add the new holiday event
-                updatedEvent = { id: "temp-id", text: eventInput, leave: true };
-                const createdEvent = await postEvent({
-                    eventDate: formatDate(selectedYear, selectedMonth, selectedDay),
-                    eventType: "holiday", // ✅ Ensure lowercase for consistency
-                    eventName: eventInput,
-                    eventTime: null,
-                });
-
-                updatedEvent.id = createdEvent.id;
-            } catch (error) {
-                console.error("Error adding holiday event:", error);
-            }
-        } else {
-            try {
-                const formattedTime = meetingTime
-                    ? new Date(`2000-01-01T${meetingTime}`).toLocaleTimeString([], {
-                        hour: "numeric",
-                        minute: "2-digit",
-                        hour12: true
-                    })
-                    : "";
-
-                const eventDisplayText = eventType === "Meeting" ? `${eventInput} - ${formattedTime}` : eventInput;
-                updatedEvent = { id: "temp-id", text: eventDisplayText, leave: eventType === "Holiday" };
-
-                const createdEvent = await postEvent({
-                    eventDate: formatDate(selectedYear, selectedMonth, selectedDay),
-                    eventType: eventType.toLowerCase(),
-                    eventName: eventInput,
-                    eventTime: eventType === "Meeting" ? meetingTime : null
-                });
-
-                updatedEvent.id = createdEvent.id;
-            } catch (error) {
-                console.error("Error adding event:", error);
-            }
-        }
+            
+            acc[day].push({
+              id: event.id,
+              text: fetchedTime ? `${event.eventName} - ${fetchedTime}` : event.eventName, // ✅ Only add time if valid
+              eventTime: fetchedTime,
+              leave: event.eventType?.toLowerCase() === "holiday"
+            });
+          }
+          return acc;
+        }, {});
+  
+        setEvents(updatedEvents);
+        setMiniCalendarEvents(updatedEvents);
+  
+      } catch (error) {
+        console.error("Error updating event:", error);
+      }
     }
-
-    if (updatedEvent) {
-        setEvents(prev => ({
-            ...prev,
-            [selectedDay]: editingEvent
-                ? prev[selectedDay].map(event => event.id === editingEvent.id ? updatedEvent : event)
-                : [updatedEvent] // ✅ Replace all events instead of appending
-        }));
-
-        setMiniCalendarEvents(prev => ({
-            ...prev,
-            [selectedDay]: editingEvent
-                ? prev[selectedDay].map(event => event.id === editingEvent.id ? updatedEvent : event)
-                : [updatedEvent] // ✅ Replace all events instead of appending
-        }));
-    }
-
-    await fetchMiniCalendarEvents(); // ✅ Ensure re-fetching after update
-
+  
     // Reset fields
     setEditingEvent(null);
     setEventInput("");
     setEventType(null);
     setMeetingTime("");
-};
-
+  };
   
+
+
   const handleConfirmDelete = async (eventId) => {
     try {
       await deleteEvent(eventId);
@@ -241,7 +208,7 @@ const MonthView = () => {
   const fetchMiniCalendarEvents = async () => {
     try {
       const eventsData = await getEventsByMonth(currentYear, currentMonth + 1);
-      
+
       if (!eventsData || !Array.isArray(eventsData.message)) {
         console.error("Unexpected API response for mini calendar:", eventsData);
         return;
@@ -277,10 +244,10 @@ const MonthView = () => {
     } catch (error) {
       console.error("Error fetching mini calendar events:", error);
     }
-};
-useEffect(() => {
-  fetchMiniCalendarEvents();
-}, [currentYear, currentMonth]);
+  };
+  useEffect(() => {
+    fetchMiniCalendarEvents();
+  }, [currentYear, currentMonth]);
 
   return (
     <div className="flex  lg:h-screen lg:p-4 bg-gray-100">
@@ -309,15 +276,15 @@ useEffect(() => {
             const isHoliday = hasEvents && miniCalendarEvents[day].some(event => event.leave);
             return (
               <button
-  key={day}
-  className={`w-6 h-6 flex items-center justify-center rounded-full text-xs 
+                key={day}
+                className={`w-6 h-6 flex items-center justify-center rounded-full text-xs 
     ${day === currentDate ? "bg-teal-500 text-white" : ""} 
     ${isHoliday ? "bg-red-400 text-white" : ""}  /* ✅ Prioritize holiday */
     ${hasEvents && !isHoliday ? "bg-blue-500 text-white" : ""}  /* ✅ Meeting only if no holiday */
     ${isSunday ? "text-red-500 font-bold" : ""}`}
-  onClick={() => { setSelectedDay(day); setModalOpen(true); }}>
-  {day}
-</button>
+                onClick={() => { setSelectedDay(day); setModalOpen(true); }}>
+                {day}
+              </button>
 
 
             );
@@ -427,7 +394,7 @@ useEffect(() => {
                     <option value="Holiday">Holiday</option>
                   </select>
                 )}
-                
+
                   {/* Show event name input only after selecting an event type */}
                   {eventType && (
                     <input
@@ -443,6 +410,7 @@ useEffect(() => {
                     <input
                       type="time"
                       value={meetingTime}
+
                       onChange={(e) => setMeetingTime(e.target.value)}
                       className="w-full border p-2 mb-2" />
                   )}
@@ -463,20 +431,20 @@ useEffect(() => {
                     onClick={(e) => {
                       if (e.target.tagName !== "BUTTON") {
                         setEditingEvent(event);
-                    
+
                         // Automatically detect event type when editing
                         if (event.leave) {
                           setEventType("Holiday"); // Holiday event
                         } else {
                           setEventType("Meeting"); // Meeting event
                         }
-                    
+
                         const [name, time] = event.text.includes(" - ") ? event.text.split(" - ") : [event.text, ""];
                         setEventInput(name || "");
                         setMeetingTime(event.eventTime || "");
                       }
                     }}
-                    >
+                  >
                     {event.text}
                     {/* Delete Button for Future Events */}
                     {(selectedYear > currentYear ||
@@ -503,43 +471,43 @@ useEffect(() => {
           </div>
         </div>
       )}
-    
 
-<AnimatePresence>
-  {eventToDelete && (
-    <motion.div
-      className="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center"
-      initial={{ opacity: 0 }}
-      animate={{ opacity: 1 }}
-      exit={{ opacity: 0, transition: { duration: 0.2 } }}
-    >
-      <motion.div
-        className="bg-white p-4 rounded-lg shadow-lg text-center"
-        initial={{ scale: 0.9 }}
-        animate={{ scale: 1 }}
-        exit={{ scale: 0.9, opacity: 0 }}
-        transition={{ duration: 0.2 }}
-      >
-        <p className="mb-4">Are you sure you want to delete "<strong>{eventToDelete.text}</strong>"?</p>
-        <div className="flex justify-center gap-3">
-          <button
-            className="bg-teal-500 text-white px-3 py-1 rounded hover:bg-teal-600"
-            onClick={async () => {
-              await handleConfirmDelete(eventToDelete.id);
-              setEventToDelete(null);
-            }}>
-            Confirm
-          </button>
-          <button
-            className="bg-gray-300 px-3 py-1 rounded hover:bg-gray-400"
-            onClick={() => setEventToDelete(null)}>
-            Cancel
-          </button>
-        </div>
-      </motion.div>
-    </motion.div>
-  )}
-</AnimatePresence>
+
+      <AnimatePresence>
+        {eventToDelete && (
+          <motion.div
+            className="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0, transition: { duration: 0.2 } }}
+          >
+            <motion.div
+              className="bg-white p-4 rounded-lg shadow-lg text-center"
+              initial={{ scale: 0.9 }}
+              animate={{ scale: 1 }}
+              exit={{ scale: 0.9, opacity: 0 }}
+              transition={{ duration: 0.2 }}
+            >
+              <p className="mb-4">Are you sure you want to delete "<strong>{eventToDelete.text}</strong>"?</p>
+              <div className="flex justify-center gap-3">
+                <button
+                  className="bg-teal-500 text-white px-3 py-1 rounded hover:bg-teal-600"
+                  onClick={async () => {
+                    await handleConfirmDelete(eventToDelete.id);
+                    setEventToDelete(null);
+                  }}>
+                  Confirm
+                </button>
+                <button
+                  className="bg-gray-300 px-3 py-1 rounded hover:bg-gray-400"
+                  onClick={() => setEventToDelete(null)}>
+                  Cancel
+                </button>
+              </div>
+            </motion.div>
+          </motion.div>
+        )}
+      </AnimatePresence>
 
 
       {successMessage && (
