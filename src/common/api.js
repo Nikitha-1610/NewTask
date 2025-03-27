@@ -1,8 +1,10 @@
 const BASE_URL = "https://3qhglx2bhd.execute-api.us-east-1.amazonaws.com/calender";
 
 // Function to create an event
-export const postEvent = async (eventData) => {
+export const postEvent = async (eventData) => { 
   try {
+    console.log("Sending Event Data:", eventData); // Log the data before sending
+
     const response = await fetch(`${BASE_URL}/postEvent`, {
       method: "POST",
       headers: {
@@ -10,12 +12,17 @@ export const postEvent = async (eventData) => {
       },
       body: JSON.stringify(eventData),
     });
-    return await response.json();
+
+    const result = await response.json();
+    console.log("API Response:", result); // Log API response
+
+    return result;
   } catch (error) {
     console.error("Error posting event:", error);
     return null;
   }
 };
+
 
 // Function to get events by date
 export const getEventByDate = async (eventDate) => {
