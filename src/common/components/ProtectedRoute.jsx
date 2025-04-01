@@ -4,17 +4,14 @@ import { Navigate, Outlet } from "react-router-dom";
 const ProtectedRoute = ({ roleRequired, children }) => {
   const { isAuthenticated, role } = useSelector((state) => state.auth);
 
-  console.log("isAuthenticated:", isAuthenticated); 
-  console.log("role:", role); 
-
   
   if (!isAuthenticated) {
     return <Navigate to="/login" replace />;
   }
 
   
-  if (roleRequired && role !== roleRequired) {
-    return <Navigate to="/" replace />;
+  if (roleRequired && !["TeamLead", "Manager", "CEO"].includes(role)) {
+    return <Navigate to="/login" replace />;
   }
 
  

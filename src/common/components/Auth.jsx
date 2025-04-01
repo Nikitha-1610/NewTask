@@ -50,7 +50,7 @@ const AuthPage = () => {
         dispatch(login({ userData: response.data, token }));
 
         setTimeout(() => {
-          navigate(role === "TeamLead" ? "/admin/dashboard" : "/user/home");
+          navigate(role === "TeamLead" ||role === "Manager" || role == "CEO" ? "/admin/dashboard" : "/user/home");
         }, 2000); // Redirect after 2 seconds
       } else {
         toast.error("Authentication failed!");

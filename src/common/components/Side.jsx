@@ -29,7 +29,7 @@ const Side = ({ isOpen, toggleSidebar, role }) => {
   const isActive = (path) => location.pathname === path;
 
   const linksByRole = {
-    TeamLead: [
+    admin: [
       { path: "/admin/dashboard", label: "Dashboard", icon: "material-symbols:dashboard-outline" },
       { path: "/admin/teams", label: "Teams", icon: "la:teamspeak" },
       { path: "/admin/employee", label: "Employee", icon: "solar:users-group-rounded-bold" },
@@ -50,7 +50,7 @@ const Side = ({ isOpen, toggleSidebar, role }) => {
       
 
     ],
-    Employee: [
+    user: [
       { path: "/user/home", label: "Home", icon: "material-symbols:home-outline" },
       { path: "/user/tasks", label: "Tasks", icon: "bi:list-task" },
       { path: "/user/profile", label: "Profile", icon: "iconamoon:profile" },
@@ -64,7 +64,20 @@ const Side = ({ isOpen, toggleSidebar, role }) => {
     ],
   };
 
-  const links = linksByRole[role];
+  // Function to get appropriate links based on role
+function getLinksForRole(role) {
+  const adminRoles = ["CEO", "TeamLead", "Manager"];
+  const userRoles = ["Employee", "Intern"];
+  
+  if (adminRoles.includes(role)) {
+    return linksByRole.admin;
+  } else if (userRoles.includes(role)) {
+    return linksByRole.user;
+  }
+  return []; // Default empty array for unknown roles
+}
+
+  const links = getLinksForRole(role);
 
   const handleLinkClick = () => {
     if (isOpen && isMobile) {

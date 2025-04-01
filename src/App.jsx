@@ -15,9 +15,11 @@ import InTestPage from "./user/pages/InTestPage";
 const App = () => {
   const isAuthenticated = useSelector((state) => state.auth.isAuthenticated);
   const role = useSelector((state) => state.auth.role);
+  
+  
 
   const defaultRoute = isAuthenticated
-    ? role === "TeamLead"
+    ? role === "TeamLead" || role === "Manager" || role === "CEO"
       ? "/admin/dashboard" // Default route for admin
       : "/user/home" // Default route for user
     : "/login";
