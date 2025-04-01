@@ -10,7 +10,7 @@ const ProtectedRoute = ({ roleRequired, children }) => {
   }
 
   
-  if (roleRequired && !["TeamLead", "Manager", "CEO"].includes(role)) {
+  if (roleRequired && !["TeamLead", "Manager", "CEO","Employee", "Intern"].includes(role)) {
     return <Navigate to="/login" replace />;
   }
 
