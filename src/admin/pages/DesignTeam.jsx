@@ -62,7 +62,7 @@ const BoardHeader = ({ showFilterDropdown, setShowFilterDropdown, taskNames, han
               onClick={() => setShowFilterDropdown(!showFilterDropdown)}
               className="flex items-center px-4 py-2 bg-gray-200 text-gray-700 font-bold rounded-lg hover:bg-gray-300"
             >
-              <FontAwesomeIcon icon={faSliders} className="mr-2" />
+              <FontAwesomeIcon icon={faSliders} className="lg:mr-10 " />
               Filter
             </button>
             {showFilterDropdown && (
@@ -77,7 +77,7 @@ const BoardHeader = ({ showFilterDropdown, setShowFilterDropdown, taskNames, han
                   <button
                     key={index}
                     onClick={() => handleFilterChange(taskName)}
-                    className="block px-4 py-2 text-sm text-gray-800 hover:bg-gray-100"
+                    className="block px-4 py-2 text-sm text-gray-800 hover:bg-gray-100 whitespace-nowrap"
                   >
                     {taskName}
                   </button>
@@ -113,6 +113,7 @@ const Board = () => {
     axiosInstance
       .get(`task/getTaskDashboard/${employeeName}`)
       .then((response) => {
+        console.log(response)
         if (response.data && response.data.message) {
           const { inTestTasks, inProgressTasks, completedTasks, assignedTasks } = response.data.message;
 
@@ -156,12 +157,12 @@ const Board = () => {
       ...taskData.completedTasks,
       ...taskData.assignedTasks,
     ];
-    const uniqueTaskNames = Array.from(new Set(allTasks.map(task => task.taskName).filter(Boolean)));
+    const uniqueTaskNames = Array.from(new Set(allTasks.map(task => task.project).filter(Boolean)));
     return uniqueTaskNames;
   };
 
   const filterTasks = (tasks) => {
-    return filterLabel ? tasks.filter((task) => task.taskName === filterLabel) : tasks;
+    return filterLabel ? tasks.filter((task) => task.project === filterLabel) : tasks;
   };
 
   const filteredColumns = [
