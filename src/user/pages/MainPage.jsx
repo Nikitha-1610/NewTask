@@ -141,7 +141,7 @@ const MainPage = () => {
 
 
   return (
-<div className="min-h-screen p-6">
+<div className="min-h-screen sm:p-6 p-2">
   {/* Header Section */}
   <header className="mb-8">
     <h1 className="text-2xl font-bold text-gray-800">Hello User</h1>
@@ -207,7 +207,7 @@ const MainPage = () => {
     </div>
 
     {/* Right Section */}
-    <div className="flex flex-col gap-6 lg:w-1/3">
+    <div className="flex flex-col gap-6 lg:w-[40%]">
       <TaskSchedule employeeTasks={employeeTasks} setTasks={setEmployeeTasks} />
       <MostWorkedCard hoursByLabel={stats.hoursByLabel || {}} />
     </div>
