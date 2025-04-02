@@ -100,7 +100,7 @@ const Calendar = () => {
   return (
     <div className="flex flex-col md:flex-row h-screen p-4">
       {/* Sidebar */}
-      <div className="w-full md:w-60 lg:w-1/5 p-3 lg:border-r border-gray-300 flex-shrink-0 md:fixed md:left-4 lg:static">
+      <div className="w-full md:w-60 lg:w-1/5 p-3 lg:border-r border-gray-300 h-fit sticky top-0">
           <div className="flex items-center justify-between md:justify-start space-x-2">
           <h1 className="text-xl md:text-3xl font-bold">{selectedYear}</h1>
           <select
