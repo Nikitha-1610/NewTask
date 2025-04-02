@@ -11,10 +11,10 @@ const Position = () => {
   const [untaggedUsers, setUntaggedUsers] = useState([]);
   const [currentPage, setCurrentPage] = useState(1);
   const [show, setShow] = useState(false);
-  const [positions, setPositions] = useState([]);
+  const [roles, setRoles] = useState([]);
   const [departments, setDepartments] = useState([]);
   const [filteredUsers, setFilteredUsers] = useState([]);
-  const [selectedPosition, setSelectedPosition] = useState("all");
+  const [selectedRole, setSelectedRole] = useState("all");
   const [selectedDepartment, setSelectedDepartment] = useState("all");
   const [selectedTeamLead, setSelectedTeamLead] = useState("");
   const [selectedEmployees, setSelectedEmployees] = useState([]);
@@ -34,17 +34,17 @@ const Position = () => {
     try {
       const response = await axiosInstance.get("employee/untag");
       const data = response.data;
-
+      console.log(response)
       if (Array.isArray(data.message)) {
         setUsers(data.message);
         const taggedEmployees = JSON.parse(localStorage.getItem("taggedEmployees")) || [];
         let untaggedUsers = data.message.filter(user => !taggedEmployees.includes(user.name));
         setUntaggedUsers(untaggedUsers);
         setFilteredUsers(untaggedUsers);
-        const uniquePositions = [...new Set(data.message.map((user) => user.position))];
-        const uniqueDepartments = [...new Set(data.message.map((user) => user.team || "General"))];
-        setPositions(uniquePositions);
-        setDepartments(uniqueDepartments);
+        const uniqueRoles = [...new Set(data.message.map((user) => user.role))]; 
+        const departmentOptions = ["Design", "Development", "DevOps", "Marketing", "HR", "AI/ML"];
+        setRoles(uniqueRoles);
+        setDepartments(departmentOptions); // Set predefined departments
       }
     } catch (error) {
       console.error("Error fetching users:", error);
@@ -195,12 +195,12 @@ const Position = () => {
   const filterUsers = () => {
     let filtered = [...users];
 
-    if (selectedPosition !== "all") {
-      filtered = filtered.filter((user) => user.position === selectedPosition);
+    if (selectedRole !== "all") {
+      filtered = filtered.filter((user) => user.role === selectedRole);
     }
 
     if (selectedDepartment !== "all") {
-      filtered = filtered.filter((user) => user.team === selectedDepartment);
+      filtered = filtered.filter((user) => user.department && user.department === selectedDepartment);
     }
 
     setFilteredUsers(filtered);
@@ -209,7 +209,7 @@ const Position = () => {
 
   useEffect(() => {
     filterUsers();
-  }, [selectedPosition, selectedDepartment, users]);
+  }, [selectedRole, selectedDepartment, users]);
 
   const goToPreviousPage = () => {
     if (currentPage > 1) setCurrentPage(currentPage - 1);
@@ -244,13 +244,13 @@ const Position = () => {
         <div className="flex flex-col sm:flex-row sm:justify-start items-center gap-4 mb-6 sm:w-auto w-32">
           <select
             className="p-2 border text-base rounded bg-gray-200 sm:w-auto w-[140px]"
-            value={selectedPosition}
-            onChange={(e) => setSelectedPosition(e.target.value)}
+            value={selectedRole}
+            onChange={(e) => setSelectedRole(e.target.value)}
           >
-            <option className="w-[100px]" value="all">All Positions</option>
-            {positions.map((position, index) => (
-              <option key={index} value={position}>
-                {position}
+            <option className="w-[100px]" value="all">All Roles</option> {/* Changed from All Positions */}
+            {roles.map((role, index) => (
+              <option key={index} value={role}>
+                {role}
               </option>
             ))}
           </select>
@@ -268,8 +268,8 @@ const Position = () => {
           </select>
           {selectedEmployees.length > 0 && (
             <button
-            className="p-2 border text-base rounded bg-[#00bfae] text-white"
-            onClick={handleTagButtonClick}
+              className="p-2 border text-base rounded bg-[#00bfae] text-white"
+              onClick={handleTagButtonClick}
             >
               Tag  ({selectedEmployees.length})
             </button>
