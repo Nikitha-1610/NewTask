@@ -47,7 +47,7 @@ const TaskSchedule = ({ employeeTasks, setTasks }) => {
   };
 
   return (
-    <div className="w-80 mx-auto p-4 h-80 rounded-lg shadow-lg bg-white">
+    <div className="w-full mx-auto p-4 h-[510px] rounded-lg shadow-lg bg-white">
       <div className="flex justify-between items-center mb-6 bg-teal-100 rounded-md p-2">
         <div>
           <p className="text-gray-500">{format(date, "MMMM")}</p>
