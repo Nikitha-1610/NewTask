@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import { Icon } from "@iconify/react";
+import noDataImage from "/Images/work.jpg";
 
 import toast, { Toaster } from "react-hot-toast";
 import CountUp from "react-countup";
@@ -146,6 +147,14 @@ const People = () => {
   const positions = ["All", ...new Set(allUsers.map(user => user.position))];
   const statusOptions = ["All", ...new Set(allUsers.map(user => user.status))];
 
+  if (allUsers.length === 0) {
+    return (
+      <div className="flex justify-center items-center h-screen">
+        <img src={noDataImage} alt="No data available" className="w-50 h-50 object-cover" />
+      </div>
+    );
+  }
+  
   return (
     <div className="p-5">
       {loading ? (
