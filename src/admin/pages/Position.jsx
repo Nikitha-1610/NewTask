@@ -11,10 +11,10 @@ const Position = () => {
   const [untaggedUsers, setUntaggedUsers] = useState([]);
   const [currentPage, setCurrentPage] = useState(1);
   const [show, setShow] = useState(false);
-  const [positions, setPositions] = useState([]);
+  const [roles, setRoles] = useState([]);
   const [departments, setDepartments] = useState([]);
   const [filteredUsers, setFilteredUsers] = useState([]);
-  const [selectedPosition, setSelectedPosition] = useState("all");
+  const [selectedRole, setSelectedRole] = useState("all");
   const [selectedDepartment, setSelectedDepartment] = useState("all");
   const [selectedTeamLead, setSelectedTeamLead] = useState("");
   const [selectedEmployees, setSelectedEmployees] = useState([]);
@@ -34,17 +34,17 @@ const Position = () => {
     try {
       const response = await axiosInstance.get("employee/untag");
       const data = response.data;
-
+      console.log(response)
       if (Array.isArray(data.message)) {
         setUsers(data.message);
         const taggedEmployees = JSON.parse(localStorage.getItem("taggedEmployees")) || [];
         let untaggedUsers = data.message.filter(user => !taggedEmployees.includes(user.name));
         setUntaggedUsers(untaggedUsers);
         setFilteredUsers(untaggedUsers);
-        const uniquePositions = [...new Set(data.message.map((user) => user.position))];
-        const uniqueDepartments = [...new Set(data.message.map((user) => user.team || "General"))];
-        setPositions(uniquePositions);
-        setDepartments(uniqueDepartments);
+        const uniqueRoles = [...new Set(data.message.map((user) => user.role))]; 
+        const departmentOptions = ["Design", "Development", "DevOps", "Marketing", "HR", "AI/ML"];
+        setRoles(uniqueRoles);
+        setDepartments(departmentOptions); // Set predefined departments
       }
     } catch (error) {
       console.error("Error fetching users:", error);
@@ -134,7 +134,9 @@ const Position = () => {
     handleCheckboxChange(user, userIndex);
   };
 
-  const handleTagButtonClick = () => {
+  const handleTagButtonClick = (e) => {
+    e.preventDefault();
+    e.stopPropagation();  // Prevent default button behavior
     if (selectedEmployees.length === 0) {
       toast.error("Please select at least one row before proceeding.", {
         position: "top-center",
@@ -143,24 +145,23 @@ const Position = () => {
     }
     setShow(true);
   };
-
   const handleSubmit = async () => {
     if (selectedEmployees.length > 0 && selectedTeamLead) {
       try {
-        const responses = await Promise.all(
-          selectedEmployees.map(employee =>
-            axiosInstance.put("employee/tag", {
-              employeeName: employee.name,
-              teamLeadName: selectedTeamLead,
-            })
-          )
+        // Create an array of promises whether it's one or multiple employees
+        const requests = selectedEmployees.map(employee =>
+          axiosInstance.put("employee/tag", {
+            employeeName: employee.name,
+            teamLeadName: selectedTeamLead,
+          })
         );
-
+  
+        const responses = await Promise.all(requests);
+  
         responses.forEach(response => {
           if (response.status === 200) {
-            toast.success(response.data.message.message || "Operation successful!", {
+            toast.success(response.data.message || "Operation successful!", {
               position: "top-right",
-              autoClose: 3000,
               hideProgressBar: false,
               closeOnClick: true,
               pauseOnHover: true,
@@ -172,17 +173,16 @@ const Position = () => {
             toast.error(response.data.message || "Error occurred.");
           }
         });
-
-        fetchUsers();
+  
         setShow(false);
         setSelectedTeamLead("");
         setSelectedEmployees([]);
         setSelectedCheckbox([]);
+        fetchUsers();
       } catch (error) {
         console.error("Error tagging employees:", error);
         toast.error(error.response?.data?.message || "Failed to tag the employees. Please try again.", {
           position: "top-right",
-          autoClose: 3000,
           theme: "colored",
         });
       }
@@ -191,16 +191,15 @@ const Position = () => {
       toast.error("Please select at least one employee and a team lead.");
     }
   };
-
   const filterUsers = () => {
     let filtered = [...users];
 
-    if (selectedPosition !== "all") {
-      filtered = filtered.filter((user) => user.position === selectedPosition);
+    if (selectedRole !== "all") {
+      filtered = filtered.filter((user) => user.role === selectedRole);
     }
 
     if (selectedDepartment !== "all") {
-      filtered = filtered.filter((user) => user.team === selectedDepartment);
+      filtered = filtered.filter((user) => user.department && user.department === selectedDepartment);
     }
 
     setFilteredUsers(filtered);
@@ -209,7 +208,7 @@ const Position = () => {
 
   useEffect(() => {
     filterUsers();
-  }, [selectedPosition, selectedDepartment, users]);
+  }, [selectedRole, selectedDepartment]);
 
   const goToPreviousPage = () => {
     if (currentPage > 1) setCurrentPage(currentPage - 1);
@@ -228,7 +227,7 @@ const Position = () => {
       </div>
     ) : (
       <div className="py-0 sm:px-5 px-0">
-        <ToastContainer />
+        <ToastContainer autoClose={1000}/>
         <div className="flex flex-wrap items-center justify-center gap-6 md:gap-28 mb-5">
           <div className="flex flex-col items-center text-center">
             <span className="text-3xl font-medium">{users.length}</span>
@@ -244,13 +243,13 @@ const Position = () => {
         <div className="flex flex-col sm:flex-row sm:justify-start items-center gap-4 mb-6 sm:w-auto w-32">
           <select
             className="p-2 border text-base rounded bg-gray-200 sm:w-auto w-[140px]"
-            value={selectedPosition}
-            onChange={(e) => setSelectedPosition(e.target.value)}
+            value={selectedRole}
+            onChange={(e) => setSelectedRole(e.target.value)}
           >
-            <option className="w-[100px]" value="all">All Positions</option>
-            {positions.map((position, index) => (
-              <option key={index} value={position}>
-                {position}
+            <option className="w-[100px]" value="all">All Roles</option> {/* Changed from All Positions */}
+            {roles.map((role, index) => (
+              <option key={index} value={role}>
+                {role}
               </option>
             ))}
           </select>
@@ -268,8 +267,8 @@ const Position = () => {
           </select>
           {selectedEmployees.length > 0 && (
             <button
-            className="p-2 border text-base rounded bg-[#00bfae] text-white"
-            onClick={handleTagButtonClick}
+              className="p-2 border text-base rounded bg-[#00bfae] text-white"
+              onClick={(e) => handleTagButtonClick(e)}
             >
               Tag  ({selectedEmployees.length})
             </button>
@@ -320,7 +319,9 @@ const Position = () => {
                       className="text-[#00bfae] cursor-pointer"
                       onClick={(e) => {
                         e.stopPropagation();
-                        setShow(true);
+    e.preventDefault();
+    setSelectedEmployees([user]);
+    setShow(true);
                       }}
                       style={{
                         fontSize: '20px',
@@ -379,7 +380,9 @@ const Position = () => {
                             className="px-2 py-1 bg-[#00bfae] text-white rounded"
                             onClick={(e) => {
                               e.stopPropagation();
-                              setShow(true);
+    e.preventDefault();
+    setSelectedEmployees([user]);
+    setShow(true);
                             }}
                           >
                             Tag
@@ -429,7 +432,7 @@ const Position = () => {
 
         {show && (
           <>
-            <div
+            <div  key="tag-modal"
               className="fixed inset-0 bg-black bg-opacity-50 backdrop-blur-sm z-40"
               onClick={() => setShow(false)}
             ></div>

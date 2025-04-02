@@ -180,10 +180,10 @@ const EmployeeForm = () => {
   
 
   return (
-    <div className="min-h-screen flex flex-col items-center">
+    <div className="min-h-96 flex flex-col items-center overflow-hidden scrollbar-hidden">
       <ToastContainer />
-      <div className="w-full max-w-6xl bg-white p-6 sm:p-8">
-        <h1 className="text-xl sm:text-2xl font-semibold mb-6 text-teal-600">
+      <div className="w-full max-w-6xl bg-white  scrollbar-hidden">
+        <h1 className="text-xl sm:text-2xl font-semibold mb-3 text-teal-600">
           Employee Form
         </h1>
 
@@ -325,7 +325,7 @@ const EmployeeForm = () => {
 
                 
 
-          <div className="flex justify-end mt-6">
+          <div className="flex justify-end mt-4">
             <button type="submit" className="bg-teal-500 text-white px-6 py-2 rounded-md">
               Save
             </button>
