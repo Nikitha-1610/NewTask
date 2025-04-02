@@ -8,6 +8,7 @@ import { useDispatch } from "react-redux";
 import { login } from "../../redux/authSlice.jsx";
 import { FaEye, FaEyeSlash } from "react-icons/fa";
 import { ImSpinner2 } from "react-icons/im"; // Import spinner icon
+import { setCookie } from "../utils/cookie/Cookies.jsx";
 
 const AuthPage = () => {
   const [formData, setFormData] = useState({ employeeId: "", password: "" });
@@ -46,6 +47,7 @@ const AuthPage = () => {
       if (token) {
         toast.success("Login successful!");
         localStorage.setItem("authToken", token);
+        setCookie("authToken", token, 90);
         localStorage.setItem("name", name);
         dispatch(login({ userData: response.data, token }));
 
