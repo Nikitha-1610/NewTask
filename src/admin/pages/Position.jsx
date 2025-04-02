@@ -453,7 +453,7 @@ const Position = () => {
               </div>
               <div>
                 <button
-                  className="w-[60%] py-2 bg-green-500 text-white rounded"
+                  className="w-[60%] py-2 bg-teal-500 text-white rounded"
                   onClick={handleSubmit}
                 >
                   Submit
