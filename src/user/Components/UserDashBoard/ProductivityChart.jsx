@@ -2,7 +2,7 @@ const ProductivityChart = ({ daywiseHours, isFullWidth, projectProgress }) => {
   const totalHours = Object.values(daywiseHours).reduce((sum, hours) => sum + hours, 0);
 
   return (
-    <div className="flex justify-between bg-white shadow-md rounded-lg p-6">
+    <div className="flex justify-between bg-white shadow-md rounded-lg p-2">
       {/* Left side: Productivity chart */}
       <div className="flex-1">
         <div className="flex justify-between">
@@ -12,7 +12,7 @@ const ProductivityChart = ({ daywiseHours, isFullWidth, projectProgress }) => {
           </div>
         </div>
         <div className="relative">
-          <div className={`flex items-end space-x-4 mt-5 ${isFullWidth ? 'justify-between' : 'justify-center'}`}>
+          <div className={`flex items-end sm:space-x-4  mt-5 ${isFullWidth ? 'justify-between' : 'justify-center'}`}>
             {Object.keys(daywiseHours).map((day, index) => {
               const hours = daywiseHours[day] || 0;
               const barHeight = hours > 0 ? `h-${hours * 4}` : "h-0";
@@ -20,7 +20,7 @@ const ProductivityChart = ({ daywiseHours, isFullWidth, projectProgress }) => {
 
               return (
                 <div key={index} className="flex flex-col items-center">
-                  <div className={`w-6 ${barHeight} ${barColor} rounded-md`}></div>
+                  <div className={`w-4 sm:w-6 ${barHeight} ${barColor} rounded-md`}></div>
                   <span className="text-xs mt-2">{day}</span>
                 </div>
               );

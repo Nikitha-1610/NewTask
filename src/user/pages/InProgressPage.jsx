@@ -96,8 +96,10 @@ const InProgressPage = () => {
               </div>
             ))
           ) : (
-            <p className="text-gray-600 text-center">No tasks in progress.</p>
-          )}
+            <div className="text-center">
+  <img src="/Images/work.jpg" alt="No tasks available" className="mx-auto mt-4 w-100 h-80" />
+  <p className="text-gray-600 text-center">No In Progress task available.</p>
+  </div>          )}
         </div>
       </div>
     </div>
