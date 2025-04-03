@@ -206,10 +206,7 @@ const AddProject = () => {
       <div className="flex md:justify-end justify-center mb-5">
         <div className="flex flex-wrap justify-end gap-4">
           {/* Add Task Button */}
-          <button className="flex items-center gap-2  bg-teal-500 hover:bg-teal-600 text-white px-4 py-2 rounded-3xl shadow-md transition">
-            <Icon icon="ic:round-add" height={22} width={22} />
-            <span>Add project</span>
-          </button>
+         
         </div>
       </div>
       <form onSubmit={handleSubmit} className="w-full ">

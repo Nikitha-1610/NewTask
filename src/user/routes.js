@@ -11,6 +11,7 @@ import AssignPage from "./pages/AssignPage";
 import InProgressPage from "./pages/InProgressPage"; 
 import InTestPage from "./pages/InTestPage"; 
 import CompletedPage from "./pages/CompletedPage"; 
+import Teammate from "./pages/Teammate";
 
 
 
@@ -21,6 +22,7 @@ const userRoutes = [
   { path: "mainpage", component: MainPage },
   { path: "mytask", component: MyTask },
   { path: "calender", component: Calendar },
+  { path: "teammate", component: Teammate },
   { path: "month/:year/:month", component: MonthView }, 
   { path: "chats", component: Chats },
   { path: "home/:taskId", component: UserTaskDetails},

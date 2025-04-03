@@ -56,6 +56,7 @@ const Side = ({ isOpen, toggleSidebar, role }) => {
       { path: "/user/profile", label: "Profile", icon: "iconamoon:profile" },
       { path: "/user/mainpage", label: "MainPage", icon: "duo-icons:dashboard" },
       { path: "/user/calender", label: "Calender", icon: "bx:calendar-event" },
+      { path: "/user/teammate", label: "Teammate Task", icon: "bx:calendar-event" },
 
 
 
