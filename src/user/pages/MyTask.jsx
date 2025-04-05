@@ -4,7 +4,7 @@ import { BsPaperclip } from 'react-icons/bs';
 //import { Oval } from "react-loader-spinner"; 
 import axiosInstance from "../../common/utils/axios/axiosInstance"; 
 import ReactLoading from "react-loading";
-
+import { ToastContainer, toast } from "react-toastify";
 
 
 const MyTask = () => {
@@ -87,6 +87,7 @@ const MyTask = () => {
           );
           setShowDiv1(false);
           setHoursSpent("");
+          toast.success("Task status updated")
         } else {
           console.error("Failed to update task:", response.data);
         }

@@ -3,6 +3,7 @@ import Avatar from "@mui/material/Avatar";
 import Badge from "@mui/material/Badge";
 import NotificationsIcon from "@mui/icons-material/Notifications";
 import MenuIcon from "@mui/icons-material/Menu";
+import HertzLogo from "../../assets/Hertzlogo.jpeg";
 
 const Navbar = ({ toggleSidebar }) => {
   console.log("Navbar is rendered");
@@ -24,7 +25,10 @@ const Navbar = ({ toggleSidebar }) => {
   };
 
   return (
-    <header className="navbar w-full h-16 flex items-center justify-between p-4 bg-white shadow-lg fixed top-0 left-0 z-40 mb-0">
+    <header className="navbar w-full h-16 flex items-center justify-between px-4">
+        <div className="flex "> {/* Add left margin here */}
+    <img src={HertzLogo} alt="Hertzworkz Logo" className="h-12 w-auto" />
+  </div>
       {/* Sidebar toggle button */}
       <button
         onClick={toggleSidebar}
@@ -33,7 +37,7 @@ const Navbar = ({ toggleSidebar }) => {
         <MenuIcon />
       </button>
 
-      <div className="flex-1 max-w-md mx-auto hidden sm:block">
+      <div className="flex-1 max-w-md mx-auto hidden sm:block ml-5">
         <input
           type="text"
           placeholder="Search Projects..."

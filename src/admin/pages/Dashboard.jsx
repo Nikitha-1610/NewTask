@@ -86,7 +86,7 @@ const Dashboard = () => {
         <div className="relative">
           {/* Scroll Left button */}
           <div
-            className="absolute left:[-18px] top-1/2 sm:left-[-20px] transform -translate-y-1/2 cursor-pointer z-10"
+            className="absolute left:[-18px] top-1/2 sm:left-[-30px] transform -translate-y-1/2 cursor-pointer z-10"
             onClick={scrollLeft}
           >
             <MdArrowBack className="text-teal-500 text-3xl font-bold" />
@@ -94,7 +94,7 @@ const Dashboard = () => {
 
           {/* Scroll Right button */}
           <div
-            className="absolute top-1/2 right-[-10px] sm:right-[-20px] transform -translate-y-1/2 cursor-pointer z-10"
+            className="absolute top-1/2 right-[-10px] sm:right-[-30px] transform -translate-y-1/2 cursor-pointer z-10"
             onClick={scrollRight}
           >
             <MdArrowForward className="text-teal-500 text-3xl font-bold" />

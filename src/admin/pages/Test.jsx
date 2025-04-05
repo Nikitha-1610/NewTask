@@ -3,6 +3,7 @@ import { Icon } from "@iconify/react";
 import axiosInstance from "../../common/utils/axios/axiosInstance";
 import AWS from "aws-sdk"; // Import AWS SDK
 
+import { ToastContainer, toast } from "react-toastify";
 const AddTasks = () => {
   const [formData, setFormData] = useState({
     projectName: "",
@@ -90,11 +91,13 @@ const AddTasks = () => {
   const handleSubmit = (e) => {
     e.preventDefault();
     console.log("Form Data Submitted:", formData);
+    toast.success("Form submitted successfully")
     // Optionally, send this data to a backend API
   };
 
   return (
     <div className="w-full p-6">
+      <ToastContainer/>
       <form onSubmit={handleSubmit} className="w-8/12">
         {/* Project Name and Due Date */}
         <div className="flex space-x-4 mb-4">

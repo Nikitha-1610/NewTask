@@ -5,6 +5,7 @@ import { Icon } from "@iconify/react";
 import ReactLoading from "react-loading";
 import { BsPaperclip } from "react-icons/bs";
 import { FaFilePdf, FaFileWord, FaFileExcel, FaFileAlt } from "react-icons/fa";
+import { toast, ToastContainer } from "react-toastify";
 const UserTaskCardDetails = () => {
   const { taskId } = useParams();
   const navigate = useNavigate();
@@ -54,6 +55,7 @@ const UserTaskCardDetails = () => {
             taskStatus: status,
           }));
           setHoursSpent(""); // Reset hours spent input
+          toast.success("Task status Updated successfully")
         } else {
           console.error("Failed to update task:", response.data);
         }
@@ -96,7 +98,7 @@ const UserTaskCardDetails = () => {
   
   return (
     <div className="w-full mx-auto p-6 bg-white rounded-lg shadow-md border border-gray-200">
-      
+      <ToastContainer/>
       <button
         onClick={goBack}
         className="flex items-center text-gray-700 hover:text-gray-800"

@@ -45,7 +45,7 @@ const ProjectStatus = ({ task, onUpdateStatus }) => {
 
       <div className="mt-4 text-sm md:text-base font-normal text-gray-600 space-y-4">
         {/* Project Details */}
-        <div className="flex flex-wrap items-center gap-4">
+        <div className="flex justify-between flex-wrap items-center gap-4">
           <div className="flex items-center">
             <span className="icon-placeholder">🕒</span>
             <span className="ml-2">Status:</span>
@@ -56,7 +56,7 @@ const ProjectStatus = ({ task, onUpdateStatus }) => {
           </div>
         </div>
 
-        <div className="flex flex-wrap items-center gap-4">
+        <div className="flex justify-between flex-wrap items-center gap-4">
           <div className="flex items-center">
             <span className="icon-placeholder"><IoPersonSharp /></span>
             <span className="ml-2">Project Lead :</span>
@@ -67,7 +67,7 @@ const ProjectStatus = ({ task, onUpdateStatus }) => {
           </div>
         </div>
 
-        <div className="flex flex-wrap items-center gap-4">
+        <div className="flex justify-between flex-wrap items-center gap-4">
           <div className="flex items-center">
             <span className="icon-placeholder"><IoPersonSharp /></span>
             <span className="ml-2">Design Lead :</span>
@@ -78,7 +78,7 @@ const ProjectStatus = ({ task, onUpdateStatus }) => {
           </div>
         </div>
 
-        <div className="flex flex-wrap items-center gap-4">
+        <div className="flex justify-between flex-wrap items-center gap-4">
           <div className="flex items-center">
             <span className="icon-placeholder"><IoPersonSharp /></span>
             <span className="ml-2">Frontend Lead :</span>
@@ -89,7 +89,7 @@ const ProjectStatus = ({ task, onUpdateStatus }) => {
           </div>
         </div>
 
-        <div className="flex flex-wrap items-center gap-4">
+        <div className="flex justify-between flex-wrap items-center gap-4">
           <div className="flex items-center">
             <span className="icon-placeholder"><IoPersonSharp /></span>
             <span className="ml-2">Backend Lead :</span>
@@ -100,7 +100,7 @@ const ProjectStatus = ({ task, onUpdateStatus }) => {
           </div>
         </div>
 
-        <div className="flex flex-wrap items-center gap-4">
+        <div className="flex justify-between flex-wrap items-center gap-4">
           <div className="flex items-center">
             <span className="icon-placeholder">📅</span>
             <span className="ml-2">Start Date:</span>
@@ -114,7 +114,7 @@ const ProjectStatus = ({ task, onUpdateStatus }) => {
           </span>
         </div>
 
-        <div className="flex flex-wrap items-center gap-4">
+        <div className="flex justify-between flex-wrap items-center gap-4">
           <div className="flex items-center">
             <span className="icon-placeholder">📅</span>
             <span className="ml-2">End Date:</span>
@@ -128,7 +128,7 @@ const ProjectStatus = ({ task, onUpdateStatus }) => {
           </span>
         </div>
 
-        <div className="flex items-center gap-4 mt-2">
+        <div className="flex justify-between items-center gap-4 mt-2">
           <span className="font-semibold">Priority:</span>
           <span
             className={`${

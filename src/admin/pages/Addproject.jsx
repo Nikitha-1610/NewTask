@@ -3,7 +3,7 @@ import { Icon } from "@iconify/react";
 import axiosInstance from "../../common/utils/axios/axiosInstance";
 import { s3Client } from "../../common/utils/aws/awsconfig";
 import { PutObjectCommand } from "@aws-sdk/client-s3";
-// import toast, { Toaster } from "react-hot-toast";
+import { ToastContainer, toast } from "react-toastify";
 const AddProject = () => {
   const [formData, setFormData] = useState({
     projectName: "",
@@ -191,6 +191,7 @@ const AddProject = () => {
           referenceFileUrl: [],
         });
         setDisplayReferences([]);
+        toast.success("New Project added successfully");
       } else {
         console.error("Unexpected response:", response);
         // toast.error("Something went wrong. Please try again.");
@@ -203,13 +204,11 @@ const AddProject = () => {
 
   return (
     <div className="w-full p-6">
+      <ToastContainer/>
       <div className="flex md:justify-end justify-center mb-5">
         <div className="flex flex-wrap justify-end gap-4">
           {/* Add Task Button */}
-          <button className="flex items-center gap-2  bg-teal-500 hover:bg-teal-600 text-white px-4 py-2 rounded-3xl shadow-md transition">
-            <Icon icon="ic:round-add" height={22} width={22} />
-            <span>Add project</span>
-          </button>
+         
         </div>
       </div>
       <form onSubmit={handleSubmit} className="w-full ">
