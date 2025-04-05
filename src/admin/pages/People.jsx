@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { Icon } from "@iconify/react";
-import noDataImage from "/Images/work.jpg";
+import noDataImage from "/Images/Nodata[1].svg";
 
 import toast, { Toaster } from "react-hot-toast";
 import CountUp from "react-countup";
@@ -150,7 +150,7 @@ const People = () => {
   if (allUsers.length === 0) {
     return (
       <div className="flex justify-center items-center h-screen">
-        <img src={noDataImage} alt="No data available" className="w-50 h-50 object-cover" />
+        <img src={noDataImage} alt="No data available" className="w-screen h-screen" />
       </div>
     );
   }

@@ -97,7 +97,7 @@ const AssignPage = () => {
             ))
           ) : (
 <div className="text-center">
-  <img src="/Images/work.jpg" alt="No tasks available" className="mx-auto mt-4 w-100 h-80" />
+  <img src="/Images/noTask[1].svg" alt="No tasks available" className="mx-auto mt-4 w-100 h-80" />
   <p className="text-gray-600 text-center">No Assigned task available.</p>
   </div>
             
