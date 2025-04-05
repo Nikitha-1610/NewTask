@@ -11,12 +11,16 @@ const Side = ({ isOpen, toggleSidebar, role }) => {
   // Detect screen size for mobile and tablet views
   useEffect(() => {
     const handleResize = () => {
-      if (window.innerWidth <= 768) {
-        setIsMobile(true); 
-        setIsCollapsed(false); 
-      } else {
-        setIsMobile(false); 
-        setIsCollapsed(true); 
+      const width = window.innerWidth;
+      if (width < 768) { // Mobile view
+        setIsMobile(true);
+        setIsCollapsed(false);
+      } else if (width >= 768 && width < 1024) { // Tablet view
+        setIsMobile(false);
+        setIsCollapsed(true);  // Collapsed by default for tablet
+      } else { // Desktop view
+        setIsMobile(false);
+        setIsCollapsed(false); // Expanded sidebar on desktop
       }
     };
 

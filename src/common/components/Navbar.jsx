@@ -25,8 +25,8 @@ const Navbar = ({ toggleSidebar }) => {
   };
 
   return (
-    <header className="navbar w-full h-16 flex items-center justify-between p-4 bg-white shadow-lg fixed top-0 left-0 z-40 mb-0">
-        <div className="flex lg:ml-[85px] md:ml-0"> {/* Add left margin here */}
+    <header className="navbar w-full h-16 flex items-center justify-between px-4">
+        <div className="flex "> {/* Add left margin here */}
     <img src={HertzLogo} alt="Hertzworkz Logo" className="h-12 w-auto" />
   </div>
       {/* Sidebar toggle button */}
@@ -37,7 +37,7 @@ const Navbar = ({ toggleSidebar }) => {
         <MenuIcon />
       </button>
 
-      <div className="flex-1 max-w-md mx-auto hidden sm:block">
+      <div className="flex-1 max-w-md mx-auto hidden sm:block ml-5">
         <input
           type="text"
           placeholder="Search Projects..."
