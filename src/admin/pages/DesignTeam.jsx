@@ -2,30 +2,20 @@ import { useState, useEffect } from "react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
   faCalendarAlt,
-  faSliders,
   faPlus,
-  faChevronDown,
-  faChevronUp,
   faComment,
   faLink,
 } from "@fortawesome/free-solid-svg-icons";
 import axiosInstance from "../../common/utils/axios/axiosInstance";
 import { useNavigate } from "react-router-dom";
-import { Link } from "react-router-dom";
 import ReactLoading from "react-loading";
-import { useDrag, useDrop } from "react-dnd";
-
-
-
+import { AnimatePresence } from "framer-motion";
 
 const DateDisplay = ({ isoDate }) => {
   if (!isoDate) return "No Date";
-  const formatDate = (isoDate) => {
-    const date = new Date(isoDate);
-    const options = { month: "long", day: "numeric" };
-    return new Intl.DateTimeFormat("en-US", options).format(date);
-  };
-  return <span>{formatDate(isoDate)}</span>;
+  const date = new Date(isoDate);
+  const options = { month: "long", day: "numeric" };
+  return new Intl.DateTimeFormat("en-US", options).format(date);
 };
 
 const generateRandomColor = () => {
@@ -41,234 +31,88 @@ const generateRandomColor = () => {
   return colors[Math.floor(Math.random() * colors.length)];
 };
 
-
-const BoardHeader = ({ showFilterDropdown, setShowFilterDropdown, taskNames, handleFilterChange, handleAddTask }) => {
-  return (
-    <div className="p-2">
-      <div className="flex flex-col sm:flex-row justify-between items-center mb-6 space-y-4 sm:space-y-0 md:space-y-0 ml-5 mt-2">
-        <h1 className="text-2xl font-bold text-gray-700 bg-teal-100 rounded-lg w-60 h-9 text-center">
-          TASKS
-        </h1>
-        <div className="flex space-x-4 flex-wrap items-center sm:ml-auto sm:space-x-4 md:space-x-6">
-          <button
-            onClick={handleAddTask}
-            className="flex items-center px-4 py-2 bg-teal-500 text-white font-bold rounded-2xl hover:bg-green-600"
-          >
-            <FontAwesomeIcon icon={faPlus} className="mr-2" />
-            Add a task
-          </button>
-          <div className="relative">
-            <button
-              onClick={() => setShowFilterDropdown(!showFilterDropdown)}
-              className="flex items-center px-4 py-2 bg-gray-200 text-gray-700 font-bold rounded-lg hover:bg-gray-300"
-            >
-              <FontAwesomeIcon icon={faSliders} className="lg:mr-10 " />
-              Filter
-            </button>
-            {showFilterDropdown && (
-              <div className="absolute top-full left-0 mt-2 w-30 max-w-13 bg-white border rounded shadow-lg z-10">
-                <button
-                  onClick={() => handleFilterChange("")}
-                  className="block px-4 py-2 text-sm text-gray-800 hover:bg-gray-100"
-                >
-                  All
-                </button>
-                {taskNames.map((taskName, index) => (
-                  <button
-                    key={index}
-                    onClick={() => handleFilterChange(taskName)}
-                    className="block px-4 py-2 text-sm text-gray-800 hover:bg-gray-100 whitespace-nowrap"
-                  >
-                    {taskName}
-                  </button>
-                ))}
-              </div>
-            )}
-          </div>
-        </div>
-      </div>
-    </div>
-  );
-};
-
-
 const Board = () => {
   const [taskData, setTaskData] = useState({
-    inTestTasks: [],
     inProgressTasks: [],
     completedTasks: [],
     assignedTasks: [],
   });
-  const [filterLabel, setFilterLabel] = useState("");
-  const [showFilterDropdown, setShowFilterDropdown] = useState(false);
+  const [filterDate, setFilterDate] = useState('');
+  const [filterYear, setFilterYear] = useState('');
+  const [filterSection, setFilterSection] = useState('');
+  const [filterStatus, setFilterStatus] = useState('');
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const navigate = useNavigate();
   const employeeName = localStorage.getItem('name');
- 
-  
 
   useEffect(() => {
     setLoading(true);
     axiosInstance
       .get(`task/getTaskDashboard/${employeeName}`)
       .then((response) => {
-        console.log(response)
         if (response.data && response.data.message) {
-          const { inTestTasks, inProgressTasks, completedTasks, assignedTasks } = response.data.message;
-
-          setTaskData({ inTestTasks, inProgressTasks, completedTasks, assignedTasks });
+          const { inProgressTasks, completedTasks, assignedTasks } = response.data.message;
+          setTaskData({ inProgressTasks, completedTasks, assignedTasks });
         } else {
           setTaskData({
-            inTestTasks: [],
             inProgressTasks: [],
             completedTasks: [],
             assignedTasks: [],
           });
         }
-        setError(null); 
+        setError(null);
       })
       .catch((error) => {
         console.error("Error fetching task data:", error);
         setError("Failed to fetch task data. Please try again later.");
       })
       .finally(() => {
-        setLoading(false); 
+        setLoading(false);
       });
   }, []);
 
-  const handleFilterChange = (label) => {
-    setFilterLabel(label);
-    setShowFilterDropdown(false);
-  };
-
   const handleAddTask = () => {
-    // Logic for adding a task
-    console.log('Add Task button clicked');
     navigate('/admin/addtasks');
   };
 
- 
-
-  const extractTaskNames = () => {
-    const allTasks = [
-      ...taskData.inTestTasks,
-      ...taskData.inProgressTasks,
-      ...taskData.completedTasks,
-      ...taskData.assignedTasks,
-    ];
-    const uniqueTaskNames = Array.from(new Set(allTasks.map(task => task.project).filter(Boolean)));
-    return uniqueTaskNames;
+  const filteredTasks = (tasks) => {
+    return tasks.filter(task => {
+      const matchDate = !filterDate || (task.deadline && new Date(task.deadline) <= new Date(filterDate));
+      const matchYear = !filterYear || (task.year === filterYear);
+      const matchSection = !filterSection || (task.section === filterSection);
+      const matchStatus = !filterStatus || (task.taskStatus === filterStatus);
+      return matchDate && matchYear && matchSection && matchStatus;
+    });
   };
 
-  const filterTasks = (tasks) => {
-    return filterLabel ? tasks.filter((task) => task.project === filterLabel) : tasks;
-  };
-
-  const filteredColumns = [
+  const columns = [
     {
       title: "ASSIGNED TASKS",
       color: "green",
-      tasks: filterTasks(taskData.assignedTasks),
+      tasks: filteredTasks(taskData.assignedTasks),
       path: "assign",
       status: "Assigned",
-      assignedBy: "TeamLead1",
     },
     {
       title: "IN PROGRESS",
       color: "yellow",
-      tasks: filterTasks(taskData.inProgressTasks),
+      tasks: filteredTasks(taskData.inProgressTasks),
       path: "inprogress",
       status: "In-Progress",
-      assignedBy: "TeamLead1",
-    },
-    {
-      title: "IN TEST",
-      color: "red",
-      tasks: filterTasks(taskData.inTestTasks),
-      path: "intest",
-      status: "In-Test",
-      assignedBy: "TeamLead1",
     },
     {
       title: "COMPLETED",
       color: "teal",
-      tasks: filterTasks(taskData.completedTasks),
+      tasks: filteredTasks(taskData.completedTasks),
       path: "completed",
       status: "Completed",
-      assignedBy: "TeamLead1",
     },
   ];
 
-  const columnMapping = {
-    "ASSIGNED TASKS": "assignedTasks",
-    "IN PROGRESS": "inProgressTasks",
-    "IN TEST": "inTestTasks",
-    "COMPLETED": "completedTasks",
-  };
-
-  const titleToStatusMap = {
-    "ASSIGNED TASKS": "Assigned",
-    "IN PROGRESS": "In-Progress",
-    "IN TEST": "In-Test",
-    "COMPLETED": "Completed"
-  };
-
-  const moveTask = (draggedTask, targetColumnTitle) => {
-    const targetColumn = columnMapping[targetColumnTitle];
-     console.log("Target Column Key:", targetColumn);
-    if (!targetColumn) {
-      console.error(`Target column "${targetColumnTitle}" does not exist.`);
-      return;
-    }
-
-    
-    
-    const updatedTaskData = { ...taskData };
-    Object.keys(updatedTaskData).forEach((columnKey) => {
-      updatedTaskData[columnKey] = updatedTaskData[columnKey].filter(
-        (task) => task.taskId !== draggedTask.taskId
-      );
-    });
-    updatedTaskData[targetColumn].push(draggedTask);
-    setTaskData(updatedTaskData); 
-  
-    
-    const newTaskStatus = titleToStatusMap[targetColumnTitle];
-    
-    if (!newTaskStatus) {
-      console.error(`No matching status found for column title: "${targetColumnTitle}"`);
-      return;
-    }
-  
-   
-    axiosInstance
-      .put(`task/updateTask/${draggedTask.taskId}`, { taskStatus: newTaskStatus })
-      .then((response) => {
-        console.log("Task status updated successfully:", response.data);
-      })
-      .catch((error) => {
-        console.error("Error updating task status:", error);
-      });
-  };
-  
-  
-
-  const TaskCard = ({ task, columnId }) => {
-    const [{ isDragging }, drag] = useDrag(() => ({
-      type: "TASK",
-      item: { task, columnId },
-      collect: (monitor) => ({
-        isDragging: monitor.isDragging(),
-      }),
-    }));
-
+  const TaskCard = ({ task }) => {
     return (
-      <Link
-        ref={drag}
-        to={`${task.taskId}`} 
-        className={`block bg-white shadow rounded-lg p-4 mb-4 relative border border-gray-400 w-full ${isDragging ? 'opacity-50' : ''}`}
-      >
+      <div className="block bg-white shadow-lg rounded-lg p-4 mb-4 relative border border-gray-300 hover:shadow-xl transition-all cursor-pointer">
         <div className="absolute top-2 right-2">
           {task.taskStatus === "Completed" ? (
             <div className="flex items-center text-green-500 text-xs font-bold">
@@ -289,86 +133,58 @@ const Board = () => {
             {task.taskName}
           </span>
         )}
-        <div className="flex justify-between">
-          <div>
-            <div className="text-sm text-black-100">
-              {task.taskDescription || "No description available."}
+        <div className="flex flex-col justify-between">
+          <div className="text-sm text-black-100">
+            {task.taskDescription || "No description available."}
+          </div>
+          <div className="flex items-center text-sm text-gray-600 mt-2 space-x-4">
+            <div className="flex items-center">
+              <FontAwesomeIcon icon={faComment} className="mr-1" />
+              {task.comment?.length || 0}
             </div>
-            <div className="flex items-center text-sm text-gray-600 mt-2 space-x-4">
-              <div className="flex items-center">
-                <FontAwesomeIcon icon={faComment} className="mr-1" />
-                {task.comment?.length || 0}
-              </div>
-              <div className="flex items-center">
-                <FontAwesomeIcon icon={faLink} className="mr-1 text-black-500" />
-                {task.referenceFileUrl?.length || 0}
-              </div>
+            <div className="flex items-center">
+              <FontAwesomeIcon icon={faLink} className="mr-1" />
+              {task.referenceFileUrl?.length || 0}
             </div>
           </div>
         </div>
-      </Link>
+      </div>
     );
   };
 
-  const Column = ({ column, columnId }) => {
-    const [{ canDrop, isOver }, drop] = useDrop(() => ({
-      accept: "TASK",
-      drop: (item) => moveTask(item.task, column.title),
-      collect: (monitor) => ({
-        isOver: monitor.isOver(),
-        canDrop: monitor.canDrop(),
-      }),
-    }));
-
-    const [showTasks, setShowTasks] = useState(true);
-
-    const handleTitleClick = () => {
-      axiosInstance
-        .post("task/getTaskByStatus", { status: column.status, assignedBy: employeeName })
-        .then((response) => {
-          console.log("API Response:", response.data);
-          navigate(`/admin/${column.path}`, { state: response.data.message || [] });
-        })
-        .catch((error) => {
-          console.error("Error making POST request:", error);
-        });
-    };
-
-    const toggleShowTasks = () => setShowTasks((prev) => !prev);
-
+  const Column = ({ column }) => {
     return (
-      <div
-        ref={drop}
-        className="flex-2 w-full sm:w-full md:w-full lg:basis-1/3 lg:max-w-lg"
-      >
-        <div className="flex items-center justify-between border-b-2 pb-2">
-          <button
-            onClick={handleTitleClick}
-            className={`font-semibold p-2 ${column.color}-600 flex-grow text-left`}
-          >
+      <div className="flex-1 w-full sm:w-full md:w-full lg:w-1/3 p-4">
+        <div className="flex items-center justify-between border-b-2 pb-2 mb-4">
+          <h2 className={`font-semibold text-lg text-${column.color}-600`}>
             {column.title}
-          </button>
-
+          </h2>
           <span className="flex items-center justify-center w-6 h-6 bg-gray-200 text-xs rounded-full">
             {column.tasks.length}
           </span>
-
-          <div className="block lg:hidden ml-2">
-            <button onClick={toggleShowTasks}>
-              <FontAwesomeIcon icon={showTasks ? faChevronUp : faChevronDown} />
-            </button>
-          </div>
         </div>
-
-        {showTasks && (
-          <div className="mt-4">
-            {column.tasks.map((task, taskIndex) => (
-              <TaskCard key={taskIndex} task={task} columnId={columnId} />
-            ))}
-          </div>
-        )}
+        <div>
+          {column.tasks.length > 0 ? (
+            column.tasks.map((task, index) => (
+              <TaskCard key={index} task={task} />
+            ))
+          ) : (
+            <div className="text-center text-gray-400 mt-4 text-sm">
+              No tasks found.
+            </div>
+          )}
+        </div>
       </div>
     );
+  };
+
+  const getTotalFilteredTaskCount = () => {
+    const allFilteredTasks = [
+      ...filteredTasks(taskData.assignedTasks),
+      ...filteredTasks(taskData.inProgressTasks),
+      ...filteredTasks(taskData.completedTasks),
+    ];
+    return allFilteredTasks.length;
   };
 
   if (loading) {
@@ -388,19 +204,101 @@ const Board = () => {
   }
 
   return (
-    <div className="p-2 min-h-screen">
-      <BoardHeader
-        showFilterDropdown={showFilterDropdown}
-        setShowFilterDropdown={setShowFilterDropdown}
-        
-        taskNames={extractTaskNames()} 
+    <div className="p-4 min-h-screen bg-gray-50">
+      {/* Header */}
+      <div className="flex flex-col md:flex-row md:justify-between md:items-center mb-6 space-y-4 md:space-y-0">
+        <button
+          onClick={handleAddTask}
+          className="flex items-center px-6 py-3 bg-teal-500 text-white font-bold rounded-2xl hover:bg-teal-600 cursor-pointer transition"
+        >
+          <FontAwesomeIcon icon={faPlus} className="mr-2" />
+          Add a task
+        </button>
 
-        handleFilterChange={handleFilterChange}
-        handleAddTask={handleAddTask}
-      />
-      <div className="flex flex-col md:flex-col lg:flex-row space-y-4 lg:space-y-0 lg:space-x-4">
-        {filteredColumns.map((column, colIndex) => (
-          <Column key={colIndex} column={column} columnId={column.status} />
+        {/* Filters */}
+        <div className="flex flex-wrap gap-4 items-center justify-between md:justify-start">
+          <div className="flex items-center space-x-2">
+            <label htmlFor="dateFilter" className="text-sm font-semibold">
+              Date:
+            </label>
+            <input
+              type="date"
+              id="dateFilter"
+              value={filterDate}
+              onChange={(e) => setFilterDate(e.target.value)}
+              className="border border-gray-300 rounded px-3 py-2"
+            />
+          </div>
+
+          <div className="flex items-center space-x-2">
+            <label className="text-sm font-semibold">Year:</label>
+            <select
+              value={filterYear}
+              onChange={(e) => setFilterYear(e.target.value)}
+              className="border border-gray-300 rounded px-3 py-2"
+            >
+              <option value="">All</option>
+              <option value="I">I</option>
+              <option value="II">II</option>
+              <option value="III">III</option>
+              <option value="IV">IV</option>
+            </select>
+          </div>
+
+          <div className="flex items-center space-x-2">
+            <label className="text-sm font-semibold">Section:</label>
+            <select
+              value={filterSection}
+              onChange={(e) => setFilterSection(e.target.value)}
+              className="border border-gray-300 rounded px-3 py-2"
+            >
+              <option value="">All</option>
+              <option value="A">A</option>
+              <option value="B">B</option>
+              <option value="C">C</option>
+              <option value="D">D</option>
+            </select>
+          </div>
+
+          <div className="flex items-center space-x-2">
+            <label className="text-sm font-semibold">Status:</label>
+            <select
+              value={filterStatus}
+              onChange={(e) => setFilterStatus(e.target.value)}
+              className="border border-gray-300 rounded px-3 py-2"
+            >
+              <option value="">All</option>
+              <option value="Assigned">Assigned</option>
+              <option value="In-Progress">In Progress</option>
+              <option value="Completed">Completed</option>
+            </select>
+          </div>
+
+          {(filterDate || filterYear || filterSection || filterStatus) && (
+            <button
+              onClick={() => {
+                setFilterDate('');
+                setFilterYear('');
+                setFilterSection('');
+                setFilterStatus('');
+              }}
+              className="px-3 py-2 bg-red-400 text-white rounded cursor-pointer transition"
+            >
+              Clear
+            </button>
+          )}
+        </div>
+      </div>
+
+      {/* Display filtered task count */}
+      <div className="mb-6 text-lg text-gray-700">
+        <strong>Showing {getTotalFilteredTaskCount()} tasks</strong>
+      </div>
+
+      {/* Columns */}
+      <div className="flex flex-col sm:flex-row md:flex-row lg:flex-row gap-6">
+        {columns.map((column, index) => (
+          <Column key={index} column={column} />
         ))}
       </div>
     </div>
@@ -408,4 +306,3 @@ const Board = () => {
 };
 
 export default Board;
-

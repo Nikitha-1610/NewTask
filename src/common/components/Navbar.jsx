@@ -25,59 +25,51 @@ const Navbar = ({ toggleSidebar }) => {
   };
 
   return (
-    <header className="navbar w-full h-16 flex items-center justify-between px-4">
-        <div className="flex "> {/* Add left margin here */}
-    <img src={HertzLogo} alt="Hertzworkz Logo" className="h-12 w-auto" />
+    <header className="navbar w-full h-16 flex items-center justify-between px-4 relative">
+  {/* Sidebar toggle button positioned to the left */}
+  <button
+    onClick={toggleSidebar}
+    className="absolute left-4 p-2 rounded-full bg-gray-500 text-white md:hidden"
+  >
+    <MenuIcon />
+  </button>
+
+  <div className="flex items-center gap-4 ml-auto"> {/* ml-auto aligns the content to the right */}
+    {/* Notifications */}
+    <Badge badgeContent={17} color="error">
+      <NotificationsIcon />
+    </Badge>
+
+    {/* User Info (only visible on medium and larger screens) */}
+    <div className="hidden md:flex flex-col items-end">
+      <h2 className="font-semibold text-sm">{userName}</h2> {/* userName property */}
+      <h6 className="text-slate-700 text-xs tracking-tight">{userRole}</h6>
+    </div>
+
+    {/* Avatar with dropdown */}
+    <div className="relative">
+      <Avatar
+        alt="User Avatar"
+        src="https://material-ui.com/static/images/avatar/2.jpg"
+        onClick={toggleDropdown} // Toggle dropdown when clicked
+        className="cursor-pointer"
+      />
+
+      {/* Dropdown Menu */}
+      {isDropdownOpen && (
+        <div className="absolute right-0 mt-2 w-48 bg-white shadow-lg rounded-md p-2 z-50">
+          <button
+            onClick={handleLogout}
+            className="w-full text-left p-2 text-sm text-red-500 hover:bg-gray-100 rounded-md"
+          >
+            Logout
+          </button>
+        </div>
+      )}
+    </div>
   </div>
-      {/* Sidebar toggle button */}
-      <button
-        onClick={toggleSidebar}
-        className="block md:hidden p-2 rounded-full bg-gray-500 text-white"
-      >
-        <MenuIcon />
-      </button>
+</header>
 
-      <div className="flex-1 max-w-md mx-auto hidden sm:block ml-5">
-        <input
-          type="text"
-          placeholder="Search Projects..."
-          className="w-full p-2 bg-slate-200 rounded-md"
-        />
-      </div>
-
-      <div className="flex items-center gap-4">
-        <Badge badgeContent={17} color="error">
-          <NotificationsIcon />
-        </Badge>
-
-        <div className="hidden md:block">
-          <h2 className="font-semibold text-sm">{userName}</h2> {/* Now using userName property */}
-          <h6 className="text-slate-700 text-xs tracking-tight">{userRole}</h6>
-        </div>
-
-        <div className="relative">
-          {/* Avatar with dropdown */}
-          <Avatar
-            alt="User Avatar"
-            src="https://material-ui.com/static/images/avatar/2.jpg"
-            onClick={toggleDropdown} // Toggle dropdown when clicked
-            className="cursor-pointer"
-          />
-
-          {/* Dropdown Menu */}
-          {isDropdownOpen && (
-            <div className="absolute right-0 mt-2 w-48 bg-white shadow-lg rounded-md p-2 z-50">
-              <button
-                onClick={handleLogout}
-                className="w-full text-left p-2 text-sm text-red-500 hover:bg-gray-100 rounded-md"
-              >
-                Logout
-              </button>
-            </div>
-          )}
-        </div>
-      </div>
-    </header>
   );
 };
 

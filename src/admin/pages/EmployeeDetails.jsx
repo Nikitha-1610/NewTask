@@ -5,17 +5,11 @@ import ReactLoading from 'react-loading';
 const EmployeeDetails = () => {
   const [employees, setEmployees] = useState([]);
   const [loading, setLoading] = useState(true);
-  const [activeDropdown, setActiveDropdown] = useState(null);
   const [searchQuery, setSearchQuery] = useState("");
-  const [selectedRole, setSelectedRole] = useState("");
-  const [roleDropdownOpen, setRoleDropdownOpen] = useState(false);
+  const [filterYear, setFilterYear] = useState("");
+  const [filterSection, setFilterSection] = useState("");
   const [currentPage, setCurrentPage] = useState(1);
-  const [employeesPerPage] = useState(6);
-  const [show, setShow] = useState(false);
-  const [selectedTeamLead, setSelectedTeamLead] = useState("");
-  const [currentEmployeeId, setCurrentEmployeeId] = useState(null);
-
-  const roleOptions = ['Employee', 'Intern', 'TeamLead', 'Manager'];
+  const [employeesPerPage] = useState(7);
 
   useEffect(() => {
     axiosInstance.get('employee/getAll')
@@ -31,37 +25,27 @@ const EmployeeDetails = () => {
       });
   }, []);
 
-  const handleRoleUpdate = (employeeId, newRole) => {
-    axiosInstance.put(`employee/update/${employeeId}`, { role: newRole })
+  const handleDelete = (employeeId) => {
+    axiosInstance.delete(`employee/delete/${employeeId}`)
       .then(response => {
+        console.log('Employee deleted:', response.data.message);
         setEmployees(prevEmployees =>
-          prevEmployees.map(employee =>
-            employee.employeeID === employeeId ? { ...employee, role: newRole } : employee
-          )
+          prevEmployees.filter(employee => employee.employeeID !== employeeId)
         );
-        setActiveDropdown(null);
       })
       .catch(error => {
-        console.error('Error updating role:', error);
+        console.error('Error deleting employee:', error);
       });
   };
 
-  const toggleDropdown = (employeeId) => {
-    setActiveDropdown(activeDropdown === employeeId ? null : employeeId);
-  };
-
-  const handleSearch = (e) => {
-    setSearchQuery(e.target.value);
-  };
-
-  const handleRoleFilter = (role) => {
-    setSelectedRole(role);
-    setRoleDropdownOpen(false);
-  };
+  const handleSearch = (e) => setSearchQuery(e.target.value);
+  const handleFilterYear = (e) => setFilterYear(e.target.value);
+  const handleFilterSection = (e) => setFilterSection(e.target.value);
 
   const filteredEmployees = employees.filter(employee =>
     employee.name.toLowerCase().includes(searchQuery.toLowerCase()) &&
-    (selectedRole ? employee.role === selectedRole : true)
+    (filterYear === "" || employee.year === filterYear) &&
+    (filterSection === "" || employee.section === filterSection)
   );
 
   const indexOfLastEmployee = currentPage * employeesPerPage;
@@ -70,14 +54,8 @@ const EmployeeDetails = () => {
 
   const paginate = (pageNumber) => setCurrentPage(pageNumber);
 
-  const handleSubmit = () => {
-    if (currentEmployeeId && selectedTeamLead) {
-      handleRoleUpdate(currentEmployeeId, selectedTeamLead);
-      setShow(false);
-      setSelectedTeamLead("");
-      setCurrentEmployeeId(null);
-    }
-  };
+  const uniqueYears = ['I', 'II', 'III', 'IV'];  // Fixed year options
+  const uniqueSections = ['A', 'B'];  // Fixed section options
 
   if (loading) {
     return (
@@ -88,107 +66,78 @@ const EmployeeDetails = () => {
   }
 
   return (
-    <div className="p-4">
-      <h1 className="text-2xl font-bold mb-4">
-        Total Employees: {filteredEmployees.length}
-      </h1>
+    <div className="bg-gray-50 p-4 min-h-screen">
+      <h1 className="text-2xl font-bold mb-4 text-teal-600">Total Students: {filteredEmployees.length}</h1>
 
-      <div className="flex flex-col md:flex-row items-center justify-between mb-4">
-        {/* Search Input */}
+      {/* Filters Section */}
+      <div className="flex flex-col lg:flex-row lg:items-center gap-4 mb-4 justify-between">
+        {/* Search Input on the Left */}
         <input
           type="text"
           placeholder="Search by name"
           value={searchQuery}
           onChange={handleSearch}
-          className="border border-gray-300 rounded px-4 py-2 mb-2 md:mb-0 md:mr-4"
+          className="border border-black rounded px-4 py-2 w-full lg:w-1/3"
         />
 
-        {/* Role Dropdown */}
-        <div className="relative w-48">
-          <button
-            onClick={() => setRoleDropdownOpen(!roleDropdownOpen)}
-            className="border border-gray-300 text-gray-700 px-4 py-2 rounded flex justify-between items-center w-full bg-white"
-          >
-            {selectedRole || 'Select Role'}
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              fill="none"
-              viewBox="0 0 24 24"
-              strokeWidth="2"
-              stroke="currentColor"
-              className="w -4 h-4 ml-2 transition-transform duration-200"
-              style={{ transform: roleDropdownOpen ? 'rotate(180deg)' : 'rotate(0deg)' }}
-            >
-              <path strokeLinecap="round" strokeLinejoin="round" d="M5 15l7-7 7 7" />
-            </svg>
-          </button>
+        {/* Filters on the Right */}
+        <div className="flex gap-4 w-full lg:w-1/3">
+          <select value={filterYear} onChange={handleFilterYear} className="border border-black rounded px-4 py-2 w-full">
+            <option value="">All Years</option>
+            {uniqueYears.map((year, i) => (
+              <option key={i} value={year}>{year}</option>
+            ))}
+          </select>
 
-          {/* Dropdown Menu */}
-          {roleDropdownOpen && (
-            <div className="absolute mt-2 w-full bg-white border border-gray-300 rounded shadow-lg z-10">
-              <button
-                className="block px-4 py-2 text-left hover:bg-gray-100 w-full"
-                onClick={() => handleRoleFilter('')}
-              >
-                All Roles
-              </button>
-              {roleOptions.map((role, index) => (
-                <button
-                  key={index}
-                  className="block px-4 py-2 text-left hover:bg-gray-100 w-full"
-                  onClick={() => handleRoleFilter(role)}
-                >
-                  {role}
-                </button>
-              ))}
-            </div>
-          )}
+          <select value={filterSection} onChange={handleFilterSection} className="border border-black rounded px-4 py-2 w-full">
+            <option value="">All Sections</option>
+            {uniqueSections.map((sec, i) => (
+              <option key={i} value={sec}>{sec}</option>
+            ))}
+          </select>
         </div>
       </div>
 
-      <div className="hidden lg:block">
-        <table className="min-w-full table-auto border-collapse border border-gray-300 ">
-          <thead>
-            <tr className="bg-gray-200">
-              <th className="border border-gray-300  px-4 py-2 text-center">Employee ID</th>
-              <th className="border border-gray-300 px-4 py-2 text-center">Name</th>
-              <th className="border border-gray-300 px-4 py-2 text-center">Department</th>
-              <th className="border border-gray-300 px-4 py-2 text-center">Role</th>
-              <th className="border border-gray-300 px-4 py-2 text-center">Position</th>
-              <th className="border border-gray-300 px-4 py-2 text-center">Update Role</th>
+      {/* Desktop Table */}
+      <div className="hidden lg:block bg-white p-4 rounded-lg shadow-md">
+        <table className="min-w-full table-auto border-collapse border border-black">
+          <thead className="bg-teal-200">
+            <tr>
+              <th className="border px-4 py-2 text-center">RegisterNo</th>
+              <th className="border px-4 py-2 text-center">Name</th>
+              <th className="border px-4 py-2 text-center">Year</th>
+              <th className="border px-4 py-2 text-center">Section</th>
+              <th className="border px-4 py-2 text-center">Department</th>
+              <th className="border px-4 py-2 text-center">Delete</th>
             </tr>
           </thead>
           <tbody>
-            {currentEmployees.map((employee) => (
+            {currentEmployees.map(employee => (
               <tr key={employee.employeeID} className="bg-white hover:bg-gray-50">
-                <td className="border border-gray-200 px-4 py-2 text-center">{employee.employeeID}</td>
-                <td className="border border-gray-200 px-4 py-2 text-center">{employee.name}</td>
-                <td className="border border-gray-200 px-4 py-2 text-center">{employee.department}</td>
-                <td className="border border-gray-200 px-4 py-2 text-center">{employee.role}</td>
-                <td className="border border-gray-200 px-4 py-2 text-center">{employee.position}</td>
-                <td className="border border-gray-200 px-4 py-2 text-center">
-                  <div className="relative inline-block">
-                    <button
-                      onClick={() => {
-                        setCurrentEmployeeId(employee.employeeID);
-                        setShow(true);
-                      }}
-                      className="bg-teal-500 text-white px-4 py-2 rounded"
-                    >
-                      Update
-                    </button>
-                  </div>
+                <td className="border px-4 py-2 text-center">{employee.registerNo}</td>
+                <td className="border px-4 py-2 text-center">{employee.name}</td>
+                <td className="border px-4 py-2 text-center">{employee.year}</td>
+                <td className="border px-4 py-2 text-center">{employee.section}</td>
+                <td className="border px-4 py-2 text-center">{employee.department}</td>
+                <td className="border px-4 py-2 text-center">
+                  <button
+                    onClick={() => handleDelete(employee.employeeID)}
+                    className="bg-teal-500 text-white px-4 py-2 rounded hover:bg-teal-600 transition"
+                  >
+                    Delete
+                  </button>
                 </td>
               </tr>
             ))}
           </tbody>
         </table>
 
-        <div className="flex justify-center mt-4">
+        {/* Pagination */}
+        <div className="flex justify-center mt-4 flex-wrap gap-2">
           {[...Array(Math.ceil(filteredEmployees.length / employeesPerPage))].map((_, index) => (
             <button
               key={index}
-              className={`px-4 py-2 border-t border-b border-gray-300 ${currentPage === index + 1 ? 'bg-teal-500 text-white' : 'bg-white'}`}
+              className={`px-4 py-2 border rounded ${currentPage === index + 1 ? 'bg-teal-500 text-white' : 'bg-white border-black'}`}
               onClick={() => paginate(index + 1)}
             >
               {index + 1}
@@ -197,68 +146,24 @@ const EmployeeDetails = () => {
         </div>
       </div>
 
-      <div className="lg:hidden">
-        {filteredEmployees.map((employee) => (
-          <div key={employee.employeeID} className="border border-gray-300 rounded p-4 mb-4 relative">
-            <p><strong>Employee ID:</strong> {employee.employeeID}</p>
+      {/* Mobile Cards */}
+      <div className="lg:hidden bg-white p-4 rounded-lg shadow-md">
+        {currentEmployees.map(employee => (
+          <div key={employee.employeeID} className="border border-black rounded p-4 mb-4">
+            <p><strong>Register No:</strong> {employee.registerNo}</p>
             <p><strong>Name:</strong> {employee.name}</p>
+            <p><strong>Year:</strong> {employee.year}</p>
+            <p><strong>Section:</strong> {employee.section}</p>
             <p><strong>Department:</strong> {employee.department}</p>
-            <p><strong>Role:</strong> {employee.role}</p>
-            <p><strong>Position:</strong> {employee.position}</p>
             <button
-              className="bg-teal-500 text-white px-4 py-2 rounded mt-2"
-              onClick={() => {
-                setCurrentEmployeeId(employee.employeeID);
-                setShow(true);
-              }}
+              className="bg-teal-500 text-white px-4 py-2 rounded mt-2 hover:bg-teal-600 transition"
+              onClick={() => handleDelete(employee.employeeID)}
             >
-              Update
+              Delete
             </button>
           </div>
         ))}
       </div>
-
-      {show && (
-  <>
-    <div
-      className="fixed inset-0 bg-black bg-opacity-50 backdrop-blur-sm z-40"
-      onClick={() => setShow(false)}
-    ></div>
-    <div className="fixed top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 bg-white p-6 shadow-lg rounded z-50 w-[90%] max-w-lg sm:max-w-md md:max-w-md lg:max-w-md h-80 text-center border-2 border-gray-500">
-      <h3 className="mb-4 text-2xl">Update Employee Role</h3>
-      <div className="mb-10 sm:text-center text-left">
-        <select
-          className="p-2 border rounded w-[45%] sm:w-[80%] sm:text-xl text-lg"
-          value={selectedTeamLead}
-          onChange={(e) => setSelectedTeamLead(e.target.value)}
-        >
-          <option value="" className="truncate w-16 text-lg sm:text-lg">
-            Select..
-          </option>
-          {roleOptions.map((lead, index) => (
-            <option key={index} value={lead} className="truncate w-24 text-lg sm:text-lg">
-              {lead}
-            </option>
-          ))}
-        </select>
-      </div>
-      <div>
-        <button
-          className="w-[60%] py-2 bg-green-500 text-white rounded"
-          onClick={handleSubmit}
-        >
-          Submit
-        </button>
-      </div>
-      <button
-        className="w-[60%] py-2 mt-2 bg-red-500 text-white rounded"
-        onClick={() => setShow(false)}
-      >
-        Close
-      </button>
-    </div>
-  </>
-)}
     </div>
   );
 };

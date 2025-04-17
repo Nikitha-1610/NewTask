@@ -1,58 +1,59 @@
-import { MdBarChart, MdArrowForward, MdArrowBack } from "react-icons/md";
-import { useState, useEffect, useRef } from "react";
-import WeeklyProduction from "../components/DashboardComp/WeeklyProduction";
-import Production from "../components/DashboardComp/Production";
-import TwoWaveChart from "../components/DashboardComp/TwoWaveChart";
-// import axiosInstance from "../utilities/axios/axiosInstance";
+import { useState, useEffect } from "react";
 import axiosInstance from "../../common/utils/axios/axiosInstance";
 import ReactLoading from "react-loading";
+import { FiUsers, FiCheckCircle, FiClock, FiLoader } from "react-icons/fi";
 
+const userFilters = ["All Users", "User A", "User B", "User C"];
+const yearFilters = ["All", "I", "II", "III", "IV"];
+const sectionFilters = ["All", "A", "B", "C", "D"];
 
-const colors = [
-  { vibrant: "text-red-500", faint: "bg-red-100" },
-  { vibrant: "text-blue-500", faint: "bg-blue-100" },
-  { vibrant: "text-green-500", faint: "bg-green-100" },
-  { vibrant: "text-yellow-500", faint: "bg-yellow-100" },
-  { vibrant: "text-purple-500", faint: "bg-purple-100" },
-  { vibrant: "text-pink-500", faint: "bg-pink-100" },
-  { vibrant: "text-teal-500", faint: "bg-teal-100" },
-  { vibrant: "text-indigo-500", faint: "bg-indigo-100" },
+const cardConfig = [
+  {
+    key: "totalTask",
+    label: "Total Tasks",
+    icon: <FiUsers className="text-white text-xl" />,
+    color: "bg-indigo-500",
+  },
+  {
+    key: "completedTask",
+    label: "Completed Tasks",
+    icon: <FiCheckCircle className="text-white text-xl" />,
+    color: "bg-green-500",
+  },
+  {
+    key: "taskInProgress",
+    label: "In Progress",
+    icon: <FiLoader className="text-white text-xl animate-spin-slow" />,
+    color: "bg-yellow-500",
+  },
+  {
+    key: "pendingTask",
+    label: "Pending Tasks",
+    icon: <FiClock className="text-white text-xl" />,
+    color: "bg-pink-500",
+  },
 ];
 
-const getRandomColor = () => colors[Math.floor(Math.random() * colors.length)];
-
 const Dashboard = () => {
-  const cardContainerRef = useRef(null);
-  const [dashboardData, setDashboardData] = useState(null);
+  const [dashboardData, setDashboardData] = useState({});
   const [loading, setLoading] = useState(true);
+  const [selectedUser, setSelectedUser] = useState("All Users");
+  const [selectedYear, setSelectedYear] = useState("All");
+  const [selectedSection, setSelectedSection] = useState("All");
   const [error, setError] = useState(null);
 
-  // Function to scroll the cards horizontally
-  const scrollRight = () => {
-    if (cardContainerRef.current) {
-      cardContainerRef.current.scrollBy({
-        left: 220,
-        behavior: "smooth",
-      });
-    }
-  };
-
-  const scrollLeft = () => {
-    if (cardContainerRef.current) {
-      cardContainerRef.current.scrollBy({
-        left: -220,
-        behavior: "smooth",
-      });
-    }
-  };
-
-  // Fetch API data
   const fetchData = async () => {
     setLoading(true);
     try {
-      const response = await axiosInstance.get("/task/adminDashboard");
+      const response = await axiosInstance.get("/task/adminDashboard", {
+        params: {
+          user: selectedUser,
+          year: selectedYear,
+          section: selectedSection,
+        },
+      });
       if (response.status === 200) {
-        setDashboardData(response.data.message); // Update state with API data
+        setDashboardData(response.data.message);
       } else {
         console.error("Failed to fetch data:", response.statusText);
       }
@@ -66,92 +67,102 @@ const Dashboard = () => {
 
   useEffect(() => {
     fetchData();
-  }, []);
+  }, [selectedUser, selectedYear, selectedSection]);
 
   if (loading)
     return (
       <div className="fixed inset-0 flex justify-center items-center bg-white bg-opacity-70 z-50">
-        <ReactLoading type="spin" color="#00bfa6" height={50} width={50} />
+        <ReactLoading type="spin" color="#6366f1" height={50} width={50} />
       </div>
     );
 
-  if (error) return <div>{error}</div>;
-  const departmentCounts = dashboardData?.departmentCounts;
+  if (error)
+    return <div className="text-center mt-10 text-red-600">{error}</div>;
 
   return (
-    <div className="flex flex-col items-center pt-0 gap-4 w-full">
-      <div className="grid grid-cols-1 gap-4 w-full max-w-screen-xl sm:p-2">
-        {/* Card Container */}
-
-        <div className="relative">
-          {/* Scroll Left button */}
-          <div
-            className="absolute left:[-18px] top-1/2 sm:left-[-30px] transform -translate-y-1/2 cursor-pointer z-10"
-            onClick={scrollLeft}
+    <div className="w-full px-4 py-6 max-w-screen-xl mx-auto bg-gray-50 min-h-screen">
+      {/* Filters */}
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
+        {/* Year Filter */}
+        <div className="w-full relative">
+          <label className="block text-sm font-medium text-gray-700 mb-2">
+            Year
+          </label>
+          <select
+            value={selectedYear}
+            onChange={(e) => setSelectedYear(e.target.value)}
+            className="w-full cursor-pointer border border-gray-300 text-gray-700 px-4 py-2 pr-10 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-[#0D9488] hover:border-[#0D9488] transition-all duration-200 ease-in-out focus:border-[#0D9488]"
           >
-            <MdArrowBack className="text-teal-500 text-3xl font-bold" />
-          </div>
+            {yearFilters.map((year, idx) => (
+              <option key={idx} value={year}>
+                {year}
+              </option>
+            ))}
+          </select>
+        </div>
 
-          {/* Scroll Right button */}
-          <div
-            className="absolute top-1/2 right-[-10px] sm:right-[-30px] transform -translate-y-1/2 cursor-pointer z-10"
-            onClick={scrollRight}
+        {/* Section Filter */}
+        <div className="w-full relative">
+          <label className="block text-sm font-medium text-gray-700 mb-2">
+            Section
+          </label>
+          <select
+            value={selectedSection}
+            onChange={(e) => setSelectedSection(e.target.value)}
+            className="w-full cursor-pointer border border-gray-300 text-gray-700 px-4 py-2 pr-10 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-[#0D9488] hover:border-[#0D9488] transition-all duration-200 ease-in-out focus:border-[#0D9488]"
           >
-            <MdArrowForward className="text-teal-500 text-3xl font-bold" />
-          </div>
+            {sectionFilters.map((sec, idx) => (
+              <option key={idx} value={sec}>
+                {sec}
+              </option>
+            ))}
+          </select>
+        </div>
 
-          <div
-            className="overflow-x-auto scrollbar-hide w-full"
-            ref={cardContainerRef} // Attach the ref to the card container
+        {/* User Filter */}
+        <div className="w-full relative">
+          <label className="block text-sm font-medium text-gray-700 mb-2">
+            Students
+          </label>
+          <select
+            value={selectedUser}
+            onChange={(e) => setSelectedUser(e.target.value)}
+            className="w-full cursor-pointer border border-gray-300 text-gray-700 px-4 py-2 pr-10 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-[#0D9488] hover:border-[#0D9488] transition-all duration-200 ease-in-out focus:border-[#0D9488]"
           >
-            <div className="flex space-x-2">
-              {departmentCounts &&
-                Object.keys(departmentCounts).map((department, index) => {
-                  const { vibrant, faint } = getRandomColor(); // Get random color and background
-                  return (
-                    <div
-                      key={index}
-                      className="min-w-[220px] bg-white p-3 rounded-lg border-2 border-gray-100 transform transition-transform duration-300 hover:scale-105"
-                    >
-                      <div className="flex justify-between items-center space-x-0">
-                        <div
-                          className={`flex justify-center items-center w-12 h-12 rounded-full ${faint}`}
-                        >
-                          <MdBarChart size={34} className={vibrant} />
-                        </div>
-                        <div>
-                          <h3 className="text-lg font-medium text-gray-400">
-                            {department}
-                          </h3>
-                          <h1 className="text-gray-800 text-2xl font-bold">
-                            {departmentCounts[department]}
-                          </h1>
-                        </div>
-                      </div>
-                    </div>
-                  );
-                })}
+            {userFilters.map((filter, idx) => (
+              <option key={idx} value={filter}>
+                {filter}
+              </option>
+            ))}
+          </select>
+        </div>
+      </div>
+
+      {/* Cards */}
+      <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-2 gap-6">
+        {cardConfig.map(({ key, label, icon, color }, index) => (
+          <div
+            key={index}
+            className="p-6 rounded-2xl bg-white shadow-lg border border-gray-200 hover:shadow-xl transition-shadow duration-300"
+          >
+            <div className="flex items-center justify-between">
+              <div className="flex flex-col gap-1">
+                <h3 className="text-gray-500 text-sm uppercase font-semibold tracking-wide">
+                  {label}
+                </h3>
+                <h1 className="text-4xl font-bold text-gray-800">
+                  {dashboardData?.[key] ?? 0}
+                </h1>
+                <p className="text-sm text-gray-400">110 last month</p>
+              </div>
+              <div
+                className={`w-12 h-12 flex items-center justify-center rounded-full ${color} shadow-inner`}
+              >
+                {icon}
+              </div>
             </div>
           </div>
-        </div>
-        {/* Weekly Production Container */}
-        <div className="w-full p-5 md:p-3 rounded-xl border-2 border-gray-100">
-          <WeeklyProduction
-            weeklyData={dashboardData?.weekly}
-            monthlyData={dashboardData?.monthly}
-            yearlyData={dashboardData?.yearly}
-          />
-        </div>
-
-        {/* Production Container */}
-        <div className="w-full rounded-xl">
-          <Production projectDetails={dashboardData?.projectDetails} />
-        </div>
-
-        {/* WaveGraph Container */}
-        <div className="w-full sm:p-3 p-2 rounded-xl border-2 border-gray-100">
-          <TwoWaveChart />
-        </div>
+        ))}
       </div>
     </div>
   );

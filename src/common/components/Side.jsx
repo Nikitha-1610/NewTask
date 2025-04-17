@@ -4,21 +4,24 @@ import { Icon } from "@iconify-icon/react";
 import { Link, useLocation } from "react-router-dom";
 
 const Side = ({ isOpen, toggleSidebar, role }) => {
-  const [isCollapsed, setIsCollapsed] = useState(false); 
-  const [isMobile, setIsMobile] = useState(true); 
+  const [isCollapsed, setIsCollapsed] = useState(false);
+  const [isMobile, setIsMobile] = useState(true);
   const location = useLocation();
 
   // Detect screen size for mobile and tablet views
   useEffect(() => {
     const handleResize = () => {
       const width = window.innerWidth;
-      if (width < 768) { // Mobile view
+      if (width < 768) {
+        // Mobile view
         setIsMobile(true);
         setIsCollapsed(false);
-      } else if (width >= 768 && width < 1024) { // Tablet view
+      } else if (width >= 768 && width < 1024) {
+        // Tablet view
         setIsMobile(false);
-        setIsCollapsed(true);  // Collapsed by default for tablet
-      } else { // Desktop view
+        setIsCollapsed(true); // Collapsed by default for tablet
+      } else {
+        // Desktop view
         setIsMobile(false);
         setIsCollapsed(false); // Expanded sidebar on desktop
       }
@@ -27,66 +30,85 @@ const Side = ({ isOpen, toggleSidebar, role }) => {
     handleResize(); // Initial screen size check
     window.addEventListener("resize", handleResize);
 
-    return () => window.removeEventListener("resize", handleResize); 
+    return () => window.removeEventListener("resize", handleResize);
   }, []);
 
   const isActive = (path) => location.pathname === path;
 
   const linksByRole = {
     admin: [
-      { path: "/admin/dashboard", label: "Dashboard", icon: "material-symbols:dashboard-outline" },
-      { path: "/admin/teams", label: "Teams", icon: "la:teamspeak" },
-      { path: "/admin/employee", label: "Employee", icon: "solar:users-group-rounded-bold" },
-      { path: "/admin/empdetails", label: "EmpDetails", icon: "fluent:contact-card-24-filled" },
-      { path: "/admin/people", label: "People", icon: "ph:users-three-fill" },
-      
+      {
+        path: "/admin/dashboard",
+        label: "Dashboard",
+        icon: "material-symbols:dashboard-outline",
+      },
+      // { path: "/admin/teams", label: "Teams", icon: "la:teamspeak" },
+      // { path: "/admin/employee", label: "Employee", icon: "solar:users-group-rounded-bold" },
+      {
+        path: "/admin/empdetails",
+        label: "Student Details",
+        icon: "fluent:contact-card-24-filled",
+      },
+      // { path: "/admin/people", label: "People", icon: "ph:users-three-fill" },
+
       // { path: "/admin/usersemail", label: "Users Email", icon: "material-symbols:action-key" },
-      { path: "/admin/task", label: "Task", icon: "solar:clipboard-check-bold" },
+      {
+        path: "/admin/task",
+        label: "Tasks",
+        icon: "solar:clipboard-check-bold",
+      },
       { path: "/admin/addtasks", label: "Add Task", icon: "mdi:plus-circle" },
-      { path: "/admin/position", label: "Position", icon: "iconoir:position-align" },
-      { path: "/admin/calender", label: "calender", icon: "bx:calendar-event" },
+      // { path: "/admin/position", label: "Position", icon: "iconoir:position-align" },
+      // { path: "/admin/calender", label: "calender", icon: "bx:calendar-event" },
 
       // { path: "/admin/chats", label: "Chats", icon: "material-symbols:chat-outline" },
-      { path: "/admin/mainpage", label: "Main Page", icon: "duo-icons:dashboard" },
-      { path: "/admin/addproject", label: "Add Project", icon: "ix:project-new" },
-      { path: "/admin/projectstatus", label: "Project Status", icon: "pajamas:project" },
-    
-      
-
+      // { path: "/admin/mainpage", label: "Main Page", icon: "duo-icons:dashboard" },
+      // { path: "/admin/addproject", label: "Add Project", icon: "ix:project-new" },
+      // { path: "/admin/projectstatus", label: "Project Status", icon: "pajamas:project" },
     ],
     user: [
-      { path: "/user/home", label: "Home", icon: "material-symbols:home-outline" },
+      {
+        path: "/user/home",
+        label: "Home",
+        icon: "material-symbols:home-outline",
+      },
       { path: "/user/tasks", label: "Tasks", icon: "bi:list-task" },
       { path: "/user/profile", label: "Profile", icon: "iconamoon:profile" },
-      { path: "/user/mainpage", label: "MainPage", icon: "duo-icons:dashboard" },
-      { path: "/user/calender", label: "Calender", icon: "bx:calendar-event" },
-      { path: "/user/teammate", label: "Teammate Task", icon: "bx:calendar-event" },
+      {
+        path: "/user/mainpage",
+        label: "Stats",
+        icon: "duo-icons:dashboard",
+      },
+      // { path: "/user/calender", label: "Calender", icon: "bx:calendar-event" },
+      // {
+      //   path: "/user/teammate",
+      //   label: "Teammate Task",
+      //   icon: "bx:calendar-event",
+      // },
 
-
-
-      { path: "/user/mytask", label: "MyTask", icon: "tabler:clipboard-list" },
+      // { path: "/user/mytask", label: "MyTask", icon: "tabler:clipboard-list" },
       // { path: "/user/chats", label: "Chats", icon: "bi:chat-dots" },
     ],
   };
 
   // Function to get appropriate links based on role
-function getLinksForRole(role) {
-  const adminRoles = ["CEO", "TeamLead", "Manager"];
-  const userRoles = ["Employee", "Intern"];
-  
-  if (adminRoles.includes(role)) {
-    return linksByRole.admin;
-  } else if (userRoles.includes(role)) {
-    return linksByRole.user;
+  function getLinksForRole(role) {
+    const adminRoles = ["CEO", "TeamLead", "Manager"];
+    const userRoles = ["Employee", "Intern"];
+
+    if (adminRoles.includes(role)) {
+      return linksByRole.admin;
+    } else if (userRoles.includes(role)) {
+      return linksByRole.user;
+    }
+    return []; // Default empty array for unknown roles
   }
-  return []; // Default empty array for unknown roles
-}
 
   const links = getLinksForRole(role);
 
   const handleLinkClick = () => {
     if (isOpen && isMobile) {
-      toggleSidebar(); 
+      toggleSidebar();
     }
   };
 
@@ -99,29 +121,26 @@ function getLinksForRole(role) {
   return (
     <div className={isOpen ? "sidebar-open" : "sidebar-closed"}>
       <ProSidebar
-        collapsed={isCollapsed} 
+        collapsed={isCollapsed}
         className={`sidebar fixed top-0 left-0 h-screen z-50 transition-transform duration-300 bg-white shadow-lg ${
           isOpen ? "translate-x-0" : "-translate-x-full"
         } ${isMobile ? "absolute" : "md:translate-x-0"}`}
         style={{ overflowY: "auto" }}
       >
-      
         {!isMobile && (
           <Menu>
             <MenuItem
               onClick={handleToggleClick}
               icon={
                 <Icon
-                  icon={isCollapsed ? "mdi:menu" : "mdi:menu-open"} 
+                  icon={isCollapsed ? "mdi:menu" : "mdi:menu-open"}
                   height={24}
                   width={24}
                 />
               }
               className="flex justify-center cursor-pointer py-2"
               style={{ marginBottom: 0 }}
-            >
-             
-            </MenuItem>
+            ></MenuItem>
           </Menu>
         )}
 
@@ -134,12 +153,11 @@ function getLinksForRole(role) {
             >
               <Link
                 to={path}
-                onClick={handleLinkClick} 
+                onClick={handleLinkClick}
                 className="flex items-center gap-5"
               >
-                
                 <Icon icon={icon} height={22} width={22} />
-               
+
                 {!isCollapsed && <span>{label}</span>}
               </Link>
             </MenuItem>
@@ -147,7 +165,6 @@ function getLinksForRole(role) {
         </Menu>
       </ProSidebar>
 
-     
       {isOpen && isMobile && (
         <div
           onClick={toggleSidebar}

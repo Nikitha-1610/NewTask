@@ -43,6 +43,7 @@ const UserHome = () => {
 
   const [collapsedColumns, setCollapsedColumns] = useState({});
   const [loading, setLoading] = useState(true);
+  const [selectedDate, setSelectedDate] = useState("");
   const navigate = useNavigate();
   const baseUrl = "https://3qhglx2bhd.execute-api.us-east-1.amazonaws.com/";
 
@@ -71,7 +72,23 @@ const UserHome = () => {
           throw new Error("API response does not contain 'message' key.");
         }
 
-        setTaskData(data.message);
+        let filteredData = data.message;
+
+        if (selectedDate) {
+          filteredData = {
+            assignedTasks: data.message.assignedTasks.filter(
+              (task) => new Date(task.deadline).toLocaleDateString() === new Date(selectedDate).toLocaleDateString()
+            ),
+            inProgressTasks: data.message.inProgressTasks.filter(
+              (task) => new Date(task.deadline).toLocaleDateString() === new Date(selectedDate).toLocaleDateString()
+            ),
+            completedTasks: data.message.completedTasks.filter(
+              (task) => new Date(task.deadline).toLocaleDateString() === new Date(selectedDate).toLocaleDateString()
+            ),
+          };
+        }
+
+        setTaskData(filteredData);
       } catch (error) {
         console.error("Error fetching tasks:", error);
       } finally {
@@ -80,13 +97,27 @@ const UserHome = () => {
     };
 
     fetchTasks();
-  }, []);
+  }, [selectedDate]);
 
   const filteredColumns = [
-    { title: "ASSIGNED TASKS", color: "green", tasks: taskData.assignedTasks || [], path: "/assigned" },
-    { title: "IN PROGRESS", color: "yellow", tasks: taskData.inProgressTasks || [], path: "/in-progress" },
-    { title: "IN TEST", color: "red", tasks: taskData.inTestTasks || [], path: "/in-test" },
-    { title: "COMPLETED", color: "teal", tasks: taskData.completedTasks || [], path: "/completed" },
+    {
+      title: "ASSIGNED TASKS",
+      color: "green",
+      tasks: taskData.assignedTasks || [],
+      path: "/assigned",
+    },
+    {
+      title: "IN PROGRESS",
+      color: "yellow",
+      tasks: taskData.inProgressTasks || [],
+      path: "/in-progress",
+    },
+    {
+      title: "COMPLETED",
+      color: "teal",
+      tasks: taskData.completedTasks || [],
+      path: "/completed",
+    },
   ];
 
   const toggleColumn = (colIndex) => {
@@ -100,22 +131,55 @@ const UserHome = () => {
     navigate(`/user${column.path}`, { state: { tasks: column.tasks } });
   };
 
+  // Clear date handler
+  const clearDate = () => {
+    setSelectedDate("");
+  };
+
+  // Calculate total task count
+  const totalTaskCount =
+    (taskData.assignedTasks?.length || 0) +
+    (taskData.inProgressTasks?.length || 0) +
+    (taskData.completedTasks?.length || 0);
+
   return (
-    <div className="p-2 min-h-screen">
+    <div className="p-2 min-h-screen" style={{ backgroundColor: "#F9FAFB" }}>
       {/* Header Section */}
       <div className="flex flex-col sm:flex-row justify-between items-center mb-6 space-y-4 sm:space-y-0 ml-5 mt-2">
         <h1 className="text-2xl font-bold text-gray-700 bg-teal-100 rounded-lg w-60 h-9 flex items-center justify-center">
           TASKS
         </h1>
+
+        {/* Date Picker and Clear Button */}
+        <div className="flex items-center space-x-2">
+          <input
+            type="date"
+            className="px-3 py-2 border rounded-md bg-white text-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-400 focus:border-transparent hover:bg-gray-200 transition"
+            value={selectedDate}
+            onChange={(e) => setSelectedDate(e.target.value)}
+          />
+          {selectedDate && (
+            <button
+              onClick={clearDate}
+              className="px-3 py-2 bg-red-200 text-red-700 rounded-md hover:bg-red-300 focus:outline-none transition"
+            >
+              Clear Date
+            </button>
+          )}
+        </div>
+      </div>
+
+      {/* Display Total Task Count on the Left */}
+      <div className="text-left ml-5 mb-6 text-lg font-semibold text-gray-700">
+        Total Tasks: {totalTaskCount}
       </div>
 
       {/* Loader */}
       {loading ? (
-  <div className="fixed inset-0 flex justify-center items-center bg-white bg-opacity-70 z-50">
-    <ReactLoading type="spin" color="#00bfae" height={50} width={50} />
-  </div>
-) : (
-
+        <div className="fixed inset-0 flex justify-center items-center bg-white bg-opacity-70 z-50">
+          <ReactLoading type="spin" color="#00bfae" height={50} width={50} />
+        </div>
+      ) : (
         <div className="flex flex-col md:flex-col lg:flex-row space-y-4 lg:space-y-0 lg:space-x-4">
           {filteredColumns.map((column, colIndex) => (
             <div key={colIndex} className="flex-2 w-full sm:w-full md:w-full lg:basis-1/3 lg:max-w-lg">
@@ -144,7 +208,7 @@ const UserHome = () => {
                   {column.tasks.map((task, taskIndex) => (
                     <div
                       key={taskIndex}
-                      className="block bg-white shadow rounded-lg p-4 mb-4 relative border border-gray-400 w-full cursor-pointer"
+                      className="block bg-white shadow-md rounded-lg p-4 mb-4 relative border border-gray-300 w-full cursor-pointer hover:shadow-xl transition-shadow duration-300"
                       onClick={() => navigate(`/user/home/${task.taskId}`)}
                     >
                       <div className="absolute top-2 right-2">
@@ -154,7 +218,7 @@ const UserHome = () => {
                             <span>Done</span>
                           </div>
                         ) : (
-                          <div className="flex items-center text-gray-500 text-sm">
+                          <div className="flex items-center text-gray-700 text-xs bg-yellow-100 rounded-full px-2 py-1">
                             <FontAwesomeIcon icon={faCalendarAlt} className="mr-1" />
                             <DateDisplay isoDate={task.deadline} />
                           </div>

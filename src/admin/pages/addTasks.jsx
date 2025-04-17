@@ -1,109 +1,92 @@
 import { useEffect, useState } from "react";
-import axios from "axios";
-
-import { Icon } from "@iconify/react";
 import axiosInstance from "../../common/utils/axios/axiosInstance";
 import { s3Client } from "../../common/utils/aws/awsconfig";
 import { PutObjectCommand } from "@aws-sdk/client-s3";
-import { ToastContainer, toast } from "react-toastify";
+import { Icon } from "@iconify/react";
+
 const AddTasks = () => {
   const [formData, setFormData] = useState({
     taskName: "",
     deadline: "",
     assignedTo: [],
     assignedBy: "john",
-    reviewers: "", // Single reviewer as a string
+    reviewers: "",
     priority: "Low",
     taskDescription: "",
     referenceFileUrl: [],
-    project: "", // Reference as an array
-  });
-
-  const [isPopupVisible, setIsPopupVisible] = useState(false); //popup
-  const [errors, setErrors] = useState({
-    taskName: "",
-    deadline: "",
-    assignedTo: "",
-    taskDescription: "",
+    category: "",
     project: "",
   });
 
+  const [errors, setErrors] = useState({});
+  const [users, setUsers] = useState([]);
   const [showUserList, setShowUserList] = useState(false);
   const [selectedUserType, setSelectedUserType] = useState("");
-  const [users, setUsers] = useState([]);
+  const [projectOptions, setProjectOptions] = useState([]);
   const [displayReferences, setDisplayReferences] = useState([]);
   const [uploading, setUploading] = useState(false);
+  const [isPopupVisible, setIsPopupVisible] = useState(false);
+  const [selectAll, setSelectAll] = useState(false);
   const employeeId = localStorage.getItem("employeeId");
 
-  
-
-  const [selectedProject, setSelectedProject] = useState(""); // New state for project selection
-
-  const [projectOptions, setProjectOptions] = useState([]);
-
-  // Function to fetch project names
   useEffect(() => {
     const fetchProjects = async () => {
       try {
-        const response = await axiosInstance.get(
-          "project/names"
-        );
-        if (response.status === 200 && response.data.message) {
-          setProjectOptions(response.data.message);
-        } else {
-          console.error("Unexpected API response format:", response);
+        const res = await axiosInstance.get("project/names");
+        if (res.status === 200 && res.data.message) {
+          setProjectOptions(res.data.message);
         }
-      } catch (error) {
-        console.error("Error fetching project names:", error);
+      } catch (err) {
+        console.error("Project fetch error:", err);
       }
     };
-
     fetchProjects();
   }, []);
 
-  const getAllEmp = async () => {
-    try {
-      const url = `employee/getMembers/${employeeId}`
-      const response = await axiosInstance.get(`employee/getMembers/${employeeId}`);
-
-      setUsers(response?.data?.message);
-    } catch (error) {
-      console.error("Error syncing with server:", error);
-      // toast.error("Failed to fetch users.");
-    }
-  };
-
   useEffect(() => {
+    const getAllEmp = async () => {
+      try {
+        const res = await axiosInstance.get(
+          `employee/getMembers/${employeeId}`
+        );
+        setUsers(res?.data?.message || []);
+      } catch (err) {
+        console.error("User fetch error:", err);
+      }
+    };
     getAllEmp();
   }, []);
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;
-    setFormData((prev) => ({
-      ...prev,
-      [name]: value,
-    }));
+    setFormData((prev) => ({ ...prev, [name]: value }));
   };
-
- 
 
   const handleSelectUser = (user) => {
     setFormData((prev) => ({
       ...prev,
       [selectedUserType]:
-        selectedUserType === "assignedTo" ? [...prev.assignedTo, user] : user, // Reviewer is stored as a string
+        selectedUserType === "assignedTo"
+          ? [...new Set([...prev.assignedTo, user])]
+          : user,
     }));
     setShowUserList(false);
+  };
+
+  const handleRemoveUser = (userToRemove) => {
+    setFormData((prev) => ({
+      ...prev,
+      assignedTo: prev.assignedTo.filter((user) => user !== userToRemove),
+    }));
   };
 
   const handleAddReference = async (e) => {
     const file = e.target.files[0];
     if (!file) return;
 
-    const BUCKET_NAME = "task-m"; // Replace with your actual bucket name
-
-    const uploadToS3 = async (file) => {
-      const fileName = `${Date.now()}-${file.name}`; // Unique file name
+    const BUCKET_NAME = "task-m";
+    const uploadToS3 = async () => {
+      const fileName = `${Date.now()}-${file.name}`;
       const params = {
         Bucket: BUCKET_NAME,
         Key: fileName,
@@ -117,13 +100,15 @@ const AddTasks = () => {
         const region = "us-east-1";
         return `https://${BUCKET_NAME}.s3.${region}.amazonaws.com/${fileName}`;
       } catch (err) {
-        console.error("Error uploading file to S3: ", err);
+        console.error("S3 upload error:", err);
         return null;
       }
     };
+
     setUploading(true);
-    const fileUrl = await uploadToS3(file);
+    const fileUrl = await uploadToS3();
     setUploading(false);
+
     if (fileUrl) {
       setFormData((prev) => ({
         ...prev,
@@ -132,88 +117,45 @@ const AddTasks = () => {
       setDisplayReferences((prev) => [
         ...prev,
         {
-          name: file.name, // Include original file name
-          size: file.size, // Include file size
-          url: fileUrl, // S3 file URL
+          name: file.name,
+          size: file.size,
+          url: fileUrl,
         },
       ]);
     } else {
-      alert("Failed to upload file. Please try again.");
+      alert("Failed to upload. Try again.");
     }
   };
 
+  const validateForm = () => {
+    const newErrors = {};
+    if (!formData.taskName) newErrors.taskName = "Task name is required.";
+    if (!formData.deadline) newErrors.deadline = "Deadline is required.";
+    if (formData.assignedTo.length === 0)
+      newErrors.assignedTo = "Assign at least one person.";
+    if (!formData.reviewers) newErrors.reviewers = "Reviewer is required.";
+    if (!formData.project) newErrors.project = "Select a project.";
+    if (!formData.category) newErrors.category = "Category is required.";
+    if (!formData.priority) newErrors.priority = "Priority is required.";
+    if (!formData.taskDescription)
+      newErrors.taskDescription = "Description is required.";
 
-  const handleProjectChange = (e) => {
-    const value = e.target.value;
-    setSelectedProject(value); // Update project state
-    setFormData((prev) => ({
-      ...prev,
-      project: value, // Save selected project into the form data
-    }));
+    // Reference file is now optional
+    // if (formData.referenceFileUrl.length === 0)
+    //   newErrors.referenceFileUrl = "Add at least one reference.";
+
+    setErrors(newErrors);
+    return Object.keys(newErrors).length === 0;
   };
-
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-
-     // Initialize an errors object to track invalid fields
-  const newErrors = {
-    taskName: "",
-    deadline: "",
-    assignedTo: "",
-    reviewers: "",
-    category: "",
-    priority: "",
-    taskDescription: "",
-    referenceFileUrl: "",
-    project:"",
-  };
-
-  // Check if required fields are filled and set error messages
-  if (!formData.taskName) {
-    newErrors.taskName = "Task name is required.";
-  }
-  if (!formData.deadline) {
-    newErrors.deadline = "Due date is required.";
-  }
-  
-  if (formData.assignedTo.length === 0) {
-    newErrors.assignedTo = "At least one person must be assigned.";
-  }
-  if (!formData.reviewers) {
-    newErrors.reviewers = "A reviewer is required.";
-  }
-  if (!formData.project) {
-    newErrors.project = "Please select a project.";
-  }
-  if (!formData.category) {
-    newErrors.category = "Please select a category.";
-  }
-  if (!formData.priority) {
-    newErrors.priority = "Priority is required.";
-  }
-  if (!formData.taskDescription) {
-    newErrors.taskDescription = "Task description is required.";
-  }
-  if (formData.referenceFileUrl.length === 0) {
-    newErrors.referenceFileUrl = "At least one reference file is required.";
-  }
-
-  // If there are any validation errors, update the errors state and stop form submission
-  if (Object.values(newErrors).some((error) => error !== "")) {
-    setErrors(newErrors);
-    return;
-  }
+    if (!validateForm()) return;
 
     try {
-
-      // Make the API POST request
       const response = await axiosInstance.post("task/addTask", formData);
-
-      // Handle success
       if (response.status === 200 || response.status === 201) {
-
-        // Reset form (if needed)
+        setIsPopupVisible(true);
         setFormData({
           taskName: "",
           deadline: "",
@@ -223,348 +165,253 @@ const AddTasks = () => {
           priority: "Low",
           taskDescription: "",
           referenceFileUrl: [],
-          category:"",
+          category: "",
           project: "",
         });
-        setSelectedProject(""); // Reset the selected project
-        setDisplayReferences([]); // Clear uploaded references
-
-        // show popup after successful submission
-        setIsPopupVisible(true);
-      } else {
-        console.error("Unexpected response:", response);
-        // toast.error("Something went wrong. Please try again.");
+        setDisplayReferences([]);
       }
-    } catch (error) {
-      console.error("Error submitting form data:", error);
-      // toast.error("Failed to submit the form. Please try again later.");
+    } catch (err) {
+      console.error("Submit error:", err);
     }
   };
 
-
+  const toggleSelectAll = () => {
+    setSelectAll((prev) => {
+      const newState = !prev;
+      if (newState) {
+        setFormData((prevData) => ({
+          ...prevData,
+          assignedTo: users.map((user) => user),
+        }));
+      } else {
+        setFormData((prevData) => ({
+          ...prevData,
+          assignedTo: [],
+        }));
+      }
+      return newState;
+    });
+  };
 
   return (
-    <div className="w-full p-6">
-     {/* Popup */}
-     {isPopupVisible && (
-        <div className="fixed top-0 left-0 w-full h-full bg-black bg-opacity-50 flex justify-center items-center">
-          <div className="bg-white rounded-lg p-6 shadow-lg relative w-11/12 md:w-1/3">
-            {/* Close Icon */}
+    <div className="p-4 sm:p-6 lg:p-10 bg-gray-50 min-h-screen">
+      {/* Success Modal */}
+      {isPopupVisible && (
+        <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-50">
+          <div className="bg-white rounded-xl p-6 shadow-xl w-[90%] sm:w-96 text-center">
+            <Icon
+              icon="mdi:check-circle"
+              className="text-teal-500"
+              width={48}
+            />
+            <h2 className="text-xl font-semibold mt-2">Task Added!</h2>
+            <p className="text-sm text-gray-600 mt-1">
+              Your task has been successfully created.
+            </p>
             <button
-              className="absolute top-3 right-3 text-gray-500 hover:text-gray-700"
               onClick={() => setIsPopupVisible(false)}
+              className="mt-4 px-4 py-2 bg-teal-500 text-white rounded hover:bg-teal-600 transition"
             >
-              <Icon icon="mdi:alpha-x-circle" height={24} width={24} />
+              Close
             </button>
-            {/* Popup Content */}
-            <div className="text-center">
-              <h2 className="text-xl font-bold text-gray-800">
-                Task Added Successfully!
-              </h2>
-              <p className="text-gray-600 mt-2">
-                Your task has been successfully added to this project.
-              </p>
-              <button
-                onClick={() => setIsPopupVisible(false)}
-                className="mt-6 bg-teal-500 text-white px-6 py-2 rounded-full"
-              >
-                Great
-              </button>
-            </div>
           </div>
         </div>
       )}
-      
-      <form onSubmit={handleSubmit} className="w-full md:w-8/12">
-        {/* Project Name and Due Date */}
-        <div className="flex flex-wrap space-y-4 md:space-y-0 md:space-x-4 mb-4">
-          <div className="w-full md:flex-1">
-            <label className="block text-sm font-semibold">Task Name</label>
-            <input
-              type="text"
-              className={'w-full p-2 border ${errors.taskName ? "border-red-500" : "border-gray-300"}  rounded mt-2'}
-              name="taskName"
-              value={formData.taskName}
-              onChange={handleInputChange}
-              placeholder="Enter Task name"
-            />
-            {errors.taskName && (<p className="text-sm text-red-500 mt-1">{errors.taskName}</p>)}
-          </div>
-          <div className="w-full md:flex-1">
-            <label className="block text-sm font-semibold">Due Date</label>
-            <input
-  type="date"
-  className={`w-full p-2 border ${errors.deadline ? "border-red-500" : "border-gray-300"} rounded mt-2`}
-  name="deadline" // Corrected from "dueDate" to "deadline"
-  value={formData.deadline}
-  onChange={handleInputChange}
-/>
 
-          </div>
-          {errors.deadline && (<p className="text-sm text-red-500 mt-1">{errors.deadline}</p>)}
+      {/* Add Task Heading */}
+      <h1 className="text-3xl sm:text-3xl lg:text-4xl font-semibold text-teal-600 mb-6 text-center">
+        ADD TASK
+      </h1>
+
+      {/* Form */}
+      <form
+        onSubmit={handleSubmit}
+        className="max-w-5xl mx-auto bg-white rounded-xl shadow-md p-6 md:p-10 grid grid-cols-1 md:grid-cols-2 gap-6"
+      >
+        {/* Task Name */}
+        <div>
+          <label className="block font-medium">Task Name</label>
+          <input
+            type="text"
+            name="taskName"
+            value={formData.taskName}
+            onChange={handleInputChange}
+            className={`mt-1 w-full border p-2 rounded-md shadow-sm focus:ring-2 focus:ring-teal-400 ${
+              errors.taskName ? "border-red-500" : "border-gray-300"
+            }`}
+          />
+          {errors.taskName && (
+            <p className="text-red-500 text-sm">{errors.taskName}</p>
+          )}
         </div>
 
-        {/* assignedTo Section */}
-        <div className="mb-4">
-          <label className="block text-sm font-semibold text-gray-800 mb-2">
-            assignedTo
-          </label>
-          <div className={'flex items-center justify-between border-b ${errors.assignedTo ? "border-red-500" : "border-gray-300"} pb-2'}>
-            <div className="flex items-center gap-2">
-              <Icon
-                icon="ic:sharp-person-add"
-                className="text-gray-600"
-                height={22}
-                width={22}
-              />
-              {formData.assignedTo.map((member, index) => (
-                <span
-                  key={index}
-                  className="bg-blue-200 text-blue-700 px-2 py-1 rounded-full text-xs"
-                >
-                  {member}
-                </span>
-              ))}
-            </div>
+        {/* Deadline */}
+        <div>
+          <label className="block font-medium">Deadline</label>
+          <input
+            type="date"
+            name="deadline"
+            value={formData.deadline}
+            onChange={handleInputChange}
+            className={`mt-1 w-full border p-2 rounded-md shadow-sm ${
+              errors.deadline ? "border-red-500" : "border-gray-300"
+            }`}
+          />
+          {errors.deadline && (
+            <p className="text-red-500 text-sm">{errors.deadline}</p>
+          )}
+        </div>
+
+        {/* Assigned To */}
+        <div className="md:col-span-2">
+          <label className="block font-medium">Assigned To</label>
+          <div className="flex flex-wrap gap-2 mt-2">
+            {formData.assignedTo.map((member, index) => (
+              <div
+                key={index}
+                className="bg-teal-100 text-teal-800 px-3 py-1 rounded-full text-sm flex items-center gap-1"
+              >
+                <span>{member}</span>
+                <button type="button" onClick={() => handleRemoveUser(member)}>
+                  <Icon icon="mdi:close" width={16} />
+                </button>
+              </div>
+            ))}
             <button
               type="button"
-              className="flex items-center justify-center w-8 h-8 rounded-full border border-dashed border-gray-400"
               onClick={() => {
                 setSelectedUserType("assignedTo");
                 setShowUserList(true);
               }}
+              className="px-3 py-1 bg-gray-200 rounded-full text-sm hover:bg-gray-300"
             >
-              <Icon
-                icon="ic:outline-add"
-                className="text-gray-600"
-                height={20}
-                width={20}
-              />
+              <Icon icon="ic:outline-add" />
             </button>
           </div>
+
+          {/* Select All / Deselect All Button */}
+          <div className="mt-4 flex justify-between">
+            <button
+              type="button"
+              onClick={toggleSelectAll}
+              className={`px-6 py-2 rounded-full text-sm font-semibold transition-colors duration-200 ${
+                selectAll
+                  ? "bg-teal-600 text-white"
+                  : "bg-gray-200 text-teal-600"
+              } hover:bg-teal-700 hover:text-white`}
+            >
+              {selectAll ? "Deselect All" : "Select All"}
+            </button>
+          </div>
+
           {errors.assignedTo && (
-            <p className="text-sm text-red-500 mt-1">{errors.assignedTo}</p>
-           )}
-        </div>
-        <div className="mb-4">
-        <label className="block text-sm font-semibold text-gray-500 mb-2">
-          Select Project
-        </label>
-        <select
-          className= {'mt-1 block w-full px-3 py-2 bg-white border ${errors.project ? "border-red-500" : "border-gray-300"} rounded-md shadow-sm focus:outline-none focus:ring-teal-500 focus:border-teal-500 sm:text-sm font-semibold text-gray-500'}
-          value={selectedProject}
-          onChange={handleProjectChange}
-        >
-          <option value="">Select a Project</option>
-          {projectOptions.map((project, index) => (
-            <option key={index} value={project}>
-              {project}
-            </option>
-          ))}
-        </select>
-      
-      </div>
-        <div className="mb-4">
-          <label className="block text-sm font-semibold text-gray-500 mb-6">
-            Select Category
-            <select className={'mt-1 block w-full px-3 py-2 bg-white border ${errors.category ? "border-red-500" : "border-gray-300"} rounded-md shadow-sm focus:outline-none focus:ring-teal-500 focus:border-teal-500 sm:text-sm'}
-            name="category"
-            value={formData.category || ""}
-            onChange={handleInputChange}
-            >
-              <option value="">Select a category</option>
-              <option value="development">Development</option>
-              <option value="research">Research</option>
-              <option value="ui">UI</option>
-            </select>
-          </label>
-          {errors.category && (<p className="text-sm text-red-500 mt-1">{errors.category}</p>)}
+            <p className="text-red-500 text-sm mt-1">{errors.assignedTo}</p>
+          )}
         </div>
 
-        {/* Reviewer Section */}
-        <div className="mb-4">
-          <label className="block text-sm font-semibold text-gray-800 mb-2">
-            Reviewer
-          </label>
-          <div className={'flex items-center justify-between border-b ${errors.reviewers ? "border-red-500" : "border-gray-300"} pb-2'}>
-            <div className="flex items-center gap-2">
-              <Icon
-                icon="ic:sharp-person-add"
-                className="text-gray-600"
-                height={22}
-                width={22}
-              />
-              {formData.reviewers && (
-                <span className="bg-green-200 text-green-700 px-2 py-1 rounded-full text-xs">
-                  {formData.reviewers}
-                </span>
-              )}
-            </div>
-            <button
-              type="button"
-              className="flex items-center justify-center w-8 h-8 rounded-full border border-dashed border-gray-400"
-              onClick={() => {
-                setSelectedUserType("reviewers");
-                setShowUserList(true);
-              }}
-            >
-              <Icon
-                icon="ic:outline-add"
-                className="text-gray-600"
-                height={20}
-                width={20}
-              />
-            </button>
+        {/* Priority */}
+        <div className="md:col-span-2">
+          <label className="block font-medium mb-1">Priority</label>
+          <div className="flex gap-3">
+            {["Low", "Normal", "Urgent"].map((level) => (
+              <button
+                key={level}
+                type="button"
+                className={`px-4 py-1 rounded-full transition ${
+                  formData.priority === level
+                    ? "bg-teal-500 text-white"
+                    : "bg-gray-200 text-gray-700"
+                }`}
+                onClick={() =>
+                  setFormData((prev) => ({ ...prev, priority: level }))
+                }
+              >
+                {level}
+              </button>
+            ))}
           </div>
-          {errors.reviewers && (<p className="text-sm text-red-500 mt-1">{errors.reviewers}</p>)}
         </div>
 
-        {/* Priority and taskDescription */}
-        <div className="flex-col space-y-4 items-center mb-4">
-          <label className="text-sm font-semibold mr-2">Priority</label>
-          <div className="flex space-x-4">
-            <button
-              type="button"
-              className={`${
-                formData.priority === "Low"
-                  ? "bg-teal-200 text-yellow-700"
-                  : "bg-gray-200 text-gray-700"
-              } px-4 py-1 rounded-full flex justify-center items-center gap-2`}
-              onClick={() =>
-                setFormData((prev) => ({ ...prev, priority: "Low" }))
-              }
-            >
-              <div className=" h-2 w-2 bg-yellow-400 rounded-full"></div>
-              Low
-            </button>
-            <button
-              type="button"
-              className={`${
-                formData.priority === "Normal"
-                  ? "bg-blue-200 text-blue-700"
-                  : "bg-gray-200 text-gray-700"
-              } px-4 py-1 rounded-full flex justify-center items-center gap-2`}
-              onClick={() =>
-                setFormData((prev) => ({ ...prev, priority: "Normal" }))
-              }
-            >
-              <div className=" h-2 w-2 bg-green-400 rounded-full"></div>
-              Normal
-            </button>
-            <button
-              type="button"
-              className={`${
-                formData.priority === "Urgent"
-                  ? "bg-red-200 text-red-700"
-                  : "bg-gray-200 text-gray-700"
-              } px-4 py-1 rounded-full flex justify-center items-center gap-2`}
-              onClick={() =>
-                setFormData((prev) => ({ ...prev, priority: "Urgent" }))
-              }
-            >
-              <div className=" h-2 w-2 bg-teal-400 rounded-full"></div>
-              Urgent
-            </button>
-          </div>
-          {errors.priority && (<p className="text-sm text-red-500 mt-1">{errors.priority}</p>)}
-        </div>
-
-        {/* Task taskDescription */}
-        <div className="mb-4">
-          <label className="block text-sm font-semibold">taskDescription</label>
+        {/* Task Description */}
+        <div className="md:col-span-2">
+          <label className="block font-medium">Task Description</label>
           <textarea
-            className={'w-full h-40 p-2 border ${errors.taskDescription ? "border-red-500" : "border-gray-300"} rounded mt-4'}
             name="taskDescription"
             value={formData.taskDescription}
             onChange={handleInputChange}
-            placeholder="Enter a taskDescription of the task"
+            rows={4}
+            className={`mt-1 w-full border p-2 rounded-md shadow-sm ${
+              errors.taskDescription ? "border-red-500" : "border-gray-300"
+            }`}
           />
-          {errors.taskDescription && (<p className="text-sm text-red-500 mt-1">{errors.taskDescription}</p>)}
         </div>
 
-        {/* File Reference */}
-        <div className="mb-4">
-          <label className="block text-sm font-semibold mb-2">References</label>
+        {/* Reference Upload */}
+        <div className="md:col-span-2">
+          <label className="block font-medium mb-1">Reference Files</label>
           <div className="flex flex-wrap gap-3">
-            {displayReferences.map((ref, index) => (
+            {displayReferences.map((ref, i) => (
               <div
-                key={index}
-                className="flex flex-wrap gap-2 items-center shadow-md p-4 w-auto border border-gray-300 rounded-lg bg-gray-50"
+                key={i}
+                className="p-3 bg-gray-100 rounded-md w-[200px] shadow-sm"
               >
-                <Icon
-                  icon="fa6-solid:file-pdf"
-                  height={22}
-                  width={22}
-                  className="text-red-500"
-                />
-                <div>
-                  <p className="text-sm font-medium text-gray-800">
-                    {ref.name}
-                  </p>
-                  <p className="text-xs text-gray-500">
-                    {new Date().toLocaleDateString()}
-                  </p>
-                  <p className="text-xs text-gray-500">
-                    Size: {(ref.size / 1024).toFixed(1)} KB
-                  </p>
-                </div>
+                <p className="truncate text-sm font-medium">{ref.name}</p>
+                <p className="text-xs text-gray-500">
+                  {(ref.size / 1024).toFixed(1)} KB
+                </p>
               </div>
             ))}
             {uploading && (
-              <div className="flex items-center justify-center shadow-md p-4 w-auto border border-gray-300 rounded-lg bg-gray-50">
-                <Icon
-                  icon="mdi:loading"
-                  className="animate-spin text-teal-500"
-                  height={30}
-                  width={30}
-                />
-                <span className="ml-2 text-sm font-medium text-gray-800">
-                  Uploading...
-                </span>
+              <div className="flex items-center space-x-2 text-sm text-gray-600">
+                <Icon icon="mdi:loading" className="animate-spin" width={20} />
+                <span>Uploading...</span>
               </div>
             )}
-            <input
-              type="file"
-              id="fileInput"
-              hidden
-              onChange={handleAddReference}
-            />
-            <button
-              type="button"
-              className="flex items-center justify-center font-medium h-24 w-14 rounded-md shadow-md"
-              onClick={() => document.getElementById("fileInput").click()}
-            >
-              <Icon
-                icon="mdi:add-bold"
-                className="text-teal-500"
-                height={30}
-                width={30}
+            <div>
+              <input
+                type="file"
+                hidden
+                id="fileInput"
+                onChange={handleAddReference}
               />
-            </button>
+              <button
+                type="button"
+                onClick={() => document.getElementById("fileInput").click()}
+                className="flex items-center gap-2 border px-4 py-2 rounded bg-white hover:bg-gray-100 text-sm"
+              >
+                <Icon icon="mdi:upload" width={18} />
+                Upload
+              </button>
+            </div>
           </div>
-          {errors.referenceFileUrl && (<p className="text-sm text-red-500 mt-1">{errors.referenceFileUrl}</p>)}
+          {errors.referenceFileUrl && (
+            <p className="text-red-500 text-sm mt-2">
+              {errors.referenceFileUrl}
+            </p>
+          )}
         </div>
 
-        <div className="flex justify-end">
+        {/* Submit */}
+        <div className="md:col-span-2 flex justify-end">
           <button
             type="submit"
-            className="bg-teal-400 text-white px-6 py-2 rounded-md mt-4"
+            className="px-6 py-2 bg-teal-600 text-white rounded-md shadow hover:bg-teal-700 transition"
           >
             Submit
           </button>
         </div>
       </form>
 
-      {/* User List Popup */}
+      {/* User List Modal */}
       {showUserList && (
-        <div className="absolute top-0 left-0 right-0 bottom-0 bg-black bg-opacity-50 flex items-center justify-center">
-          <div className="bg-white p-4 rounded-lg w-full md:w-1/3 max-w-lg">
-            <h3 className="font-semibold text-lg mb-2">Select a User</h3>
-            <ul>
+        <div className="fixed inset-0 bg-black bg-opacity-40 flex justify-center items-center z-50">
+          <div className="bg-white rounded-lg p-6 shadow-lg w-full max-w-md">
+            <h3 className="text-lg font-semibold mb-4">Select a User</h3>
+            <ul className="max-h-64 overflow-y-auto space-y-2">
               {users.map((user, index) => (
                 <li
                   key={index}
-                  className="py-2 cursor-pointer hover:bg-gray-100"
+                  className="p-2 rounded cursor-pointer hover:bg-gray-100"
                   onClick={() => handleSelectUser(user)}
                 >
                   {user}
@@ -572,10 +419,10 @@ const AddTasks = () => {
               ))}
             </ul>
             <button
-              className="mt-4 text-red-600"
               onClick={() => setShowUserList(false)}
+              className="mt-4 text-sm text-red-500 hover:underline"
             >
-              Close
+              Cancel
             </button>
           </div>
         </div>
