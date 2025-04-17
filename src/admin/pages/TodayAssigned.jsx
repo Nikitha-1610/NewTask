@@ -29,7 +29,7 @@ const TodayAssigned = () => {
   return (
     <div className="space-y-5">
       <div className="flex items-center justify-between pb-4 border-gray-300">
-      <div className=" flex gap-2">
+        <div className=" flex gap-2">
           <button
             onClick={goBack}
             style={{
@@ -41,11 +41,10 @@ const TodayAssigned = () => {
           >
             <Icon icon="mdi:arrow-left" height={24} width={24} />
           </button>
-        <h2 className="text-xl font-bold bg-red-300 px-2 p-1 rounded-md text-gray-700">
-          AssignedTasks ({sampleTask.length})
-        </h2>
+          <h2 className="text-xl font-bold bg-red-300 px-2 p-1 rounded-md text-gray-700">
+            AssignedTasks ({sampleTask.length})
+          </h2>
         </div>
-        
       </div>
       {sampleTask.map((task) => (
         <TaskDetails key={task.id} task={task} className="gap-6" />
