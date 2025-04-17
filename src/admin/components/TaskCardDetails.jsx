@@ -4,16 +4,14 @@ import axiosInstance from "../../common/utils/axios/axiosInstance";
 import { Icon } from "@iconify/react";
 import ReactLoading from "react-loading";
 
-
 const TaskCardDetails = () => {
+  console.log("TaskCardDetails");
   const { taskId } = useParams();
   const navigate = useNavigate();
   const [taskDetails, setTaskDetails] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [priority, setPriority] = useState("Normal");
- 
- 
 
   useEffect(() => {
     // Fetch task details
@@ -29,21 +27,23 @@ const TaskCardDetails = () => {
         setLoading(false);
       });
   }, [taskId]);
-
+  console.log("taskStatus", taskDetails?.taskStatus);
   const goBack = () => {
-    navigate("/admin/task");
+    if (taskDetails?.taskStatus === "Assigned") {
+      navigate("/admin/NewAssign");
+    } else {
+      // console.log("taskStatus", taskDetails.taskStatus);
+      navigate("/admin/task");
+    }
   };
 
-  
-
-    
-    if (loading) {
-      return (
-        <div className="fixed inset-0 flex justify-center items-center z-50">
-          <ReactLoading type="spin" color="#00bfae" height={50} width={40} />
-        </div>
-      );
-    }
+  if (loading) {
+    return (
+      <div className="fixed inset-0 flex justify-center items-center z-50">
+        <ReactLoading type="spin" color="#00bfae" height={50} width={40} />
+      </div>
+    );
+  }
 
   if (error)
     return <div className="text-center mt-10 text-red-500">{error}</div>;
@@ -171,39 +171,42 @@ const TaskCardDetails = () => {
         </div>
 
         <div className="mt-4">
-  <div className="flex justify-between">
-    <div className="flex gap-2">
-      <Icon icon="cuida:attachment-clip-outline" height={22} width={22} />
-      <h4 className="text-base font-semibold text-gray-400">
-        Attachments ({referenceFileUrl.length})
-      </h4>
-    </div>
-  </div>
-  <div className="flex flex-wrap gap-4 mt-2">
-    {referenceFileUrl.map((url, index) => (
-      <div
-        key={index}
-        className="flex items-center gap-3 p-2 border rounded-md border-gray-300 bg-gray-50 w-full md:w-80"
-      >
-        <Icon
-          icon="mdi:file-pdf"
-          className="text-red-500"
-          height={40}
-          width={40}
-        />
-        <div className="flex">
-          {/* Removed the size text */}
+          <div className="flex justify-between">
+            <div className="flex gap-2">
+              <Icon
+                icon="cuida:attachment-clip-outline"
+                height={22}
+                width={22}
+              />
+              <h4 className="text-base font-semibold text-gray-400">
+                Attachments ({referenceFileUrl.length})
+              </h4>
+            </div>
+          </div>
+          <div className="flex flex-wrap gap-4 mt-2">
+            {referenceFileUrl.map((url, index) => (
+              <div
+                key={index}
+                className="flex items-center gap-3 p-2 border rounded-md border-gray-300 bg-gray-50 w-full md:w-80"
+              >
+                <Icon
+                  icon="mdi:file-pdf"
+                  className="text-red-500"
+                  height={40}
+                  width={40}
+                />
+                <div className="flex">{/* Removed the size text */}</div>
+                <div className="text-blue-600 cursor-pointer">
+                  <a href={url} target="_blank" rel="noopener noreferrer">
+                    <button className="text-blue-600 hover:underline">
+                      View
+                    </button>
+                  </a>
+                </div>
+              </div>
+            ))}
+          </div>
         </div>
-        <div className="text-blue-600 cursor-pointer">
-          <a href={url} target="_blank" rel="noopener noreferrer">
-            <button className="text-blue-600 hover:underline">View</button>
-          </a>
-        </div>
-      </div>
-    ))}
-  </div>
-</div>
-
 
         <div className="mt-4">
           <div className="flex items-center gap-2">
@@ -273,4 +276,3 @@ const TaskCardDetails = () => {
 };
 
 export default TaskCardDetails;
-

@@ -12,6 +12,7 @@ import MainPage from "./pages/MainPage";
 import InProgressTasks from "./pages/InProgressTask";
 import Completed from "./pages/Completed";
 import TodayAssigned from "./pages/TodayAssigned";
+import NewAssign from "./pages/NewAssign";
 import IntestTasks from "./pages/InTest";
 import AssignTasks from "./pages/Assigntask";
 import TaskCardDetails from "./components/TaskCardDetails";
@@ -19,6 +20,8 @@ import ProjectStatus from "./pages/ProjectStatus";
 import EmployeeDetails from "./pages/EmployeeDetails";
 import Calender from "./pages/CalenderAdmin"
 import MonthView from "./pages/MonthAdmin"
+import NewInProgress from "./pages/NewInProgress";
+import NewCompleted from "./pages/NewCompleted";
 
 const adminRoutes = [
   {
@@ -38,10 +41,14 @@ const adminRoutes = [
     path: "task",
     component: DesignTeam,
   },
-  { path: "intest", component: IntestTasks },
+ // { path: "intest", component: IntestTasks },
   { path: "inprogress", component: InProgressTasks },
   { path: "completed", component: Completed },
   { path: "assign", component: TodayAssigned },
+  { path: "NewAssign", component: NewAssign },
+  { path: "NewInProgress", component: NewInProgress },
+  { path: "NewCompleted", component: NewCompleted },
+
   // { path: "assign", component: AssignTasks },
   { path: "task/:taskId", component: TaskCardDetails },
   { path: "addtasks", component: AddTasks },

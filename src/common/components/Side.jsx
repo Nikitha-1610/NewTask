@@ -57,6 +57,22 @@ const Side = ({ isOpen, toggleSidebar, role }) => {
         label: "Tasks",
         icon: "solar:clipboard-check-bold",
       },
+      {
+        path: "/admin/NewAssign",
+        label: "Assigned",
+        icon: "mdi:clipboard-text", // Represents a task being assigned
+      },
+      {
+        path: "/admin/NewInProgress",
+        label: "In Progress",
+        icon: "mdi:progress-clock", // Represents tasks currently being worked on
+      },
+      {
+        path: "/admin/NewCompleted",
+        label: "Completed",
+        icon: "mdi:check-circle-outline", // Represents tasks that are completed
+      },
+      
       { path: "/admin/addtasks", label: "Add Task", icon: "mdi:plus-circle" },
       // { path: "/admin/position", label: "Position", icon: "iconoir:position-align" },
       // { path: "/admin/calender", label: "calender", icon: "bx:calendar-event" },

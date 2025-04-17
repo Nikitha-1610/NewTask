@@ -46,7 +46,6 @@ const TaskDetails = ({ task }) => {
           <div className="flex flex-wrap gap-2">
             {task.assignedTo.map((person, index) => (
               <div key={index} className="flex items-center gap-2">
-                
                 <Icon
                   icon="ph:user-circle-fill"
                   className="text-blue-500  p-0 rounded-full"
@@ -64,7 +63,6 @@ const TaskDetails = ({ task }) => {
           <Icon icon="mdi:user-outline" height={22} width={22} />
           <span className="ml-2">Assigned by:</span>
           <div className="flex items-center gap-2 ml-3">
-            
             <Icon
               icon="mdi:account-circle-outline"
               className="text-blue-500  p-0 rounded-full"
@@ -91,40 +89,40 @@ const TaskDetails = ({ task }) => {
 
       {/* Attachments Section */}
       <div className="mt-4">
-  <div className="flex justify-between">
-    <div className="flex gap-2">
-      <Icon icon="cuida:attachment-clip-outline" height={22} width={22} />
-      <h4 className="text-base font-semibold text-gray-400">
-        Attachments ({task.referenceFileUrl ? task.referenceFileUrl.length : 0})
-      </h4>
-    </div>
-  </div>
-  <div className="flex flex-wrap gap-4 mt-2">
-    {task.referenceFileUrl &&
-      task.referenceFileUrl.map((url, index) => (
-        <div
-          key={index}
-          className="flex items-center gap-3 p-2 border rounded-md border-gray-300 bg-gray-50 w-full md:w-80"
-        >
-          <Icon
-            icon="mdi:file-pdf"
-            className="text-red-500"
-            height={40}
-            width={40}
-          />
-          <div className="flex">
-            {/* Removed the size text */}
-          </div>
-          <div className="text-blue-600 cursor-pointer">
-            <a href={url} target="_blank" rel="noopener noreferrer">
-              <button className="text-blue-600 hover:underline">View</button>
-            </a>
+        <div className="flex justify-between">
+          <div className="flex gap-2">
+            <Icon icon="cuida:attachment-clip-outline" height={22} width={22} />
+            <h4 className="text-base font-semibold text-gray-400">
+              Attachments (
+              {task.referenceFileUrl ? task.referenceFileUrl.length : 0})
+            </h4>
           </div>
         </div>
-      ))}
-  </div>
-</div>
-
+        <div className="flex flex-wrap gap-4 mt-2">
+          {task.referenceFileUrl &&
+            task.referenceFileUrl.map((url, index) => (
+              <div
+                key={index}
+                className="flex items-center gap-3 p-2 border rounded-md border-gray-300 bg-gray-50 w-full md:w-80"
+              >
+                <Icon
+                  icon="mdi:file-pdf"
+                  className="text-red-500"
+                  height={40}
+                  width={40}
+                />
+                <div className="flex">{/* Removed the size text */}</div>
+                <div className="text-blue-600 cursor-pointer">
+                  <a href={url} target="_blank" rel="noopener noreferrer">
+                    <button className="text-blue-600 hover:underline">
+                      View
+                    </button>
+                  </a>
+                </div>
+              </div>
+            ))}
+        </div>
+      </div>
 
       {/* Comments Section */}
       <div className="mt-4">
@@ -140,7 +138,6 @@ const TaskDetails = ({ task }) => {
               key={index}
               className="flex items-center gap-2 p-2 text-sm text-gray-700 bg-blue-100 border border-gray-300 rounded-md"
             >
-              
               <div className=" font-bold text-teal-300 text-base">
                 {comment.userName}:
               </div>
@@ -164,7 +161,7 @@ const TaskDetails = ({ task }) => {
         {["Low", "Normal", "Urgent"].map((currentPriority) => (
           <button
             key={currentPriority}
-            onClick={() => setPriority(currentPriority)} 
+            onClick={() => setPriority(currentPriority)}
             className={`px-3 py-1 flex items-center gap-1 text-xs font-medium rounded-md transition duration-200 ${
               currentPriority === priority
                 ? "ring-2 ring-offset-2 ring-blue-500"
