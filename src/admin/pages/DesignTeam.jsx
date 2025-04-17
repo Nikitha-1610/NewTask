@@ -2,34 +2,17 @@ import { useState, useEffect } from "react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
   faCalendarAlt,
+  faSliders,
   faPlus,
+  faChevronDown,
+  faChevronUp,
   faComment,
   faLink,
 } from "@fortawesome/free-solid-svg-icons";
 import axiosInstance from "../../common/utils/axios/axiosInstance";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, Link } from "react-router-dom";
 import ReactLoading from "react-loading";
-import { AnimatePresence } from "framer-motion";
-
-const DateDisplay = ({ isoDate }) => {
-  if (!isoDate) return "No Date";
-  const date = new Date(isoDate);
-  const options = { month: "long", day: "numeric" };
-  return new Intl.DateTimeFormat("en-US", options).format(date);
-};
-
-const generateRandomColor = () => {
-  const colors = [
-    "bg-green-200",
-    "bg-blue-200",
-    "bg-yellow-200",
-    "bg-red-200",
-    "bg-teal-200",
-    "bg-purple-200",
-    "bg-pink-200",
-  ];
-  return colors[Math.floor(Math.random() * colors.length)];
-};
+import { useDrag, useDrop } from "react-dnd";
 
 const Board = () => {
   const [taskData, setTaskData] = useState({
@@ -37,14 +20,19 @@ const Board = () => {
     completedTasks: [],
     assignedTasks: [],
   });
-  const [filterDate, setFilterDate] = useState('');
-  const [filterYear, setFilterYear] = useState('');
-  const [filterSection, setFilterSection] = useState('');
-  const [filterStatus, setFilterStatus] = useState('');
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const navigate = useNavigate();
   const employeeName = localStorage.getItem('name');
+
+  const [selectedDate, setSelectedDate] = useState('');
+  const [selectedYear, setSelectedYear] = useState('');
+  const [selectedSection, setSelectedSection] = useState('');
+  const [selectedStatus, setSelectedStatus] = useState('');
+
+  const years = ["I", "II", "III", "IV"];
+  const sections = ["A", "B", "C", "D"];
+  const statuses = ["Assigned", "In Progress", "Completed"];
 
   useEffect(() => {
     setLoading(true);
@@ -76,43 +64,86 @@ const Board = () => {
     navigate('/admin/addtasks');
   };
 
-  const filteredTasks = (tasks) => {
-    return tasks.filter(task => {
-      const matchDate = !filterDate || (task.deadline && new Date(task.deadline) <= new Date(filterDate));
-      const matchYear = !filterYear || (task.year === filterYear);
-      const matchSection = !filterSection || (task.section === filterSection);
-      const matchStatus = !filterStatus || (task.taskStatus === filterStatus);
-      return matchDate && matchYear && matchSection && matchStatus;
-    });
+  const generateRandomColor = () => {
+    const colors = [
+      "bg-green-200",
+      "bg-blue-200",
+      "bg-yellow-200",
+      "bg-red-200",
+      "bg-teal-200",
+      "bg-purple-200",
+      "bg-pink-200",
+    ];
+    return colors[Math.floor(Math.random() * colors.length)];
   };
 
-  const columns = [
-    {
-      title: "ASSIGNED TASKS",
-      color: "green",
-      tasks: filteredTasks(taskData.assignedTasks),
-      path: "assign",
-      status: "Assigned",
-    },
-    {
-      title: "IN PROGRESS",
-      color: "yellow",
-      tasks: filteredTasks(taskData.inProgressTasks),
-      path: "inprogress",
-      status: "In-Progress",
-    },
-    {
-      title: "COMPLETED",
-      color: "teal",
-      tasks: filteredTasks(taskData.completedTasks),
-      path: "completed",
-      status: "Completed",
-    },
-  ];
+  const DateDisplay = ({ isoDate }) => {
+    if (!isoDate) return "No Date";
 
-  const TaskCard = ({ task }) => {
+    const date = new Date(isoDate);
+    const options = { month: "long", day: "numeric" };
+    return new Intl.DateTimeFormat("en-US", options).format(date);
+  };
+
+  const columnMapping = {
+    "ASSIGNED TASKS": "assignedTasks",
+    "IN PROGRESS": "inProgressTasks",
+    "COMPLETED": "completedTasks",
+  };
+
+  const titleToStatusMap = {
+    "ASSIGNED TASKS": "Assigned",
+    "IN PROGRESS": "In-Progress",
+    "COMPLETED": "Completed",
+  };
+
+  const moveTask = (draggedTask, targetColumnTitle) => {
+    const targetColumn = columnMapping[targetColumnTitle];
+    if (!targetColumn) {
+      console.error(`Target column "${targetColumnTitle}" does not exist.`);
+      return;
+    }
+
+    const updatedTaskData = { ...taskData };
+    Object.keys(updatedTaskData).forEach((columnKey) => {
+      updatedTaskData[columnKey] = updatedTaskData[columnKey].filter(
+        (task) => task.taskId !== draggedTask.taskId
+      );
+    });
+    updatedTaskData[targetColumn].push(draggedTask);
+    setTaskData(updatedTaskData);
+
+    const newTaskStatus = titleToStatusMap[targetColumnTitle];
+    if (!newTaskStatus) {
+      console.error(`No matching status found for column title: "${targetColumnTitle}"`);
+      return;
+    }
+
+    axiosInstance
+      .put(`task/updateTask/${draggedTask.taskId}`, { taskStatus: newTaskStatus })
+      .then((response) => {
+        console.log("Task status updated successfully:", response.data);
+      })
+      .catch((error) => {
+        console.error("Error updating task status:", error);
+      });
+  };
+
+  const TaskCard = ({ task, columnId }) => {
+    const [{ isDragging }, drag] = useDrag(() => ({
+      type: "TASK",
+      item: { task, columnId },
+      collect: (monitor) => ({
+        isDragging: monitor.isDragging(),
+      }),
+    }));
+
     return (
-      <div className="block bg-white shadow-lg rounded-lg p-4 mb-4 relative border border-gray-300 hover:shadow-xl transition-all cursor-pointer">
+      <Link
+        ref={drag}
+        to={`${task.taskId}`}
+        className={`block bg-white shadow rounded-lg p-4 mb-4 relative border border-gray-400 w-full ${isDragging ? 'opacity-50' : ''}`}
+      >
         <div className="absolute top-2 right-2">
           {task.taskStatus === "Completed" ? (
             <div className="flex items-center text-green-500 text-xs font-bold">
@@ -133,59 +164,113 @@ const Board = () => {
             {task.taskName}
           </span>
         )}
-        <div className="flex flex-col justify-between">
-          <div className="text-sm text-black-100">
-            {task.taskDescription || "No description available."}
-          </div>
-          <div className="flex items-center text-sm text-gray-600 mt-2 space-x-4">
-            <div className="flex items-center">
-              <FontAwesomeIcon icon={faComment} className="mr-1" />
-              {task.comment?.length || 0}
+        <div className="flex justify-between">
+          <div>
+            <div className="text-sm text-black-100">
+              {task.taskDescription || "No description available."}
             </div>
-            <div className="flex items-center">
-              <FontAwesomeIcon icon={faLink} className="mr-1" />
-              {task.referenceFileUrl?.length || 0}
+            <div className="flex items-center text-sm text-gray-600 mt-2 space-x-4">
+              <div className="flex items-center">
+                <FontAwesomeIcon icon={faComment} className="mr-1" />
+                {task.comment?.length || 0}
+              </div>
+              <div className="flex items-center">
+                <FontAwesomeIcon icon={faLink} className="mr-1 text-black-500" />
+                {task.referenceFileUrl?.length || 0}
+              </div>
             </div>
           </div>
         </div>
-      </div>
+      </Link>
     );
   };
 
   const Column = ({ column }) => {
+    const [{ canDrop, isOver }, drop] = useDrop(() => ({
+      accept: "TASK",
+      drop: (item) => moveTask(item.task, column.title),
+      collect: (monitor) => ({
+        isOver: monitor.isOver(),
+        canDrop: monitor.canDrop(),
+      }),
+    }));
+
+    const [showTasks, setShowTasks] = useState(true);
+
+    const handleTitleClick = () => {
+      axiosInstance
+        .post("task/getTaskByStatus", { status: column.status, assignedBy: employeeName })
+        .then((response) => {
+          navigate(`/admin/${column.path}`, { state: response.data.message || [] });
+        })
+        .catch((error) => {
+          console.error("Error making POST request:", error);
+        });
+    };
+
+    const toggleShowTasks = () => setShowTasks((prev) => !prev);
+
+    const filteredTasks = column.tasks.filter((task) => {
+      const matchesDate = selectedDate ? task.deadline?.startsWith(selectedDate) : true;
+      const matchesYear = selectedYear ? task.year === selectedYear : true;
+      const matchesSection = selectedSection ? task.section === selectedSection : true;
+      const matchesStatus = selectedStatus ? task.taskStatus === selectedStatus : true;
+      return matchesDate && matchesYear && matchesSection && matchesStatus;
+    });
+
     return (
-      <div className="flex-1 w-full sm:w-full md:w-full lg:w-1/3 p-4">
-        <div className="flex items-center justify-between border-b-2 pb-2 mb-4">
-          <h2 className={`font-semibold text-lg text-${column.color}-600`}>
+      <div ref={drop} className="flex-2 w-full sm:w-full md:w-full lg:basis-1/3 lg:max-w-lg">
+        <div className="flex items-center justify-between border-b-2 pb-2">
+          <button
+            onClick={handleTitleClick}
+            className={`font-semibold p-2 ${column.color}-600 flex-grow text-left`}
+          >
             {column.title}
-          </h2>
+          </button>
           <span className="flex items-center justify-center w-6 h-6 bg-gray-200 text-xs rounded-full">
-            {column.tasks.length}
+            {filteredTasks.length}
           </span>
+          <div className="block lg:hidden ml-2">
+            <button onClick={toggleShowTasks}>
+              <FontAwesomeIcon icon={showTasks ? faChevronUp : faChevronDown} />
+            </button>
+          </div>
         </div>
-        <div>
-          {column.tasks.length > 0 ? (
-            column.tasks.map((task, index) => (
-              <TaskCard key={index} task={task} />
-            ))
-          ) : (
-            <div className="text-center text-gray-400 mt-4 text-sm">
-              No tasks found.
-            </div>
-          )}
-        </div>
+
+        {showTasks && (
+          <div className="mt-4">
+            {filteredTasks.map((task, taskIndex) => (
+              <TaskCard key={taskIndex} task={task} columnId={column.status} />
+            ))}
+          </div>
+        )}
       </div>
     );
   };
 
-  const getTotalFilteredTaskCount = () => {
-    const allFilteredTasks = [
-      ...filteredTasks(taskData.assignedTasks),
-      ...filteredTasks(taskData.inProgressTasks),
-      ...filteredTasks(taskData.completedTasks),
-    ];
-    return allFilteredTasks.length;
-  };
+  const columns = [
+    {
+      title: "ASSIGNED TASKS",
+      color: "green",
+      tasks: taskData.assignedTasks,
+      path: "assign",
+      status: "Assigned",
+    },
+    {
+      title: "IN PROGRESS",
+      color: "yellow",
+      tasks: taskData.inProgressTasks,
+      path: "inprogress",
+      status: "In-Progress",
+    },
+    {
+      title: "COMPLETED",
+      color: "teal",
+      tasks: taskData.completedTasks,
+      path: "completed",
+      status: "Completed",
+    },
+  ];
 
   if (loading) {
     return (
@@ -204,101 +289,88 @@ const Board = () => {
   }
 
   return (
-    <div className="p-4 min-h-screen bg-gray-50">
+    <div style={{ backgroundColor: "#F9FAFB" }} className="p-2 min-h-screen">
       {/* Header */}
-      <div className="flex flex-col md:flex-row md:justify-between md:items-center mb-6 space-y-4 md:space-y-0">
-        <button
-          onClick={handleAddTask}
-          className="flex items-center px-6 py-3 bg-teal-500 text-white font-bold rounded-2xl hover:bg-teal-600 cursor-pointer transition"
-        >
-          <FontAwesomeIcon icon={faPlus} className="mr-2" />
-          Add a task
-        </button>
+      <div className="p-2">
+        <div className="flex flex-col sm:flex-row justify-between items-center mb-6 space-y-4 sm:space-y-0 md:space-y-0 ml-5 mt-2">
+          <h1 className="text-2xl font-bold text-gray-700 bg-teal-100 rounded-lg w-60 h-9 text-center">
+            TASKS
+          </h1>
 
-        {/* Filters */}
-        <div className="flex flex-wrap gap-4 items-center justify-between md:justify-start">
-          <div className="flex items-center space-x-2">
-            <label htmlFor="dateFilter" className="text-sm font-semibold">
-              Date:
-            </label>
+          {/* Filters and Add Button */}
+          <div className="flex flex-wrap items-center space-x-2 sm:space-x-4 md:space-x-6">
+
             <input
               type="date"
-              id="dateFilter"
-              value={filterDate}
-              onChange={(e) => setFilterDate(e.target.value)}
-              className="border border-gray-300 rounded px-3 py-2"
+              value={selectedDate}
+              onChange={(e) => setSelectedDate(e.target.value)}
+              className="border rounded-lg px-2 py-1 text-sm"
             />
-          </div>
 
-          <div className="flex items-center space-x-2">
-            <label className="text-sm font-semibold">Year:</label>
             <select
-              value={filterYear}
-              onChange={(e) => setFilterYear(e.target.value)}
-              className="border border-gray-300 rounded px-3 py-2"
+              value={selectedYear}
+              onChange={(e) => setSelectedYear(e.target.value)}
+              className="border rounded-lg px-2 py-1 text-sm"
             >
-              <option value="">All</option>
-              <option value="I">I</option>
-              <option value="II">II</option>
-              <option value="III">III</option>
-              <option value="IV">IV</option>
+              <option value="">Year</option>
+              {years.map((year) => (
+                <option key={year} value={year}>{year}</option>
+              ))}
             </select>
-          </div>
 
-          <div className="flex items-center space-x-2">
-            <label className="text-sm font-semibold">Section:</label>
             <select
-              value={filterSection}
-              onChange={(e) => setFilterSection(e.target.value)}
-              className="border border-gray-300 rounded px-3 py-2"
+              value={selectedSection}
+              onChange={(e) => setSelectedSection(e.target.value)}
+              className="border rounded-lg px-2 py-1 text-sm"
             >
-              <option value="">All</option>
-              <option value="A">A</option>
-              <option value="B">B</option>
-              <option value="C">C</option>
-              <option value="D">D</option>
+              <option value="">Section</option>
+              {sections.map((section) => (
+                <option key={section} value={section}>{section}</option>
+              ))}
             </select>
-          </div>
 
-          <div className="flex items-center space-x-2">
-            <label className="text-sm font-semibold">Status:</label>
             <select
-              value={filterStatus}
-              onChange={(e) => setFilterStatus(e.target.value)}
-              className="border border-gray-300 rounded px-3 py-2"
+              value={selectedStatus}
+              onChange={(e) => setSelectedStatus(e.target.value)}
+              className="border rounded-lg px-2 py-1 text-sm"
             >
-              <option value="">All</option>
-              <option value="Assigned">Assigned</option>
-              <option value="In-Progress">In Progress</option>
-              <option value="Completed">Completed</option>
+              <option value="">Status</option>
+              {statuses.map((status) => (
+                <option key={status} value={status}>{status}</option>
+              ))}
             </select>
-          </div>
 
-          {(filterDate || filterYear || filterSection || filterStatus) && (
+            {/* Clear Filters button */}
+            {(selectedDate || selectedYear || selectedSection || selectedStatus) && (
+              <button
+                onClick={() => {
+                  setSelectedDate('');
+                  setSelectedYear('');
+                  setSelectedSection('');
+                  setSelectedStatus('');
+                }}
+                className="flex items-center px-3 py-2 bg-red-400 text-white font-semibold rounded-2xl hover:bg-red-500 text-xs"
+              >
+                Clear Filters
+              </button>
+            )}
+
             <button
-              onClick={() => {
-                setFilterDate('');
-                setFilterYear('');
-                setFilterSection('');
-                setFilterStatus('');
-              }}
-              className="px-3 py-2 bg-red-400 text-white rounded cursor-pointer transition"
+              onClick={handleAddTask}
+              className="flex items-center px-4 py-2 bg-teal-500 text-white font-bold rounded-2xl hover:bg-green-600"
             >
-              Clear
+              <FontAwesomeIcon icon={faPlus} className="mr-2" />
+              Add a task
             </button>
-          )}
+
+          </div>
         </div>
       </div>
 
-      {/* Display filtered task count */}
-      <div className="mb-6 text-lg text-gray-700">
-        <strong>Showing {getTotalFilteredTaskCount()} tasks</strong>
-      </div>
-
       {/* Columns */}
-      <div className="flex flex-col sm:flex-row md:flex-row lg:flex-row gap-6">
-        {columns.map((column, index) => (
-          <Column key={index} column={column} />
+      <div className="flex flex-col md:flex-col lg:flex-row space-y-4 lg:space-y-0 lg:space-x-4">
+        {columns.map((column, colIndex) => (
+          <Column key={colIndex} column={column} />
         ))}
       </div>
     </div>

@@ -108,7 +108,6 @@ const UserTaskCardDetails = () => {
       </button>
 
       <h3 className="mt-4 text-2xl font-semibold">{taskName}</h3>
-
       
       {successMessage && (
         <div className="mt-4 p-4 bg-green-100 text-green-800 rounded-md">
