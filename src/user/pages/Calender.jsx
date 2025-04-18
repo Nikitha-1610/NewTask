@@ -46,51 +46,68 @@ const Calendar = () => {
   };
 
   useEffect(() => {
-    const fetchAllEvents = async () => {
-      try {
-        const eventsData = await getEventsByMonth(selectedYear, selectedMonth + 1);
-  
-        if (!eventsData || !Array.isArray(eventsData.message)) {
-          console.error("Unexpected API response format:", eventsData);
-          return;
-        }
-  
-        const allEvents = eventsData.message.reduce((acc, event) => {
-          if (event.eventDate) {
-            const eventDate = new Date(event.eventDate);
-            const day = eventDate.getDate(); // Extract the day of the month
-  
-            if (!acc[day]) acc[day] = [];
-  
-            let formattedText = event.eventName;
-  
-            if (event.eventType?.toLowerCase() === "meeting" && event.eventTime) {
-              const formattedTime = new Date(`2000-01-01T${event.eventTime}`).toLocaleTimeString([], {
-                hour: "numeric",
-                minute: "2-digit",
-                hour12: true
-              });
-              formattedText = `${event.eventName} - ${formattedTime}`;
+     const fetchAllEvents = async () => {
+          try {
+            const eventsData = await getEventsByMonth(selectedYear, selectedMonth + 1);
+        
+            if (!eventsData || !Array.isArray(eventsData.message)) {
+              console.error("Unexpected API response format:", eventsData);
+              return;
             }
-  
-            acc[day].push({
-              id: event.id,
-              text: formattedText,
-              eventType: event.eventType?.toLowerCase(), // ✅ Store eventType correctly
-              eventTime: event.eventTime,
-              leave: event.eventType?.toLowerCase() === "holiday"
-            });
+        
+            const allEvents = eventsData.message.reduce((acc, event) => {
+              if (event.eventDate) {
+                const eventDate = new Date(event.eventDate);
+                const day = eventDate.getDate(); // Extract the day of the month
+        
+                if (!acc[day]) acc[day] = [];
+        
+                let formattedText = event.eventName;
+        
+                if (event.eventType?.toLowerCase() === "meeting" && event.eventTime) {
+                  let formattedTime = "";
+        
+                  // Handle time formatting based on eventTime presence
+                  if (event.eventTime && typeof event.eventTime === "string" && event.eventTime.trim() !== "") {
+                    try {
+                      // If it's in 24-hour format or without AM/PM, convert to 12-hour format
+                      if (!event.eventTime.includes("AM") && !event.eventTime.includes("PM")) {
+                        formattedTime = new Date(`2000-01-01T${event.eventTime}`).toLocaleTimeString([], {
+                          hour: "numeric",
+                          minute: "2-digit",
+                          hour12: true,
+                        });
+                      } else {
+                        formattedTime = event.eventTime; // Preserve AM/PM if already formatted
+                      }
+                    } catch (error) {
+                      console.error("Invalid event time format:", event.eventTime);
+                    }
+                  }
+        
+                  if (formattedTime) {
+                    formattedText = `${event.eventName} - ${formattedTime}`;
+                  }
+                }
+        
+                acc[day].push({
+                  id: event.id,
+                  text: formattedText,
+                  eventType: event.eventType?.toLowerCase(),
+                  eventTime: event.eventTime,
+                  leave: event.eventType?.toLowerCase() === "holiday",
+                });
+              }
+              return acc;
+            }, {});
+        
+            setEvents(allEvents);
+            setMiniCalendarEvents(allEvents);
+        
+          } catch (error) {
+            console.error("Error fetching events for the month:", error);
           }
-          return acc;
-        }, {});
-  
-        setEvents(allEvents);
-        setMiniCalendarEvents(allEvents); // ✅ Ensure eventType is stored in miniCalendarEvents
-  
-      } catch (error) {
-        console.error("Error fetching events for the month:", error);
-      }
-    };
+        };
     fetchAllEvents();
   }, [selectedYear, selectedMonth]);
   

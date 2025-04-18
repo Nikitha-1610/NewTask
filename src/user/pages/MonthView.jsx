@@ -24,8 +24,8 @@ const MonthView = () => {
 const getDaysInMonth = (year, month) => new Date(year, month + 1, 0).getDate();
   const startDay = (new Date(selectedYear, selectedMonth, 1).getDay() || 7) - 1;
 const daysInMonth = getDaysInMonth(selectedYear, selectedMonth);
-const miniStartDay = (new Date(currentYear, currentMonth, 1).getDay() || 7) - 1;
-const miniDaysInMonth = getDaysInMonth(currentYear, currentMonth);
+const miniStartDay = (new Date(selectedYear, selectedMonth, 1).getDay() || 7) - 1;
+const miniDaysInMonth = getDaysInMonth(selectedYear, selectedMonth);
 const miniDaysArray = Array.from({ length: miniDaysInMonth }, (_, i) => i + 1);
 const daysArray = Array.from({ length: daysInMonth }, (_, i) => i + 1);
 const formatDate = (year, month, day) => `${year}-${String(month + 1).padStart(2, "0")}-${String(day).padStart(2, "0")}`;
@@ -122,9 +122,7 @@ const formatDate = (year, month, day) => `${year}-${String(month + 1).padStart(2
          console.error("Error fetching mini calendar events:", error);
        }
    };
-   useEffect(() => {
-     fetchMiniCalendarEvents();
-   }, [currentYear, currentMonth]);
+  
   
 return (
     <div className="flex lg:h-screen  lg:p-4 bg-gray-100">
@@ -134,8 +132,9 @@ return (
           onClick={() => navigate(-1)}
           className="bg-gray-200 px-2 py-1 rounded-lg text-teal-600 hover:bg-teal-300 text-sm mb-3"
         > ⬅</button>
-        <h1 className="text-xl md:text-3xl font-bold">{currentYear}</h1>
-        <h2 className="mt-4 text-lg font-bold">{months[currentMonth]}</h2>
+        <h1 className="text-xl md:text-3xl font-bold">{selectedYear}</h1>
+<h2 className="mt-4 text-lg font-bold">{months[selectedMonth]}</h2>
+
         {/* Days of the week */}
         <div className="grid grid-cols-7 gap-1 text-gray-700 text-xs mt-2">
           {daysOfWeek.map((d, index) => (
@@ -148,14 +147,14 @@ return (
           ))}
           {/* Calendar Days */}
           {miniDaysArray.map(day => {
-            const isSunday = new Date(currentYear, currentMonth, day).getDay() === 0;
-            const hasEvents = miniCalendarEvents[day] && miniCalendarEvents[day].length > 0;
+const isSunday = new Date(selectedYear, selectedMonth, day).getDay() === 0;
+const hasEvents = miniCalendarEvents[day] && miniCalendarEvents[day].length > 0;
             const isHoliday = hasEvents && miniCalendarEvents[day].some(event => event.leave);
             return (
               <button
               key={day}
               className={`w-6 h-6 flex items-center justify-center rounded-full text-xs 
-                ${day === currentDate ? "bg-teal-500 text-white" : ""} 
+                ${day === currentDate && selectedMonth === currentMonth && selectedYear === currentYear ? "bg-teal-500 text-white" : ""}
                 ${isHoliday ? "bg-red-400 text-white" : ""}  /* ✅ Prioritize holiday */
                 ${hasEvents && !isHoliday ? "bg-blue-500 text-white" : ""}  /* ✅ Meeting only if no holiday */
                 ${isSunday ? "text-red-500 font-bold" : ""}`}
