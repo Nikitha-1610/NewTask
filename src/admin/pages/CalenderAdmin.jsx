@@ -50,49 +50,67 @@ const Calendar = () => {
     const fetchAllEvents = async () => {
       try {
         const eventsData = await getEventsByMonth(selectedYear, selectedMonth + 1);
-  
+    
         if (!eventsData || !Array.isArray(eventsData.message)) {
           console.error("Unexpected API response format:", eventsData);
           return;
         }
-  
+    
         const allEvents = eventsData.message.reduce((acc, event) => {
           if (event.eventDate) {
             const eventDate = new Date(event.eventDate);
             const day = eventDate.getDate(); // Extract the day of the month
-  
+    
             if (!acc[day]) acc[day] = [];
-  
+    
             let formattedText = event.eventName;
-  
+    
             if (event.eventType?.toLowerCase() === "meeting" && event.eventTime) {
-              const formattedTime = new Date(`2000-01-01T${event.eventTime}`).toLocaleTimeString([], {
-                hour: "numeric",
-                minute: "2-digit",
-                hour12: true
-              });
-  
-              formattedText = `${event.eventName} - ${formattedTime}`;
+              let formattedTime = "";
+    
+              // Handle time formatting based on eventTime presence
+              if (event.eventTime && typeof event.eventTime === "string" && event.eventTime.trim() !== "") {
+                try {
+                  // If it's in 24-hour format or without AM/PM, convert to 12-hour format
+                  if (!event.eventTime.includes("AM") && !event.eventTime.includes("PM")) {
+                    formattedTime = new Date(`2000-01-01T${event.eventTime}`).toLocaleTimeString([], {
+                      hour: "numeric",
+                      minute: "2-digit",
+                      hour12: true,
+                    });
+                  } else {
+                    formattedTime = event.eventTime; // Preserve AM/PM if already formatted
+                  }
+                } catch (error) {
+                  console.error("Invalid event time format:", event.eventTime);
+                }
+              }
+    
+              if (formattedTime) {
+                formattedText = `${event.eventName} - ${formattedTime}`;
+              }
             }
-  
+    
             acc[day].push({
               id: event.id,
               text: formattedText,
-              eventType: event.eventType?.toLowerCase(),  // ✅ Store eventType explicitly
+              eventType: event.eventType?.toLowerCase(),
               eventTime: event.eventTime,
-              leave: event.eventType?.toLowerCase() === "holiday"
+              leave: event.eventType?.toLowerCase() === "holiday",
             });
           }
           return acc;
         }, {});
-  
+    
         setEvents(allEvents);
-        setMiniCalendarEvents(allEvents); 
-  
+        setMiniCalendarEvents(allEvents);
+    
       } catch (error) {
         console.error("Error fetching events for the month:", error);
       }
     };
+    
+    
     fetchAllEvents();
   }, [selectedYear, selectedMonth]);
   
@@ -140,51 +158,52 @@ const Calendar = () => {
         </div>
         {/* Mini Calendar Events Section */}
         <div className="mt-4">
-  <h3 className="text-md font-bold mb-1">Events for {months[selectedMonth]}</h3>
+  <h3 className="text-md font-bold mb-1">Events for {months[selectedMonth]} </h3>
 
   {/* Meetings Section */}
-  {Object.keys(miniCalendarEvents).some(day => 
-    miniCalendarEvents[day].some(event => event.eventType === "meeting")
-  ) ? (
-    <div className="mb-2">
-      <h4 className="text-blue-600 font-semibold">Meetings</h4>
-      <ul className="text-sm bg-gray-200 p-2 rounded">
-        {Object.entries(miniCalendarEvents).map(([day, events]) =>
-          events
-            .filter(event => event.eventType === "meeting")  // ✅ Corrected filtering logic
-            .map(event => (
-              <li key={event.id} className="border-b py-1">
-                • {day} - {event.text}
-              </li>
-            ))
-        )}
-      </ul>
-    </div>
-  ) : (
-    <p className="text-gray-500 text-sm">No meetings this month.</p>
-  )}
+{Object.keys(miniCalendarEvents).some(day => 
+  miniCalendarEvents[day].some(event => event.eventType === "meeting")
+) ? (
+  <div className="mb-2">
+    <h4 className="text-blue-600 font-semibold">Meetings</h4>
+    <ul className="text-sm bg-gray-200 p-2 rounded">
+      {Object.entries(miniCalendarEvents).map(([day, events]) =>
+        events
+          .filter(event => event.eventType === "meeting")  // ✅ Corrected filtering logic
+          .map(event => (
+            <li key={event.id} className="border-b py-1">
+              • {day} - {event.text} {/* Here event.text already includes the formatted time */}
+            </li>
+          ))
+      )}
+    </ul>
+  </div>
+) : (
+  <p className="text-gray-500 text-sm">No meetings this month.</p>
+)}
 
-  {/* Holidays Section */}
-  {Object.keys(miniCalendarEvents).some(day => 
-    miniCalendarEvents[day].some(event => event.leave)
-  ) ? (
-    <div>
-      <h4 className="text-red-600 font-semibold">Holidays</h4>
-      <ul className="text-sm bg-gray-200 p-2 rounded">
-        {Object.entries(miniCalendarEvents).map(([day, events]) =>
-          events
-            .filter(event => event.leave)  
-            .map(event => (
-              <li key={event.id} className="border-b py-1">
-                • {day} - {event.text}
-              </li>
-            ))
-        )}
-      </ul>
-    </div>
-  ) : (
-    <p className="text-gray-500 text-sm">No holidays this month.</p>
-  )}
+{/* Holidays Section */}
+{Object.keys(miniCalendarEvents).some(day => 
+  miniCalendarEvents[day].some(event => event.leave)
+) ? (
+  <div>
+    <h4 className="text-red-600 font-semibold">Holidays</h4>
+    <ul className="text-sm bg-gray-200 p-2 rounded">
+      {Object.entries(miniCalendarEvents).map(([day, events]) =>
+        events
+          .filter(event => event.leave)  
+          .map(event => (
+            <li key={event.id} className="border-b py-1">
+              • {day} - {event.text} {/* Here event.text includes holiday info */}
+            </li>
+          ))
+      )}
+    </ul>
+  </div>
+) : (
+  <p className="text-gray-500 text-sm">No holidays this month.</p>
+)}
+
 </div>
 </div>
 

@@ -103,7 +103,7 @@ const MonthView = () => {
 
   const fetchMiniCalendarEvents = async () => {
     try {
-      const eventsData = await getEventsByMonth(currentYear, currentMonth + 1);
+      const eventsData = await getEventsByMonth(selectedYear, selectedMonth + 1);  // Use selectedMonth instead of currentMonth
       
       if (!eventsData || !Array.isArray(eventsData.message)) {
         console.error("Unexpected API response for mini calendar:", eventsData);
@@ -121,7 +121,7 @@ const MonthView = () => {
   
           let formattedText = event.eventName;
           let formattedTime = "";
-  
+    
           if (event.eventTime && typeof event.eventTime === "string" && event.eventTime.trim() !== "") {
             try {
               if (!event.eventTime.includes("AM") && !event.eventTime.includes("PM")) {
@@ -143,6 +143,7 @@ const MonthView = () => {
             formattedText += ` - ${formattedTime}`;
           }
   
+          allEvents[day] = allEvents[day] || [];
           allEvents[day].push({
             id: event.id,
             text: formattedText,
@@ -152,13 +153,24 @@ const MonthView = () => {
         }
       });
   
-      // ✅ Ensure React detects changes
-      setMiniCalendarEvents({ ...allEvents });
-  
+      setMiniCalendarEvents(allEvents); // Update the mini calendar with fetched events for the selected month
+    
     } catch (error) {
       console.error("Error fetching mini calendar events:", error);
     }
   };
+  useEffect(() => {
+    fetchMiniCalendarEvents();
+  }, [selectedYear, selectedMonth]);  // Add selectedMonth to trigger a re-fetch when the month changes
+    
+  useEffect(() => {
+    const fetchDebounced = setTimeout(() => {
+      fetchMiniCalendarEvents();
+    }, 500);  // Add delay (in ms) to avoid rapid successive API calls
+    return () => clearTimeout(fetchDebounced);
+  }, [selectedYear, selectedMonth]);
+
+  
   
 
   const handleAddOrUpdateEvent = async () => {
@@ -283,8 +295,10 @@ const MonthView = () => {
           acc[day].push({
             id: event.id,
             text: fetchedTime ? `${event.eventName} - ${fetchedTime}` : event.eventName,
+            eventType: event.eventType?.toLowerCase(), // ✅ Include this
             leave: event.eventType?.toLowerCase() === "holiday"
           });
+          
         }
         
         return acc;
@@ -332,7 +346,7 @@ const MonthView = () => {
           className="bg-gray-200 px-2 py-1 rounded-lg text-teal-600 hover:bg-teal-300 text-sm mb-3"
         > ⬅</button>
         <h1 className="text-xl md:text-3xl font-bold">{currentYear}</h1>
-        <h2 className="mt-4 text-lg font-bold">{months[currentMonth]}</h2>
+        <h2 className="mt-4 text-lg font-bold">{months[selectedMonth]}</h2>
         {/* Days of the week */}
         <div className="grid grid-cols-7 gap-1 text-gray-700 text-xs mt-2">
           {daysOfWeek.map((d, index) => (
@@ -345,8 +359,8 @@ const MonthView = () => {
           ))}
           {/* Calendar Days */}
           {miniDaysArray.map(day => {
-            const isSunday = new Date(currentYear, currentMonth, day).getDay() === 0;
-            const hasEvents = miniCalendarEvents[day] && miniCalendarEvents[day].length > 0;
+const isSunday = new Date(currentYear, selectedMonth, day).getDay() === 0;
+const hasEvents = miniCalendarEvents[day] && miniCalendarEvents[day].length > 0;
             const isHoliday = hasEvents && miniCalendarEvents[day].some(event => event.leave);
             return (
               <button
@@ -369,25 +383,31 @@ const MonthView = () => {
   <h3 className="text-md font-bold mb-1">Events for {months[selectedMonth]}</h3>
 
   {/* Meetings Section */}
-  {/* Meetings Section */}
-{miniCalendarEvents && Object.keys(miniCalendarEvents).length > 0 &&
+{miniCalendarEvents && Object.keys(miniCalendarEvents).length > 0 && 
   Object.keys(miniCalendarEvents).some(day =>
     miniCalendarEvents[day].some(event => event.eventType === "meeting")
   ) ? (
-  <div className="mb-2">
-    <h4 className="text-blue-600 font-semibold">Meetings</h4>
-    <ul className="text-sm bg-gray-200 p-2 rounded">
-      {Object.entries(miniCalendarEvents).flatMap(([day, events]) =>
-        events
-          .filter(event => event.eventType === "meeting")
-          .map(event => (
-            <li key={`${day}-${event.id}`} className="border-b py-1">
-              • {day} - {event.text}
-            </li>
-          ))
-      )}
-    </ul>
-  </div>
+    <div className="mb-2">
+      <h4 className="text-blue-600 font-semibold">Meetings</h4>
+      <ul className="text-sm bg-gray-200 p-2 rounded">
+        {Object.entries(miniCalendarEvents).flatMap(([day, events]) =>
+          events
+            .filter(event => {
+              const eventDate = new Date(selectedYear, selectedMonth, day);
+              return (
+                eventDate.getMonth() === selectedMonth &&  // Ensure it's the selected month
+                eventDate.getFullYear() === selectedYear &&  // Ensure it's the selected year
+                event.eventType === "meeting"  // Filter only meetings
+              );
+            })
+            .map(event => (
+              <li key={`${day}-${event.id}`} className="border-b py-1">
+                • {day} - {event.text}
+              </li>
+            ))
+        )}
+      </ul>
+    </div>
 ) : (
   <p className="text-gray-500 text-sm">No meetings this month.</p>
 )}
@@ -401,15 +421,23 @@ const MonthView = () => {
     <div>
       <h4 className="text-red-600 font-semibold">Holidays</h4>
       <ul className="text-sm bg-gray-200 p-2 rounded">
-        {Object.entries(miniCalendarEvents).map(([day, events]) =>
-          events
-            .filter(event => event.leave)  
-            .map(event => (
-              <li key={event.id} className="border-b py-1">
-                • {day} - {event.text}
-              </li>
-            ))
-        )}
+      {Object.entries(miniCalendarEvents).flatMap(([day, events]) =>
+  events
+    .filter(event => {
+      const eventDate = new Date(selectedYear, selectedMonth, day);
+      return (
+        eventDate.getMonth() === selectedMonth &&
+        eventDate.getFullYear() === selectedYear &&
+        event.leave
+      );
+    })
+    .map(event => (
+      <li key={event.id} className="border-b py-1">
+        • {day} - {event.text}
+      </li>
+    ))
+)}
+
       </ul>
     </div>
   ) : (

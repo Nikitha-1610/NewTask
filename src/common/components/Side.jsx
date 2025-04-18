@@ -75,7 +75,7 @@ const Side = ({ isOpen, toggleSidebar, role }) => {
       
       { path: "/admin/addtasks", label: "Add Task", icon: "mdi:plus-circle" },
       // { path: "/admin/position", label: "Position", icon: "iconoir:position-align" },
-      // { path: "/admin/calender", label: "calender", icon: "bx:calendar-event" },
+       { path: "/admin/calender", label: "calender", icon: "bx:calendar-event" },
 
       // { path: "/admin/chats", label: "Chats", icon: "material-symbols:chat-outline" },
       // { path: "/admin/mainpage", label: "Main Page", icon: "duo-icons:dashboard" },
@@ -95,7 +95,7 @@ const Side = ({ isOpen, toggleSidebar, role }) => {
         label: "Stats",
         icon: "duo-icons:dashboard",
       },
-      // { path: "/user/calender", label: "Calender", icon: "bx:calendar-event" },
+       { path: "/user/calender", label: "Calender", icon: "bx:calendar-event" },
       // {
       //   path: "/user/teammate",
       //   label: "Teammate Task",
