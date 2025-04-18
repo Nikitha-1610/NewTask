@@ -56,7 +56,7 @@ const handleInputChanges = (e) => {
   }
 
   // Validation for mobile and alterMobile
-  if (name === "mobile" || name === "alterMobile") {
+  if (name === "mobile" ) {
     if (!validateMobileNumber(value)) {
       setErrors((prevErrors) => ({
         ...prevErrors,
@@ -75,27 +75,40 @@ const handleInputChanges = (e) => {
 {/* State to Manage Errors */}
 
 
-  useEffect(() => {
-    const fetchUserData = async () => {
-      try {
-        const response = await axiosInstance.get(
-          `employee/get/${employeeId}`
-        );
-        if (response.data.status === 200) {
-          setUserData(response.data.message);
-          setEditedData(response.data.message);
-        } else {
-          throw new Error("Failed to fetch user data");
-        }
-      } catch (err) {
-        setError(err.message);
-      } finally {
-        setLoading(false);
-      }
-    };
+useEffect(() => {
+  const fetchUserData = async () => {
+    try {
+      const response = await axiosInstance.get(
+        `employee/get/${employeeId}`
+      );
+      if (response.data.status === 200) {
+        const fetched = response.data.message;
 
-    fetchUserData();
-  }, []);
+        const localData = {
+          name: localStorage.getItem("name") || fetched.name,
+          email: localStorage.getItem("email") || fetched.email,
+          mobile: localStorage.getItem("mobile") || fetched.mobile,
+          Department: localStorage.getItem("Department") || fetched.Department,
+          Section: localStorage.getItem("Section") || fetched.Section,
+          RegisterNumber: localStorage.getItem("RegisterNumber") || fetched.RegisterNumber,
+          profileImage: fetched.profileImage,
+          position: fetched.position,
+        };
+
+        setUserData(localData);
+        setEditedData(localData);
+      } else {
+        throw new Error("Failed to fetch user data");
+      }
+    } catch (err) {
+      setError(err.message);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  fetchUserData();
+}, []);
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;
@@ -105,56 +118,65 @@ const handleInputChanges = (e) => {
   const handleImageChange = (event) => {
     const file = event.target.files[0];
     if (file) {
+      setProfileImage(file); 
+  
       const reader = new FileReader();
       reader.onload = () => {
         setEditedData((prevData) => ({
           ...prevData,
-          profileImage: reader.result, // Base64 encoding for preview
+          profileImage: reader.result, 
         }));
       };
       reader.readAsDataURL(file);
     }
   };
+  
 
   const saveChanges = async () => {
     try {
-      // If there's an image, append it to FormData
       const formData = new FormData();
       if (profileImage) {
         formData.append("profileImage", profileImage);
       }
-
-      // Append other fields from editedData
+  
       Object.keys(editedData).forEach((key) =>
         formData.append(key, editedData[key])
       );
-      
-      
-
+  
       const response = await axiosInstance.put(
         `employee/update/${employeeId}`,
-        {name:editedData.name,
-          email:editedData.email,
-          DOB: editedData.DOB,
-          address: editedData.address,
-          alterMobile: Number(editedData.alterMobile),
-          mobile: Number(editedData.mobile)
+        {
+          name: editedData.name,
+          email: editedData.email,
+          Department: editedData.Department,
+          Class: editedData.Class,
+          RegisterNumber: Number(editedData.RegisterNumber),
+          mobile: Number(editedData.mobile),
         }
       );
-
+  
       if (response.status === 200) {
+        // Save data to localStorage, including the Section field
+        localStorage.setItem("name", editedData.name || "");
+        localStorage.setItem("email", editedData.email || "");
+        localStorage.setItem("mobile", editedData.mobile || "");
+        localStorage.setItem("Department", editedData.Department || "");
+        localStorage.setItem("Section", editedData.Section || ""); // <-- Add this line for Section
+        localStorage.setItem("RegisterNumber", editedData.RegisterNumber || "");
+  
         toast.success("Changes saved successfully!");
-        setUserData({ ...editedData, profileImage: previewImage });
+        setUserData(editedData);
         setIsEditing(false);
       } else {
         throw new Error("Failed to save changes");
       }
     } catch (err) {
       console.log(err);
-      
       toast.error("Error saving changes: " + err.message);
     }
   };
+  
+  
 
   // Loader component to display while loading
   if (loading) {
@@ -172,7 +194,7 @@ const handleInputChanges = (e) => {
   <div className="bg-white shadow-2xl rounded-lg px-10 py-2 w-full max-w-5xl h-auto sm:h-[500px] flex flex-col justify-center items-center">
   {/* Profile Section */}
   <div className="flex flex-col items-center mb-6 sm:mt-0">
-    <div className="w-24 h-24 rounded-full bg-blue-200 flex items-center justify-center text-4xl text-white font-bold overflow-hidden">
+    <div className="w-24 h-24 rounded-full bg-teal-200 flex items-center justify-center text-4xl text-white font-bold overflow-hidden">
       {userData.profileImage ? (
         <img
           src={userData.profileImage}
@@ -186,7 +208,7 @@ const handleInputChanges = (e) => {
     <h2 className="text-2xl font-bold mt-4">{userData.name}</h2>
     <p className="text-gray-700">{userData.position}</p>
     <p className="text-gray-700">
-      <strong>Employee ID:</strong> {userData.employeeID}
+     
     </p>
   </div>
 
@@ -196,32 +218,25 @@ const handleInputChanges = (e) => {
     <strong>Email:</strong> {userData.email}
   </p>
   <p>
+    <strong>Name:</strong> {userData.name}
+  </p>
+  <p>
     <strong>Mobile:</strong> {userData.mobile}
   </p>
   <p>
-    <strong>Address:</strong> {userData.address}
+    <strong>Department:</strong> {userData.Department}
   </p>
   <p>
-    <strong>Date of Birth:</strong> {userData.DOB}
+    <strong>Section:</strong> {userData.Section}
   </p>
   <p>
-    <strong>Role:</strong> {userData.role}
+    <strong>RegisterNumber:</strong> {userData.RegisterNumber}
   </p>
-  <p>
-    <strong>Applied Date:</strong> {userData.appliedDate}
-  </p>
-  <p>
-    <strong>Reference:</strong> {userData.reference}
-  </p>
-  <p>
-    <strong>Created On:</strong> {new Date(userData.createdOn).toLocaleDateString()}
-  </p>
-  <p>
-    <strong>Team Lead:</strong> {userData.teamLead}
-  </p>
-  <p>
-    <strong>Team Members:</strong> {userData.teamMembers}
-  </p>
+  
+  
+ 
+  
+ 
 </div>
 
 
@@ -230,7 +245,7 @@ const handleInputChanges = (e) => {
   <div className="mt-6 flex justify-center">
     <button
       onClick={() => setIsEditing(true)}
-      className="px-6 py-2 bg-blue-500 text-white rounded-lg shadow-lg hover:bg-blue-600"
+      className="px-6 py-2 bg-teal-500 text-white rounded-lg shadow-lg hover:bg-teal-600"
     >
       Edit Profile
     </button>
@@ -254,7 +269,7 @@ const handleInputChanges = (e) => {
 
       {/* Profile Image Section */}
       <div className="flex flex-col items-center mb-6">
-        <div className="relative w-24 h-24 rounded-full bg-blue-200 flex items-center justify-center text-4xl text-white font-bold overflow-hidden">
+        <div className="relative w-24 h-24 rounded-full bg-teal-200 flex items-center justify-center text-4xl text-white font-bold overflow-hidden">
           {editedData.profileImage ? (
             <img
               src={editedData.profileImage}
@@ -266,7 +281,7 @@ const handleInputChanges = (e) => {
           )}
           <label
             htmlFor="profileImage"
-            className="absolute bottom-1 right-1 bg-blue-500 text-white p-2 rounded-full cursor-pointer hover:bg-blue-600"
+            className="absolute bottom-1 right-1 bg-teal-500 text-white p-2 rounded-full cursor-pointer hover:bg-teal-600"
             title="Edit Profile Image"
           >
             <Icon icon="mdi:pencil" className="text-sm" />
@@ -338,52 +353,53 @@ const handleInputChanges = (e) => {
 </div>
 
 
-          <div>
-            <label htmlFor="address" className="block font-bold mb-1">
-              Address
-            </label>
-            <input
-              type="text"
-              id="address"
-              name="address"
-              value={editedData.address}
-              onChange={handleInputChange}
-              className="w-full p-3 border rounded"
-              placeholder="Address"
-            />
-          </div>
-
-          <div>
-            <label htmlFor="dob" className="block font-bold mb-1">
-              Date of Birth
-            </label>
-            <input
-              type="date"
-              id="dob"
-              name="DOB"
-              value={editedData.DOB}
-              onChange={handleInputChange}
-              className="w-full p-3 border rounded"
-            />
-          </div>
-          <div>
-  <label htmlFor="alterMobile" className="block font-bold mb-1">
-    Alternate Mobile
+<div>
+  <label htmlFor="Department" className="block font-bold mb-1">
+    Department
   </label>
   <input
     type="text"
-    id="alterMobile"
-    name="alterMobile"
-    value={editedData.alterMobile || ""}
-    onChange={handleInputChanges}
-    className={`w-full p-3 border rounded ${
-      errors.alterMobile ? "border-red-500" : ""
-    }`}
-    placeholder="Alternate Mobile Number"
+    id="Department"
+    name="Department"
+    value={editedData.Department}
+    onChange={handleInputChange}
+    className="w-full p-3 border rounded"
+    placeholder="Department"
   />
-  {errors.alterMobile && (
-    <span className="text-red-500 text-sm mt-1">{errors.alterMobile}</span>
-  )}
+</div>
+
+
+<div>
+  <label htmlFor="section" className="block font-bold mb-1">
+    Section
+  </label>
+  <input
+    type="text"
+    id="section"
+    name="Section"  
+    value={editedData.Section || ""}  
+    onChange={handleInputChange}
+    className="w-full p-3 border rounded"
+    placeholder="Section"
+  />
+</div>
+
+
+          <div>
+  <label htmlFor="alterMobile" className="block font-bold mb-1">
+    RegisterNumber
+  </label>
+  <input
+    type="text"
+    id="RegisterNumber"
+    name="RegisterNumber"
+    value={editedData.RegisterNumber || ""}
+    onChange={handleInputChanges}
+    className="w-full p-3 border rounded" 
+    placeholder="RegisterNumber"
+   
+  />
+ 
 </div>
 
           {/* <div>
@@ -426,7 +442,7 @@ const handleInputChanges = (e) => {
         </button>
         <button
           onClick={saveChanges}
-          className="px-4 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600"
+          className="px-4 py-2 bg-teal-500 text-white rounded-lg hover:bg-teal-600"
         >
           Save
         </button>
@@ -440,6 +456,7 @@ const handleInputChanges = (e) => {
 
 
       <ToastContainer position="top-center" autoClose={3000} />
+      
     </div>
   );
 };
