@@ -104,7 +104,7 @@ const AuthPage = () => {
           <form onSubmit={handleSignIn} className="space-y-4">
             <div>
               <label htmlFor="employeeId" className="block text-sm font-medium text-gray-700">
-                EmployeeId
+                Register Number
               </label>
               <input
                 id="employeeId"
